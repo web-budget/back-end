@@ -1,0 +1,82 @@
+spring:
+  application.name: @project.name@
+  jmx.enabled: false
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/webbudget
+    username: sa_webbudget
+    password: sa_webbudget
+    hikari.pool-name: ${spring.application.name}_pool
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: org.postgresql.Driver
+    hikari.maximum-pool-size: 10
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    open-in-view: false
+    properties:
+      hibernate:
+        hibernate.dialect: org.hibernate.dialect.PostgreSQL10Dialect
+
+  jackson:
+    default-property-inclusion: non_null
+    deserialization:
+      read_unknown_enum_values_as_null: true
+
+  liquibase:
+    enabled: true
+    change-log: db/changelog/db.changelog.master.xml
+
+  mail:
+    host: ${mail.host}
+    port: ${mail.port}
+    username: ${mail.user}
+    password: ${mail.password}
+    default-encoding: UTF-8
+    properties:
+      mail.transport.protocol: smtp
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+      mail.debug: false
+
+server:
+  servlet:
+    encoding:
+      enabled: true
+      force: true
+      charset: UTF-8
+
+management:
+  endpoints:
+    enabled-by-default: false
+    web:
+      exposure:
+        include: ['logfile', 'health', 'info', 'scheduledtasks']
+  endpoint:
+    health:
+      enabled: true
+    info:
+      enabled: true
+    scheduledtasks:
+      enabled: true
+    logfile:
+      enabled: true
+      external-file: ${log.directory}/${spring.application.name}.log
+
+logging:
+  file:
+    name: ${log.directory}/${spring.application.name}.log
+  level:
+    root: INFO
+    org.hibernate: INFO
+    org.springframework: INFO
+    org.springframework.web: INFO
+    org.springframework.security: INFO
+    org.springframework.context.support: INFO
+
+info:
+  name: ${spring.application.name}
+  description: @project.description@
+  version: @project.version@

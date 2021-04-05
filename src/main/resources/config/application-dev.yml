@@ -1,0 +1,20 @@
+spring:
+  jpa:
+    show-sql: true
+
+  mail:
+    host: smtp.mailtrap.io
+    port: 587
+    username: ${mailtrap.user}
+    password: ${mailtrap.password}
+    properties:
+      mail.debug: true
+
+management:
+  endpoint:
+    logfile:
+      external-file: /${user.home}/${spring.application.name}/${spring.application.name}.log
+
+logging:
+  file:
+    name: /${user.home}/${spring.application.name}/${spring.application.name}.log

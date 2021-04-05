@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+
+    <property name="uuid_function" value="random_uuid()" dbms="h2"/>
+    <property name="uuid_function" value="uuid_generate_v4()" dbms="postgresql"/>
+
+    <property name="text_type" value="varchar(255)" dbms="h2"/>
+    <property name="text_type" value="text" dbms="postgresql"/>
+
+    <property name="uuid_type" value="uuid" dbms="postgresql"/>
+    <property name="uuid_type" value="uuid" dbms="h2"/>
+
+    <changeSet id="0" author="arthur.gregorio" dbms="postgresql">
+        <sql>
+            CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+        </sql>
+    </changeSet>
+
+    <!--
+        down here, you should put your versioned changelogs for production
+    -->
+    <include relativeToChangelogFile="true" file="db.changelog.20210404.xml"/>
+
+    <!--
+        use this changelog to initialize h2 testing database.
+        ATTENTION: this line must stay after database versions!
+    -->
+    <include relativeToChangelogFile="true" file="db.changelog.testing.xml"/>
+</databaseChangeLog>
