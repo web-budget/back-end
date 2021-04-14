@@ -22,5 +22,4 @@ class User(
     val active: Boolean,
     @OneToMany(mappedBy = "user", fetch = EAGER, cascade = [REMOVE])
     val grants: List<Grant>
-) : PersistentEntity<Long>() {
-}
+) : PersistentEntity<Long>()

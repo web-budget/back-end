@@ -16,5 +16,4 @@ class Grant(
     @ManyToOne(optional = false)
     @JoinColumn(name = "id_authority", nullable = false)
     val authority: Authority
-) : PersistentEntity<Long>() {
-}
+) : PersistentEntity<Long>()

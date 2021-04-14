@@ -11,5 +11,4 @@ import javax.persistence.Table
 class Authority(
     @Column(name = "name", nullable = false, length = 45)
     val name: String
-) : PersistentEntity<Long>() {
-}
+) : PersistentEntity<Long>()
