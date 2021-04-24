@@ -2,10 +2,12 @@ package br.com.webbudget.backend.domain.entities
 
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
+import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.io.Serializable
 import java.time.LocalDateTime
 import java.util.UUID
 import javax.persistence.Column
+import javax.persistence.EntityListeners
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
 import javax.persistence.Id
@@ -14,6 +16,7 @@ import javax.persistence.PrePersist
 import javax.persistence.Version
 
 @MappedSuperclass
+@EntityListeners(AuditingEntityListener::class)
 open class PersistentEntity<T : Serializable> {
 
     @Id
@@ -32,7 +35,7 @@ open class PersistentEntity<T : Serializable> {
         private set
 
     @LastModifiedDate
-    @Column(name = "created_on", nullable = false)
+    @Column(name = "last_update", nullable = false)
     var lastUpdate: LocalDateTime? = null
         private set
 

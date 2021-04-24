@@ -15,9 +15,18 @@
     <property name="uuid_type" value="uuid" dbms="postgresql"/>
     <property name="uuid_type" value="uuid" dbms="h2"/>
 
-    <changeSet id="0" author="arthur.gregorio" dbms="postgresql">
+    <changeSet id="create-extension" author="arthurshakal@gmail.com" dbms="postgresql">
         <sql>
             CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+        </sql>
+    </changeSet>
+
+    <changeSet id="create-schemas" author="arthurshakal@gmail.com" dbms="postgresql">
+        <sql>
+            CREATE SCHEMA "configuration";
+            CREATE SCHEMA "administration";
+            CREATE SCHEMA "financial";
+            CREATE SCHEMA "registration";
         </sql>
     </changeSet>
 

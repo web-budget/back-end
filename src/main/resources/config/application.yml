@@ -1,3 +1,10 @@
+web-budget:
+  cache:
+    collection: webbudget
+  jwt:
+    secret: #w3b-Budg3t*$
+    seconds-to-expire: 259200
+
 spring:
   application.name: @project.name@
   jmx.enabled: false
@@ -27,7 +34,7 @@ spring:
 
   liquibase:
     enabled: true
-    change-log: db/changelog/db.changelog.master.xml
+    change-log: classpath:db/changelog/db.changelog.master.xml
 
   mail:
     host: ${mail.host}
@@ -64,11 +71,11 @@ management:
       enabled: true
     logfile:
       enabled: true
-      external-file: ${log.directory}/${spring.application.name}.log
+      external-file: /${user.home}/${spring.application.name}/${spring.application.name}.log
 
 logging:
   file:
-    name: ${log.directory}/${spring.application.name}.log
+    name: /${user.home}/${spring.application.name}/${spring.application.name}.log
   level:
     root: INFO
     org.hibernate: INFO

@@ -1,7 +1,7 @@
-version: 3.7
+version: "3.7"
 
 services:
-  database:
+  postgres:
     container_name: wb-database
     image: postgres:13-alpine
     ports:
@@ -15,6 +15,15 @@ services:
       wb_network:
         aliases:
           - postgres
+  redis:
+    image: redis:6-alpine
+    container_name: wb-cache
+    ports:
+      - 6379:6379
+    networks:
+      wb_network:
+        aliases:
+          - redis
 
 networks:
   wb_network:

@@ -5,5 +5,91 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
+    <changeSet id="back-end#2" author="arthurshakal@gmail.com">
+        <createTable tableName="users" schemaName="configuration">
+            <column name="id" autoIncrement="true" type="bigint">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="external_id" type="${uuid_type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="smallint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_on" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_update" type="timestamp"/>
 
+            <column name="name" type="varchar(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="varchar(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="password" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="active" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="authorities" schemaName="configuration">
+            <column name="id" autoIncrement="true" type="bigint">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="external_id" type="${uuid_type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="smallint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_on" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_update" type="timestamp"/>
+
+            <column name="name" type="varchar(150)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="grants" schemaName="configuration">
+            <column name="id" autoIncrement="true" type="bigint">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="external_id" type="${uuid_type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="smallint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_on" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_update" type="timestamp"/>
+
+            <column name="id_user" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id_authority" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint constraintName="fk_users_on_grants"
+                                 baseColumnNames="id_user" baseTableName="grants" baseTableSchemaName="configuration"
+                                 referencedTableName="users" referencedTableSchemaName="configuration"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint constraintName="fk_authorities_on_grants"
+                                 baseColumnNames="id_authority" baseTableName="grants"
+                                 baseTableSchemaName="configuration"
+                                 referencedTableName="authorities" referencedTableSchemaName="configuration"
+                                 referencedColumnNames="id"/>
+
+        <addUniqueConstraint columnNames="id,external_id" tableName="users" schemaName="configuration"/>
+        <addUniqueConstraint columnNames="id,external_id" tableName="grants" schemaName="configuration"/>
+        <addUniqueConstraint columnNames="id,external_id" tableName="authorities" schemaName="configuration"/>
+    </changeSet>
 </databaseChangeLog>
