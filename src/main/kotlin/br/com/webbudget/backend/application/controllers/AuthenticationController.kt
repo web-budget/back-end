@@ -24,7 +24,7 @@ class AuthenticationController(
     @PostMapping("/login")
     fun login(@RequestBody @Valid credential: Credential): ResponseEntity<Token> {
 
-        val authentication = this.authenticationManager.authenticate(
+        val authentication = authenticationManager.authenticate(
             UsernamePasswordAuthenticationToken(credential.username, credential.password)
         )
 

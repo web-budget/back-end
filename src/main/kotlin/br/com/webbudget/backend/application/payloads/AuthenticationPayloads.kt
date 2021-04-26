@@ -13,7 +13,7 @@ data class Credential(
 )
 
 data class Token(
-    val token: String,
+    val accessToken: String,
     val refreshToken: String,
     val validity: LocalDateTime
 )

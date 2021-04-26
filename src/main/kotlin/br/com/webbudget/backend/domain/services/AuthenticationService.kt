@@ -16,7 +16,7 @@ class AuthenticationService(
 ) : UserDetailsService {
 
     override fun loadUserByUsername(username: String?): UserDetails {
-        val user = this.userRepository.findByEmail(username)
+        val user = userRepository.findByEmail(username)
             ?: throw UsernameNotFoundException("Can't find user with given username $username")
         return AuthenticableUser.from(user)
     }
@@ -29,31 +29,31 @@ class AuthenticationService(
     ) : UserDetails {
 
         override fun getAuthorities(): List<GrantedAuthority> {
-            return ImmutableList.copyOf(this.authorities)
+            return ImmutableList.copyOf(authorities)
         }
 
         override fun getUsername(): String {
-            return this.username
+            return username
         }
 
         override fun getPassword(): String {
-            return this.password
+            return password
         }
 
         override fun isAccountNonExpired(): Boolean {
-            return this.active
+            return active
         }
 
         override fun isAccountNonLocked(): Boolean {
-            return this.active
+            return active
         }
 
         override fun isCredentialsNonExpired(): Boolean {
-            return this.active
+            return active
         }
 
         override fun isEnabled(): Boolean {
-            return this.active
+            return active
         }
 
         companion object {

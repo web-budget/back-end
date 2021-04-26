@@ -17,7 +17,7 @@ class CommonsConfiguration(
 ) : WebMvcConfigurer {
 
     override fun addFormatters(registry: FormatterRegistry) {
-        this.formatters.forEach(registry::addFormatter)
-        this.converters.forEach(registry::addConverter)
+        formatters.forEach(registry::addFormatter)
+        converters.forEach(registry::addConverter)
     }
 }

@@ -1,18 +1,15 @@
 package br.com.webbudget.backend.domain.services
 
 import br.com.webbudget.backend.application.payloads.Token
-import io.jsonwebtoken.Claims
-import io.jsonwebtoken.ExpiredJwtException
-import io.jsonwebtoken.Jws
-import io.jsonwebtoken.Jwts
-import io.jsonwebtoken.SignatureAlgorithm
-import io.jsonwebtoken.security.Keys
+import com.auth0.jwt.JWT
+import com.auth0.jwt.algorithms.Algorithm
+import com.auth0.jwt.exceptions.JWTVerificationException
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.time.Instant
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.util.Date
-import javax.crypto.SecretKey
 
 @Service
 class TokenService(
@@ -26,60 +23,39 @@ class TokenService(
     fun generateFrom(subject: String): Token {
 
         val now = Instant.now()
-        val instantOfExpiration = now.plusSeconds(this.secondsToExpire)
+        val instantOfExpiration = now.plusSeconds(secondsToExpire)
 
-        val token = Jwts.builder()
-            .setSubject(subject)
-            .setIssuer("br.com.web-budget")
-            .setIssuedAt(Date.from(now))
-            .setExpiration(Date.from(instantOfExpiration))
-            .signWith(this.jwtSecretAsSecretKey(), SignatureAlgorithm.HS512)
-            .compact()
+        val token = JWT.create()
+            .withSubject(subject)
+            .withIssuer("br.com.webbudget")
+            .withExpiresAt(Date.from(instantOfExpiration))
+            .sign(Algorithm.HMAC512(jwtSecret))
 
-        this.tokenCacheService.store(subject, token)
+        tokenCacheService.store(subject, token)
 
-        return Token(token, "", LocalDateTime.from(instantOfExpiration))
+        return Token(token, "", LocalDateTime.ofInstant(instantOfExpiration, ZoneId.systemDefault()))
     }
 
-    fun validate(token: String): ValidationResult {
+    fun validate(token: String): Boolean {
         return try {
-            this.parseAndClaim(token)
+            val verifier = JWT.require(Algorithm.HMAC512(jwtSecret))
+                .withIssuer("br.com.webbudget")
+                .build()
 
-            val subject = this.extract(Claims.SUBJECT, token)
-            if (this.tokenCacheService.isExpired(subject)) {
-                return ValidationResult.EXPIRED
+            val decoded = verifier.verify(token)
+            if (tokenCacheService.isExpired(decoded.subject)) {
+                return false
             }
 
-            ValidationResult.VALID
-        } catch (ex: ExpiredJwtException) {
-            return ValidationResult.EXPIRED
-        } catch (ex: Exception) {
-            return ValidationResult.INVALID
+            true
+        } catch (ex: JWTVerificationException) {
+            false
         }
     }
 
-    fun extract(key: String, token: String): String {
-        return this.parseAndClaim(token).body.get(key, String::class.java)
-    }
-
-    private fun parseAndClaim(token: String): Jws<Claims> {
-        val parser = Jwts.parserBuilder()
-            .setSigningKey(this.jwtSecretAsSecretKey())
-            .build()
-        return parser.parseClaimsJws(token)
-    }
-
-    private fun jwtSecretAsSecretKey(): SecretKey {
-        return Keys.hmacShaKeyFor(this.jwtSecret.toByteArray(Charsets.UTF_8))
-    }
-
-    enum class ValidationResult {
-
-        VALID, INVALID, EXPIRED;
-
-        fun isValid(): Boolean {
-            return this == VALID
-        }
+    fun extractSubject(token: String): String {
+        val decoded = JWT.decode(token)
+        return decoded.subject
     }
 }
 

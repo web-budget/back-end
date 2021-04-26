@@ -2,7 +2,7 @@ web-budget:
   cache:
     collection: webbudget
   jwt:
-    secret: #w3b-Budg3t*$
+    secret: '#w3b-Budg3t*$'
     seconds-to-expire: 259200
 
 spring:
@@ -34,7 +34,9 @@ spring:
 
   liquibase:
     enabled: true
-    change-log: classpath:db/changelog/db.changelog.master.xml
+    databaseChangeLogTable: database_changelog
+    databaseChangeLogLockTable: database_changelog_lock
+    change-log: db/changelog/db.changelog.master.xml
 
   mail:
     host: ${mail.host}

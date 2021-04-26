@@ -13,20 +13,20 @@ class TokenCacheService(
 ) {
 
     fun store(subject: String, token: String) {
-        this.redisTemplate.opsForHash<String, String>().put(COLLECTION, subject, token)
-        this.redisTemplate.expire(subject, secondsToExpire, TimeUnit.SECONDS)
+        redisTemplate.opsForHash<String, String>().put(COLLECTION, subject, token)
+        redisTemplate.expire(subject, secondsToExpire, TimeUnit.SECONDS)
     }
 
     fun find(subject: String): String? {
-        return this.redisTemplate.opsForHash<String, String>().get(COLLECTION, subject)
+        return redisTemplate.opsForHash<String, String>().get(COLLECTION, subject)
     }
 
     fun remove(subject: String) {
-        this.redisTemplate.opsForHash<String, String>().delete(COLLECTION, subject)
+        redisTemplate.opsForHash<String, String>().delete(COLLECTION, subject)
     }
 
     fun isExpired(subject: String): Boolean {
-        return this.find(subject).isNullOrBlank()
+        return find(subject).isNullOrBlank()
     }
 
     companion object {

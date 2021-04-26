@@ -2,7 +2,6 @@ package br.com.webbudget.backend.infrastructure.config.spring
 
 import br.com.webbudget.backend.domain.services.AuthenticationService
 import br.com.webbudget.backend.domain.services.TokenService
-import io.jsonwebtoken.Claims
 import org.springframework.http.HttpHeaders
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
@@ -29,12 +28,11 @@ class TokenAuthenticationFilter(
         }
 
         val token = header.substring(7, header.length)
-        val result = this.tokenService.validate(token)
 
-        if (result.isValid()) {
+        if (tokenService.validate(token)) {
 
-            val username = this.tokenService.extract(Claims.SUBJECT, token)
-            val authenticable = this.authenticationService.loadUserByUsername(username)
+            val username = tokenService.extractSubject(token)
+            val authenticable = authenticationService.loadUserByUsername(username)
 
             val authentication = UsernamePasswordAuthenticationToken(
                 authenticable, null, authenticable.authorities

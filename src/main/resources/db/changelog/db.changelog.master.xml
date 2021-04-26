@@ -21,15 +21,6 @@
         </sql>
     </changeSet>
 
-    <changeSet id="create-schemas" author="arthurshakal@gmail.com" dbms="postgresql">
-        <sql>
-            CREATE SCHEMA "configuration";
-            CREATE SCHEMA "administration";
-            CREATE SCHEMA "financial";
-            CREATE SCHEMA "registration";
-        </sql>
-    </changeSet>
-
     <!--
         down here, you should put your versioned changelogs for production
     -->

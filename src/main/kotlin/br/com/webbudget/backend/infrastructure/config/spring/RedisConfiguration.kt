@@ -9,14 +9,14 @@ import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactor
 
 @Configuration
 class RedisConfiguration(
-    @Value("\${redis.host:localhost}")
+    @Value("\${spring.redis.host:localhost}")
     private val hostname: String,
-    @Value("\${redis.host:6379}")
+    @Value("\${spring.redis.port:6379}")
     private val port: Int
 ) {
 
     @Bean
     fun lettuceConnectionFactory(): LettuceConnectionFactory {
-        return LettuceConnectionFactory(RedisStandaloneConfiguration(this.hostname, this.port))
+        return LettuceConnectionFactory(RedisStandaloneConfiguration(hostname, port))
     }
 }

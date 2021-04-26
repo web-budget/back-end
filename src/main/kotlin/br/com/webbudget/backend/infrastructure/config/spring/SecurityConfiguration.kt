@@ -22,7 +22,7 @@ class SecurityConfiguration(
 ) : WebSecurityConfigurerAdapter() {
 
     override fun configure(auth: AuthenticationManagerBuilder) {
-        auth.userDetailsService(this.authenticationService).passwordEncoder(this.passwordEncoder())
+        auth.userDetailsService(authenticationService).passwordEncoder(passwordEncoder())
     }
 
     override fun configure(http: HttpSecurity) {
@@ -43,7 +43,7 @@ class SecurityConfiguration(
                     .antMatchers("/actuator/health/**").permitAll()
                     .antMatchers("/api/**", "/actuator/**").authenticated()
             .and()
-                .addFilterBefore(this.tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
+                .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
     }
 
     @Bean

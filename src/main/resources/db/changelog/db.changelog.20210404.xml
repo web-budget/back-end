@@ -6,6 +6,10 @@
                       https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <changeSet id="back-end#2" author="arthurshakal@gmail.com">
+        <sql>
+            CREATE SCHEMA "configuration";
+        </sql>
+
         <createTable tableName="users" schemaName="configuration">
             <column name="id" autoIncrement="true" type="bigint">
                 <constraints nullable="false" primaryKey="true"/>
@@ -91,5 +95,12 @@
         <addUniqueConstraint columnNames="id,external_id" tableName="users" schemaName="configuration"/>
         <addUniqueConstraint columnNames="id,external_id" tableName="grants" schemaName="configuration"/>
         <addUniqueConstraint columnNames="id,external_id" tableName="authorities" schemaName="configuration"/>
+
+        <!--password means 'admin'-->
+        <sql>
+            INSERT INTO configuration.users (external_id, version, created_on, name, email, password, active)
+            VALUES('6706a395-6690-4bad-948a-5c3c823e93d2', 0, current_timestamp, 'Administrador',
+            'admin@webbudget.com.br', '$2a$11$gofMXY5BBXVbwoPHbYiCd.6PJ.2pIZk01XRiI8gnVut8t6kFWoOle', true);
+        </sql>
     </changeSet>
 </databaseChangeLog>
