@@ -3,7 +3,8 @@ web-budget:
     collection: webbudget
   jwt:
     secret: '#w3b-Budg3t*$'
-    seconds-to-expire: 259200
+    access-token-expiration: 21600
+    refresh-token-expiration: 172800
 
 spring:
   application.name: @project.name@

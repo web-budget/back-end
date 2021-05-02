@@ -1,5 +1,6 @@
 package br.com.webbudget.backend.application.controllers.advice
 
+import br.com.webbudget.backend.domain.exceptions.BadRefreshTokenException
 import org.springframework.http.HttpStatus
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.web.bind.annotation.ControllerAdvice
@@ -11,6 +12,11 @@ class ExceptionHandlerAdvice {
 
     @ExceptionHandler(BadCredentialsException::class)
     fun handle(response: HttpServletResponse, ex: BadCredentialsException) {
+        response.sendError(HttpStatus.UNAUTHORIZED.value(), ex.message)
+    }
+
+    @ExceptionHandler(BadRefreshTokenException::class)
+    fun handle(response: HttpServletResponse, ex: BadRefreshTokenException) {
         response.sendError(HttpStatus.UNAUTHORIZED.value(), ex.message)
     }
 }

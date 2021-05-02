@@ -1,39 +1,53 @@
 package br.com.webbudget.backend.domain.services
 
 import br.com.webbudget.backend.application.payloads.Token
+import br.com.webbudget.backend.domain.exceptions.BadRefreshTokenException
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.exceptions.JWTVerificationException
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneId
 import java.util.Date
+import java.util.UUID
 
 @Service
 class TokenService(
     @Value("\${web-budget.jwt.secret}")
     private val jwtSecret: String,
-    @Value("\${web-budget.jwt.seconds-to-expire}")
-    private val secondsToExpire: Long,
+    @Value("\${web-budget.jwt.access-token-expiration}")
+    private val accessTokenExpiration: Long,
     private val tokenCacheService: TokenCacheService
 ) {
 
     fun generateFrom(subject: String): Token {
 
-        val now = Instant.now()
-        val instantOfExpiration = now.plusSeconds(secondsToExpire)
-
         val token = JWT.create()
             .withSubject(subject)
+            .withIssuedAt(Date())
             .withIssuer("br.com.webbudget")
-            .withExpiresAt(Date.from(instantOfExpiration))
+            .withExpiresAt(Date.from(Instant.now().plusSeconds(accessTokenExpiration)))
             .sign(Algorithm.HMAC512(jwtSecret))
 
-        tokenCacheService.store(subject, token)
+        val refreshToken = UUID.randomUUID()
 
-        return Token(token, "", LocalDateTime.ofInstant(instantOfExpiration, ZoneId.systemDefault()))
+        tokenCacheService.remove(subject)
+
+        tokenCacheService.storeAccessToken(subject, token)
+        tokenCacheService.storeRefreshToken(subject, refreshToken)
+
+        return Token(token, refreshToken, accessTokenExpiration)
+    }
+
+    fun refresh(subject: String, refreshToken: UUID): Token {
+
+        val storedRefreshToken = tokenCacheService.findRefreshToken(subject)
+
+        if (storedRefreshToken == null && storedRefreshToken != refreshToken) {
+            throw BadRefreshTokenException("Refresh token [$refreshToken] is invalid")
+        }
+
+        return generateFrom(subject)
     }
 
     fun validate(token: String): Boolean {
