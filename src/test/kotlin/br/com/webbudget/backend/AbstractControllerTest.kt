@@ -14,9 +14,9 @@ abstract class AbstractControllerTest : AbstractTest() {
     @Autowired
     private lateinit var objectMapper: ObjectMapper
 
-    protected fun toJson(payload: Any): String = objectMapper.writeValueAsString(payload)
+    protected fun objectToJson(payload: Any): String = objectMapper.writeValueAsString(payload)
 
-    protected fun <T> fromJson(json: String, valueType: Class<T>): T {
+    protected fun <T> jsonToObject(json: String, valueType: Class<T>): T {
         return objectMapper.readValue(json, valueType)
     }
 }

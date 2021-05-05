@@ -34,11 +34,6 @@ class AuthenticationController(
         return ResponseEntity.ok(token)
     }
 
-    @PostMapping("/logout")
-    fun logout(@RequestBody token: String): ResponseEntity<Any> {
-        return ResponseEntity.ok().build()
-    }
-
     @PostMapping("/refresh")
     fun refresh(@RequestBody credential: RefreshCredential): ResponseEntity<Token> {
         val token = tokenService.refresh(credential.username, credential.refreshToken)

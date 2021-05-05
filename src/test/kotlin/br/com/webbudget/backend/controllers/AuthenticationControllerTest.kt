@@ -21,7 +21,7 @@ class AuthenticationControllerTest : AbstractControllerTest() {
     fun `should login and receive valid token`() {
         mockMvc.post("$ENDPOINT_URL/login") {
             contentType = MediaType.APPLICATION_JSON
-            content = toJson(Credential("admin@webbudget.com.br", "admin"))
+            content = objectToJson(Credential("admin@webbudget.com.br", "admin"))
         }.andExpect {
             status { isOk() }
         }.andExpect {
@@ -35,7 +35,7 @@ class AuthenticationControllerTest : AbstractControllerTest() {
     fun `should be unauthorized when bad credentials`() {
         mockMvc.post("$ENDPOINT_URL/login") {
             contentType = MediaType.APPLICATION_JSON
-            content = toJson(Credential("baduser@webbudget.com.br", "admin"))
+            content = objectToJson(Credential("baduser@webbudget.com.br", "admin"))
         }.andExpect {
             status { isUnauthorized() }
         }
@@ -46,7 +46,7 @@ class AuthenticationControllerTest : AbstractControllerTest() {
 
         val oldTokenJson = mockMvc.post("$ENDPOINT_URL/login") {
             contentType = MediaType.APPLICATION_JSON
-            content = toJson(Credential("admin@webbudget.com.br", "admin"))
+            content = objectToJson(Credential("admin@webbudget.com.br", "admin"))
         }.andExpect {
             status { isOk() }
         }.andExpect {
@@ -56,14 +56,14 @@ class AuthenticationControllerTest : AbstractControllerTest() {
             .response
             .contentAsString
 
-        val oldToken = fromJson(oldTokenJson, Token::class.java)
+        val oldToken = jsonToObject(oldTokenJson, Token::class.java)
         val refreshCredential = RefreshCredential("admin@webbudget.com.br", oldToken.refreshToken)
 
         Thread.sleep(5000) // sleep to let jwt have different issue dates
 
         val newTokenJson = mockMvc.post("$ENDPOINT_URL/refresh") {
             contentType = MediaType.APPLICATION_JSON
-            content = toJson(refreshCredential)
+            content = objectToJson(refreshCredential)
         }.andExpect {
             status { isOk() }
         }.andExpect {
@@ -73,7 +73,7 @@ class AuthenticationControllerTest : AbstractControllerTest() {
             .response
             .contentAsString
 
-        val newToken = fromJson(newTokenJson, Token::class.java)
+        val newToken = jsonToObject(newTokenJson, Token::class.java)
         assertThat(newToken.accessToken).isNotEqualTo(oldToken.accessToken)
         assertThat(newToken.refreshToken.toString()).isNotEqualTo(oldToken.refreshToken.toString())
     }
