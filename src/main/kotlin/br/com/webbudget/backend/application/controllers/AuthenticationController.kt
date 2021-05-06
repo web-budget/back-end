@@ -30,13 +30,17 @@ class AuthenticationController(
 
         val authenticable = authentication.principal as AuthenticationService.AuthenticableUser
 
-        val token = tokenService.generateFrom(authenticable.username)
+        val token = tokenService.generateFor(authenticable.username)
         return ResponseEntity.ok(token)
     }
 
     @PostMapping("/refresh")
-    fun refresh(@RequestBody credential: RefreshCredential): ResponseEntity<Token> {
-        val token = tokenService.refresh(credential.username, credential.refreshToken)
+    fun refresh(@RequestBody refreshCredential: RefreshCredential): ResponseEntity<Token> {
+        val token = tokenService.refresh(
+            refreshCredential.tokenId.toString(),
+            refreshCredential.username,
+            refreshCredential.refreshToken
+        )
         return ResponseEntity.ok(token)
     }
 }

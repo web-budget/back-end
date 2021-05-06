@@ -25,6 +25,7 @@ class AuthenticationControllerTest : AbstractControllerTest() {
         }.andExpect {
             status { isOk() }
         }.andExpect {
+            jsonPath("$.id", notNullValue())
             jsonPath("$.accessToken", notNullValue())
             jsonPath("$.refreshToken", notNullValue())
             jsonPath("$.expireIn", `is`(secondsToExpireToken))
@@ -57,9 +58,7 @@ class AuthenticationControllerTest : AbstractControllerTest() {
             .contentAsString
 
         val oldToken = jsonToObject(oldTokenJson, Token::class.java)
-        val refreshCredential = RefreshCredential("admin@webbudget.com.br", oldToken.refreshToken)
-
-        Thread.sleep(5000) // sleep to let jwt have different issue dates
+        val refreshCredential = RefreshCredential(oldToken.id,"admin@webbudget.com.br", oldToken.refreshToken)
 
         val newTokenJson = mockMvc.post("$ENDPOINT_URL/refresh") {
             contentType = MediaType.APPLICATION_JSON
@@ -74,8 +73,9 @@ class AuthenticationControllerTest : AbstractControllerTest() {
             .contentAsString
 
         val newToken = jsonToObject(newTokenJson, Token::class.java)
+        assertThat(newToken.id).isNotEqualTo(oldToken.id)
         assertThat(newToken.accessToken).isNotEqualTo(oldToken.accessToken)
-        assertThat(newToken.refreshToken.toString()).isNotEqualTo(oldToken.refreshToken.toString())
+        assertThat(newToken.refreshToken).isNotEqualTo(oldToken.refreshToken)
     }
 
     companion object {

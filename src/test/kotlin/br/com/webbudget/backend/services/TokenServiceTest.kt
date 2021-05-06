@@ -1,7 +1,7 @@
 package br.com.webbudget.backend.services
 
 import br.com.webbudget.backend.AbstractTest
-import br.com.webbudget.backend.domain.services.TokenCacheService
+import br.com.webbudget.backend.domain.services.CacheService
 import br.com.webbudget.backend.domain.services.TokenService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -20,13 +20,14 @@ class TokenServiceTest : AbstractTest() {
     private lateinit var tokenService: TokenService
 
     @Autowired
-    private lateinit var tokenCacheService: TokenCacheService
+    private lateinit var cacheService: CacheService
 
     @Test
-    fun `should generate valid token`() {
+    fun `should generate token`() {
 
-        val token = tokenService.generateFrom("valid@webbudget.com.br")
+        val token = tokenService.generateFor("valid@webbudget.com.br")
 
+        assertThat(token.id).isNotNull
         assertThat(token.accessToken).isNotBlank
         assertThat(token.refreshToken).isNotNull
 
@@ -35,32 +36,36 @@ class TokenServiceTest : AbstractTest() {
     }
 
     @Test
-    fun `token should be put on cache`() {
+    fun `should put generated token on cache`() {
 
-        val subject = "cacheable@webbudget.com.br"
+        val token = tokenService.generateFor("cacheable@webbudget.com.br")
 
-        tokenService.generateFrom(subject)
-
-        val accessToken = tokenCacheService.findAccessToken(subject)
+        val accessToken = cacheService.find("access_token:${token.id}") as String
         assertThat(accessToken).isNotBlank
 
-        val refreshToken = tokenCacheService.findRefreshToken(subject)
+        val refreshToken = cacheService.find("refresh_token:${token.id}") as String
         assertThat(refreshToken).isNotNull
     }
 
     @Test
-    fun `token should expire after 5 seconds`() {
+    fun `access token should expire after 5 seconds`() {
 
-        val token = tokenService.generateFrom("expire@webbudget.com.br")
+        val token = tokenService.generateFor("expire@webbudget.com.br")
 
         Thread.sleep(6000)
 
-        val subject = tokenService.extractSubject(token.accessToken)
-
-        val accessToken = tokenCacheService.findAccessToken(subject)
+        val accessToken = cacheService.find("access_token:${token.id}") as? String
         assertThat(accessToken).isBlank
+    }
 
-        val refreshToken = tokenCacheService.findRefreshToken(subject)
-        assertThat(refreshToken).isNull()
+    @Test
+    fun `refresh token should expire after 5 seconds`() {
+
+        val token = tokenService.generateFor("expire@webbudget.com.br")
+
+        Thread.sleep(6000)
+
+        val refreshToken = cacheService.find("refresh_token:${token.id}") as? String
+        assertThat(refreshToken).isBlank
     }
 }

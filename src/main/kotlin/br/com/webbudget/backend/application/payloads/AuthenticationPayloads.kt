@@ -14,6 +14,8 @@ data class Credential(
 )
 
 data class RefreshCredential(
+    @field:NotNull
+    val tokenId: UUID,
     @field:Email
     @field:NotBlank
     val username: String,
@@ -22,9 +24,11 @@ data class RefreshCredential(
 )
 
 data class Token(
+    @field:NotNull
+    val id: UUID,
     @field:NotBlank
     val accessToken: String,
-    @field:NotBlank
+    @field:NotNull
     val refreshToken: UUID,
     @field:NotNull
     val expireIn: Long

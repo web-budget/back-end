@@ -13,51 +13,57 @@ import java.util.UUID
 
 @Service
 class TokenService(
+    private val cacheService: CacheService,
     @Value("\${web-budget.jwt.secret}")
     private val jwtSecret: String,
     @Value("\${web-budget.jwt.access-token-expiration}")
     private val accessTokenExpiration: Long,
-    private val tokenCacheService: TokenCacheService
+    @Value("\${web-budget.jwt.refresh-token-expiration}")
+    private val refreshTokenExpiration: Long
 ) {
 
-    fun generateFrom(subject: String): Token {
+    fun generateFor(subject: String): Token {
 
-        val token = JWT.create()
+        val tokenId = UUID.randomUUID()
+
+        val accessToken = JWT.create()
+            .withJWTId(tokenId.toString())
             .withSubject(subject)
             .withIssuedAt(Date())
-            .withIssuer("br.com.webbudget")
+            .withIssuer(TOKEN_ISSUER)
             .withExpiresAt(Date.from(Instant.now().plusSeconds(accessTokenExpiration)))
             .sign(Algorithm.HMAC512(jwtSecret))
 
-        val refreshToken = UUID.randomUUID()
+        val token = Token(tokenId, accessToken, UUID.randomUUID(), accessTokenExpiration)
 
-        tokenCacheService.remove(subject)
+        cacheService.store(accessTokenKey(tokenId.toString()), token.accessToken, accessTokenExpiration)
+        cacheService.store(refreshTokenKey(tokenId.toString()), token.refreshToken, refreshTokenExpiration)
 
-        tokenCacheService.storeAccessToken(subject, token)
-        tokenCacheService.storeRefreshToken(subject, refreshToken)
-
-        return Token(token, refreshToken, accessTokenExpiration)
+        return token
     }
 
-    fun refresh(subject: String, refreshToken: UUID): Token {
+    fun refresh(tokenId: String, subject: String, refreshToken: UUID): Token {
 
-        val storedRefreshToken = tokenCacheService.findRefreshToken(subject)
+        val actualRefreshToken = cacheService.find(refreshTokenKey(tokenId)) as String
 
-        if (storedRefreshToken == null && storedRefreshToken != refreshToken) {
+        if (actualRefreshToken.isBlank() || UUID.fromString(actualRefreshToken) != refreshToken) {
             throw BadRefreshTokenException("Refresh token [$refreshToken] is invalid")
         }
 
-        return generateFrom(subject)
+        cacheService.remove(accessTokenKey(tokenId))
+        cacheService.remove(refreshTokenKey(tokenId))
+
+        return generateFor(subject)
     }
 
-    fun validate(token: String): Boolean {
+    fun validate(accessToken: String): Boolean {
         return try {
             val verifier = JWT.require(Algorithm.HMAC512(jwtSecret))
-                .withIssuer("br.com.webbudget")
+                .withIssuer(TOKEN_ISSUER)
                 .build()
 
-            val decoded = verifier.verify(token)
-            if (tokenCacheService.isExpired(decoded.subject)) {
+            val decoded = verifier.verify(accessToken)
+            if (cacheService.isExpired(accessTokenKey(decoded.id))) {
                 return false
             }
 
@@ -67,9 +73,24 @@ class TokenService(
         }
     }
 
-    fun extractSubject(token: String): String {
-        val decoded = JWT.decode(token)
+    fun extractSubject(accessToken: String): String {
+        val decoded = JWT.decode(accessToken)
         return decoded.subject
+    }
+
+    fun extractId(accessToken: String): String {
+        val decoded = JWT.decode(accessToken)
+        return decoded.id
+    }
+
+    fun accessTokenKey(tokenId: String): String = ACCESS_TOKEN_KEY + tokenId
+
+    fun refreshTokenKey(tokenId: String): String = REFRESH_TOKEN_KEY + tokenId
+
+    companion object {
+        private const val TOKEN_ISSUER = "br.com.webbudget"
+        private const val ACCESS_TOKEN_KEY = "access_token:"
+        private const val REFRESH_TOKEN_KEY = "refresh_token:"
     }
 }
 
