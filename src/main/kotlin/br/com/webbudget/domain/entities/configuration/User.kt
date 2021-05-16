@@ -1,7 +1,7 @@
 package br.com.webbudget.domain.entities.configuration
 
 import br.com.webbudget.domain.entities.PersistentEntity
-import br.com.webbudget.infrastructure.config.DefaultSchemas.CONFIGURATION
+import br.com.webbudget.infrastructure.config.DefaultSchemas.ADMINISTRATION
 import javax.persistence.CascadeType.REMOVE
 import javax.persistence.Column
 import javax.persistence.Entity
@@ -10,7 +10,7 @@ import javax.persistence.OneToMany
 import javax.persistence.Table
 
 @Entity
-@Table(name = "users", schema = CONFIGURATION)
+@Table(name = "users", schema = ADMINISTRATION)
 class User(
     @Column(name = "name", length = 150, nullable = false)
     val name: String,

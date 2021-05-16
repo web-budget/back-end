@@ -7,10 +7,10 @@
 
     <changeSet id="back-end#2" author="arthurshakal@gmail.com">
         <sql>
-            CREATE SCHEMA "configuration";
+            CREATE SCHEMA "administration";
         </sql>
 
-        <createTable tableName="users" schemaName="configuration">
+        <createTable tableName="users" schemaName="administration">
             <column name="id" autoIncrement="true" type="bigint">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
@@ -39,7 +39,7 @@
             </column>
         </createTable>
 
-        <createTable tableName="authorities" schemaName="configuration">
+        <createTable tableName="authorities" schemaName="administration">
             <column name="id" autoIncrement="true" type="bigint">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
@@ -59,7 +59,7 @@
             </column>
         </createTable>
 
-        <createTable tableName="grants" schemaName="configuration">
+        <createTable tableName="grants" schemaName="administration">
             <column name="id" autoIncrement="true" type="bigint">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
@@ -83,22 +83,22 @@
         </createTable>
 
         <addForeignKeyConstraint constraintName="fk_users_on_grants"
-                                 baseColumnNames="id_user" baseTableName="grants" baseTableSchemaName="configuration"
-                                 referencedTableName="users" referencedTableSchemaName="configuration"
+                                 baseColumnNames="id_user" baseTableName="grants" baseTableSchemaName="administration"
+                                 referencedTableName="users" referencedTableSchemaName="administration"
                                  referencedColumnNames="id"/>
         <addForeignKeyConstraint constraintName="fk_authorities_on_grants"
                                  baseColumnNames="id_authority" baseTableName="grants"
-                                 baseTableSchemaName="configuration"
-                                 referencedTableName="authorities" referencedTableSchemaName="configuration"
+                                 baseTableSchemaName="administration"
+                                 referencedTableName="authorities" referencedTableSchemaName="administration"
                                  referencedColumnNames="id"/>
 
-        <addUniqueConstraint columnNames="id,external_id" tableName="users" schemaName="configuration"/>
-        <addUniqueConstraint columnNames="id,external_id" tableName="grants" schemaName="configuration"/>
-        <addUniqueConstraint columnNames="id,external_id" tableName="authorities" schemaName="configuration"/>
+        <addUniqueConstraint columnNames="id,external_id" tableName="users" schemaName="administration"/>
+        <addUniqueConstraint columnNames="id,external_id" tableName="grants" schemaName="administration"/>
+        <addUniqueConstraint columnNames="id,external_id" tableName="authorities" schemaName="administration"/>
 
         <!--password means 'admin'-->
         <sql>
-            INSERT INTO configuration.users (external_id, version, created_on, name, email, password, active)
+            INSERT INTO administration.users (external_id, version, created_on, name, email, password, active)
             VALUES('6706a395-6690-4bad-948a-5c3c823e93d2', 0, current_timestamp, 'Administrador',
             'admin@webbudget.com.br', '$2a$11$gofMXY5BBXVbwoPHbYiCd.6PJ.2pIZk01XRiI8gnVut8t6kFWoOle', true);
         </sql>
