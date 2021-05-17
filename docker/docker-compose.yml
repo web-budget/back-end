@@ -19,7 +19,7 @@ services:
     image: redis:6-alpine
     container_name: wb-cache
     ports:
-      - 6379:6379
+      - "6379:6379"
     networks:
       wb_network:
         aliases:
