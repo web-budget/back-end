@@ -5,5 +5,4 @@ import br.com.webbudget.infrastructure.repository.DefaultRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface GrantRepository : DefaultRepository<Grant> {
-}
+interface GrantRepository : DefaultRepository<Grant>

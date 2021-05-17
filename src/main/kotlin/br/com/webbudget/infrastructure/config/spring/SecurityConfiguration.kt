@@ -30,20 +30,20 @@ class SecurityConfiguration(
         http.cors()
             .and()
             .csrf()
-                .disable()
+            .disable()
             .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
             .exceptionHandling()
-                .authenticationEntryPoint { _: HttpServletRequest, response: HttpServletResponse, ex: AuthenticationException ->
-                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, ex.message)
-                }
+            .authenticationEntryPoint { _: HttpServletRequest, response: HttpServletResponse, ex: AuthenticationException ->
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, ex.message)
+            }
             .and()
-                .authorizeRequests()
-                    .antMatchers("/actuator/health/**").permitAll()
-                    .antMatchers("/api/**", "/actuator/**").authenticated()
+            .authorizeRequests()
+            .antMatchers("/actuator/health/**").permitAll()
+            .antMatchers("/api/**", "/actuator/**").authenticated()
             .and()
-                .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
+            .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
     }
 
     @Bean
@@ -52,7 +52,7 @@ class SecurityConfiguration(
     }
 
     @Bean
-    fun passwordEncoder() : PasswordEncoder {
+    fun passwordEncoder(): PasswordEncoder {
         return BCryptPasswordEncoder(11)
     }
 }

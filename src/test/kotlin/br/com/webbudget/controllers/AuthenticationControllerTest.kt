@@ -57,7 +57,7 @@ class AuthenticationControllerTest : AbstractControllerTest() {
             .contentAsString
 
         val oldToken = jsonToObject(oldTokenJson, Token::class.java)
-        val refreshCredential = RefreshCredential(oldToken.id,"admin@webbudget.com.br", oldToken.refreshToken)
+        val refreshCredential = RefreshCredential(oldToken.id, "admin@webbudget.com.br", oldToken.refreshToken)
 
         val newTokenJson = mockMvc.post("$ENDPOINT_URL/refresh") {
             contentType = MediaType.APPLICATION_JSON
