@@ -10,4 +10,6 @@ import java.util.UUID
 interface DefaultRepository<T : PersistentEntity<Long>> : JpaRepository<T, Long> {
 
     fun findByExternalId(uuid: UUID): Optional<T>
+
+    fun deleteByExternalId(uuid: UUID)
 }

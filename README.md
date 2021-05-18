@@ -26,7 +26,7 @@ To just lint and check for formatting problems, run: `mvnw antrun:run@ktlint` an
 
 If you plan to develop in the project, after cloning the project, go to the folder named _docker_ and run this command:
 
-2. `docker-compose -p web-budget up`
+2. `docker compose -p web-budget up`
 
 This command should create an instance of the PostgreSQL database and Redis (used here to for cache) inside the docker
 runtime. Everything will be exposed in the default ports: _5432_ (postgres) and _6379_ (redis).

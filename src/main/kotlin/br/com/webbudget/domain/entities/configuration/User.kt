@@ -17,7 +17,7 @@ class User(
     @Column(name = "email", length = 150, nullable = false)
     val email: String,
     @Column(name = "password", nullable = false)
-    val password: String,
+    var password: String,
     @Column(name = "active", nullable = false)
     val active: Boolean,
     @OneToMany(mappedBy = "user", fetch = EAGER, cascade = [REMOVE])
