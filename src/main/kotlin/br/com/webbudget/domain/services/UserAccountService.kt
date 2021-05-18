@@ -15,16 +15,18 @@ class UserAccountService(
 ) {
 
     @Transactional
-    fun createAccount(user: User) {
+    fun createAccount(user: User): UUID {
 
         val password = passwordEncoder.encode(user.password)
         user.password = password
 
         userRepository.save(user)
+
+        return user.externalId!!
     }
 
     @Transactional
-    fun updateAccount(user: User): User {
+    fun updateAccount(externalId: UUID, user: User): User {
         return userRepository.save(user)
     }
 

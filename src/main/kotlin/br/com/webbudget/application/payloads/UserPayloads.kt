@@ -4,9 +4,7 @@ import java.util.UUID
 import javax.validation.constraints.Email
 import javax.validation.constraints.NotBlank
 
-data class UserPayload(
-    val id: UUID,
-    val active: Boolean,
+data class UserRequest(
     @field:NotBlank
     val name: String,
     @field:Email
@@ -14,4 +12,17 @@ data class UserPayload(
     val email: String,
     @field:NotBlank
     val password: String
+)
+
+data class UserResponse(
+    val id: UUID,
+    val active: Boolean,
+    val name: String,
+    val email: String
+)
+
+data class UserFilter(
+    val name: String,
+    val email: String,
+    val active: Boolean
 )
