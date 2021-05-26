@@ -1,8 +1,7 @@
 package br.com.webbudget.application.controllers.administration
 
+import br.com.webbudget.application.payloads.UserDto
 import br.com.webbudget.application.payloads.UserFilter
-import br.com.webbudget.application.payloads.UserRequest
-import br.com.webbudget.application.payloads.UserResponse
 import br.com.webbudget.domain.entities.configuration.User
 import br.com.webbudget.domain.services.UserAccountService
 import br.com.webbudget.infrastructure.repository.configuration.UserRepository
@@ -30,23 +29,25 @@ class UserController(
 ) {
 
     @GetMapping
-    fun get(userFilter: UserFilter, pageable: Pageable): ResponseEntity<Page<UserResponse>> {
+    fun get(userFilter: UserFilter, pageable: Pageable): ResponseEntity<Page<UserDto>> {
         val response = userRepository.findByFilter(userFilter, pageable)
-            .map { conversionService.convert(it, UserResponse::class.java)!! }
+            .map { conversionService.convert(it, UserDto::class.java)!! }
         return ResponseEntity.ok(response)
     }
 
     @GetMapping("/{id}")
-    fun get(@PathVariable id: UUID): ResponseEntity<UserResponse> {
+    fun getById(@PathVariable id: UUID): ResponseEntity<UserDto> {
         return userRepository.findByExternalId(id)
-            .let { conversionService.convert(it, UserResponse::class.java) }
-            .let { ResponseEntity.ok(it) }
+            ?.run { conversionService.convert(this, UserDto::class.java) }
+            ?.let { ResponseEntity.ok(it) }
+            ?: ResponseEntity.notFound().build()
     }
 
     @PostMapping
-    fun create(@RequestBody userRequest: UserRequest): ResponseEntity<Any> {
+    fun create(@RequestBody userDto: UserDto): ResponseEntity<Any> {
 
-        val created = userAccountService.createAccount(conversionService.convert(userRequest, User::class.java)!!)
+        val toCreate = conversionService.convert(userDto, User::class.java)!!
+        val created = userAccountService.createAccount(toCreate, userDto.roles)
 
         val location = ServletUriComponentsBuilder.fromCurrentRequest()
             .path("/{id}")
@@ -57,12 +58,12 @@ class UserController(
     }
 
     @PutMapping("/{id}")
-    fun update(@PathVariable id: UUID, @RequestBody userRequest: UserRequest): ResponseEntity<UserResponse> {
+    fun update(@PathVariable id: UUID, @RequestBody userDto: UserDto): ResponseEntity<UserDto> {
 
-        val updatable = conversionService.convert(userRequest, User::class.java)!!
-        val updated = userAccountService.updateAccount(id, updatable)
+        val toUpdate = conversionService.convert(userDto, User::class.java)!!
+        val updated = userAccountService.updateAccount(id, toUpdate)
 
-        return ResponseEntity.ok(conversionService.convert(updated, UserResponse::class.java))
+        return ResponseEntity.ok(conversionService.convert(updated, UserDto::class.java))
     }
 
     @DeleteMapping("/{id}")

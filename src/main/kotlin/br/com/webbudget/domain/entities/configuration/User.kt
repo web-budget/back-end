@@ -21,7 +21,7 @@ class User(
     @Column(name = "active", nullable = false)
     var active: Boolean,
     @OneToMany(mappedBy = "user", fetch = EAGER, cascade = [REMOVE])
-    var grants: List<Grant>
+    var grants: List<Grant>?
 ) : PersistentEntity<Long>() {
 
     fun prepareForUpdate(user: User) {

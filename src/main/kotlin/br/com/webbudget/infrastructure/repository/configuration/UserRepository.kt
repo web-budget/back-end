@@ -14,9 +14,11 @@ interface UserRepository : DefaultRepository<User> {
 
     fun findByEmail(username: String?): User?
 
-    @Query("from User u " +
+    @Query(
+        "from User u " +
             "where (:#{#filter.name} is null or u.name like :#{#filter.name}) " +
             "and (:#{#filter.email} is null or u.email like :#{#filter.email}) " +
-            "and (:#{#filter.active} is null or u.active = :#{#filter.active}) ")
+            "and (:#{#filter.active} is null or u.active = :#{#filter.active}) "
+    )
     fun findByFilter(@Param("filter") filter: UserFilter, pageable: Pageable): Page<User>
 }

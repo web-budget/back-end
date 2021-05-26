@@ -44,7 +44,7 @@ open class PersistentEntity<T : Serializable> {
         private set
 
     @PrePersist
-    fun onPersist() {
+    private fun onPersist() {
         if (externalId == null) {
             externalId = UUID.randomUUID()
         }

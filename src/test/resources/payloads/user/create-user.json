@@ -1,0 +1,6 @@
+{
+  "name": "Test User",
+  "email": "test@webbudget.com.br",
+  "password": "testing",
+  "roles": ["ADMINISTRATION", "REGISTRATION"]
+}

@@ -2,6 +2,7 @@ package br.com.webbudget.infrastructure.config.spring
 
 import br.com.webbudget.domain.services.AuthenticationService
 import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -15,7 +16,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-@EnableWebSecurity
+@Configuration
 class SecurityConfiguration(
     private val authenticationService: AuthenticationService,
     private val tokenAuthenticationFilter: TokenAuthenticationFilter

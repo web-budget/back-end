@@ -59,7 +59,7 @@ class AuthenticationService(
         companion object {
             fun from(user: User): AuthenticableUser {
 
-                val authorities = user.grants
+                val authorities = user.grants!!
                     .map { grant -> grant.authority }
                     .map { authority -> SimpleGrantedAuthority(authority.name) }
 

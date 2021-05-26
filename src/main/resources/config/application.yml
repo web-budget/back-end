@@ -10,6 +10,11 @@ spring:
   application.name: @project.name@
   jmx.enabled: false
 
+  data:
+    redis:
+      repositories:
+        enabled: false
+
   datasource:
     url: jdbc:postgresql://localhost:5432/webbudget
     username: sa_webbudget

@@ -1,8 +1,11 @@
 package br.com.webbudget
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.google.common.base.Charsets
+import com.google.common.io.Resources
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
+import org.springframework.core.io.Resource
 import org.springframework.test.web.servlet.MockMvc
 
 @AutoConfigureMockMvc
@@ -18,5 +21,9 @@ abstract class AbstractControllerTest : AbstractTest() {
 
     protected fun <T> jsonToObject(json: String, valueType: Class<T>): T {
         return objectMapper.readValue(json, valueType)
+    }
+
+    protected fun resourceAsString(resource: Resource): String {
+        return Resources.toString(resource.url, Charsets.UTF_8)
     }
 }

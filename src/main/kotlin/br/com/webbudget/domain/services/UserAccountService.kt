@@ -1,6 +1,10 @@
 package br.com.webbudget.domain.services
 
+import br.com.webbudget.domain.entities.configuration.Grant
 import br.com.webbudget.domain.entities.configuration.User
+import br.com.webbudget.domain.validators.user.UserCreationValidator
+import br.com.webbudget.infrastructure.repository.configuration.AuthorityRepository
+import br.com.webbudget.infrastructure.repository.configuration.GrantRepository
 import br.com.webbudget.infrastructure.repository.configuration.UserRepository
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
@@ -11,18 +15,28 @@ import java.util.UUID
 @Transactional(readOnly = true)
 class UserAccountService(
     private val userRepository: UserRepository,
-    private val passwordEncoder: PasswordEncoder
+    private val grantRepository: GrantRepository,
+    private val passwordEncoder: PasswordEncoder,
+    private val authorityRepository: AuthorityRepository,
+    private val userCreationValidators: List<UserCreationValidator>
 ) {
 
     @Transactional
-    fun createAccount(user: User): UUID {
+    fun createAccount(user: User, roles: List<String>): UUID {
+
+        userCreationValidators.forEach { it.validate(user) }
 
         val password = passwordEncoder.encode(user.password)
         user.password = password
 
-        userRepository.save(user)
+        val saved = userRepository.save(user)
 
-        return user.externalId!!
+        roles.forEach {
+            authorityRepository.findByName(it)
+                ?.let { authority -> grantRepository.save(Grant(saved, authority)) }
+        }
+
+        return saved.externalId!!
     }
 
     @Transactional

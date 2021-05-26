@@ -103,4 +103,17 @@
             'admin@webbudget.com.br', '$2a$11$gofMXY5BBXVbwoPHbYiCd.6PJ.2pIZk01XRiI8gnVut8t6kFWoOle', true);
         </sql>
     </changeSet>
+
+    <changeSet id="back-end#5" author="arthurshakal@gmail.com">
+        <sql>
+            INSERT INTO administration.authorities(external_id, version, created_on, name)
+            VALUES('0d5f0878-0926-4735-a4f6-83d3d270db74', 0, current_timestamp, 'DASHBOARDS');
+            INSERT INTO administration.authorities(external_id, version, created_on, name)
+            VALUES('44a45aa7-5b83-41ee-9f62-578592cb3fe2', 0, current_timestamp, 'REGISTRATION');
+            INSERT INTO administration.authorities(external_id, version, created_on, name)
+            VALUES('d73e33fe-b54a-4516-b33b-60ad62ea5542', 0, current_timestamp, 'FINANCIAL');
+            INSERT INTO administration.authorities(external_id, version, created_on, name)
+            VALUES('8f7d81d6-0ccd-49af-b1dd-a588dbdebd62', 0, current_timestamp, 'ADMINISTRATION');
+        </sql>
+    </changeSet>
 </databaseChangeLog>
