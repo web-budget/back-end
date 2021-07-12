@@ -1,8 +1,12 @@
 package br.com.webbudget.application.controllers.administration
 
-import br.com.webbudget.application.payloads.UserDto
 import br.com.webbudget.application.payloads.UserFilter
+import br.com.webbudget.application.payloads.UserForm
+import br.com.webbudget.application.payloads.UserView
+import br.com.webbudget.application.payloads.validation.OnCreateValidation
+import br.com.webbudget.application.payloads.validation.OnUpdateValidation
 import br.com.webbudget.domain.entities.configuration.User
+import br.com.webbudget.domain.exceptions.ResourceNotFoundException
 import br.com.webbudget.domain.services.UserAccountService
 import br.com.webbudget.infrastructure.repository.configuration.UserRepository
 import org.springframework.core.convert.ConversionService
@@ -29,25 +33,25 @@ class UserController(
 ) {
 
     @GetMapping
-    fun get(userFilter: UserFilter, pageable: Pageable): ResponseEntity<Page<UserDto>> {
-        val response = userRepository.findByFilter(userFilter, pageable)
-            .map { conversionService.convert(it, UserDto::class.java)!! }
+    fun get(userFilter: UserFilter, pageable: Pageable): ResponseEntity<Page<UserView>> {
+        val response = userRepository.findAll(userFilter.toSpecification(), pageable)
+            .map { conversionService.convert(it, UserView::class.java)!! }
         return ResponseEntity.ok(response)
     }
 
     @GetMapping("/{id}")
-    fun getById(@PathVariable id: UUID): ResponseEntity<UserDto> {
+    fun getById(@PathVariable id: UUID): ResponseEntity<UserView> {
         return userRepository.findByExternalId(id)
-            ?.run { conversionService.convert(this, UserDto::class.java) }
+            ?.let { conversionService.convert(it, UserView::class.java) }
             ?.let { ResponseEntity.ok(it) }
-            ?: ResponseEntity.notFound().build()
+            ?: throw ResourceNotFoundException("Can't find resource with id $id")
     }
 
     @PostMapping
-    fun create(@RequestBody userDto: UserDto): ResponseEntity<Any> {
+    fun create(@RequestBody @OnCreateValidation userForm: UserForm): ResponseEntity<Any> {
 
-        val toCreate = conversionService.convert(userDto, User::class.java)!!
-        val created = userAccountService.createAccount(toCreate, userDto.roles)
+        val toCreate = conversionService.convert(userForm, User::class.java)!!
+        val created = userAccountService.createAccount(toCreate, userForm.roles)
 
         val location = ServletUriComponentsBuilder.fromCurrentRequest()
             .path("/{id}")
@@ -58,17 +62,21 @@ class UserController(
     }
 
     @PutMapping("/{id}")
-    fun update(@PathVariable id: UUID, @RequestBody userDto: UserDto): ResponseEntity<UserDto> {
+    fun update(@PathVariable id: UUID, @RequestBody @OnUpdateValidation userForm: UserForm): ResponseEntity<UserView> {
 
-        val toUpdate = conversionService.convert(userDto, User::class.java)!!
-        val updated = userAccountService.updateAccount(id, toUpdate)
+        val toUpdate = conversionService.convert(userForm, User::class.java)!!
 
-        return ResponseEntity.ok(conversionService.convert(updated, UserDto::class.java))
+        return userRepository.findByExternalId(id)?.prepareForUpdate(toUpdate)
+            ?.let { userAccountService.updateAccount(it, userForm.roles) }
+            ?.let { ResponseEntity.ok(conversionService.convert(it, UserView::class.java)) }
+            ?: throw ResourceNotFoundException("Can't find resource with id $id")
     }
 
     @DeleteMapping("/{id}")
     fun delete(@PathVariable id: UUID): ResponseEntity<Any> {
-        userAccountService.deleteAccount(id)
+        userRepository.findByExternalId(id)
+            ?.let { userAccountService.deleteAccount(it) }
+            ?: throw ResourceNotFoundException("Can't find resource with id $id")
         return ResponseEntity.ok().build()
     }
 }

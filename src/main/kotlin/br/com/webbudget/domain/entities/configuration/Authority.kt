@@ -9,6 +9,6 @@ import javax.persistence.Table
 @Entity
 @Table(name = "authorities", schema = ADMINISTRATION)
 class Authority(
-    @Column(name = "name", nullable = false, length = 45)
+    @field:Column(name = "name", nullable = false, length = 45)
     val name: String
 ) : PersistentEntity<Long>()

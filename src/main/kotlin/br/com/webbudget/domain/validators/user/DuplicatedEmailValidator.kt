@@ -8,9 +8,22 @@ import org.springframework.stereotype.Component
 @Component
 class DuplicatedEmailValidator(
     private val userRepository: UserRepository
-) : UserCreationValidator {
+) : UserCreationValidator, UserUpdatingValidator {
 
     override fun validate(value: User) {
+        if (value.isSaved()) {
+            this.validateSaved(value)
+        } else {
+            this.validateNotSaved(value)
+        }
+    }
+
+    private fun validateSaved(value: User) {
+        userRepository.findByEmailAndExternalIdNot(value.email, value.externalId!!)
+            ?.let { throw BusinessException("users.error.duplicated-email", "The e-mail address is already in use") }
+    }
+
+    private fun validateNotSaved(value: User) {
         userRepository.findByEmail(value.email)
             ?.let { throw BusinessException("users.error.duplicated-email", "The e-mail address is already in use") }
     }

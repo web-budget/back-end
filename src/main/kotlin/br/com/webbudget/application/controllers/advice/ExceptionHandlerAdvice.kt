@@ -1,6 +1,7 @@
 package br.com.webbudget.application.controllers.advice
 
 import br.com.webbudget.domain.exceptions.BadRefreshTokenException
+import br.com.webbudget.domain.exceptions.ResourceNotFoundException
 import org.springframework.http.HttpStatus
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.web.bind.annotation.ControllerAdvice
@@ -18,5 +19,10 @@ class ExceptionHandlerAdvice {
     @ExceptionHandler(BadRefreshTokenException::class)
     fun handle(response: HttpServletResponse, ex: BadRefreshTokenException) {
         response.sendError(HttpStatus.UNAUTHORIZED.value(), ex.message)
+    }
+
+    @ExceptionHandler(ResourceNotFoundException::class)
+    fun handle(response: HttpServletResponse, ex: ResourceNotFoundException) {
+        response.sendError(HttpStatus.NO_CONTENT.value(), ex.message)
     }
 }

@@ -6,14 +6,9 @@
                       https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
 
-    <property name="uuid_function" value="random_uuid()" dbms="h2"/>
     <property name="uuid_function" value="uuid_generate_v4()" dbms="postgresql"/>
-
-    <property name="text_type" value="varchar(255)" dbms="h2"/>
     <property name="text_type" value="text" dbms="postgresql"/>
-
     <property name="uuid_type" value="uuid" dbms="postgresql"/>
-    <property name="uuid_type" value="uuid" dbms="h2"/>
 
     <changeSet id="create-extension" author="arthurshakal@gmail.com" dbms="postgresql">
         <sql>
@@ -27,8 +22,8 @@
     <include relativeToChangelogFile="true" file="db.changelog.20210404.xml"/>
 
     <!--
-        use this changelog to initialize h2 testing database.
+        use this changelog to initialize testing database.
         ATTENTION: this line must stay after database versions!
     -->
-    <include relativeToChangelogFile="true" file="db.changelog.testing.xml"/>
+    <include relativeToChangelogFile="true" context="test" file="db.changelog.testing.xml"/>
 </databaseChangeLog>

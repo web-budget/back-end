@@ -12,21 +12,24 @@ import javax.persistence.Table
 @Entity
 @Table(name = "users", schema = ADMINISTRATION)
 class User(
-    @Column(name = "name", length = 150, nullable = false)
+    @field:Column(name = "name", length = 150, nullable = false)
     var name: String,
-    @Column(name = "email", length = 150, nullable = false)
+    @field:Column(name = "email", length = 150, nullable = false)
     var email: String,
-    @Column(name = "password", nullable = false)
-    var password: String,
-    @Column(name = "active", nullable = false)
+    @field:Column(name = "password", nullable = false)
+    var password: String?,
+    @field:Column(name = "active", nullable = false)
     var active: Boolean,
-    @OneToMany(mappedBy = "user", fetch = EAGER, cascade = [REMOVE])
+    @field:OneToMany(mappedBy = "user", fetch = EAGER, cascade = [REMOVE])
     var grants: List<Grant>?
 ) : PersistentEntity<Long>() {
 
-    fun prepareForUpdate(user: User) {
+    fun prepareForUpdate(user: User): User {
+
         this.name = user.name
         this.email = user.email
         this.active = user.active
+
+        return this
     }
 }

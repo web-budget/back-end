@@ -1,7 +1,6 @@
 package br.com.webbudget.domain.entities
 
 import org.springframework.data.annotation.CreatedDate
-import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.io.Serializable
 import java.time.LocalDateTime
@@ -13,6 +12,7 @@ import javax.persistence.GenerationType
 import javax.persistence.Id
 import javax.persistence.MappedSuperclass
 import javax.persistence.PrePersist
+import javax.persistence.PreUpdate
 import javax.persistence.Version
 
 @MappedSuperclass
@@ -34,7 +34,6 @@ open class PersistentEntity<T : Serializable> {
     var createdOn: LocalDateTime? = null
         private set
 
-    @LastModifiedDate
     @Column(name = "last_update", nullable = false)
     var lastUpdate: LocalDateTime? = null
         private set
@@ -43,10 +42,19 @@ open class PersistentEntity<T : Serializable> {
     var version: Short? = null
         private set
 
+    fun isSaved(): Boolean {
+        return this.id != null && this.id != 0 && this.externalId != null
+    }
+
     @PrePersist
     private fun onPersist() {
         if (externalId == null) {
             externalId = UUID.randomUUID()
         }
+    }
+
+    @PreUpdate
+    private fun onUpdate() {
+        this.lastUpdate = LocalDateTime.now()
     }
 }

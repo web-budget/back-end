@@ -1,13 +1,3 @@
 spring:
-  redis:
-    host: localhost
-    port: 6379
-
-management:
-  endpoint:
-    logfile:
-      external-file: ${log.directory}/${spring.application.name}.log
-
-logging:
-  file:
-    name: ${log.directory}/${spring.application.name}.log
+  liquibase:
+    contexts: prod

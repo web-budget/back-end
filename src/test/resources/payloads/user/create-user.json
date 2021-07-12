@@ -1,6 +1,6 @@
 {
-  "name": "Test User",
-  "email": "test@webbudget.com.br",
-  "password": "testing",
-  "roles": ["ADMINISTRATION", "REGISTRATION"]
+  "name": "User",
+  "email": "user@webbudget.com.br",
+  "password": "user",
+  "roles": ["REGISTRATION"]
 }

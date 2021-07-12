@@ -10,10 +10,10 @@ import javax.persistence.Table
 @Entity
 @Table(name = "grants", schema = ADMINISTRATION)
 class Grant(
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "id_user", nullable = false)
+    @field:ManyToOne(optional = false)
+    @field:JoinColumn(name = "id_user", nullable = false)
     val user: User,
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "id_authority", nullable = false)
+    @field:ManyToOne(optional = false)
+    @field:JoinColumn(name = "id_authority", nullable = false)
     val authority: Authority
 ) : PersistentEntity<Long>()

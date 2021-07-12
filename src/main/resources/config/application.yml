@@ -10,13 +10,16 @@ spring:
   application.name: @project.name@
   jmx.enabled: false
 
+  redis:
+    port: 6380
+
   data:
     redis:
       repositories:
         enabled: false
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/webbudget
+    url: jdbc:postgresql://localhost:5433/webbudget
     username: sa_webbudget
     password: sa_webbudget
     hikari.pool-name: ${spring.application.name}_pool

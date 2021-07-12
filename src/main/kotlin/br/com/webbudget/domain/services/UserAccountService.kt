@@ -3,6 +3,7 @@ package br.com.webbudget.domain.services
 import br.com.webbudget.domain.entities.configuration.Grant
 import br.com.webbudget.domain.entities.configuration.User
 import br.com.webbudget.domain.validators.user.UserCreationValidator
+import br.com.webbudget.domain.validators.user.UserUpdatingValidator
 import br.com.webbudget.infrastructure.repository.configuration.AuthorityRepository
 import br.com.webbudget.infrastructure.repository.configuration.GrantRepository
 import br.com.webbudget.infrastructure.repository.configuration.UserRepository
@@ -18,7 +19,8 @@ class UserAccountService(
     private val grantRepository: GrantRepository,
     private val passwordEncoder: PasswordEncoder,
     private val authorityRepository: AuthorityRepository,
-    private val userCreationValidators: List<UserCreationValidator>
+    private val userCreationValidators: List<UserCreationValidator>,
+    private val userUpdatingValidators: List<UserUpdatingValidator>
 ) {
 
     @Transactional
@@ -40,12 +42,24 @@ class UserAccountService(
     }
 
     @Transactional
-    fun updateAccount(externalId: UUID, user: User): User {
-        return userRepository.save(user)
+    fun updateAccount(user: User, roles: List<String>): User {
+
+        userUpdatingValidators.forEach { it.validate(user) }
+
+        grantRepository.deleteByUserExternalId(user.externalId!!)
+
+        val saved = userRepository.save(user)
+
+        roles.forEach {
+            authorityRepository.findByName(it)
+                ?.let { authority -> grantRepository.save(Grant(saved, authority)) }
+        }
+
+        return userRepository.findByExternalId(saved.externalId!!)!!
     }
 
     @Transactional
-    fun deleteAccount(externalId: UUID) {
-        userRepository.deleteByExternalId(externalId)
+    fun deleteAccount(user: User) {
+        userRepository.delete(user)
     }
 }
