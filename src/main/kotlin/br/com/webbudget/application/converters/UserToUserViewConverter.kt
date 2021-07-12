@@ -23,4 +23,8 @@ interface UserToUserViewConverter : Converter<User, UserView> {
             .map { it.name }
             .toCollection(arrayListOf())
     }
+
+    fun grantToString(grant: Grant): String {
+        return grant.authority.name
+    }
 }
