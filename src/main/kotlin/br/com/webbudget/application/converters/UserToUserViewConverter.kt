@@ -17,14 +17,13 @@ interface UserToUserViewConverter : Converter<User, UserView> {
     )
     override fun convert(user: User): UserView?
 
-    fun grantsToRoles(grants: List<Grant>): List<String> {
-        return grants
-            .map { it.authority }
-            .map { it.name }
-            .toCollection(arrayListOf())
-    }
-
-    fun grantToString(grant: Grant): String {
-        return grant.authority.name
+    companion object {
+        @JvmStatic
+        fun grantsToRoles(grants: List<Grant>): List<String> {
+            return grants
+                .map { it.authority }
+                .map { it.name }
+                .toCollection(arrayListOf())
+        }
     }
 }

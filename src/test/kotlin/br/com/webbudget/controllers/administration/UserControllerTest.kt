@@ -116,7 +116,7 @@ class UserControllerTest : AbstractControllerTest() {
 
         assertThat(found).isNotNull
         assertThat(found.id).isEqualTo(userId)
-        assertThat(found.roles).containsExactlyInAnyOrder("")
+        assertThat(found.roles).containsExactlyInAnyOrder("DASHBOARDS", "REGISTRATION", "FINANCIAL", "ADMINISTRATION")
     }
 
     @Test
