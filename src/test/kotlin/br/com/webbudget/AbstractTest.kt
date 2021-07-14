@@ -23,26 +23,27 @@ abstract class AbstractTest {
     companion object {
 
         @Container
-        private val redisContainer = KGenericContainer("redis:6-alpine")
-            .withExposedPorts(6379)
+        private val redisContainer = GenericContainer<Nothing>("redis:6-alpine")
+            .apply {
+                withReuse(true)
+                withExposedPorts(6379)
+            }
 
         @Container
-        private val postgresContainer = KPostgreSQLContainer("postgres:13-alpine")
-            .withDatabaseName("webbudget")
+        private val postgresContainer = PostgreSQLContainer<Nothing>("postgres:13-alpine")
+            .apply {
+                withReuse(true)
+                withUsername("sa_webbudget")
+                withPassword("sa_webbudget")
+                withDatabaseName("webbudget")
+            }
 
         @JvmStatic
         @DynamicPropertySource
         fun dynamicPropertiesRegister(registry: DynamicPropertyRegistry) {
             registry.add("spring.datasource.url", postgresContainer::getJdbcUrl)
-            registry.add("spring.datasource.username", postgresContainer::getUsername)
-            registry.add("spring.datasource.password", postgresContainer::getPassword)
-
             registry.add("spring.redis.host", redisContainer::getHost)
             registry.add("spring.redis.port", redisContainer::getFirstMappedPort)
         }
     }
 }
-
-internal class KGenericContainer(image: String) : GenericContainer<KGenericContainer>(image)
-
-internal class KPostgreSQLContainer(image: String) : PostgreSQLContainer<KPostgreSQLContainer>(image)

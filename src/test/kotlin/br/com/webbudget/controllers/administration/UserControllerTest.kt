@@ -3,7 +3,6 @@ package br.com.webbudget.controllers.administration
 import br.com.webbudget.AbstractControllerTest
 import br.com.webbudget.application.payloads.UserForm
 import br.com.webbudget.application.payloads.UserView
-import br.com.webbudget.domain.entities.configuration.Grant
 import br.com.webbudget.domain.entities.configuration.User
 import br.com.webbudget.infrastructure.repository.configuration.UserRepository
 import org.assertj.core.api.Assertions.assertThat
@@ -139,7 +138,7 @@ class UserControllerTest : AbstractControllerTest() {
     @WithMockUser
     fun `should delete an user account`() {
 
-        val user = createUser("To be deleted", "tobedeleted@test.com", "password")
+        val user = userRepository.save(User("To be deleted", "tobedeleted@test.com", "123", true, listOf()))
 
         mockMvc.delete("$ENDPOINT_URL/${user.externalId}") {
             contentType = MediaType.APPLICATION_JSON
@@ -192,16 +191,6 @@ class UserControllerTest : AbstractControllerTest() {
             .hasSize(1)
             .extracting("id", "name", "email")
             .contains(tuple("6706a395-6690-4bad-948a-5c3c823e93d2", "Administrador", "admin@webbudget.com.br"))
-    }
-
-    private fun createUser(
-        name: String,
-        email: String,
-        password: String,
-        active: Boolean = true,
-        roles: List<Grant> = listOf()
-    ): User {
-        return userRepository.save(User(name, email, password, active, roles))
     }
 
     companion object {
