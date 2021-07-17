@@ -2,6 +2,7 @@ package br.com.webbudget.domain.validators.user
 
 import br.com.webbudget.domain.entities.configuration.User
 import br.com.webbudget.domain.exceptions.BusinessException
+import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
 import br.com.webbudget.infrastructure.repository.configuration.UserRepository
 import org.springframework.stereotype.Component
 
@@ -20,11 +21,11 @@ class DuplicatedEmailValidator(
 
     private fun validateSaved(value: User) {
         userRepository.findByEmailAndExternalIdNot(value.email, value.externalId!!)
-            ?.let { throw BusinessException("users.error.duplicated-email", "The e-mail address is already in use") }
+            ?.let { throw DuplicatedPropertyException("user.email", "E-mail address is already in use") }
     }
 
     private fun validateNotSaved(value: User) {
         userRepository.findByEmail(value.email)
-            ?.let { throw BusinessException("users.error.duplicated-email", "The e-mail address is already in use") }
+            ?.let { throw DuplicatedPropertyException("user.email", "E-mail address is already in use") }
     }
 }

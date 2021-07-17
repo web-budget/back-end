@@ -1,6 +1,6 @@
 package br.com.webbudget.domain.exceptions
 
-class BusinessException : RuntimeException {
+open class BusinessException : RuntimeException {
 
     val detail: String
 

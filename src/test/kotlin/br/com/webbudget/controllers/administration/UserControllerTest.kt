@@ -8,6 +8,7 @@ import br.com.webbudget.infrastructure.repository.configuration.UserRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.tuple
 import org.hamcrest.Matchers.containsInAnyOrder
+import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -96,6 +97,23 @@ class UserControllerTest : AbstractControllerTest() {
             status { isUnprocessableEntity() }
         }.andExpect {
             jsonPath("\$.violations[*].property", containsInAnyOrder(*requiredFields))
+        }
+    }
+
+    @Test
+    @WithMockUser
+    fun `should get conflict if e-mail is duplicated`() {
+
+        val payload = resourceAsString(createUserJson)
+            .replace("user@webbudget.com.br", "admin@webbudget.com.br")
+
+        mockMvc.post(ENDPOINT_URL) {
+            contentType = MediaType.APPLICATION_JSON
+            content = payload
+        }.andExpect {
+            status { isConflict() }
+        }.andExpect {
+            jsonPath("\$.property", equalTo("user.email"))
         }
     }
 

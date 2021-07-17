@@ -3,6 +3,7 @@ package br.com.webbudget.application.controllers.advice
 import br.com.webbudget.application.payloads.ValidationError
 import br.com.webbudget.application.payloads.Violation
 import br.com.webbudget.domain.exceptions.BusinessException
+import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
@@ -15,10 +16,10 @@ import javax.validation.ConstraintViolationException
 class ValidationAdvice {
 
     @ResponseBody
-    @ExceptionHandler(BusinessException::class)
-    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(DuplicatedPropertyException::class)
     fun handle(ex: BusinessException): Violation {
-        return Violation(ex.message!!, ex.detail)
+        return Violation(ex.message!!, ex.detail) // FIXME remove the assert to not null
     }
 
     @ResponseBody
