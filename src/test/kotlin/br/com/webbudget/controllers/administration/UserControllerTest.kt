@@ -19,6 +19,7 @@ import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
+import org.springframework.util.LinkedMultiValueMap
 import java.util.UUID
 
 class UserControllerTest : AbstractControllerTest() {
@@ -102,6 +103,18 @@ class UserControllerTest : AbstractControllerTest() {
 
     @Test
     @WithMockUser
+    fun `should update an user account`() {
+
+    }
+
+    @Test
+    @WithMockUser
+    fun `should fail if update user with duplicated data`() {
+
+    }
+
+    @Test
+    @WithMockUser
     fun `should get conflict if e-mail is duplicated`() {
 
         val payload = resourceAsString(createUserJson)
@@ -170,7 +183,7 @@ class UserControllerTest : AbstractControllerTest() {
 
     @Test
     @WithMockUser
-    fun `should get no content when delete an unknown user account`() {
+    fun `should get no content when deleting an unknown user account`() {
 
         val userId = UUID.randomUUID()
 
@@ -188,17 +201,17 @@ class UserControllerTest : AbstractControllerTest() {
     @WithMockUser
     fun `should find users using filters`() {
 
-        val parameters = mapOf(
-            "page" to "0",
-            "size" to "1",
-            "name" to "Administrador",
-            "email" to "admin@webbudget.com.br",
-            "active" to "true"
-        )
+        val parameters = LinkedMultiValueMap<String, String>()
+
+        parameters.add("page", "0")
+        parameters.add("size", "1")
+        parameters.add("name", "Administrador")
+        parameters.add("email", "admin@webbudget.com.br")
+        parameters.add("active", "true")
 
         val result = mockMvc.get(ENDPOINT_URL) {
             contentType = MediaType.APPLICATION_JSON
-            params = fromMap(parameters)
+            params = parameters
         }.andExpect {
             status { isOk() }
         }.andReturn()

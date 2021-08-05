@@ -8,8 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.core.io.Resource
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.util.LinkedMultiValueMap
-import org.springframework.util.MultiValueMap
 
 @AutoConfigureMockMvc
 abstract class AbstractControllerTest : AbstractTest() {
@@ -34,11 +32,5 @@ abstract class AbstractControllerTest : AbstractTest() {
 
     protected fun resourceAsString(resource: Resource): String {
         return Resources.toString(resource.url, Charsets.UTF_8)
-    }
-
-    protected fun fromMap(values: Map<String, String>): MultiValueMap<String, String> {
-        val parameters = LinkedMultiValueMap<String, String>()
-        values.forEach { (key, value) -> parameters[key] = listOf(value) }
-        return parameters
     }
 }

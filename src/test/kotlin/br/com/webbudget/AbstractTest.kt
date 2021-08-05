@@ -25,17 +25,18 @@ abstract class AbstractTest {
         @Container
         private val redisContainer = GenericContainer<Nothing>("redis:6-alpine")
             .apply {
-                withReuse(true)
                 withExposedPorts(6379)
+                withCreateContainerCmdModifier { cmd -> cmd.withName("wb-test-cache") }
             }
 
         @Container
         private val postgresContainer = PostgreSQLContainer<Nothing>("postgres:13-alpine")
             .apply {
-                withReuse(true)
+                withExposedPorts(5432)
                 withUsername("sa_webbudget")
                 withPassword("sa_webbudget")
                 withDatabaseName("webbudget")
+                withCreateContainerCmdModifier { cmd -> cmd.withName("wb-test-database") }
             }
 
         @JvmStatic
