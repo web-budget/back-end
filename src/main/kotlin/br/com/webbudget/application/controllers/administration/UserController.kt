@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import java.util.UUID
+import javax.validation.constraints.NotBlank
 
 @RestController
 @RequestMapping("/api/users")
@@ -66,10 +68,21 @@ class UserController(
 
         val toUpdate = conversionService.convert(userForm, User::class.java)!!
 
-        return userRepository.findByExternalId(id)?.prepareForUpdate(toUpdate)
+        return userRepository.findByExternalId(id)
+            ?.prepareForUpdate(toUpdate)
             ?.let { userAccountService.updateAccount(it, userForm.roles) }
             ?.let { ResponseEntity.ok(conversionService.convert(it, UserView::class.java)) }
             ?: throw ResourceNotFoundException("Can't find resource with id $id")
+    }
+
+    @PatchMapping("/{id}/update-password")
+    fun updatePassword(@PathVariable id: UUID, @RequestBody @NotBlank password: String): ResponseEntity<Any> {
+
+        userRepository.findByExternalId(id)
+            ?.let { userAccountService.updatePassword(it, password) }
+            ?: throw ResourceNotFoundException("Can't find resource with id $id")
+
+        return ResponseEntity.ok().build()
     }
 
     @DeleteMapping("/{id}")

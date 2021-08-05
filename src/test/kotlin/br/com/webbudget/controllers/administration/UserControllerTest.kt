@@ -18,7 +18,9 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
+import org.springframework.test.web.servlet.patch
 import org.springframework.test.web.servlet.post
+import org.springframework.test.web.servlet.put
 import org.springframework.util.LinkedMultiValueMap
 import java.util.UUID
 
@@ -105,12 +107,70 @@ class UserControllerTest : AbstractControllerTest() {
     @WithMockUser
     fun `should update an user account`() {
 
+        val payload = resourceAsString(updateUserJson)
+
+        mockMvc.put("$ENDPOINT_URL/e443f25b-2a6f-4a7a-8ecd-054dfba8fd19") {
+            contentType = MediaType.APPLICATION_JSON
+            content = payload
+        }.andExpect {
+            status { isOk() }
+        }
+
+        val user = userRepository.findByEmail("update@webbudget.com.br")
+        assertThat(user).isNotNull
+
+        user?.let {
+            assertThat(it.name).isEqualTo("Updated User")
+            assertThat(it.email).isEqualTo("update@webbudget.com.br")
+
+            assertThat(passwordEncoder.matches("user", it.password)).isTrue
+
+            assertThat(it.externalId).isEqualTo(UUID.fromString("e443f25b-2a6f-4a7a-8ecd-054dfba8fd19"))
+            assertThat(it.active).isTrue
+
+            assertThat(it.grants).isNotEmpty
+
+            val roles = it.grants!!
+                .map { grant -> grant.authority.name }
+                .toCollection(mutableListOf())
+
+            assertThat(roles).containsExactlyInAnyOrder("FINANCIAL")
+        }
     }
 
     @Test
     @WithMockUser
-    fun `should fail if update user with duplicated data`() {
+    fun `should update only password`() {
 
+        val payload = "testing"
+
+        mockMvc.patch("$ENDPOINT_URL/6706a395-6690-4bad-948a-5c3c823e93d2/update-password") {
+            contentType = MediaType.APPLICATION_JSON
+            content = payload
+        }.andExpect {
+            status { isOk() }
+        }
+
+        val user = userRepository.findByEmail("admin@webbudget.com.br")
+        assertThat(user).isNotNull
+
+        user?.let {
+            assertThat(it.name).isEqualTo("Administrador")
+            assertThat(it.email).isEqualTo("admin@webbudget.com.br")
+
+            assertThat(passwordEncoder.matches("testing", it.password)).isTrue
+
+            assertThat(it.externalId).isEqualTo(UUID.fromString("6706a395-6690-4bad-948a-5c3c823e93d2"))
+            assertThat(it.active).isTrue
+
+            assertThat(it.grants).isNotEmpty
+
+            val roles = it.grants!!
+                .map { grant -> grant.authority.name }
+                .toCollection(mutableListOf())
+
+            assertThat(roles).containsExactlyInAnyOrder("DASHBOARDS", "REGISTRATION", "FINANCIAL", "ADMINISTRATION")
+        }
     }
 
     @Test
@@ -169,15 +229,13 @@ class UserControllerTest : AbstractControllerTest() {
     @WithMockUser
     fun `should delete an user account`() {
 
-        val user = userRepository.save(User("To be deleted", "tobedeleted@test.com", "123", true, listOf()))
-
-        mockMvc.delete("$ENDPOINT_URL/${user.externalId}") {
+        mockMvc.delete("$ENDPOINT_URL/f4032b91-c4ff-4a4c-bf9e-43b28c909e1d") {
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isOk() }
         }
 
-        val found = userRepository.findByExternalId(user.externalId!!)
+        val found = userRepository.findByExternalId(UUID.fromString("f4032b91-c4ff-4a4c-bf9e-43b28c909e1d"))
         assertThat(found).isNull()
     }
 

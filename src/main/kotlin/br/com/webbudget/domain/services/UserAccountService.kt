@@ -59,6 +59,15 @@ class UserAccountService(
     }
 
     @Transactional
+    fun updatePassword(user: User, password: String) {
+
+        val newPassword = passwordEncoder.encode(password)
+        user.password = newPassword
+
+        userRepository.save(user)
+    }
+
+    @Transactional
     fun deleteAccount(user: User) {
         userRepository.delete(user)
     }
