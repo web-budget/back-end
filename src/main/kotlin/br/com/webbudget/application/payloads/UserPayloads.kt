@@ -14,15 +14,15 @@ import javax.validation.constraints.NotEmpty
 data class UserForm(
     val id: UUID?,
     val active: Boolean = false,
-    @field:NotBlank(message = "user.name.is-blank")
+    @field:NotBlank(message = "users.errors.name-is-blank")
     val name: String,
-    @field:Email(message = "user.email.is-invalid")
-    @field:NotBlank(message = "user.email.is-blank")
+    @field:Email(message = "users.errors.email-is-invalid")
+    @field:NotBlank(message = "users.errors.email-is-blank")
     val email: String,
-    @field:NotBlank(message = "user.password.is-blank", groups = [OnCreate::class])
+    @field:NotBlank(message = "users.errors.password-is-blank", groups = [OnCreate::class])
     val password: String?,
-    @field:NotEmpty(message = "user.roles.is-empty")
-    val roles: List<String>
+    @field:NotEmpty(message = "users.errors.empty-authorities")
+    val authorities: List<String>
 )
 
 data class UserView(
@@ -30,12 +30,12 @@ data class UserView(
     val active: Boolean,
     val name: String,
     val email: String,
-    val roles: List<String>
+    val authorities: List<String>
 )
 
 data class UserFilter(
     val filter: String?,
-    val active: Boolean?
+    val state: StateFilter
 ) : SpecificationSupport<User> {
 
     override fun buildPredicates(root: Root<User>, query: CriteriaQuery<*>, builder: CriteriaBuilder): List<Predicate> {
@@ -45,14 +45,14 @@ data class UserFilter(
         if (!filter.isNullOrBlank()) {
             predicates.add(
                 builder.or(
-                    builder.like(builder.lower(root.get("name")), filter.lowercase()),
-                    builder.like(builder.lower(root.get("email")), filter.lowercase())
+                    builder.like(builder.lower(root.get("name")), likeIgnoringCase(filter)),
+                    builder.like(builder.lower(root.get("email")), likeIgnoringCase(filter))
                 )
             )
         }
 
-        if (active != null) {
-            predicates.add(builder.equal(root.get<Boolean>("active"), active))
+        if (state.value != null) {
+            predicates.add(builder.equal(root.get<Boolean>("active"), state.value))
         }
 
         return predicates

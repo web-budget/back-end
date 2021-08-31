@@ -24,7 +24,7 @@ class UserAccountService(
 ) {
 
     @Transactional
-    fun createAccount(user: User, roles: List<String>): UUID {
+    fun createAccount(user: User, authorities: List<String>): UUID {
 
         userCreationValidators.forEach { it.validate(user) }
 
@@ -33,7 +33,7 @@ class UserAccountService(
 
         val saved = userRepository.save(user)
 
-        roles.forEach {
+        authorities.forEach {
             authorityRepository.findByName(it)
                 ?.let { authority -> grantRepository.save(Grant(saved, authority)) }
         }
@@ -42,7 +42,7 @@ class UserAccountService(
     }
 
     @Transactional
-    fun updateAccount(user: User, roles: List<String>): User {
+    fun updateAccount(user: User, authorities: List<String>): User {
 
         userUpdatingValidators.forEach { it.validate(user) }
 
@@ -50,7 +50,7 @@ class UserAccountService(
 
         val saved = userRepository.save(user)
 
-        roles.forEach {
+        authorities.forEach {
             authorityRepository.findByName(it)
                 ?.let { authority -> grantRepository.save(Grant(saved, authority)) }
         }

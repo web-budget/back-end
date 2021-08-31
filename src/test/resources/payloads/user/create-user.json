@@ -2,5 +2,5 @@
   "name": "User",
   "email": "user@webbudget.com.br",
   "password": "user",
-  "roles": ["REGISTRATION"]
+  "authorities": ["REGISTRATION"]
 }

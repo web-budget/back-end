@@ -3,7 +3,6 @@ package br.com.webbudget.controllers.administration
 import br.com.webbudget.AbstractControllerTest
 import br.com.webbudget.application.payloads.UserForm
 import br.com.webbudget.application.payloads.UserView
-import br.com.webbudget.domain.entities.configuration.User
 import br.com.webbudget.infrastructure.repository.configuration.UserRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.tuple
@@ -78,11 +77,11 @@ class UserControllerTest : AbstractControllerTest() {
 
             assertThat(it.grants).isNotEmpty
 
-            val roles = it.grants!!
+            val authorities = it.grants!!
                 .map { grant -> grant.authority.name }
                 .toCollection(mutableListOf())
 
-            assertThat(roles).containsExactlyInAnyOrder("REGISTRATION")
+            assertThat(authorities).containsExactlyInAnyOrder("REGISTRATION")
         }
     }
 
@@ -91,7 +90,7 @@ class UserControllerTest : AbstractControllerTest() {
     fun `should fail if required fields are not present`() {
 
         val payload = resourceAsString(invalidUserJson)
-        val requiredFields = arrayOf("name", "email", "password", "roles")
+        val requiredFields = arrayOf("name", "email", "password", "authorities")
 
         mockMvc.post(ENDPOINT_URL) {
             contentType = MediaType.APPLICATION_JSON
@@ -130,11 +129,11 @@ class UserControllerTest : AbstractControllerTest() {
 
             assertThat(it.grants).isNotEmpty
 
-            val roles = it.grants!!
+            val authorities = it.grants!!
                 .map { grant -> grant.authority.name }
                 .toCollection(mutableListOf())
 
-            assertThat(roles).containsExactlyInAnyOrder("FINANCIAL")
+            assertThat(authorities).containsExactlyInAnyOrder("FINANCIAL")
         }
     }
 
@@ -165,11 +164,16 @@ class UserControllerTest : AbstractControllerTest() {
 
             assertThat(it.grants).isNotEmpty
 
-            val roles = it.grants!!
+            val authorities = it.grants!!
                 .map { grant -> grant.authority.name }
                 .toCollection(mutableListOf())
 
-            assertThat(roles).containsExactlyInAnyOrder("DASHBOARDS", "REGISTRATION", "FINANCIAL", "ADMINISTRATION")
+            assertThat(authorities).containsExactlyInAnyOrder(
+                "DASHBOARDS",
+                "REGISTRATION",
+                "FINANCIAL",
+                "ADMINISTRATION"
+            )
         }
     }
 
@@ -206,7 +210,12 @@ class UserControllerTest : AbstractControllerTest() {
 
         assertThat(found).isNotNull
         assertThat(found.id).isEqualTo(userId)
-        assertThat(found.roles).containsExactlyInAnyOrder("DASHBOARDS", "REGISTRATION", "FINANCIAL", "ADMINISTRATION")
+        assertThat(found.authorities).containsExactlyInAnyOrder(
+            "DASHBOARDS",
+            "REGISTRATION",
+            "FINANCIAL",
+            "ADMINISTRATION"
+        )
     }
 
     @Test
@@ -263,9 +272,10 @@ class UserControllerTest : AbstractControllerTest() {
 
         parameters.add("page", "0")
         parameters.add("size", "1")
-        parameters.add("name", "Administrador")
-        parameters.add("email", "admin@webbudget.com.br")
         parameters.add("active", "true")
+
+        parameters.add("state", "ACTIVE")
+        parameters.add("filter", "Administrador")
 
         val result = mockMvc.get(ENDPOINT_URL) {
             contentType = MediaType.APPLICATION_JSON

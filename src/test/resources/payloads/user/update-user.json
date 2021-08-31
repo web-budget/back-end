@@ -2,5 +2,5 @@
   "name": "Updated User",
   "email": "update@webbudget.com.br",
   "active": true,
-  "roles": ["FINANCIAL"]
+  "authorities": ["FINANCIAL"]
 }

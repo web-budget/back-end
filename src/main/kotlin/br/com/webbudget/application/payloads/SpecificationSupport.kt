@@ -15,4 +15,6 @@ interface SpecificationSupport<T> {
     }
 
     fun buildPredicates(root: Root<T>, query: CriteriaQuery<*>, builder: CriteriaBuilder): List<Predicate>
+
+    fun likeIgnoringCase(text: String) = "%${text.lowercase()}%"
 }

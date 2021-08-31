@@ -53,7 +53,7 @@ class UserController(
     fun create(@RequestBody @OnCreateValidation userForm: UserForm): ResponseEntity<Any> {
 
         val toCreate = conversionService.convert(userForm, User::class.java)!!
-        val created = userAccountService.createAccount(toCreate, userForm.roles)
+        val created = userAccountService.createAccount(toCreate, userForm.authorities)
 
         val location = ServletUriComponentsBuilder.fromCurrentRequest()
             .path("/{id}")
@@ -70,7 +70,7 @@ class UserController(
 
         return userRepository.findByExternalId(id)
             ?.prepareForUpdate(toUpdate)
-            ?.let { userAccountService.updateAccount(it, userForm.roles) }
+            ?.let { userAccountService.updateAccount(it, userForm.authorities) }
             ?.let { ResponseEntity.ok(conversionService.convert(it, UserView::class.java)) }
             ?: throw ResourceNotFoundException("Can't find resource with id $id")
     }

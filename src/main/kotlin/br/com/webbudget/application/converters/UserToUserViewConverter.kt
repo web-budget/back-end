@@ -13,13 +13,13 @@ interface UserToUserViewConverter : Converter<User, UserView> {
 
     @Mappings(
         Mapping(source = "externalId", target = "id"),
-        Mapping(source = "grants", target = "roles")
+        Mapping(source = "grants", target = "authorities")
     )
     override fun convert(user: User): UserView?
 
     companion object {
         @JvmStatic
-        fun grantsToRoles(grants: List<Grant>): List<String> {
+        fun grantsToAuthorities(grants: List<Grant>): List<String> {
             return grants
                 .map { it.authority }
                 .map { it.name }
