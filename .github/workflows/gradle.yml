@@ -8,23 +8,19 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Java
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Validate Gradle
+      uses: gradle/wrapper-validation-action@v1
+    - name: Setup Java
       uses: actions/setup-java@v2
       with:
         java-version: '17'
         distribution: 'adopt'
-    - name: Validate gradle
-      uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
-    - name: Test and build
-      uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
+        cache: gradle
+    - name: Build
+      uses: gradle/gradle-build-action@v2
       with:
-        arguments: clean build
-    - name: Clean cache
-      run: |
-        rm -f ~/.gradle/caches/modules-2/modules-2.lock
-        rm -f ~/.gradle/caches/modules-2/gc.properties
+        arguments: build --scan
