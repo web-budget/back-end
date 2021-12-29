@@ -5,6 +5,8 @@ import br.com.webbudget.domain.exceptions.BadRefreshTokenException
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.exceptions.JWTVerificationException
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.time.Instant
@@ -21,6 +23,8 @@ class TokenService(
     @Value("\${web-budget.jwt.refresh-token-expiration}")
     private val refreshTokenExpiration: Long
 ) {
+
+    private val log = LoggerFactory.getLogger(TokenService::class.java)
 
     fun generateFor(subject: String): Token {
 
@@ -69,6 +73,7 @@ class TokenService(
 
             true
         } catch (ex: JWTVerificationException) {
+            log.debug("JWT verification failed for token [$accessToken]", ex)
             false
         }
     }

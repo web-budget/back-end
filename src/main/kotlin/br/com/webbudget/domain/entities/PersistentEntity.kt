@@ -47,6 +47,7 @@ open class PersistentEntity<T : Serializable> {
     }
 
     @PrePersist
+    @Suppress("UnusedPrivateMember")
     private fun onPersist() {
         if (externalId == null) {
             externalId = UUID.randomUUID()
@@ -54,6 +55,7 @@ open class PersistentEntity<T : Serializable> {
     }
 
     @PreUpdate
+    @Suppress("UnusedPrivateMember")
     private fun onUpdate() {
         this.lastUpdate = LocalDateTime.now()
     }

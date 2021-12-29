@@ -27,7 +27,7 @@ class TokenAuthenticationFilter(
             return
         }
 
-        val token = header.substring(7, header.length)
+        val token = header.substring(TOKEN_START_INDEX, header.length)
 
         if (tokenService.validate(token)) {
 
@@ -42,5 +42,9 @@ class TokenAuthenticationFilter(
             SecurityContextHolder.getContext().authentication = authentication
         }
         chain.doFilter(request, response)
+    }
+
+    companion object {
+        private const val TOKEN_START_INDEX = 7
     }
 }
