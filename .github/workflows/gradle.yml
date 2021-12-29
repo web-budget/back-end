@@ -13,7 +13,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up JDK 11
+    - name: Set up Java
       uses: actions/setup-java@v2
       with:
         java-version: '17'
@@ -21,7 +21,9 @@ jobs:
     - name: Validate gradle
       uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
     - name: Test and build
-      run: ./gradlew clean build
+      uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
+      with:
+        arguments: clean build
     - name: Clean cache
       run: |
         rm -f ~/.gradle/caches/modules-2/modules-2.lock
