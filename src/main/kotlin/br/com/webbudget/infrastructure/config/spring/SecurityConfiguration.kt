@@ -35,8 +35,8 @@ class SecurityConfiguration(
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
             .exceptionHandling()
-            .authenticationEntryPoint { _: HttpServletRequest, response: HttpServletResponse, ex: AuthenticationException ->
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, ex.message)
+            .authenticationEntryPoint { _: HttpServletRequest, r: HttpServletResponse, ex: AuthenticationException ->
+                r.sendError(HttpServletResponse.SC_UNAUTHORIZED, ex.message)
             }
             .and()
             .authorizeRequests()
@@ -53,6 +53,10 @@ class SecurityConfiguration(
 
     @Bean
     fun passwordEncoder(): PasswordEncoder {
-        return BCryptPasswordEncoder(11)
+        return BCryptPasswordEncoder(BCRYPT_STRENGTH)
+    }
+
+    companion object {
+        private const val BCRYPT_STRENGTH = 11
     }
 }

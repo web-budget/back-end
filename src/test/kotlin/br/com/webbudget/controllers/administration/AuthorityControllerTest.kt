@@ -1,8 +1,7 @@
 package br.com.webbudget.controllers.administration
 
-import br.com.webbudget.AbstractControllerTest
+import br.com.webbudget.ControllerTestRunner
 import br.com.webbudget.infrastructure.repository.configuration.AuthorityRepository
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -10,7 +9,7 @@ import org.springframework.http.MediaType
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.web.servlet.get
 
-class AuthorityControllerTest : AbstractControllerTest() {
+class AuthorityControllerTest : ControllerTestRunner() {
 
     @Autowired
     private lateinit var authorityRepository: AuthorityRepository

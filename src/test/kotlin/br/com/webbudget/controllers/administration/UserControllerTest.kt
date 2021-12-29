@@ -1,6 +1,6 @@
 package br.com.webbudget.controllers.administration
 
-import br.com.webbudget.AbstractControllerTest
+import br.com.webbudget.ControllerTestRunner
 import br.com.webbudget.application.payloads.UserForm
 import br.com.webbudget.application.payloads.UserView
 import br.com.webbudget.infrastructure.repository.configuration.UserRepository
@@ -23,7 +23,7 @@ import org.springframework.test.web.servlet.put
 import org.springframework.util.LinkedMultiValueMap
 import java.util.UUID
 
-class UserControllerTest : AbstractControllerTest() {
+class UserControllerTest : ControllerTestRunner() {
 
     @Value("classpath:/payloads/user/create-user.json")
     private lateinit var createUserJson: Resource

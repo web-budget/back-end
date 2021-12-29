@@ -1,6 +1,6 @@
 package br.com.webbudget.services
 
-import br.com.webbudget.AbstractTest
+import br.com.webbudget.TestRunner
 import br.com.webbudget.domain.services.CacheService
 import br.com.webbudget.domain.services.TokenService
 import org.assertj.core.api.Assertions.assertThat
@@ -14,7 +14,7 @@ import org.springframework.test.context.TestPropertySource
         "web-budget.jwt.refresh-token-expiration=5"
     ]
 )
-class TokenServiceTest : AbstractTest() {
+class TokenServiceTest : TestRunner() {
 
     @Autowired
     private lateinit var tokenService: TokenService

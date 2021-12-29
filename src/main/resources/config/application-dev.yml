@@ -1,7 +1,4 @@
 spring:
-  jpa:
-    show-sql: true
-
   liquibase:
     contexts: dev
 
@@ -12,3 +9,9 @@ spring:
     password: ${mailtrap.password}
     properties:
       mail.debug: true
+
+logging:
+  level:
+    org.hibernate: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.security: DEBUG

@@ -1,13 +1,5 @@
-web-budget:
-  cache:
-    collection: webbudget
-  jwt:
-    secret: '#w3b-Budg3t*$'
-    access-token-expiration: 21600
-    refresh-token-expiration: 172800
-
 spring:
-  application.name: @project.name@
+  application.name: webbudget
   jmx.enabled: false
 
   redis:
@@ -95,7 +87,10 @@ logging:
     org.springframework.security: INFO
     org.springframework.context.support: INFO
 
-info:
-  name: ${spring.application.name}
-  description: @project.description@
-  version: @project.version@
+web-budget:
+  cache:
+    collection: webbudget
+  jwt:
+    secret: '#w3b-Budg3t*$'
+    access-token-expiration: 21600
+    refresh-token-expiration: 172800
