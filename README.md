@@ -1,3 +1,4 @@
+[![build](https://github.com/web-budget/back-end/actions/workflows/gradle.yml/badge.svg)](https://github.com/web-budget/back-end/actions/workflows/gradle.yml)
 # webBudget back-end
 
 Welcome to the webBudget repository! Here you will find the back-end application responsible for all the API's used by 

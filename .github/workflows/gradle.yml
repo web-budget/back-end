@@ -10,23 +10,28 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: checkout
+      - name: Checkout
         uses: actions/checkout@v2
-      - name: validate gradle
+      - name: Validate gradle
         uses: gradle/wrapper-validation-action@v1
-      - name: setup java
+      - name: Setup java
         uses: actions/setup-java@v2
         with:
           java-version: '17'
           distribution: 'adopt'
           cache: gradle
-      - name: test
+      - name: Detekt
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: current
+          arguments: detekt --no-daemon
+      - name: Test
         uses: gradle/gradle-build-action@v2
         with:
           gradle-version: current
           arguments: test --no-daemon
-      - name: build
+      - name: Build
         uses: gradle/gradle-build-action@v2
         with:
           gradle-version: current
-          arguments: build --no-daemon --scan -x test
+          arguments: build --no-daemon --scan -x test detekt
