@@ -33,12 +33,12 @@ repositories {
 }
 
 val testcontainersVersion = "1.16.2"
-val guavaVersion = "31.0.1-jre"
+val guavaVersion = "31.1-jre"
 val mapstructVersion = "1.4.2.Final"
-val mapstructExtVersion = "0.1.0"
-val auth0Version = "3.18.2"
-val springSecurityTestVersion = "5.5.1"
-val assertJVersion = "3.21.0"
+val mapstructExtVersion = "0.1.1"
+val auth0Version = "3.19.1"
+val springSecurityTestVersion = "5.6.2"
+val assertJVersion = "3.22.0"
 
 dependencies {
     // spring
