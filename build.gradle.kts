@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     // spring
-    id("org.springframework.boot") version "2.6.2"
+    id("org.springframework.boot") version "2.7.0"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
 
     // detekt
@@ -34,11 +34,11 @@ repositories {
 
 val testcontainersVersion = "1.16.2"
 val guavaVersion = "31.1-jre"
-val mapstructVersion = "1.4.2.Final"
+val mapstructVersion = "1.5.1.Final"
 val mapstructExtVersion = "0.1.1"
-val auth0Version = "3.19.1"
-val springSecurityTestVersion = "5.6.2"
-val assertJVersion = "3.22.0"
+val auth0Version = "3.19.2"
+val springSecurityTestVersion = "5.7.1"
+val assertJVersion = "3.23.1"
 
 dependencies {
     // spring

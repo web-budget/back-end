@@ -48,9 +48,9 @@ class TokenService(
 
     fun refresh(tokenId: String, subject: String, refreshToken: UUID): Token {
 
-        val actualRefreshToken = cacheService.find(refreshTokenKey(tokenId)) as String
+        val actualRefreshToken = cacheService.find(refreshTokenKey(tokenId)) as UUID
 
-        if (actualRefreshToken.isBlank() || UUID.fromString(actualRefreshToken) != refreshToken) {
+        if (actualRefreshToken != refreshToken) {
             throw BadRefreshTokenException("Refresh token [$refreshToken] is invalid")
         }
 

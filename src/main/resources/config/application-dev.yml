@@ -13,5 +13,5 @@ spring:
 logging:
   level:
     org.hibernate: DEBUG
-    org.springframework.web: DEBUG
-    org.springframework.security: DEBUG
+    org.springframework.web: INFO
+    org.springframework.security: INFO

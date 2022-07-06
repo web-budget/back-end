@@ -15,7 +15,7 @@ interface UserToUserViewConverter : Converter<User, UserView> {
         Mapping(source = "externalId", target = "id"),
         Mapping(source = "grants", target = "authorities")
     )
-    override fun convert(user: User): UserView?
+    override fun convert(toConvert: User): UserView?
 
     companion object {
         @JvmStatic

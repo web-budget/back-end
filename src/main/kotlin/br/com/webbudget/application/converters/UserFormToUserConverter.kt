@@ -8,5 +8,5 @@ import org.springframework.core.convert.converter.Converter
 @Mapper(config = MappingConfiguration::class)
 interface UserFormToUserConverter : Converter<UserForm, User> {
 
-    override fun convert(userForm: UserForm): User?
+    override fun convert(toConvert: UserForm): User?
 }

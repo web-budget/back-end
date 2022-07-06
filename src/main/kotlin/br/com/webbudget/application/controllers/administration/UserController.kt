@@ -35,8 +35,8 @@ class UserController(
 ) {
 
     @GetMapping
-    fun get(userFilter: UserFilter, pageable: Pageable): ResponseEntity<Page<UserView>> {
-        val response = userRepository.findAll(userFilter.toSpecification(), pageable)
+    fun get(filter: UserFilter, pageable: Pageable): ResponseEntity<Page<UserView>> {
+        val response = userRepository.findAll(filter.toSpecification(), pageable)
             .map { conversionService.convert(it, UserView::class.java)!! }
         return ResponseEntity.ok(response)
     }

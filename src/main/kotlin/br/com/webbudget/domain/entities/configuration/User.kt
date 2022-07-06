@@ -22,7 +22,7 @@ class User(
     var active: Boolean,
     @field:OneToMany(mappedBy = "user", fetch = EAGER, cascade = [REMOVE])
     var grants: List<Grant>?
-) : PersistentEntity<Long>() {
+) : PersistentEntity<Long>() { // FIXME add update support
 
     fun prepareForUpdate(user: User): User {
 

@@ -7,6 +7,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.TestPropertySource
+import java.util.UUID
 
 @TestPropertySource(
     properties = [
@@ -43,7 +44,7 @@ class TokenServiceTest : TestRunner() {
         val accessToken = cacheService.find("access_token:${token.id}") as String
         assertThat(accessToken).isNotBlank
 
-        val refreshToken = cacheService.find("refresh_token:${token.id}") as String
+        val refreshToken = cacheService.find("refresh_token:${token.id}") as UUID
         assertThat(refreshToken).isNotNull
     }
 
