@@ -1,7 +1,7 @@
 package br.com.webbudget.application.payloads
 
 import br.com.webbudget.application.payloads.support.SpecificationSupport
-import br.com.webbudget.application.payloads.support.StateFilter
+import br.com.webbudget.application.payloads.support.StatusFilter
 import br.com.webbudget.application.payloads.validation.OnCreate
 import br.com.webbudget.domain.entities.configuration.User
 import java.util.UUID
@@ -37,7 +37,7 @@ data class UserView(
 
 data class UserFilter(
     val filter: String?,
-    val state: StateFilter?
+    val status: StatusFilter?
 ) : SpecificationSupport<User> {
 
     override fun buildPredicates(root: Root<User>, query: CriteriaQuery<*>, builder: CriteriaBuilder): List<Predicate> {
@@ -53,8 +53,8 @@ data class UserFilter(
             )
         }
 
-        if (state != null) {
-            predicates.add(builder.equal(root.get<Boolean>("active"), state.value))
+        if (status != null) {
+            predicates.add(builder.equal(root.get<Boolean>("active"), status.value))
         }
 
         return predicates

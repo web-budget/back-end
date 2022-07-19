@@ -1,7 +1,7 @@
 package br.com.webbudget.application.payloads.registration
 
 import br.com.webbudget.application.payloads.support.SpecificationSupport
-import br.com.webbudget.application.payloads.support.StateFilter
+import br.com.webbudget.application.payloads.support.StatusFilter
 import br.com.webbudget.domain.entities.registration.CostCenter
 import java.util.UUID
 import javax.persistence.criteria.CriteriaBuilder
@@ -25,7 +25,7 @@ data class CostCenterView(
 
 data class CostCenterFilter(
     val filter: String?,
-    val state: StateFilter?
+    val status: StatusFilter?
 ) : SpecificationSupport<CostCenter> {
 
     override fun buildPredicates(root: Root<CostCenter>, query: CriteriaQuery<*>, builder: CriteriaBuilder): List<Predicate> {
@@ -36,8 +36,8 @@ data class CostCenterFilter(
             predicates.add(builder.like(builder.lower(root.get("description")), likeIgnoringCase(filter)))
         }
 
-        if (state != null) {
-            predicates.add(builder.equal(root.get<Boolean>("active"), state.value))
+        if (status != null && status != StatusFilter.ALL) {
+            predicates.add(builder.equal(root.get<Boolean>("active"), status.value))
         }
 
         return predicates
