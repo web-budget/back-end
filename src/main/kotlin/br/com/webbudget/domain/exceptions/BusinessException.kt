@@ -1,14 +1,3 @@
 package br.com.webbudget.domain.exceptions
 
-open class BusinessException : RuntimeException {
-
-    val detail: String
-
-    constructor(message: String, detail: String) : super(message) {
-        this.detail = detail
-    }
-
-    constructor(message: String, detail: String, cause: Throwable) : super(message, cause) {
-        this.detail = detail
-    }
-}
+open class BusinessException(message: String, val detail: String) : RuntimeException(message)

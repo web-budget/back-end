@@ -1,9 +1,9 @@
-package br.com.webbudget.domain.services
+package br.com.webbudget.domain.services.configuration
 
 import br.com.webbudget.domain.entities.configuration.Grant
 import br.com.webbudget.domain.entities.configuration.User
-import br.com.webbudget.domain.validators.user.UserCreationValidator
-import br.com.webbudget.domain.validators.user.UserUpdatingValidator
+import br.com.webbudget.domain.validators.configuration.UserCreationValidator
+import br.com.webbudget.domain.validators.configuration.UserUpdatingValidator
 import br.com.webbudget.infrastructure.repository.configuration.AuthorityRepository
 import br.com.webbudget.infrastructure.repository.configuration.GrantRepository
 import br.com.webbudget.infrastructure.repository.configuration.UserRepository

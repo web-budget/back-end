@@ -6,9 +6,4 @@ import org.springframework.web.bind.annotation.ResponseStatus
 
 @ResponseBody
 @ResponseStatus(HttpStatus.UNAUTHORIZED)
-class BadRefreshTokenException : RuntimeException {
-
-    constructor(message: String) : super(message)
-
-    constructor(message: String, cause: Throwable) : super(message, cause)
-}
+class BadRefreshTokenException(message: String) : RuntimeException(message)

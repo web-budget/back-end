@@ -1,4 +1,4 @@
-package br.com.webbudget.controllers.administration
+package br.com.webbudget.controllers.configuration
 
 import br.com.webbudget.ControllerTestRunner
 import br.com.webbudget.application.payloads.UserForm

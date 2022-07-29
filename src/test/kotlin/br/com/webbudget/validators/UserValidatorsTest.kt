@@ -3,7 +3,7 @@ package br.com.webbudget.validators
 import br.com.webbudget.TestRunner
 import br.com.webbudget.domain.entities.configuration.User
 import br.com.webbudget.domain.exceptions.BusinessException
-import br.com.webbudget.domain.validators.user.DuplicatedEmailValidator
+import br.com.webbudget.domain.validators.configuration.DuplicatedEmailValidator
 import br.com.webbudget.infrastructure.repository.configuration.UserRepository
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow

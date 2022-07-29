@@ -1,4 +1,4 @@
-package br.com.webbudget.domain.services
+package br.com.webbudget.domain.services.configuration
 
 import br.com.webbudget.domain.entities.configuration.User
 import br.com.webbudget.infrastructure.repository.configuration.UserRepository

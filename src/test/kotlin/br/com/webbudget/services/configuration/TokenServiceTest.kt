@@ -1,8 +1,8 @@
-package br.com.webbudget.services
+package br.com.webbudget.services.configuration
 
 import br.com.webbudget.TestRunner
-import br.com.webbudget.domain.services.CacheService
-import br.com.webbudget.domain.services.TokenService
+import br.com.webbudget.domain.services.configuration.CacheService
+import br.com.webbudget.domain.services.configuration.TokenService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired

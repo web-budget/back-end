@@ -16,8 +16,10 @@ class CostCenter(
     var active: Boolean,
 ) : PersistentEntity<Long>(), UpdateSupport<CostCenter> {
 
-    override fun updateFields(source: CostCenter) {
-        description = source.description
-        active = source.active
+    override fun updateFields(source: CostCenter): CostCenter {
+        return this.apply {
+            description = source.description
+            active = source.active
+        }
     }
 }

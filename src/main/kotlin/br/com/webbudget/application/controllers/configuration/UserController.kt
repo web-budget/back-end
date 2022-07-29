@@ -1,4 +1,4 @@
-package br.com.webbudget.application.controllers.administration
+package br.com.webbudget.application.controllers.configuration
 
 import br.com.webbudget.application.payloads.UserFilter
 import br.com.webbudget.application.payloads.UserForm
@@ -7,7 +7,7 @@ import br.com.webbudget.application.payloads.validation.OnCreateValidation
 import br.com.webbudget.application.payloads.validation.OnUpdateValidation
 import br.com.webbudget.domain.entities.configuration.User
 import br.com.webbudget.domain.exceptions.ResourceNotFoundException
-import br.com.webbudget.domain.services.UserAccountService
+import br.com.webbudget.domain.services.configuration.UserAccountService
 import br.com.webbudget.infrastructure.repository.configuration.UserRepository
 import org.springframework.core.convert.ConversionService
 import org.springframework.data.domain.Page

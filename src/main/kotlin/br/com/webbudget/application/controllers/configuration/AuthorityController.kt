@@ -1,4 +1,4 @@
-package br.com.webbudget.application.controllers.administration
+package br.com.webbudget.application.controllers.configuration
 
 import br.com.webbudget.infrastructure.repository.configuration.AuthorityRepository
 import org.springframework.http.ResponseEntity

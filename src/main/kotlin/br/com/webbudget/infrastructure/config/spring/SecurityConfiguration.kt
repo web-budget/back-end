@@ -1,6 +1,6 @@
 package br.com.webbudget.infrastructure.config.spring
 
-import br.com.webbudget.domain.services.AuthenticationService
+import br.com.webbudget.domain.services.configuration.AuthenticationService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationManager

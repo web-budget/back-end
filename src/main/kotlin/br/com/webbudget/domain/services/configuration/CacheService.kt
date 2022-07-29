@@ -1,4 +1,4 @@
-package br.com.webbudget.domain.services
+package br.com.webbudget.domain.services.configuration
 
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Service

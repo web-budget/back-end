@@ -1,8 +1,7 @@
 package br.com.webbudget.infrastructure.config.spring
 
-import br.com.webbudget.domain.services.AuthenticationService
-import br.com.webbudget.domain.services.TokenService
-import org.springframework.http.HttpHeaders
+import br.com.webbudget.domain.services.configuration.AuthenticationService
+import br.com.webbudget.domain.services.configuration.TokenService
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource

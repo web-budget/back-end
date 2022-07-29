@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository
 @Repository
 interface CostCenterRepository : DefaultRepository<CostCenter> {
 
+    fun findByDescriptionIgnoreCase(description: String): CostCenter?
 }
