@@ -1,6 +1,6 @@
 package br.com.webbudget.domain.services.configuration
 
-import br.com.webbudget.application.payloads.Token
+import br.com.webbudget.application.payloads.configuration.Token
 import br.com.webbudget.domain.exceptions.BadRefreshTokenException
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm

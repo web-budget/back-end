@@ -46,7 +46,7 @@ class UserController(
         return userRepository.findByExternalId(id)
             ?.let { conversionService.convert(it, UserView::class.java) }
             ?.let { ResponseEntity.ok(it) }
-            ?: throw ResourceNotFoundException("Can't find resource with id $id")
+            ?: throw ResourceNotFoundException(id)
     }
 
     @PostMapping
@@ -72,7 +72,7 @@ class UserController(
             ?.prepareForUpdate(toUpdate)
             ?.let { userAccountService.updateAccount(it, userForm.authorities) }
             ?.let { ResponseEntity.ok(conversionService.convert(it, UserView::class.java)) }
-            ?: throw ResourceNotFoundException("Can't find resource with id $id")
+            ?: throw ResourceNotFoundException(id)
     }
 
     @PatchMapping("/{id}/update-password")
@@ -80,7 +80,7 @@ class UserController(
 
         userRepository.findByExternalId(id)
             ?.let { userAccountService.updatePassword(it, password) }
-            ?: throw ResourceNotFoundException("Can't find resource with id $id")
+            ?: throw ResourceNotFoundException(id)
 
         return ResponseEntity.ok().build()
     }
@@ -89,7 +89,7 @@ class UserController(
     fun delete(@PathVariable id: UUID): ResponseEntity<Any> {
         userRepository.findByExternalId(id)
             ?.let { userAccountService.deleteAccount(it) }
-            ?: throw ResourceNotFoundException("Can't find resource with id $id")
+            ?: throw ResourceNotFoundException(id)
         return ResponseEntity.ok().build()
     }
 }

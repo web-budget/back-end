@@ -1,8 +1,8 @@
 package br.com.webbudget.application.controllers
 
-import br.com.webbudget.application.payloads.Credential
-import br.com.webbudget.application.payloads.RefreshCredential
-import br.com.webbudget.application.payloads.Token
+import br.com.webbudget.application.payloads.configuration.Credential
+import br.com.webbudget.application.payloads.configuration.RefreshCredential
+import br.com.webbudget.application.payloads.configuration.Token
 import br.com.webbudget.domain.services.configuration.AuthenticationService
 import br.com.webbudget.domain.services.configuration.TokenService
 import org.springframework.http.ResponseEntity

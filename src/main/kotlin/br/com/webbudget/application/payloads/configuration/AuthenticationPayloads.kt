@@ -1,4 +1,4 @@
-package br.com.webbudget.application.payloads
+package br.com.webbudget.application.payloads.configuration
 
 import java.util.UUID
 import javax.validation.constraints.Email

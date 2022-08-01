@@ -1,7 +1,7 @@
 package br.com.webbudget.application.controllers.advice
 
-import br.com.webbudget.application.payloads.ValidationError
-import br.com.webbudget.application.payloads.Violation
+import br.com.webbudget.application.payloads.validation.ValidationError
+import br.com.webbudget.application.payloads.validation.Violation
 import br.com.webbudget.domain.exceptions.BusinessException
 import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
 import org.springframework.http.HttpStatus

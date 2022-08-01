@@ -1,4 +1,4 @@
-package br.com.webbudget.application.payloads
+package br.com.webbudget.application.payloads.validation
 
 data class ValidationError(val violations: List<Violation>)
 

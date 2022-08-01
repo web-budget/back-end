@@ -1,9 +1,9 @@
 package br.com.webbudget.controllers
 
 import br.com.webbudget.ControllerTestRunner
-import br.com.webbudget.application.payloads.Credential
-import br.com.webbudget.application.payloads.RefreshCredential
-import br.com.webbudget.application.payloads.Token
+import br.com.webbudget.application.payloads.configuration.Credential
+import br.com.webbudget.application.payloads.configuration.RefreshCredential
+import br.com.webbudget.application.payloads.configuration.Token
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.notNullValue
