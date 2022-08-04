@@ -10,7 +10,7 @@ import org.springframework.core.io.Resource
 import org.springframework.test.web.servlet.MockMvc
 
 @AutoConfigureMockMvc
-abstract class ControllerTestRunner : TestRunner() {
+abstract class BaseControllerIntegrationTest : BaseIntegrationTest() {
 
     @Autowired
     protected lateinit var mockMvc: MockMvc

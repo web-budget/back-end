@@ -1,6 +1,6 @@
-package br.com.webbudget.validators
+package br.com.webbudget.validators.configuration
 
-import br.com.webbudget.TestRunner
+import br.com.webbudget.BaseIntegrationTest
 import br.com.webbudget.domain.entities.configuration.User
 import br.com.webbudget.domain.exceptions.BusinessException
 import br.com.webbudget.domain.validators.configuration.DuplicatedEmailValidator
@@ -10,7 +10,7 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 
-class UserValidatorsTest : TestRunner() {
+class UserValidatorsTest : BaseIntegrationTest() {
 
     @Autowired
     lateinit var userRepository: UserRepository

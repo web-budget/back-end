@@ -3,18 +3,18 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     // spring
     id("org.springframework.boot") version "2.7.0"
-    id("io.spring.dependency-management") version "1.0.11.RELEASE"
+    id("io.spring.dependency-management") version "1.0.12.RELEASE"
 
     // detekt
-    id("io.gitlab.arturbosch.detekt").version("1.19.0")
+    id("io.gitlab.arturbosch.detekt").version("1.21.0")
 
     // kotlin things
-    kotlin("jvm") version "1.6.10"
-    kotlin("plugin.spring") version "1.6.10"
-    kotlin("plugin.jpa") version "1.6.10"
+    kotlin("jvm") version "1.7.10"
+    kotlin("plugin.spring") version "1.7.10"
+    kotlin("plugin.jpa") version "1.7.10"
 
     // mapstruct
-    kotlin("kapt") version "1.6.10"
+    kotlin("kapt") version "1.7.10"
 }
 
 group = "br.com.webbudget"
@@ -34,11 +34,12 @@ repositories {
 
 val testcontainersVersion = "1.16.2"
 val guavaVersion = "31.1-jre"
-val mapstructVersion = "1.5.1.Final"
+val mapstructVersion = "1.5.2.Final"
 val mapstructExtVersion = "0.1.1"
 val auth0Version = "3.19.2"
 val springSecurityTestVersion = "5.7.1"
 val assertJVersion = "3.23.1"
+val mockkVersion = "3.1.1"
 
 dependencies {
     // spring
@@ -79,10 +80,12 @@ dependencies {
 
     // testing
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
+        exclude("org.mockito", "mockito-core")
         exclude("org.junit.vintage", "junit-vintage-engine")
     }
     testImplementation("org.springframework.security:spring-security-test:$springSecurityTestVersion")
     testImplementation("org.assertj:assertj-core:$assertJVersion")
+    testImplementation("com.ninja-squad:springmockk:$mockkVersion")
 
     // testcontainers
     testImplementation("org.testcontainers:junit-jupiter")

@@ -1,4 +1,4 @@
-package br.com.webbudget.application.payloads
+package br.com.webbudget.application.payloads.configuration
 
 import br.com.webbudget.application.payloads.support.SpecificationSupport
 import br.com.webbudget.application.payloads.support.StatusFilter

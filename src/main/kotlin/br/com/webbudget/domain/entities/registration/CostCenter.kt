@@ -10,15 +10,15 @@ import javax.persistence.Table
 @Entity
 @Table(name = "cost_centers", schema = DefaultSchemas.REGISTRATION)
 class CostCenter(
-    @field:Column(name = "description", length = 150, nullable = false)
-    var description: String,
+    @field:Column(name = "name", length = 150, nullable = false)
+    var name: String,
     @field:Column(name = "active", nullable = false)
     var active: Boolean,
 ) : PersistentEntity<Long>(), UpdateSupport<CostCenter> {
 
     override fun updateFields(source: CostCenter): CostCenter {
         return this.apply {
-            description = source.description
+            name = source.name
             active = source.active
         }
     }

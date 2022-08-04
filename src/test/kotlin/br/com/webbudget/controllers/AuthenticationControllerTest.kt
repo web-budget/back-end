@@ -1,6 +1,6 @@
 package br.com.webbudget.controllers
 
-import br.com.webbudget.ControllerTestRunner
+import br.com.webbudget.BaseControllerIntegrationTest
 import br.com.webbudget.application.payloads.configuration.Credential
 import br.com.webbudget.application.payloads.configuration.RefreshCredential
 import br.com.webbudget.application.payloads.configuration.Token
@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.post
 
-class AuthenticationControllerTest : ControllerTestRunner() {
+class AuthenticationControllerTest : BaseControllerIntegrationTest() {
 
     @Value("\${web-budget.jwt.access-token-expiration}")
     private var secondsToExpireToken: Int? = 0

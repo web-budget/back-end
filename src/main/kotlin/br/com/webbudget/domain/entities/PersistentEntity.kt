@@ -59,4 +59,20 @@ open class PersistentEntity<T : Serializable> {
     private fun onUpdate() {
         this.lastUpdate = LocalDateTime.now()
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is PersistentEntity<*>) return false
+
+        if (id != other.id) return false
+        if (externalId != other.externalId) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = id?.hashCode() ?: 0
+        result = 31 * result + (externalId?.hashCode() ?: 0)
+        return result
+    }
 }

@@ -1,8 +1,8 @@
 package br.com.webbudget.application.controllers.configuration
 
-import br.com.webbudget.application.payloads.UserFilter
-import br.com.webbudget.application.payloads.UserForm
-import br.com.webbudget.application.payloads.UserView
+import br.com.webbudget.application.payloads.configuration.UserFilter
+import br.com.webbudget.application.payloads.configuration.UserForm
+import br.com.webbudget.application.payloads.configuration.UserView
 import br.com.webbudget.application.payloads.validation.OnCreateValidation
 import br.com.webbudget.application.payloads.validation.OnUpdateValidation
 import br.com.webbudget.domain.entities.configuration.User

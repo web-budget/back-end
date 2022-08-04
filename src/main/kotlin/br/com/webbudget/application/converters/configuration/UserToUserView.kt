@@ -1,6 +1,7 @@
-package br.com.webbudget.application.converters
+package br.com.webbudget.application.converters.configuration
 
-import br.com.webbudget.application.payloads.UserView
+import br.com.webbudget.application.converters.MappingConfiguration
+import br.com.webbudget.application.payloads.configuration.UserView
 import br.com.webbudget.domain.entities.configuration.Grant
 import br.com.webbudget.domain.entities.configuration.User
 import org.mapstruct.Mapper
@@ -9,7 +10,7 @@ import org.mapstruct.Mappings
 import org.springframework.core.convert.converter.Converter
 
 @Mapper(config = MappingConfiguration::class)
-interface UserToUserViewConverter : Converter<User, UserView> {
+interface UserToUserView : Converter<User, UserView> {
 
     @Mappings(
         Mapping(source = "externalId", target = "id"),

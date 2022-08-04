@@ -8,7 +8,7 @@ import java.util.UUID
 @Repository
 interface CostCenterRepository : DefaultRepository<CostCenter> {
 
-    fun findByDescriptionIgnoreCase(description: String): CostCenter?
+    fun findByNameIgnoreCase(description: String): CostCenter?
 
-    fun findByDescriptionIgnoreCaseAndExternalIdNot(description: String, externalId: UUID): CostCenter?
+    fun findByNameIgnoreCaseAndExternalIdNot(description: String, externalId: UUID): CostCenter?
 }

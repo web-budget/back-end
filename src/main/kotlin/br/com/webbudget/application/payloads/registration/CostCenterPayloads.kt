@@ -11,16 +11,15 @@ import javax.persistence.criteria.Root
 import javax.validation.constraints.NotBlank
 
 data class CostCenterForm(
-    val id: UUID?,
     val active: Boolean = true,
-    @field:NotBlank(message = "cost-center.errors.description-is-blank")
-    val description: String,
+    @field:NotBlank(message = "cost-center.errors.name-is-blank")
+    val name: String,
 )
 
 data class CostCenterView(
     val id: UUID,
     val active: Boolean,
-    val description: String
+    val name: String
 )
 
 data class CostCenterFilter(
@@ -28,12 +27,16 @@ data class CostCenterFilter(
     val status: StatusFilter?
 ) : SpecificationSupport<CostCenter> {
 
-    override fun buildPredicates(root: Root<CostCenter>, query: CriteriaQuery<*>, builder: CriteriaBuilder): List<Predicate> {
+    override fun buildPredicates(
+        root: Root<CostCenter>,
+        query: CriteriaQuery<*>,
+        builder: CriteriaBuilder
+    ): List<Predicate> {
 
         val predicates = mutableListOf<Predicate>()
 
         if (!filter.isNullOrBlank()) {
-            predicates.add(builder.like(builder.lower(root.get("description")), likeIgnoringCase(filter)))
+            predicates.add(builder.like(builder.lower(root.get("name")), likeIgnoringCase(filter)))
         }
 
         if (status != null && status != StatusFilter.ALL) {

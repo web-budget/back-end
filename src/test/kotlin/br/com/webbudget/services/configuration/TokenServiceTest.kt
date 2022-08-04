@@ -1,6 +1,6 @@
 package br.com.webbudget.services.configuration
 
-import br.com.webbudget.TestRunner
+import br.com.webbudget.BaseIntegrationTest
 import br.com.webbudget.domain.services.configuration.CacheService
 import br.com.webbudget.domain.services.configuration.TokenService
 import org.assertj.core.api.Assertions.assertThat
@@ -15,7 +15,7 @@ import java.util.UUID
         "web-budget.jwt.refresh-token-expiration=5"
     ]
 )
-class TokenServiceTest : TestRunner() {
+class TokenServiceTest : BaseIntegrationTest() {
 
     @Autowired
     private lateinit var tokenService: TokenService

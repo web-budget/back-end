@@ -20,7 +20,7 @@ import org.testcontainers.junit.jupiter.Testcontainers
 @TestMethodOrder(value = OrderAnnotation::class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-abstract class TestRunner {
+abstract class BaseIntegrationTest {
 
     companion object {
 

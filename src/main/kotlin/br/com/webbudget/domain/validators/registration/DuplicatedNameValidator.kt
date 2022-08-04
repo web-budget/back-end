@@ -23,21 +23,21 @@ class DuplicatedNameValidator(
     }
 
     private fun validateSaved(value: CostCenter) {
-        costCenterRepository.findByDescriptionIgnoreCaseAndExternalIdNot(value.description, value.externalId!!)
+        costCenterRepository.findByNameIgnoreCaseAndExternalIdNot(value.name, value.externalId!!)
             ?.let {
                 throw DuplicatedPropertyException(
-                    "cost-center.description",
-                    "cost-center.errors.duplicated-description"
+                    "cost-center.name",
+                    "cost-center.errors.duplicated-name"
                 )
             }
     }
 
     private fun validateNotSaved(value: CostCenter) {
-        costCenterRepository.findByDescriptionIgnoreCase(value.description)
+        costCenterRepository.findByNameIgnoreCase(value.name)
             ?.let {
                 throw DuplicatedPropertyException(
-                    "cost-center.description",
-                    "cost-center.errors.duplicated-description"
+                    "cost-center.name",
+                    "cost-center.errors.duplicated-name"
                 )
             }
     }

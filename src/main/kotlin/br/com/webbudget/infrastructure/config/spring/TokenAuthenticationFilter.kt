@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse
 
 @Component // FIXME review it when new auth process takes place
 class TokenAuthenticationFilter(
-    private val tokenService: TokenService,
+//    private val tokenService: TokenService,
     private val authenticationService: AuthenticationService
 ) : OncePerRequestFilter() {
 
@@ -44,7 +44,7 @@ class TokenAuthenticationFilter(
         chain.doFilter(request, response)
     }
 
-    companion object {
-        private const val TOKEN_START_INDEX = 7
-    }
+//    companion object {
+//        private const val TOKEN_START_INDEX = 7
+//    }
 }
