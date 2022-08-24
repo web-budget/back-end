@@ -9,6 +9,7 @@ import br.com.webbudget.domain.entities.configuration.User
 import br.com.webbudget.domain.exceptions.ResourceNotFoundException
 import br.com.webbudget.domain.services.configuration.UserAccountService
 import br.com.webbudget.infrastructure.repository.configuration.UserRepository
+import io.swagger.v3.oas.annotations.media.Schema
 import org.springframework.core.convert.ConversionService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -28,6 +29,7 @@ import javax.validation.constraints.NotBlank
 
 @RestController
 @RequestMapping("/api/users")
+@Schema(description = "Users")
 class UserController(
     private val userRepository: UserRepository,
     private val conversionService: ConversionService,

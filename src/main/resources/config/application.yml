@@ -94,3 +94,10 @@ web-budget:
     secret: '#w3b-Budg3t*$'
     access-token-expiration: 21600
     refresh-token-expiration: 172800
+
+springdoc:
+  swagger-ui:
+    path: /swagger/openapi/swagger-ui.html
+  api-doc:
+    path: /swagger/openapi/v3/api-docs
+  packagesToScan: br.com.webbudget

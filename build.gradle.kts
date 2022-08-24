@@ -50,6 +50,10 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
 
+    implementation("org.springdoc:springdoc-openapi-data-rest:1.6.0")
+    implementation("org.springdoc:springdoc-openapi-ui:1.6.0")
+    implementation("org.springdoc:springdoc-openapi-kotlin:1.6.0")
+
     // utilities
     implementation("com.google.guava:guava:$guavaVersion")
     implementation("com.auth0:java-jwt:$auth0Version")
