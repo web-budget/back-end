@@ -9,17 +9,22 @@ import javax.persistence.criteria.CriteriaQuery
 import javax.persistence.criteria.Predicate
 import javax.persistence.criteria.Root
 import javax.validation.constraints.NotBlank
+import javax.validation.constraints.Size
+import kotlin.math.max
 
 data class CostCenterForm(
     val active: Boolean = true,
     @field:NotBlank(message = "cost-center.errors.name-is-blank")
+    @field:Size(message = "cost-center.errors.name-max-150-chars", max = 150)
     val name: String,
+    val description: String?,
 )
 
 data class CostCenterView(
     val id: UUID,
     val active: Boolean,
-    val name: String
+    val name: String,
+    val description: String?,
 )
 
 data class CostCenterFilter(
@@ -36,7 +41,12 @@ data class CostCenterFilter(
         val predicates = mutableListOf<Predicate>()
 
         if (!filter.isNullOrBlank()) {
-            predicates.add(builder.like(builder.lower(root.get("name")), likeIgnoringCase(filter)))
+            predicates.add(
+                builder.or(
+                    builder.like(builder.lower(root.get("name")), likeIgnoringCase(filter)),
+                    builder.like(builder.lower(root.get("description")), likeIgnoringCase(filter))
+                )
+            )
         }
 
         if (status != null && status != StatusFilter.ALL) {

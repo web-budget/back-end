@@ -16,7 +16,6 @@ import org.testcontainers.junit.jupiter.Testcontainers
 
 @Testcontainers
 @ActiveProfiles("test")
-@ExtendWith(SpringExtension::class)
 @TestMethodOrder(value = OrderAnnotation::class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)

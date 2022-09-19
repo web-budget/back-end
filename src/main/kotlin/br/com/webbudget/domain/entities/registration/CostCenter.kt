@@ -13,12 +13,15 @@ class CostCenter(
     @field:Column(name = "name", length = 150, nullable = false)
     var name: String,
     @field:Column(name = "active", nullable = false)
-    var active: Boolean,
+    var active: Boolean = true,
+    @field:Column(name = "description", columnDefinition = "TEXT")
+    var description: String? = null,
 ) : PersistentEntity<Long>(), UpdateSupport<CostCenter> {
 
     override fun updateFields(source: CostCenter): CostCenter {
         return this.apply {
             name = source.name
+            description = source.description
             active = source.active
         }
     }
