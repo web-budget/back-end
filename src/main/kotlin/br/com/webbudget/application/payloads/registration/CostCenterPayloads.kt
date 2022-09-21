@@ -10,7 +10,6 @@ import javax.persistence.criteria.Predicate
 import javax.persistence.criteria.Root
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Size
-import kotlin.math.max
 
 data class CostCenterForm(
     val active: Boolean = true,
