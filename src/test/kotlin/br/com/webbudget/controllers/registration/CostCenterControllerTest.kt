@@ -32,9 +32,13 @@ class CostCenterControllerTest : BaseControllerIntegrationTest() {
     }
 
     @Test
-    @Disabled
+    @Disabled // FIXME when auth works, enable it
     fun `should require authentication`() {
-        // TODO do it when auth is back to work
+        mockMvc.get(ENDPOINT_URL) {
+            contentType = MediaType.APPLICATION_JSON
+        }.andExpect {
+            status { isUnauthorized() }
+        }
     }
 
     @Test

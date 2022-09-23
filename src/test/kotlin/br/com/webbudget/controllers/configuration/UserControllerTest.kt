@@ -24,7 +24,7 @@ import org.springframework.test.web.servlet.put
 import org.springframework.util.LinkedMultiValueMap
 import java.util.UUID
 
-class UserControllerTest : BaseControllerIntegrationTest() {
+class UserControllerTest : BaseControllerIntegrationTest() { // TODO refactor
 
     @Value("classpath:/payloads/user/create-user.json")
     private lateinit var createUserJson: Resource
@@ -42,8 +42,8 @@ class UserControllerTest : BaseControllerIntegrationTest() {
     private lateinit var passwordEncoder: PasswordEncoder
 
     @Test
-    @Disabled
-    fun `should require authentication`() { // FIXME when auth works, enable it
+    @Disabled // FIXME when auth works, enable it
+    fun `should require authentication`() {
         mockMvc.get(ENDPOINT_URL) {
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {

@@ -3,6 +3,7 @@ package br.com.webbudget.controllers.configuration
 import br.com.webbudget.BaseControllerIntegrationTest
 import br.com.webbudget.infrastructure.repository.configuration.AuthorityRepository
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
@@ -13,6 +14,16 @@ class AuthorityControllerTest : BaseControllerIntegrationTest() {
 
     @Autowired
     private lateinit var authorityRepository: AuthorityRepository
+
+    @Test
+    @Disabled // FIXME when auth works, enable it
+    fun `should require authentication`() {
+        mockMvc.get(ENDPOINT_URL) {
+            contentType = MediaType.APPLICATION_JSON
+        }.andExpect {
+            status { isUnauthorized() }
+        }
+    }
 
     @Test
     @WithMockUser
