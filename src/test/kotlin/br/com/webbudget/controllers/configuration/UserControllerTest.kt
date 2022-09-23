@@ -211,7 +211,6 @@ class UserControllerTest : BaseControllerIntegrationTest() {
         val found = jsonToObject(result.response.contentAsString, UserForm::class.java)
 
         assertThat(found).isNotNull
-        assertThat(found.id).isEqualTo(userId)
         assertThat(found.authorities).containsExactlyInAnyOrder(
             "DASHBOARDS",
             "REGISTRATION",

@@ -23,11 +23,9 @@ open class PersistentEntity<T : Serializable> {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, unique = true)
     var id: T? = null
-        private set
 
     @Column(name = "external_id", length = 36, updatable = false, unique = true)
     var externalId: UUID? = null
-        private set
 
     @CreatedDate
     @Column(name = "created_on", nullable = false)

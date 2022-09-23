@@ -14,7 +14,6 @@ import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotEmpty
 
 data class UserForm(
-    val id: UUID?,
     val active: Boolean = false,
     @field:NotBlank(message = "users.errors.name-is-blank")
     val name: String,
