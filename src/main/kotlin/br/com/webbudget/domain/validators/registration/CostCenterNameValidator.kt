@@ -2,15 +2,15 @@ package br.com.webbudget.domain.validators.registration
 
 import br.com.webbudget.domain.entities.registration.CostCenter
 import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
-import br.com.webbudget.domain.validators.CreationValidation
+import br.com.webbudget.domain.validators.CreatingValidation
 import br.com.webbudget.domain.validators.UpdatingValidation
 import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository
 import org.springframework.stereotype.Component
 
 @Component
 @UpdatingValidation
-@CreationValidation
-class DuplicatedNameValidator(
+@CreatingValidation
+class CostCenterNameValidator(
     private val costCenterRepository: CostCenterRepository
 ) : CostCenterValidator {
 
@@ -24,21 +24,11 @@ class DuplicatedNameValidator(
 
     private fun validateSaved(value: CostCenter) {
         costCenterRepository.findByNameIgnoreCaseAndExternalIdNot(value.name, value.externalId!!)
-            ?.let {
-                throw DuplicatedPropertyException(
-                    "cost-center.name",
-                    "cost-center.errors.duplicated-name"
-                )
-            }
+            ?.let { throw DuplicatedPropertyException("cost-center.name", "cost-center.errors.duplicated-name") }
     }
 
     private fun validateNotSaved(value: CostCenter) {
         costCenterRepository.findByNameIgnoreCase(value.name)
-            ?.let {
-                throw DuplicatedPropertyException(
-                    "cost-center.name",
-                    "cost-center.errors.duplicated-name"
-                )
-            }
+            ?.let { throw DuplicatedPropertyException("cost-center.name", "cost-center.errors.duplicated-name") }
     }
 }

@@ -2,30 +2,27 @@ package br.com.webbudget.validators.registration
 
 import br.com.webbudget.domain.entities.registration.CostCenter
 import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
-import br.com.webbudget.domain.validators.registration.DuplicatedNameValidator
+import br.com.webbudget.domain.validators.registration.CostCenterNameValidator
 import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository
 import io.mockk.every
+import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
+import io.mockk.verify
 import org.assertj.core.api.AssertionsForClassTypes.assertThatNoException
 import org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import java.util.UUID
 
 @ExtendWith(MockKExtension::class)
-class CostCenterValidatorsTest {
+class CostCenterNameValidatorTest {
 
     @MockK
     private lateinit var costCenterRepository: CostCenterRepository
 
-    private lateinit var duplicatedNameValidator: DuplicatedNameValidator
-
-    @BeforeEach
-    fun setup() {
-        duplicatedNameValidator = DuplicatedNameValidator(costCenterRepository)
-    }
+    @InjectMockKs
+    private lateinit var costCenterNameValidator: CostCenterNameValidator
 
     @Test
     fun `should fail for different entities and equal name`() {
@@ -42,9 +39,11 @@ class CostCenterValidatorsTest {
 
         val toValidate = CostCenter("Duplicated", true)
 
-        assertThatThrownBy { duplicatedNameValidator.validate(toValidate) }
+        assertThatThrownBy { costCenterNameValidator.validate(toValidate) }
             .isInstanceOf(DuplicatedPropertyException::class.java)
             .hasMessage("cost-center.name")
+
+        verify(exactly = 1) { costCenterRepository.findByNameIgnoreCase("Duplicated") }
     }
 
     @Test
@@ -63,6 +62,10 @@ class CostCenterValidatorsTest {
         } returns null
 
         assertThatNoException()
-            .isThrownBy { duplicatedNameValidator.validate(notDuplicated) }
+            .isThrownBy { costCenterNameValidator.validate(notDuplicated) }
+
+        verify(exactly = 1) {
+            costCenterRepository.findByNameIgnoreCaseAndExternalIdNot("Not duplicated", externalId)
+        }
     }
 }

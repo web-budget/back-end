@@ -3,30 +3,26 @@ package br.com.webbudget.validators.configuration
 import br.com.webbudget.BaseIntegrationTest
 import br.com.webbudget.domain.entities.configuration.User
 import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
-import br.com.webbudget.domain.validators.configuration.DuplicatedEmailValidator
+import br.com.webbudget.domain.validators.configuration.UserAccountEmailValidator
 import br.com.webbudget.infrastructure.repository.configuration.UserRepository
 import io.mockk.every
+import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import org.assertj.core.api.Assertions.assertThatNoException
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import java.util.UUID
 
 @ExtendWith(MockKExtension::class)
-class UserValidatorsTest : BaseIntegrationTest() {
+class UserAccountEmailValidatorTest : BaseIntegrationTest() {
 
     @MockK
     lateinit var userRepository: UserRepository
 
-    lateinit var duplicatedEmailValidator: DuplicatedEmailValidator
-
-    @BeforeEach
-    fun setup() {
-        this.duplicatedEmailValidator = DuplicatedEmailValidator(userRepository)
-    }
+    @InjectMockKs
+    lateinit var userAccountEmailValidator: UserAccountEmailValidator
 
     @Test
     fun `should fail when duplicated email`() {
@@ -41,7 +37,7 @@ class UserValidatorsTest : BaseIntegrationTest() {
 
         val toValidate = User("Duplicated", "test@test.com", "123", false, listOf())
 
-        assertThatThrownBy { duplicatedEmailValidator.validate(toValidate) }
+        assertThatThrownBy { userAccountEmailValidator.validate(toValidate) }
             .isInstanceOf(DuplicatedPropertyException::class.java)
             .hasMessage("user.email")
     }
@@ -62,6 +58,6 @@ class UserValidatorsTest : BaseIntegrationTest() {
         } returns null
 
         assertThatNoException()
-            .isThrownBy { duplicatedEmailValidator.validate(notDuplicated) }
+            .isThrownBy { userAccountEmailValidator.validate(notDuplicated) }
     }
 }

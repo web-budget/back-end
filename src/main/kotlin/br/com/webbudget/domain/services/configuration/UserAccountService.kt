@@ -2,8 +2,7 @@ package br.com.webbudget.domain.services.configuration
 
 import br.com.webbudget.domain.entities.configuration.Grant
 import br.com.webbudget.domain.entities.configuration.User
-import br.com.webbudget.domain.validators.configuration.UserCreationValidator
-import br.com.webbudget.domain.validators.configuration.UserUpdatingValidator
+import br.com.webbudget.domain.validators.configuration.UserValidator
 import br.com.webbudget.infrastructure.repository.configuration.AuthorityRepository
 import br.com.webbudget.infrastructure.repository.configuration.GrantRepository
 import br.com.webbudget.infrastructure.repository.configuration.UserRepository
@@ -19,14 +18,13 @@ class UserAccountService(
     private val grantRepository: GrantRepository,
     private val passwordEncoder: PasswordEncoder,
     private val authorityRepository: AuthorityRepository,
-    private val userCreationValidators: List<UserCreationValidator>,
-    private val userUpdatingValidators: List<UserUpdatingValidator>
+    private val userAccountValidationService: UserAccountValidationService
 ) {
 
     @Transactional
     fun createAccount(user: User, authorities: List<String>): UUID {
 
-        userCreationValidators.forEach { it.validate(user) }
+        userAccountValidationService.validateOnCreate(user)
 
         val password = passwordEncoder.encode(user.password)
         user.password = password
@@ -44,7 +42,7 @@ class UserAccountService(
     @Transactional
     fun updateAccount(user: User, authorities: List<String>): User {
 
-        userUpdatingValidators.forEach { it.validate(user) }
+        userAccountValidationService.validateOnUpdate(user)
 
         grantRepository.deleteByUserExternalId(user.externalId!!)
 
