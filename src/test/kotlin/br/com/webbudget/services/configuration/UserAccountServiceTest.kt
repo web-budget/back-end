@@ -8,7 +8,6 @@ import br.com.webbudget.domain.services.configuration.UserAccountValidationServi
 import br.com.webbudget.infrastructure.repository.configuration.AuthorityRepository
 import br.com.webbudget.infrastructure.repository.configuration.GrantRepository
 import br.com.webbudget.infrastructure.repository.configuration.UserRepository
-import io.mockk.called
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
@@ -16,6 +15,7 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.just
 import io.mockk.runs
 import io.mockk.verify
+import org.assertj.core.api.AssertionsForClassTypes.assertThat
 import org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -74,12 +74,14 @@ class UserAccountServiceTest {
         every { userAccountValidationService.validateOnCreate(any()) } throws RuntimeException()
 
         assertThatThrownBy { userAccountService.createAccount(toCreate, listOf("ROLE")) }
-            .isInstanceOf(java.lang.RuntimeException::class.java)
+            .isInstanceOf(RuntimeException::class.java)
 
         verify(exactly = 1) { userAccountValidationService.validateOnCreate(any()) }
 
-        verify { userRepository.save(toCreate) wasNot called }
-        verify { grantRepository.save(any()) wasNot called }
+        verify(exactly = 0) { passwordEncoder.encode("secret") }
+        verify(exactly = 0) { userRepository.save(toCreate) }
+        verify(exactly = 0) { authorityRepository.findByName("ROLE") }
+        verify(exactly = 0) { grantRepository.save(any()) }
     }
 
     @Test
@@ -127,25 +129,69 @@ class UserAccountServiceTest {
         val authority = Authority("ROLE")
         val grant = Grant(toUpdate, authority)
 
-        every { userAccountValidationService.validateOnUpdate(any()) } throws java.lang.RuntimeException()
+        every { userAccountValidationService.validateOnUpdate(any()) } throws RuntimeException()
 
         assertThatThrownBy { userAccountService.updateAccount(toUpdate, listOf("ROLE")) }
-            .isInstanceOf(java.lang.RuntimeException::class.java)
+            .isInstanceOf(RuntimeException::class.java)
 
         verify(exactly = 1) { userAccountValidationService.validateOnUpdate(any()) }
 
         verify(exactly = 0) { grantRepository.deleteByUserExternalId(externalId) }
-        verify { userRepository.save(toUpdate) wasNot called }
-        verify { grantRepository.save(grant) wasNot called }
+        verify(exactly = 0) { userRepository.save(toUpdate) }
+        verify(exactly = 0) { grantRepository.save(grant) }
     }
 
     @Test
     fun `should delete`() {
 
+        val toDelete = User("To delete", "test@test.com", "secret", true, listOf())
+
+        every { userRepository.delete(toDelete) } just runs
+
+        userAccountService.deleteAccount(toDelete)
+
+        verify(exactly = 1) { userRepository.delete(toDelete) }
     }
 
     @Test
     fun `should update password`() {
 
+        val newPassword = "new-secret"
+        val toUpdate = User("To update", "test@test.com", "secret", true, listOf())
+
+        every { passwordEncoder.encode(newPassword) } returns "n3w-s3cr3t"
+        every { userRepository.save(toUpdate) } returns toUpdate
+
+        userAccountService.updatePassword(toUpdate, newPassword)
+
+        verify(exactly = 1) { passwordEncoder.encode(newPassword) }
+        verify(exactly = 1) {
+            userRepository.save(withArg { user ->
+                assertThat(user.password).isEqualTo("n3w-s3cr3t")
+            })
+        }
+    }
+
+    @Test
+    fun `should grant for all authorities`() {
+
+        val toCreate = User("To create", "test@test.com", "secret", true, listOf())
+
+        val authority = Authority("ROLE")
+        val grant = Grant(toCreate, authority)
+
+        every { userAccountValidationService.validateOnCreate(any()) } just runs
+        every { passwordEncoder.encode("secret") } returns "s3cr3t"
+        every { userRepository.save(any()) } returns toCreate.apply { this.externalId = UUID.randomUUID() }
+        every { authorityRepository.findByName(any()) } returns authority
+        every { grantRepository.save(any()) } returns grant
+
+        userAccountService.createAccount(toCreate, listOf("ROLE1", "ROLE2", "ROLE3"))
+
+        verify(exactly = 1) { userAccountValidationService.validateOnCreate(any()) }
+        verify(exactly = 1) { passwordEncoder.encode("secret") }
+        verify(exactly = 1) { userRepository.save(toCreate) }
+        verify(exactly = 3) { authorityRepository.findByName(any()) }
+        verify(exactly = 3) { grantRepository.save(grant) }
     }
 }
