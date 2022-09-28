@@ -78,6 +78,6 @@ class AuthenticationControllerTest : BaseControllerIntegrationTest() {
     }
 
     companion object {
-        private const val ENDPOINT_URL = "/authentication/"
+        private const val ENDPOINT_URL = "/authentication"
     }
 }

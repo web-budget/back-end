@@ -4,6 +4,7 @@ import br.com.webbudget.BaseControllerIntegrationTest
 import br.com.webbudget.application.payloads.configuration.UserForm
 import br.com.webbudget.application.payloads.configuration.UserView
 import br.com.webbudget.infrastructure.repository.configuration.UserRepository
+import br.com.webbudget.utilities.ResourceAsString
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.tuple
 import org.hamcrest.Matchers.containsInAnyOrder
@@ -11,8 +12,6 @@ import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.core.io.Resource
 import org.springframework.http.MediaType
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.test.context.support.WithMockUser
@@ -25,15 +24,6 @@ import org.springframework.util.LinkedMultiValueMap
 import java.util.UUID
 
 class UserControllerTest : BaseControllerIntegrationTest() { // TODO refactor
-
-    @Value("classpath:/payloads/user/create-user.json")
-    private lateinit var createUserJson: Resource
-
-    @Value("classpath:/payloads/user/update-user.json")
-    private lateinit var updateUserJson: Resource
-
-    @Value("classpath:/payloads/user/invalid-user.json")
-    private lateinit var invalidUserJson: Resource
 
     @Autowired
     private lateinit var userRepository: UserRepository
@@ -53,9 +43,7 @@ class UserControllerTest : BaseControllerIntegrationTest() { // TODO refactor
 
     @Test
     @WithMockUser
-    fun `should create an user account`() {
-
-        val payload = resourceAsString(createUserJson)
+    fun `should create an user account`(@ResourceAsString("user/create.json") payload: String) {
 
         mockMvc.post(ENDPOINT_URL) {
             contentType = MediaType.APPLICATION_JSON
@@ -89,9 +77,8 @@ class UserControllerTest : BaseControllerIntegrationTest() { // TODO refactor
 
     @Test
     @WithMockUser
-    fun `should fail if required fields are not present`() {
+    fun `should fail if required fields are not present`(@ResourceAsString("user/invalid.json") payload: String) {
 
-        val payload = resourceAsString(invalidUserJson)
         val requiredFields = arrayOf("name", "email", "password", "authorities")
 
         mockMvc.post(ENDPOINT_URL) {
@@ -106,9 +93,7 @@ class UserControllerTest : BaseControllerIntegrationTest() { // TODO refactor
 
     @Test
     @WithMockUser
-    fun `should update an user account`() {
-
-        val payload = resourceAsString(updateUserJson)
+    fun `should update an user account`(@ResourceAsString("user/update.json") payload: String) {
 
         mockMvc.put("$ENDPOINT_URL/e443f25b-2a6f-4a7a-8ecd-054dfba8fd19") {
             contentType = MediaType.APPLICATION_JSON
@@ -181,10 +166,9 @@ class UserControllerTest : BaseControllerIntegrationTest() { // TODO refactor
 
     @Test
     @WithMockUser
-    fun `should get conflict if e-mail is duplicated`() {
+    fun `should get conflict if e-mail is duplicated`(@ResourceAsString("user/create.json") payload: String) {
 
-        val payload = resourceAsString(createUserJson)
-            .replace("user@webbudget.com.br", "admin@webbudget.com.br")
+        payload.replace("user@webbudget.com.br", "admin@webbudget.com.br")
 
         mockMvc.post(ENDPOINT_URL) {
             contentType = MediaType.APPLICATION_JSON
@@ -294,6 +278,6 @@ class UserControllerTest : BaseControllerIntegrationTest() { // TODO refactor
     }
 
     companion object {
-        private const val ENDPOINT_URL = "/api/users/"
+        private const val ENDPOINT_URL = "/api/users"
     }
 }

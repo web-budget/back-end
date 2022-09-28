@@ -249,6 +249,6 @@ class CostCenterControllerTest : BaseControllerIntegrationTest() {
     }
 
     companion object {
-        private const val ENDPOINT_URL = "/api/cost-centers/"
+        private const val ENDPOINT_URL = "/api/cost-centers"
     }
 }
