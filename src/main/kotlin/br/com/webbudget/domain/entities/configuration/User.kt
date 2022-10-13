@@ -1,6 +1,7 @@
 package br.com.webbudget.domain.entities.configuration
 
 import br.com.webbudget.domain.entities.PersistentEntity
+import br.com.webbudget.domain.entities.UpdateSupport
 import br.com.webbudget.infrastructure.config.DefaultSchemas.ADMINISTRATION
 import javax.persistence.CascadeType.REMOVE
 import javax.persistence.Column
@@ -22,14 +23,12 @@ class User(
     var active: Boolean,
     @field:OneToMany(mappedBy = "user", fetch = EAGER, cascade = [REMOVE])
     var grants: List<Grant>?
-) : PersistentEntity<Long>() { // FIXME add update support
+) : PersistentEntity<Long>(), UpdateSupport<User> {
 
-    fun prepareForUpdate(user: User): User {
-
-        this.name = user.name
-        this.email = user.email
-        this.active = user.active
-
+    override fun updateFields(source: User): User {
+        this.name = source.name
+        this.email = source.email
+        this.active = source.active
         return this
     }
 }

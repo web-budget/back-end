@@ -69,7 +69,7 @@ class UserController(
         val toUpdate = conversionService.convert(userForm, User::class.java)!!
 
         return userRepository.findByExternalId(id)
-            ?.prepareForUpdate(toUpdate)
+            ?.updateFields(toUpdate)
             ?.let { userAccountService.updateAccount(it, userForm.authorities) }
             ?.let { ResponseEntity.ok(conversionService.convert(it, UserView::class.java)) }
             ?: throw ResourceNotFoundException(id)
