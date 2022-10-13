@@ -2,19 +2,19 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     // spring
-    id("org.springframework.boot") version "2.7.0"
-    id("io.spring.dependency-management") version "1.0.12.RELEASE"
+    id("org.springframework.boot") version "2.7.4"
+    id("io.spring.dependency-management") version "1.0.14.RELEASE"
 
     // detekt
     id("io.gitlab.arturbosch.detekt").version("1.21.0")
 
     // kotlin things
-    kotlin("jvm") version "1.7.10"
-    kotlin("plugin.spring") version "1.7.10"
-    kotlin("plugin.jpa") version "1.7.10"
+    kotlin("jvm") version "1.7.20"
+    kotlin("plugin.spring") version "1.7.20"
+    kotlin("plugin.jpa") version "1.7.20"
 
     // mapstruct
-    kotlin("kapt") version "1.7.10"
+    kotlin("kapt") version "1.7.20"
 }
 
 group = "br.com.webbudget"
@@ -32,12 +32,12 @@ repositories {
     mavenCentral()
 }
 
-val testcontainersVersion = "1.16.2"
+val testcontainersVersion = "1.17.5"
 val guavaVersion = "31.1-jre"
-val mapstructVersion = "1.5.2.Final"
+val mapstructVersion = "1.5.3.Final"
 val mapstructExtVersion = "0.1.1"
-val auth0Version = "4.0.0"
-val springSecurityTestVersion = "5.7.2"
+val auth0Version = "4.1.0"
+val springSecurityTestVersion = "5.7.3"
 val assertJVersion = "3.23.1"
 val mockkVersion = "3.1.1"
 
