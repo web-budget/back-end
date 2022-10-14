@@ -2,12 +2,12 @@ package br.com.webbudget.controllers.configuration
 
 import br.com.webbudget.BaseControllerIntegrationTest
 import br.com.webbudget.infrastructure.repository.configuration.AuthorityRepository
+import br.com.webbudget.utilities.Authorities
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
-import org.springframework.security.test.context.support.WithMockUser
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt
 import org.springframework.test.web.servlet.get
 
 class AuthorityControllerTest : BaseControllerIntegrationTest() {
@@ -16,7 +16,6 @@ class AuthorityControllerTest : BaseControllerIntegrationTest() {
     private lateinit var authorityRepository: AuthorityRepository
 
     @Test
-    @Disabled // FIXME when auth works, enable it
     fun `should require authentication`() {
         mockMvc.get(ENDPOINT_URL) {
             contentType = MediaType.APPLICATION_JSON
@@ -26,11 +25,11 @@ class AuthorityControllerTest : BaseControllerIntegrationTest() {
     }
 
     @Test
-    @WithMockUser
-    fun `should get all authorities from database in a string list`() {
+    fun `should find all authorities`() {
 
         val result = mockMvc.get(ENDPOINT_URL) {
             contentType = MediaType.APPLICATION_JSON
+            with(jwt().authorities(Authorities.ADMINISTRATION))
         }.andExpect {
             status { isOk() }
         }.andReturn()
@@ -47,6 +46,6 @@ class AuthorityControllerTest : BaseControllerIntegrationTest() {
     }
 
     companion object {
-        private const val ENDPOINT_URL = "/api/authorities"
+        private const val ENDPOINT_URL = "/api/administration/authorities"
     }
 }

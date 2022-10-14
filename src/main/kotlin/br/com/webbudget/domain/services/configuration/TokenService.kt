@@ -25,7 +25,7 @@ class TokenService(
             .issuedAt(now)
             .expiresAt(now.plusSeconds(accessTokenExpiration))
             .subject(subject)
-            .claim("scope", scope)
+            .claim(SCOPE_CLAIM, scope)
             .id(tokenId.toString())
             .build()
 
@@ -35,6 +35,7 @@ class TokenService(
     }
 
     companion object {
+        private const val SCOPE_CLAIM = "scope"
         private const val TOKEN_ISSUER = "br.com.webbudget"
     }
 }

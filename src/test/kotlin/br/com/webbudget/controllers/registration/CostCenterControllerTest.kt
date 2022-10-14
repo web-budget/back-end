@@ -4,16 +4,17 @@ import br.com.webbudget.BaseControllerIntegrationTest
 import br.com.webbudget.application.payloads.registration.CostCenterView
 import br.com.webbudget.domain.entities.registration.CostCenter
 import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository
+import br.com.webbudget.utilities.Authorities
 import br.com.webbudget.utilities.ResourceAsString
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.tuple
 import org.hamcrest.Matchers
 import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt
 import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
@@ -32,7 +33,6 @@ class CostCenterControllerTest : BaseControllerIntegrationTest() {
     }
 
     @Test
-    @Disabled // FIXME when auth works, enable it
     fun `should require authentication`() {
         mockMvc.get(ENDPOINT_URL) {
             contentType = MediaType.APPLICATION_JSON
@@ -45,6 +45,7 @@ class CostCenterControllerTest : BaseControllerIntegrationTest() {
     fun `should create and return created`(@ResourceAsString("cost-center/create.json") payload: String) {
 
         mockMvc.post(ENDPOINT_URL) {
+            with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
             content = payload
         }.andExpect {
@@ -67,6 +68,7 @@ class CostCenterControllerTest : BaseControllerIntegrationTest() {
         val created = costCenterRepository.save(CostCenter("To update", true))
 
         mockMvc.put("$ENDPOINT_URL/${created.externalId}") {
+            with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
             content = payload
         }.andExpect {
@@ -87,6 +89,7 @@ class CostCenterControllerTest : BaseControllerIntegrationTest() {
         val created = costCenterRepository.save(CostCenter("To delete", true))
 
         mockMvc.delete("$ENDPOINT_URL/${created.externalId}") {
+            with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isOk() }
@@ -102,6 +105,7 @@ class CostCenterControllerTest : BaseControllerIntegrationTest() {
         val randomUuid = UUID.randomUUID()
 
         mockMvc.delete("$ENDPOINT_URL/$randomUuid") {
+            with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isNoContent() }
@@ -115,6 +119,7 @@ class CostCenterControllerTest : BaseControllerIntegrationTest() {
         val requiredFields = arrayOf("name")
 
         mockMvc.post(ENDPOINT_URL) {
+            with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
             content = payload
         }.andExpect {
@@ -130,6 +135,7 @@ class CostCenterControllerTest : BaseControllerIntegrationTest() {
         costCenterRepository.save(CostCenter("Alimentação", true))
 
         mockMvc.post(ENDPOINT_URL) {
+            with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
             content = payload
         }.andExpect {
@@ -143,6 +149,7 @@ class CostCenterControllerTest : BaseControllerIntegrationTest() {
         val created = costCenterRepository.save(CostCenter("To find", true))
 
         val result = mockMvc.get("$ENDPOINT_URL/${created.externalId}") {
+            with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isOk() }
@@ -162,6 +169,7 @@ class CostCenterControllerTest : BaseControllerIntegrationTest() {
         val randomUuid = UUID.randomUUID()
 
         mockMvc.get("$ENDPOINT_URL/$randomUuid") {
+            with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isNoContent() }
@@ -188,6 +196,7 @@ class CostCenterControllerTest : BaseControllerIntegrationTest() {
         parameters.add("size", "2")
 
         val result = mockMvc.get(ENDPOINT_URL) {
+            with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
             params = parameters
         }.andExpect {
@@ -228,6 +237,7 @@ class CostCenterControllerTest : BaseControllerIntegrationTest() {
         parameters.add("filter", "Filhos")
 
         val result = mockMvc.get(ENDPOINT_URL) {
+            with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
             params = parameters
         }.andExpect {
@@ -249,6 +259,6 @@ class CostCenterControllerTest : BaseControllerIntegrationTest() {
     }
 
     companion object {
-        private const val ENDPOINT_URL = "/api/cost-centers"
+        private const val ENDPOINT_URL = "/api/registration/cost-centers"
     }
 }

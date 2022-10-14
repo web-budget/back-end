@@ -4,17 +4,17 @@ import br.com.webbudget.BaseControllerIntegrationTest
 import br.com.webbudget.application.payloads.configuration.UserForm
 import br.com.webbudget.application.payloads.configuration.UserView
 import br.com.webbudget.infrastructure.repository.configuration.UserRepository
+import br.com.webbudget.utilities.Authorities
 import br.com.webbudget.utilities.ResourceAsString
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.tuple
 import org.hamcrest.Matchers.containsInAnyOrder
 import org.hamcrest.Matchers.equalTo
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.security.crypto.password.PasswordEncoder
-import org.springframework.security.test.context.support.WithMockUser
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt
 import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.patch
@@ -32,7 +32,6 @@ class UserControllerTest : BaseControllerIntegrationTest() { // TODO refactor
     private lateinit var passwordEncoder: PasswordEncoder
 
     @Test
-    @Disabled // FIXME when auth works, enable it
     fun `should require authentication`() {
         mockMvc.get(ENDPOINT_URL) {
             contentType = MediaType.APPLICATION_JSON
@@ -42,10 +41,10 @@ class UserControllerTest : BaseControllerIntegrationTest() { // TODO refactor
     }
 
     @Test
-    @WithMockUser
     fun `should create an user account`(@ResourceAsString("user/create.json") payload: String) {
 
         mockMvc.post(ENDPOINT_URL) {
+            with(jwt().authorities(Authorities.ADMINISTRATION))
             contentType = MediaType.APPLICATION_JSON
             content = payload
         }.andExpect {
@@ -76,12 +75,12 @@ class UserControllerTest : BaseControllerIntegrationTest() { // TODO refactor
     }
 
     @Test
-    @WithMockUser
     fun `should fail if required fields are not present`(@ResourceAsString("user/invalid.json") payload: String) {
 
         val requiredFields = arrayOf("name", "email", "password", "authorities")
 
         mockMvc.post(ENDPOINT_URL) {
+            with(jwt().authorities(Authorities.ADMINISTRATION))
             contentType = MediaType.APPLICATION_JSON
             content = payload
         }.andExpect {
@@ -92,10 +91,10 @@ class UserControllerTest : BaseControllerIntegrationTest() { // TODO refactor
     }
 
     @Test
-    @WithMockUser
     fun `should update an user account`(@ResourceAsString("user/update.json") payload: String) {
 
         mockMvc.put("$ENDPOINT_URL/e443f25b-2a6f-4a7a-8ecd-054dfba8fd19") {
+            with(jwt().authorities(Authorities.ADMINISTRATION))
             contentType = MediaType.APPLICATION_JSON
             content = payload
         }.andExpect {
@@ -125,12 +124,12 @@ class UserControllerTest : BaseControllerIntegrationTest() { // TODO refactor
     }
 
     @Test
-    @WithMockUser
     fun `should update only password`() {
 
         val payload = "testing"
 
         mockMvc.patch("$ENDPOINT_URL/6706a395-6690-4bad-948a-5c3c823e93d2/update-password") {
+            with(jwt().authorities(Authorities.ADMINISTRATION))
             contentType = MediaType.APPLICATION_JSON
             content = payload
         }.andExpect {
@@ -165,12 +164,12 @@ class UserControllerTest : BaseControllerIntegrationTest() { // TODO refactor
     }
 
     @Test
-    @WithMockUser
     fun `should get conflict if e-mail is duplicated`(@ResourceAsString("user/create.json") payload: String) {
 
         payload.replace("user@webbudget.com.br", "admin@webbudget.com.br")
 
         mockMvc.post(ENDPOINT_URL) {
+            with(jwt().authorities(Authorities.ADMINISTRATION))
             contentType = MediaType.APPLICATION_JSON
             content = payload
         }.andExpect {
@@ -181,12 +180,12 @@ class UserControllerTest : BaseControllerIntegrationTest() { // TODO refactor
     }
 
     @Test
-    @WithMockUser
     fun `should find an user by id`() {
 
         val userId = UUID.fromString("6706a395-6690-4bad-948a-5c3c823e93d2")
 
         val result = mockMvc.get("$ENDPOINT_URL/$userId") {
+            with(jwt().authorities(Authorities.ADMINISTRATION))
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isOk() }
@@ -204,12 +203,12 @@ class UserControllerTest : BaseControllerIntegrationTest() { // TODO refactor
     }
 
     @Test
-    @WithMockUser
     fun `should get no content if user does not exists`() {
 
         val userId = UUID.randomUUID()
 
         mockMvc.get("$ENDPOINT_URL/$userId") {
+            with(jwt().authorities(Authorities.ADMINISTRATION))
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isNoContent() }
@@ -220,10 +219,10 @@ class UserControllerTest : BaseControllerIntegrationTest() { // TODO refactor
     }
 
     @Test
-    @WithMockUser
     fun `should delete an user account`() {
 
         mockMvc.delete("$ENDPOINT_URL/f4032b91-c4ff-4a4c-bf9e-43b28c909e1d") {
+            with(jwt().authorities(Authorities.ADMINISTRATION))
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isOk() }
@@ -234,12 +233,12 @@ class UserControllerTest : BaseControllerIntegrationTest() { // TODO refactor
     }
 
     @Test
-    @WithMockUser
     fun `should get no content when deleting an unknown user account`() {
 
         val userId = UUID.randomUUID()
 
         mockMvc.delete("$ENDPOINT_URL/$userId") {
+            with(jwt().authorities(Authorities.ADMINISTRATION))
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isNoContent() }
@@ -250,7 +249,6 @@ class UserControllerTest : BaseControllerIntegrationTest() { // TODO refactor
     }
 
     @Test
-    @WithMockUser
     fun `should find users using filters`() {
 
         val parameters = LinkedMultiValueMap<String, String>()
@@ -263,6 +261,7 @@ class UserControllerTest : BaseControllerIntegrationTest() { // TODO refactor
         parameters.add("filter", "Administrador")
 
         val result = mockMvc.get(ENDPOINT_URL) {
+            with(jwt().authorities(Authorities.ADMINISTRATION))
             contentType = MediaType.APPLICATION_JSON
             params = parameters
         }.andExpect {
@@ -278,6 +277,6 @@ class UserControllerTest : BaseControllerIntegrationTest() { // TODO refactor
     }
 
     companion object {
-        private const val ENDPOINT_URL = "/api/users"
+        private const val ENDPOINT_URL = "/api/administration/users"
     }
 }

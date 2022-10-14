@@ -1,3 +1,7 @@
 spring:
   liquibase:
     contexts: test
+
+logging:
+  level:
+    org.springframework.security: DEBUG

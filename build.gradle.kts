@@ -39,6 +39,7 @@ val mapstructExtVersion = "0.1.1"
 val auth0Version = "4.1.0"
 val assertJVersion = "3.23.1"
 val mockkVersion = "3.1.1"
+val jsonUnitVersion = "2.36.0"
 
 dependencies {
     // spring
@@ -85,6 +86,8 @@ dependencies {
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.assertj:assertj-core:$assertJVersion")
     testImplementation("com.ninja-squad:springmockk:$mockkVersion")
+    testImplementation("net.javacrumbs.json-unit:json-unit-assertj:$jsonUnitVersion")
+    testImplementation("net.javacrumbs.json-unit:json-unit-spring:$jsonUnitVersion")
 
     // testcontainers
     testImplementation("org.testcontainers:junit-jupiter")
