@@ -16,20 +16,8 @@ services:
     networks:
       - default
 
-  redis:
-    image: redis:6-alpine
-    container_name: wb-cache
-    ports:
-      - "6380:6379"
-    volumes:
-      - data-redis:/data
-    networks:
-      - default
-
 volumes:
   data-postgres:
-    driver: local
-  data-redis:
     driver: local
 
 networks:

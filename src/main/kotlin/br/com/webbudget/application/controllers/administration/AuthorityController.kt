@@ -1,4 +1,4 @@
-package br.com.webbudget.application.controllers.configuration
+package br.com.webbudget.application.controllers.administration
 
 import br.com.webbudget.infrastructure.repository.configuration.AuthorityRepository
 import org.springframework.http.ResponseEntity
@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/authorities")
+@RequestMapping("/api/administration/authorities")
 class AuthorityController(
     private val authorityRepository: AuthorityRepository
 ) {

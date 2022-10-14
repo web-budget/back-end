@@ -1,4 +1,4 @@
-package br.com.webbudget.application.controllers.configuration
+package br.com.webbudget.application.controllers.administration
 
 import br.com.webbudget.application.payloads.configuration.UserFilter
 import br.com.webbudget.application.payloads.configuration.UserForm
@@ -27,7 +27,7 @@ import java.util.UUID
 import javax.validation.constraints.NotBlank
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/administration/users")
 class UserController(
     private val userRepository: UserRepository,
     private val conversionService: ConversionService,

@@ -25,7 +25,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import java.util.UUID
 
 @RestController
-@RequestMapping("/api/cost-centers")
+@RequestMapping("/api/registration/cost-centers")
 class CostCenterController(
     private val costCenterService: CostCenterService,
     private val conversionService: ConversionService,

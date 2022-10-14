@@ -1,99 +1,40 @@
 package br.com.webbudget.domain.services.configuration
 
-import br.com.webbudget.application.payloads.configuration.Token
-import br.com.webbudget.domain.exceptions.BadRefreshTokenException
-import com.auth0.jwt.JWT
-import com.auth0.jwt.algorithms.Algorithm
-import com.auth0.jwt.exceptions.JWTVerificationException
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.security.oauth2.jwt.JwtClaimsSet
+import org.springframework.security.oauth2.jwt.JwtEncoder
+import org.springframework.security.oauth2.jwt.JwtEncoderParameters
 import org.springframework.stereotype.Service
 import java.time.Instant
-import java.util.Date
 import java.util.UUID
 
 @Service
 class TokenService(
-    private val cacheService: CacheService,
-    @Value("\${web-budget.jwt.secret}")
-    private val jwtSecret: String,
+    private val jwtEncoder: JwtEncoder,
     @Value("\${web-budget.jwt.access-token-expiration}")
-    private val accessTokenExpiration: Long,
-    @Value("\${web-budget.jwt.refresh-token-expiration}")
-    private val refreshTokenExpiration: Long
+    private val accessTokenExpiration: Long
 ) {
 
-    private val log = LoggerFactory.getLogger(TokenService::class.java)
+    fun generateFor(subject: String, scope: List<String>): String {
 
-    fun generateFor(subject: String): Token {
-
+        val now = Instant.now()
         val tokenId = UUID.randomUUID()
 
-        val accessToken = JWT.create()
-            .withJWTId(tokenId.toString())
-            .withSubject(subject)
-            .withIssuedAt(Date())
-            .withIssuer(TOKEN_ISSUER)
-            .withExpiresAt(Date.from(Instant.now().plusSeconds(accessTokenExpiration)))
-            .sign(Algorithm.HMAC512(jwtSecret))
+        val claims = JwtClaimsSet.builder()
+            .issuer(TOKEN_ISSUER)
+            .issuedAt(now)
+            .expiresAt(now.plusSeconds(accessTokenExpiration))
+            .subject(subject)
+            .claim("scope", scope)
+            .id(tokenId.toString())
+            .build()
 
-        val token = Token(tokenId, accessToken, UUID.randomUUID(), accessTokenExpiration)
+        val jwt = jwtEncoder.encode(JwtEncoderParameters.from(claims))
 
-        cacheService.store(accessTokenKey(tokenId.toString()), token.accessToken, accessTokenExpiration)
-        cacheService.store(refreshTokenKey(tokenId.toString()), token.refreshToken, refreshTokenExpiration)
-
-        return token
+        return jwt.tokenValue
     }
-
-    fun refresh(tokenId: String, subject: String, refreshToken: UUID): Token {
-
-        val actualRefreshToken = cacheService.find(refreshTokenKey(tokenId)) as UUID
-
-        if (actualRefreshToken != refreshToken) {
-            throw BadRefreshTokenException("Refresh token [$refreshToken] is invalid")
-        }
-
-        cacheService.remove(accessTokenKey(tokenId))
-        cacheService.remove(refreshTokenKey(tokenId))
-
-        return generateFor(subject)
-    }
-
-    fun validate(accessToken: String): Boolean {
-        return try {
-            val verifier = JWT.require(Algorithm.HMAC512(jwtSecret))
-                .withIssuer(TOKEN_ISSUER)
-                .build()
-
-            val decoded = verifier.verify(accessToken)
-            if (cacheService.isExpired(accessTokenKey(decoded.id))) {
-                return false
-            }
-
-            true
-        } catch (ex: JWTVerificationException) {
-            log.debug("JWT verification failed for token [$accessToken]", ex)
-            false
-        }
-    }
-
-    fun extractSubject(accessToken: String): String {
-        val decoded = JWT.decode(accessToken)
-        return decoded.subject
-    }
-
-    fun extractId(accessToken: String): String {
-        val decoded = JWT.decode(accessToken)
-        return decoded.id
-    }
-
-    private fun accessTokenKey(tokenId: String): String = ACCESS_TOKEN_KEY + tokenId
-
-    private fun refreshTokenKey(tokenId: String): String = REFRESH_TOKEN_KEY + tokenId
 
     companion object {
         private const val TOKEN_ISSUER = "br.com.webbudget"
-        private const val ACCESS_TOKEN_KEY = "access_token:"
-        private const val REFRESH_TOKEN_KEY = "refresh_token:"
     }
 }

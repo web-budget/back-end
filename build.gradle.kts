@@ -37,7 +37,6 @@ val guavaVersion = "31.1-jre"
 val mapstructVersion = "1.5.3.Final"
 val mapstructExtVersion = "0.1.1"
 val auth0Version = "4.1.0"
-val springSecurityTestVersion = "5.7.3"
 val assertJVersion = "3.23.1"
 val mockkVersion = "3.1.1"
 
@@ -48,7 +47,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-security")
-    implementation("org.springframework.boot:spring-boot-starter-data-redis")
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
 
     // utilities
     implementation("com.google.guava:guava:$guavaVersion")
@@ -83,7 +82,7 @@ dependencies {
         exclude("org.mockito", "mockito-core")
         exclude("org.junit.vintage", "junit-vintage-engine")
     }
-    testImplementation("org.springframework.security:spring-security-test:$springSecurityTestVersion")
+    testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.assertj:assertj-core:$assertJVersion")
     testImplementation("com.ninja-squad:springmockk:$mockkVersion")
 

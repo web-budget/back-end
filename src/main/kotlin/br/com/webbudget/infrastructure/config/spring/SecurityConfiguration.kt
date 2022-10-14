@@ -1,58 +1,71 @@
 package br.com.webbudget.infrastructure.config.spring
 
-import br.com.webbudget.domain.services.configuration.AuthenticationService
+import com.nimbusds.jose.jwk.JWKSet
+import com.nimbusds.jose.jwk.RSAKey
+import com.nimbusds.jose.jwk.source.ImmutableJWKSet
+import com.nimbusds.jose.proc.SecurityContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.security.authentication.AuthenticationManager
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.config.http.SessionCreationPolicy
-import org.springframework.security.core.AuthenticationException
+import org.springframework.security.config.web.servlet.invoke
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
+import org.springframework.security.oauth2.jwt.JwtDecoder
+import org.springframework.security.oauth2.jwt.JwtEncoder
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder
+import org.springframework.security.oauth2.jwt.NimbusJwtEncoder
+import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint
+import org.springframework.security.oauth2.server.resource.web.access.BearerTokenAccessDeniedHandler
+import org.springframework.security.web.SecurityFilterChain
+import java.security.interfaces.RSAPrivateKey
+import java.security.interfaces.RSAPublicKey
 
 @Configuration
 class SecurityConfiguration(
-    private val authenticationService: AuthenticationService,
-    private val tokenAuthenticationFilter: TokenAuthenticationFilter
-) : WebSecurityConfigurerAdapter() {
+    private val publicKey: RSAPublicKey = KeyPairGenerator.getPublicKey(),
+    private val privateKey: RSAPrivateKey = KeyPairGenerator.getPrivateKey()
+) {
 
-    override fun configure(auth: AuthenticationManagerBuilder) {
-        auth.userDetailsService(authenticationService).passwordEncoder(passwordEncoder())
-    }
-
-    override fun configure(http: HttpSecurity) {
-
-        http.cors()
-            .and()
-            .csrf()
-            .disable()
-            .sessionManagement()
-            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            .and()
-            .exceptionHandling()
-            .authenticationEntryPoint { _: HttpServletRequest, r: HttpServletResponse, ex: AuthenticationException ->
-                r.sendError(HttpServletResponse.SC_UNAUTHORIZED, ex.message)
+    @Bean
+    fun configureSecurity(http: HttpSecurity): SecurityFilterChain {
+        http {
+            cors { }
+            csrf { disable() }
+            authorizeRequests {
+                authorize("/actuator/health/**", permitAll)
+                authorize("/api/administration/**", hasAuthority("SCOPE_ADMINISTRATION"))
+                authorize("/api/registration/**", hasAuthority("SCOPE_REGISTRATION"))
+                authorize("/api/financial/**", hasAuthority("SCOPE_FINANCIAL"))
+                authorize("/api/dashboards/**", hasAuthority("SCOPE_DASHBOARDS"))
+                authorize(anyRequest, authenticated)
             }
-            .and()
-            .authorizeRequests()
-            .antMatchers("/actuator/health/**").permitAll()
-            .antMatchers("/api/**", "/actuator/**").authenticated()
-            .and()
-            .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
+            httpBasic { }
+            oauth2ResourceServer { jwt { } }
+            sessionManagement { sessionCreationPolicy = SessionCreationPolicy.STATELESS }
+            exceptionHandling {
+                authenticationEntryPoint = BearerTokenAuthenticationEntryPoint()
+                accessDeniedHandler = BearerTokenAccessDeniedHandler()
+            }
+        }
+
+        return http.build()
     }
 
     @Bean
-    override fun authenticationManagerBean(): AuthenticationManager {
-        return super.authenticationManagerBean()
+    fun configureJwtDecoder(): JwtDecoder {
+        return NimbusJwtDecoder.withPublicKey(publicKey).build()
     }
 
     @Bean
-    fun passwordEncoder(): PasswordEncoder {
+    fun configureJwtEncoder(): JwtEncoder {
+        val jwk = RSAKey.Builder(publicKey).privateKey(privateKey).build()
+        val jwkSource = ImmutableJWKSet<SecurityContext>(JWKSet(jwk))
+        return NimbusJwtEncoder(jwkSource)
+    }
+
+    @Bean
+    fun configurePasswordEncoder(): PasswordEncoder {
         return BCryptPasswordEncoder(BCRYPT_STRENGTH)
     }
 
