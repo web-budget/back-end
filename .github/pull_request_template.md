@@ -1,5 +1,5 @@
 **Objective**
-Clear and concise description of what's the objective of your PR [...]
+Clear and concise description of what's the objective of your PR
 
 **What's changed**
 Which are the changes you've done
