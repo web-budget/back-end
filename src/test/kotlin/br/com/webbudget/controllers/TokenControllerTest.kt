@@ -5,12 +5,14 @@ import br.com.webbudget.application.controllers.TokenController
 import com.nimbusds.jwt.JWTParser
 import net.javacrumbs.jsonunit.assertj.assertThatJson
 import org.assertj.core.api.Assertions.assertThat
+import org.awaitility.Awaitility.await
 import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.web.servlet.post
 import java.time.Instant
+import java.util.concurrent.TimeUnit
 
 @TestPropertySource(
     properties = [
@@ -67,7 +69,9 @@ class TokenControllerTest : BaseControllerIntegrationTest() {
             .hasFieldOrProperty("token").isNotNull
 
         val expiration = JWTParser.parse(tokenResponse.token).jwtClaimsSet.expirationTime
-        assertThat(expiration).isBefore(Instant.now())
+        await().atMost(2, TimeUnit.SECONDS).untilAsserted() {
+            assertThat(expiration).isBefore(Instant.now())
+        }
     }
 
     companion object {

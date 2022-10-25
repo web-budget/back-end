@@ -39,6 +39,7 @@ val mapstructExtVersion = "0.1.1"
 val assertJVersion = "3.23.1"
 val mockkVersion = "3.1.1"
 val jsonUnitVersion = "2.36.0"
+val awaitilityVersion = "4.2.0"
 
 dependencies {
     // spring
@@ -86,6 +87,7 @@ dependencies {
     testImplementation("com.ninja-squad:springmockk:$mockkVersion")
     testImplementation("net.javacrumbs.json-unit:json-unit-assertj:$jsonUnitVersion")
     testImplementation("net.javacrumbs.json-unit:json-unit-spring:$jsonUnitVersion")
+    testImplementation("org.awaitility:awaitility:$awaitilityVersion")
 
     // testcontainers
     testImplementation("org.testcontainers:junit-jupiter")
