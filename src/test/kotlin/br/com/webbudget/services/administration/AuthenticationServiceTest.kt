@@ -1,8 +1,8 @@
-package br.com.webbudget.services.configuration
+package br.com.webbudget.services.administration
 
-import br.com.webbudget.domain.entities.configuration.User
-import br.com.webbudget.domain.services.configuration.AuthenticationService
-import br.com.webbudget.infrastructure.repository.configuration.UserRepository
+import br.com.webbudget.domain.entities.administration.User
+import br.com.webbudget.domain.services.administration.AuthenticationService
+import br.com.webbudget.infrastructure.repository.administration.UserRepository
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK

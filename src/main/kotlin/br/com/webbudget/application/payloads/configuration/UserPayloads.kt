@@ -3,7 +3,7 @@ package br.com.webbudget.application.payloads.configuration
 import br.com.webbudget.application.payloads.support.SpecificationSupport
 import br.com.webbudget.application.payloads.support.StatusFilter
 import br.com.webbudget.application.payloads.validation.OnCreate
-import br.com.webbudget.domain.entities.configuration.User
+import br.com.webbudget.domain.entities.administration.User
 import java.util.UUID
 import javax.persistence.criteria.CriteriaBuilder
 import javax.persistence.criteria.CriteriaQuery

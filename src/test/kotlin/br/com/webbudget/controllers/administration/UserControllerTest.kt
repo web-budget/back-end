@@ -1,9 +1,9 @@
-package br.com.webbudget.controllers.configuration
+package br.com.webbudget.controllers.administration
 
 import br.com.webbudget.BaseControllerIntegrationTest
 import br.com.webbudget.application.payloads.configuration.UserForm
 import br.com.webbudget.application.payloads.configuration.UserView
-import br.com.webbudget.infrastructure.repository.configuration.UserRepository
+import br.com.webbudget.infrastructure.repository.administration.UserRepository
 import br.com.webbudget.utilities.Authorities
 import br.com.webbudget.utilities.ResourceAsString
 import org.assertj.core.api.Assertions.assertThat

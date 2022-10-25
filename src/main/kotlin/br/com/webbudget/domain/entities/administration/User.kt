@@ -1,4 +1,4 @@
-package br.com.webbudget.domain.entities.configuration
+package br.com.webbudget.domain.entities.administration
 
 import br.com.webbudget.domain.entities.PersistentEntity
 import br.com.webbudget.domain.entities.UpdateSupport

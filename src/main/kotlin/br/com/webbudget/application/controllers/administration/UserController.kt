@@ -5,10 +5,10 @@ import br.com.webbudget.application.payloads.configuration.UserForm
 import br.com.webbudget.application.payloads.configuration.UserView
 import br.com.webbudget.application.payloads.validation.OnCreateValidation
 import br.com.webbudget.application.payloads.validation.OnUpdateValidation
-import br.com.webbudget.domain.entities.configuration.User
+import br.com.webbudget.domain.entities.administration.User
 import br.com.webbudget.domain.exceptions.ResourceNotFoundException
-import br.com.webbudget.domain.services.configuration.UserAccountService
-import br.com.webbudget.infrastructure.repository.configuration.UserRepository
+import br.com.webbudget.domain.services.administration.UserAccountService
+import br.com.webbudget.infrastructure.repository.administration.UserRepository
 import org.springframework.core.convert.ConversionService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable

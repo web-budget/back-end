@@ -1,6 +1,6 @@
-package br.com.webbudget.infrastructure.repository.configuration
+package br.com.webbudget.infrastructure.repository.administration
 
-import br.com.webbudget.domain.entities.configuration.Authority
+import br.com.webbudget.domain.entities.administration.Authority
 import br.com.webbudget.infrastructure.repository.DefaultRepository
 import org.springframework.stereotype.Repository
 

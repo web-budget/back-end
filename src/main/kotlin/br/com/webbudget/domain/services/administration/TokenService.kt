@@ -1,4 +1,4 @@
-package br.com.webbudget.domain.services.configuration
+package br.com.webbudget.domain.services.administration
 
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.oauth2.jwt.JwtClaimsSet

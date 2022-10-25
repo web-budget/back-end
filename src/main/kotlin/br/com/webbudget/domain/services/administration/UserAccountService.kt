@@ -1,11 +1,10 @@
-package br.com.webbudget.domain.services.configuration
+package br.com.webbudget.domain.services.administration
 
-import br.com.webbudget.domain.entities.configuration.Grant
-import br.com.webbudget.domain.entities.configuration.User
-import br.com.webbudget.domain.validators.configuration.UserValidator
-import br.com.webbudget.infrastructure.repository.configuration.AuthorityRepository
-import br.com.webbudget.infrastructure.repository.configuration.GrantRepository
-import br.com.webbudget.infrastructure.repository.configuration.UserRepository
+import br.com.webbudget.domain.entities.administration.Grant
+import br.com.webbudget.domain.entities.administration.User
+import br.com.webbudget.infrastructure.repository.administration.AuthorityRepository
+import br.com.webbudget.infrastructure.repository.administration.GrantRepository
+import br.com.webbudget.infrastructure.repository.administration.UserRepository
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional

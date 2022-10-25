@@ -1,6 +1,6 @@
-package br.com.webbudget.domain.services.configuration
+package br.com.webbudget.domain.services.administration
 
-import br.com.webbudget.domain.entities.configuration.User
+import br.com.webbudget.domain.entities.administration.User
 import br.com.webbudget.domain.services.ValidationService
 import br.com.webbudget.domain.validators.CreatingValidation
 import br.com.webbudget.domain.validators.UpdatingValidation

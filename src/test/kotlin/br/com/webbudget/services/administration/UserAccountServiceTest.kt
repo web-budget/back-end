@@ -1,13 +1,13 @@
-package br.com.webbudget.services.configuration
+package br.com.webbudget.services.administration
 
-import br.com.webbudget.domain.entities.configuration.Authority
-import br.com.webbudget.domain.entities.configuration.Grant
-import br.com.webbudget.domain.entities.configuration.User
-import br.com.webbudget.domain.services.configuration.UserAccountService
-import br.com.webbudget.domain.services.configuration.UserAccountValidationService
-import br.com.webbudget.infrastructure.repository.configuration.AuthorityRepository
-import br.com.webbudget.infrastructure.repository.configuration.GrantRepository
-import br.com.webbudget.infrastructure.repository.configuration.UserRepository
+import br.com.webbudget.domain.entities.administration.Authority
+import br.com.webbudget.domain.entities.administration.Grant
+import br.com.webbudget.domain.entities.administration.User
+import br.com.webbudget.domain.services.administration.UserAccountService
+import br.com.webbudget.domain.services.administration.UserAccountValidationService
+import br.com.webbudget.infrastructure.repository.administration.AuthorityRepository
+import br.com.webbudget.infrastructure.repository.administration.GrantRepository
+import br.com.webbudget.infrastructure.repository.administration.UserRepository
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK

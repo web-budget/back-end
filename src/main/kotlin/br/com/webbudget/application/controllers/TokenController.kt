@@ -1,7 +1,7 @@
 package br.com.webbudget.application.controllers
 
-import br.com.webbudget.domain.services.configuration.TokenService
-import br.com.webbudget.infrastructure.repository.configuration.UserRepository
+import br.com.webbudget.domain.services.administration.TokenService
+import br.com.webbudget.infrastructure.repository.administration.UserRepository
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.userdetails.UsernameNotFoundException

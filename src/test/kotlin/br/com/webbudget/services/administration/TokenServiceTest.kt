@@ -1,6 +1,6 @@
-package br.com.webbudget.services.configuration
+package br.com.webbudget.services.administration
 
-import br.com.webbudget.domain.services.configuration.TokenService
+import br.com.webbudget.domain.services.administration.TokenService
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension

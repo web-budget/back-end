@@ -1,7 +1,7 @@
-package br.com.webbudget.controllers.configuration
+package br.com.webbudget.controllers.administration
 
 import br.com.webbudget.BaseControllerIntegrationTest
-import br.com.webbudget.infrastructure.repository.configuration.AuthorityRepository
+import br.com.webbudget.infrastructure.repository.administration.AuthorityRepository
 import br.com.webbudget.utilities.Authorities
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test

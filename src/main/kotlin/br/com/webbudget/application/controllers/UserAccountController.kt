@@ -1,6 +1,6 @@
 package br.com.webbudget.application.controllers
 
-import br.com.webbudget.domain.services.configuration.UserAccountService
+import br.com.webbudget.domain.services.administration.UserAccountService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.RequestBody

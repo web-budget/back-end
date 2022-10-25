@@ -1,6 +1,6 @@
-package br.com.webbudget.infrastructure.repository.configuration
+package br.com.webbudget.infrastructure.repository.administration
 
-import br.com.webbudget.domain.entities.configuration.User
+import br.com.webbudget.domain.entities.administration.User
 import br.com.webbudget.infrastructure.repository.DefaultRepository
 import org.springframework.stereotype.Repository
 import java.util.UUID

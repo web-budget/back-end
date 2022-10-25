@@ -1,10 +1,10 @@
 package br.com.webbudget.domain.validators.configuration
 
-import br.com.webbudget.domain.entities.configuration.User
+import br.com.webbudget.domain.entities.administration.User
 import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
 import br.com.webbudget.domain.validators.CreatingValidation
 import br.com.webbudget.domain.validators.UpdatingValidation
-import br.com.webbudget.infrastructure.repository.configuration.UserRepository
+import br.com.webbudget.infrastructure.repository.administration.UserRepository
 import org.springframework.stereotype.Component
 
 @Component

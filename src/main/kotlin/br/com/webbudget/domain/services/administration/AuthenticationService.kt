@@ -1,7 +1,7 @@
-package br.com.webbudget.domain.services.configuration
+package br.com.webbudget.domain.services.administration
 
-import br.com.webbudget.domain.entities.configuration.User
-import br.com.webbudget.infrastructure.repository.configuration.UserRepository
+import br.com.webbudget.domain.entities.administration.User
+import br.com.webbudget.infrastructure.repository.administration.UserRepository
 import com.google.common.collect.ImmutableList
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority

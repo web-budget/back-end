@@ -2,8 +2,8 @@ package br.com.webbudget.application.converters.configuration
 
 import br.com.webbudget.application.converters.MappingConfiguration
 import br.com.webbudget.application.payloads.configuration.UserView
-import br.com.webbudget.domain.entities.configuration.Grant
-import br.com.webbudget.domain.entities.configuration.User
+import br.com.webbudget.domain.entities.administration.Grant
+import br.com.webbudget.domain.entities.administration.User
 import org.mapstruct.Mapper
 import org.mapstruct.Mapping
 import org.mapstruct.Mappings
