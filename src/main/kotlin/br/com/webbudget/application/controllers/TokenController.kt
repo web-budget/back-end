@@ -1,8 +1,10 @@
 package br.com.webbudget.application.controllers
 
 import br.com.webbudget.domain.services.configuration.TokenService
+import br.com.webbudget.infrastructure.repository.configuration.UserRepository
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.Authentication
+import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -10,7 +12,8 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/token")
 class TokenController(
-    private val tokenService: TokenService
+    private val tokenService: TokenService,
+    private val userRepository: UserRepository
 ) {
 
     @PostMapping
@@ -20,12 +23,17 @@ class TokenController(
             .map { it.authority }
             .toList()
 
-        val token = tokenService.generateFor(authentication.name, grantedAuthorities)
+        val username = authentication.name
+        val token = tokenService.generateFor(username, grantedAuthorities)
 
-        return ResponseEntity.ok(TokenResponse(token))
+        val authenticatedUser = userRepository.findByEmail(username) ?: throw UsernameNotFoundException(username)
+
+        return ResponseEntity.ok(TokenResponse(authenticatedUser.name, authenticatedUser.email, token))
     }
 
     data class TokenResponse(
-        val token: String
+        val name: String,
+        val email: String,
+        val token: String,
     )
 }
