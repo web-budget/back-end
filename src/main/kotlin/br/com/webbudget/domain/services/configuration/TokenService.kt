@@ -11,7 +11,7 @@ import java.util.UUID
 @Service
 class TokenService(
     private val jwtEncoder: JwtEncoder,
-    @Value("\${web-budget.jwt.access-token-expiration}")
+    @Value("\${web-budget.jwt.access-token-expiration:2400}")
     private val accessTokenExpiration: Long
 ) {
 

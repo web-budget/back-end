@@ -36,7 +36,6 @@ val testcontainersVersion = "1.17.5"
 val guavaVersion = "31.1-jre"
 val mapstructVersion = "1.5.3.Final"
 val mapstructExtVersion = "0.1.1"
-val auth0Version = "4.1.0"
 val assertJVersion = "3.23.1"
 val mockkVersion = "3.1.1"
 val jsonUnitVersion = "2.36.0"
@@ -52,7 +51,6 @@ dependencies {
 
     // utilities
     implementation("com.google.guava:guava:$guavaVersion")
-    implementation("com.auth0:java-jwt:$auth0Version")
 
     // mapstruct
     kapt("org.mapstruct:mapstruct-processor:$mapstructVersion")
