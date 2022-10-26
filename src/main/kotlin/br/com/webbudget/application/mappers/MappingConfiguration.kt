@@ -1,4 +1,4 @@
-package br.com.webbudget.application.converters
+package br.com.webbudget.application.mappers
 
 import org.mapstruct.MapperConfig
 import org.mapstruct.ReportingPolicy
