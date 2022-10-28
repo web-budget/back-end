@@ -120,7 +120,6 @@ springBoot {
 }
 
 tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
-    this.mainClass.set("br.com.webbudget.ApplicationKt")
     this.archiveFileName.set("back-end.${archiveExtension.get()}")
 }
 
