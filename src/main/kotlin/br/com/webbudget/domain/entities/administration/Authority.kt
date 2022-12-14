@@ -2,9 +2,9 @@ package br.com.webbudget.domain.entities.administration
 
 import br.com.webbudget.domain.entities.PersistentEntity
 import br.com.webbudget.infrastructure.config.DefaultSchemas.ADMINISTRATION
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.Table
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.Table
 
 @Entity
 @Table(name = "authorities", schema = ADMINISTRATION)

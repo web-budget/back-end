@@ -3,9 +3,9 @@ package br.com.webbudget.domain.entities.registration
 import br.com.webbudget.domain.entities.PersistentEntity
 import br.com.webbudget.domain.entities.UpdateSupport
 import br.com.webbudget.infrastructure.config.DefaultSchemas
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.Table
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.Table
 
 @Entity
 @Table(name = "cost_centers", schema = DefaultSchemas.REGISTRATION)

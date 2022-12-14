@@ -16,7 +16,6 @@ import org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import java.lang.RuntimeException
 
 @ExtendWith(MockKExtension::class)
 class CostCenterServiceTest {
@@ -91,7 +90,7 @@ class CostCenterServiceTest {
 
         val toDelete = CostCenter("To delete", true)
 
-        every { costCenterRepository.delete(any()) } just runs
+        every { costCenterRepository.delete(any<CostCenter>()) } just runs
 
         costCenterService.delete(toDelete)
 

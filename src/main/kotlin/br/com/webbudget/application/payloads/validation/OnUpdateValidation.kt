@@ -1,7 +1,7 @@
 package br.com.webbudget.application.payloads.validation
 
 import org.springframework.validation.annotation.Validated
-import javax.validation.groups.Default
+import jakarta.validation.groups.Default
 
 @MustBeDocumented
 @Retention(AnnotationRetention.RUNTIME)

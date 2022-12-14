@@ -4,12 +4,12 @@ import br.com.webbudget.application.payloads.support.SpecificationSupport
 import br.com.webbudget.application.payloads.support.StatusFilter
 import br.com.webbudget.domain.entities.registration.CostCenter
 import java.util.UUID
-import javax.persistence.criteria.CriteriaBuilder
-import javax.persistence.criteria.CriteriaQuery
-import javax.persistence.criteria.Predicate
-import javax.persistence.criteria.Root
-import javax.validation.constraints.NotBlank
-import javax.validation.constraints.Size
+import jakarta.persistence.criteria.CriteriaBuilder
+import jakarta.persistence.criteria.CriteriaQuery
+import jakarta.persistence.criteria.Predicate
+import jakarta.persistence.criteria.Root
+import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.Size
 
 data class CostCenterForm(
     val active: Boolean = true,

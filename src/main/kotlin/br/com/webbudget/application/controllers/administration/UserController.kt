@@ -9,6 +9,7 @@ import br.com.webbudget.application.payloads.validation.OnUpdateValidation
 import br.com.webbudget.domain.exceptions.ResourceNotFoundException
 import br.com.webbudget.domain.services.administration.UserAccountService
 import br.com.webbudget.infrastructure.repository.administration.UserRepository
+import jakarta.validation.constraints.NotBlank
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
@@ -22,8 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
-import java.util.UUID
-import javax.validation.constraints.NotBlank
+import java.util.*
 
 @RestController
 @RequestMapping("/api/administration/users")

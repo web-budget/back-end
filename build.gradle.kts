@@ -2,19 +2,19 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     // spring
-    id("org.springframework.boot") version "2.7.4"
-    id("io.spring.dependency-management") version "1.0.14.RELEASE"
+    id("org.springframework.boot") version "3.0.0"
+    id("io.spring.dependency-management") version "1.1.0"
 
     // detekt
     id("io.gitlab.arturbosch.detekt").version("1.21.0")
 
     // kotlin things
-    kotlin("jvm") version "1.7.20"
-    kotlin("plugin.spring") version "1.7.20"
-    kotlin("plugin.jpa") version "1.7.20"
+    kotlin("jvm") version "1.7.21"
+    kotlin("plugin.spring") version "1.7.21"
+    kotlin("plugin.jpa") version "1.7.21"
 
     // mapstruct
-    kotlin("kapt") version "1.7.20"
+    kotlin("kapt") version "1.7.21"
 }
 
 group = "br.com.webbudget"
@@ -55,9 +55,7 @@ dependencies {
 
     // mapstruct
     kapt("org.mapstruct:mapstruct-processor:$mapstructVersion")
-    kapt("org.mapstruct.extensions.spring:mapstruct-spring-extensions:$mapstructExtVersion")
     implementation("org.mapstruct:mapstruct:$mapstructVersion")
-    implementation("org.mapstruct.extensions.spring:mapstruct-spring-annotations:$mapstructExtVersion")
 
     // dev tools
     developmentOnly("org.springframework.boot:spring-boot-devtools")
@@ -78,11 +76,11 @@ dependencies {
     implementation("org.liquibase:liquibase-core")
 
     // testing
+    testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude("org.mockito", "mockito-core")
         exclude("org.junit.vintage", "junit-vintage-engine")
     }
-    testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.assertj:assertj-core:$assertJVersion")
     testImplementation("com.ninja-squad:springmockk:$mockkVersion")
     testImplementation("net.javacrumbs.json-unit:json-unit-assertj:$jsonUnitVersion")
@@ -100,32 +98,8 @@ dependencyManagement {
     }
 }
 
-kapt {
-    arguments {
-        arg("mapstruct.verbose", "false")
-        arg("mapstruct.suppressGeneratorTimestamp", "true")
-        arg("mapstruct.suppressGeneratorVersionInfoComment", "true")
-    }
-}
-
-springBoot {
-    buildInfo {
-        properties {
-            group = group
-            version = version
-            artifact = "web-budget_backend"
-            name = "webBudget backend application"
-        }
-    }
-}
-
 tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
     this.archiveFileName.set("back-end.${archiveExtension.get()}")
-}
-
-extensions.findByName("buildScan")?.withGroovyBuilder {
-    setProperty("termsOfServiceUrl", "https://gradle.com/terms-of-service")
-    setProperty("termsOfServiceAgree", "yes")
 }
 
 tasks.withType<KotlinCompile> {
@@ -137,4 +111,29 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+extensions.findByName("buildScan")?.withGroovyBuilder {
+    setProperty("termsOfServiceUrl", "https://gradle.com/terms-of-service")
+    setProperty("termsOfServiceAgree", "yes")
+}
+
+kapt {
+    correctErrorTypes = true
+    arguments {
+        arg("mapstruct.verbose", "false")
+        arg("mapstruct.suppressGeneratorTimestamp", "true")
+        arg("mapstruct.suppressGeneratorVersionInfoComment", "true")
+    }
+}
+
+springBoot {
+    buildInfo {
+        properties {
+            group.set(project.group as String)
+            version.set(project.version as String)
+            artifact.set("web-budget_backend")
+            name.set("webBudget backend application")
+        }
+    }
 }

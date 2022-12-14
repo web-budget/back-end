@@ -2,10 +2,10 @@ package br.com.webbudget.domain.entities.administration
 
 import br.com.webbudget.domain.entities.PersistentEntity
 import br.com.webbudget.infrastructure.config.DefaultSchemas.ADMINISTRATION
-import javax.persistence.Entity
-import javax.persistence.JoinColumn
-import javax.persistence.ManyToOne
-import javax.persistence.Table
+import jakarta.persistence.Entity
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
+import jakarta.persistence.Table
 
 @Entity
 @Table(name = "grants", schema = ADMINISTRATION)
