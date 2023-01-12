@@ -4,6 +4,7 @@ import br.com.webbudget.domain.entities.registration.CostCenter
 import br.com.webbudget.domain.services.registration.CostCenterService
 import br.com.webbudget.domain.services.registration.CostCenterValidationService
 import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository
+import br.com.webbudget.utilities.fixture.CostCenterFixture
 import io.mockk.called
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
@@ -16,6 +17,7 @@ import org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import java.util.UUID
 
 @ExtendWith(MockKExtension::class)
 class CostCenterServiceTest {
@@ -32,7 +34,7 @@ class CostCenterServiceTest {
     @Test
     fun `should save when validation pass`() {
 
-        val toCreate = CostCenter("To create", true)
+        val toCreate = CostCenterFixture.create(1L, UUID.randomUUID())
 
         every { costCenterValidationService.validateOnCreate(any()) } just runs
         every { costCenterRepository.save(any()) } returns toCreate
@@ -46,7 +48,7 @@ class CostCenterServiceTest {
     @Test
     fun `should not save when validation fail`() {
 
-        val toCreate = CostCenter("To create", true)
+        val toCreate = CostCenterFixture.create(1L, UUID.randomUUID())
 
         every { costCenterValidationService.validateOnCreate(any()) } throws RuntimeException("Validation fail")
 
@@ -60,7 +62,7 @@ class CostCenterServiceTest {
     @Test
     fun `should update when validation pass`() {
 
-        val toUpdate = CostCenter("To update", true)
+        val toUpdate = CostCenterFixture.create(1L, UUID.randomUUID())
 
         every { costCenterValidationService.validateOnUpdate(any()) } just runs
         every { costCenterRepository.save(any()) } returns toUpdate
@@ -74,7 +76,7 @@ class CostCenterServiceTest {
     @Test
     fun `should not update when validation fail`() {
 
-        val toUpdate = CostCenter("To update", true)
+        val toUpdate = CostCenterFixture.create(1L, UUID.randomUUID())
 
         every { costCenterValidationService.validateOnUpdate(any()) } throws RuntimeException("Validation fail")
 
@@ -88,7 +90,7 @@ class CostCenterServiceTest {
     @Test
     fun `should delete`() {
 
-        val toDelete = CostCenter("To delete", true)
+        val toDelete = CostCenterFixture.create(1L, UUID.randomUUID())
 
         every { costCenterRepository.delete(any<CostCenter>()) } just runs
 
