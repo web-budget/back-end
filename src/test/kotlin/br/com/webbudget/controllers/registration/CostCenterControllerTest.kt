@@ -1,18 +1,30 @@
 package br.com.webbudget.controllers.registration
 
 import br.com.webbudget.BaseControllerIntegrationTest
-import br.com.webbudget.application.payloads.registration.CostCenterView
 import br.com.webbudget.domain.entities.registration.CostCenter
+import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
+import br.com.webbudget.domain.services.registration.CostCenterService
 import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository
 import br.com.webbudget.utilities.Authorities
 import br.com.webbudget.utilities.ResourceAsString
+import br.com.webbudget.utilities.fixture.CostCenterFixture
+import com.ninjasquad.springmockk.MockkBean
+import io.mockk.Runs
+import io.mockk.called
+import io.mockk.confirmVerified
+import io.mockk.every
+import io.mockk.just
+import io.mockk.slot
+import io.mockk.verify
+import net.javacrumbs.jsonunit.assertj.assertThatJson
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.tuple
-import org.hamcrest.Matchers
-import org.hamcrest.Matchers.`is`
-import org.junit.jupiter.api.BeforeEach
+import org.hamcrest.Matchers.containsInAnyOrder
+import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
+import org.springframework.data.jpa.domain.Specification
 import org.springframework.http.MediaType
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt
 import org.springframework.test.web.servlet.delete
@@ -24,13 +36,11 @@ import java.util.UUID
 
 class CostCenterControllerTest : BaseControllerIntegrationTest() {
 
-    @Autowired
-    private lateinit var costCenterRepository: CostCenterRepository
+    @MockkBean
+    private lateinit var costCenterService: CostCenterService
 
-    @BeforeEach
-    fun clearDatabase() {
-        costCenterRepository.deleteAll()
-    }
+    @MockkBean
+    private lateinit var costCenterRepository: CostCenterRepository
 
     @Test
     fun `should require authentication`() {
@@ -42,7 +52,11 @@ class CostCenterControllerTest : BaseControllerIntegrationTest() {
     }
 
     @Test
-    fun `should create and return created`(@ResourceAsString("cost-center/create.json") payload: String) {
+    fun `should call create and return created`(@ResourceAsString("cost-center/create.json") payload: String) {
+
+        val externalId = UUID.randomUUID()
+
+        every { costCenterService.create(any()) } returns externalId
 
         mockMvc.post(ENDPOINT_URL) {
             with(jwt().authorities(Authorities.REGISTRATION))
@@ -50,72 +64,93 @@ class CostCenterControllerTest : BaseControllerIntegrationTest() {
             content = payload
         }.andExpect {
             status { isCreated() }
+        }.andExpect {
+            header {
+                stringValues("Location", "http://localhost$ENDPOINT_URL/$externalId")
+            }
         }
 
-        val found = costCenterRepository.findByNameIgnoreCase("Alimentação")
+        verify(exactly = 1) { costCenterService.create(any()) }
 
-        assertThat(found)
-            .isNotNull
-            .hasFieldOrProperty("id").isNotNull
-            .hasFieldOrProperty("externalId").isNotNull
-            .hasFieldOrPropertyWithValue("active", true)
-            .hasFieldOrPropertyWithValue("name", "Alimentação")
+        confirmVerified(costCenterService)
     }
 
     @Test
-    fun `should update and return success`(@ResourceAsString("cost-center/update.json") payload: String) {
+    fun `should call update and return ok`(@ResourceAsString("cost-center/update.json") payload: String) {
 
-        val created = costCenterRepository.save(CostCenter("To update", true))
+        val externalId = UUID.randomUUID()
+        val expectedCostCenter = CostCenterFixture.create(1L, externalId)
 
-        mockMvc.put("$ENDPOINT_URL/${created.externalId}") {
+        every { costCenterRepository.findByExternalId(externalId) } returns expectedCostCenter
+        every { costCenterService.update(any()) } returns expectedCostCenter
+
+        val jsonResponse = mockMvc.put("$ENDPOINT_URL/$externalId") {
             with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
             content = payload
         }.andExpect {
             status { isOk() }
-        }
+        }.andReturn()
+            .response
+            .contentAsString
 
-        val found = costCenterRepository.findByExternalId(created.externalId!!)
+        assertThatJson(jsonResponse)
+            .isObject
+            .containsEntry("id", expectedCostCenter.externalId.toString())
+            .containsEntry("name", expectedCostCenter.name)
+            .containsEntry("active", expectedCostCenter.active)
+            .containsEntry("description", expectedCostCenter.description)
 
-        assertThat(found)
-            .isNotNull
-            .hasFieldOrPropertyWithValue("active", false)
-            .hasFieldOrPropertyWithValue("name", "Carro")
+        verify(exactly = 1) { costCenterRepository.findByExternalId(externalId) }
+        verify(exactly = 1) { costCenterService.update(any()) }
+
+        confirmVerified(costCenterService, costCenterRepository)
     }
 
     @Test
-    fun `should delete and return success`() {
+    fun `should call delete and return ok`() {
 
-        val created = costCenterRepository.save(CostCenter("To delete", true))
+        val externalId = UUID.randomUUID()
+        val expectedCostCenter = CostCenterFixture.create(1L, externalId)
 
-        mockMvc.delete("$ENDPOINT_URL/${created.externalId}") {
+        every { costCenterRepository.findByExternalId(externalId) } returns expectedCostCenter
+        every { costCenterService.delete(expectedCostCenter) } just Runs
+
+        mockMvc.delete("$ENDPOINT_URL/$externalId") {
             with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isOk() }
         }
 
-        val found = costCenterRepository.findByExternalId(created.externalId!!)
-        assertThat(found).isNull()
+        verify(exactly = 1) { costCenterRepository.findByExternalId(externalId) }
+        verify(exactly = 1) { costCenterService.delete(expectedCostCenter) }
+
+        confirmVerified(costCenterService, costCenterRepository)
     }
 
     @Test
-    fun `should return no content if delete unknown entity`() {
+    fun `should return not found if try to delete unknown cost center`() {
 
-        val randomUuid = UUID.randomUUID()
+        val externalId = UUID.randomUUID()
 
-        mockMvc.delete("$ENDPOINT_URL/$randomUuid") {
+        every { costCenterRepository.findByExternalId(externalId) } returns null
+
+        mockMvc.delete("$ENDPOINT_URL/$externalId") {
             with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
-            status { isNoContent() }
+            status { isNotFound() }
         }
+
+        verify(exactly = 1) { costCenterRepository.findByExternalId(externalId) }
+
+        confirmVerified(costCenterService)
     }
 
     @Test
-    fun `should return unprocessable entity if required fields are not present`(
-        @ResourceAsString("cost-center/invalid.json") payload: String
-    ) {
+    fun `should fail if required fields are not present`(@ResourceAsString("cost-center/invalid.json") payload: String) {
+
         val requiredFields = arrayOf("name")
 
         mockMvc.post(ENDPOINT_URL) {
@@ -125,14 +160,19 @@ class CostCenterControllerTest : BaseControllerIntegrationTest() {
         }.andExpect {
             status { isUnprocessableEntity() }
         }.andExpect {
-            jsonPath("\$.violations[*].property", Matchers.containsInAnyOrder(*requiredFields))
+            jsonPath("\$.violations[*].property", containsInAnyOrder(*requiredFields))
         }
+
+        verify { costCenterService.create(any()) wasNot called }
+
+        confirmVerified(costCenterService)
     }
 
     @Test
     fun `should return conflict if name is duplicated`(@ResourceAsString("cost-center/create.json") payload: String) {
 
-        costCenterRepository.save(CostCenter("Alimentação", true))
+        every { costCenterService.create(any()) } throws
+                DuplicatedPropertyException("cost-center.name", "cost-center.errors.duplicated-name")
 
         mockMvc.post(ENDPOINT_URL) {
             with(jwt().authorities(Authorities.REGISTRATION))
@@ -140,122 +180,112 @@ class CostCenterControllerTest : BaseControllerIntegrationTest() {
             content = payload
         }.andExpect {
             status { isConflict() }
+        }.andExpect {
+            jsonPath("\$.property", equalTo("cost-center.name"))
         }
+
+        verify(exactly = 1) { costCenterService.create(any()) }
+
+        confirmVerified(costCenterService)
     }
 
     @Test
-    fun `should find by external id`() {
+    fun `should call find by id and expect ok`() {
 
-        val created = costCenterRepository.save(CostCenter("To find", true))
+        val externalId = UUID.randomUUID()
+        val expectedCostCenter = CostCenterFixture.create(1L, externalId)
 
-        val result = mockMvc.get("$ENDPOINT_URL/${created.externalId}") {
+        every { costCenterRepository.findByExternalId(externalId) } returns expectedCostCenter
+
+        val jsonResponse = mockMvc.get("$ENDPOINT_URL/$externalId") {
             with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isOk() }
         }.andReturn()
+            .response
+            .contentAsString
 
-        val found = jsonToObject(result.response.contentAsString, CostCenterView::class.java)
+        assertThatJson(jsonResponse)
+            .isObject
+            .containsEntry("name", expectedCostCenter.name)
+            .containsEntry("description", expectedCostCenter.description)
+            .containsEntry("active", expectedCostCenter.active)
+            .containsEntry("id", expectedCostCenter.externalId.toString())
 
-        assertThat(found)
-            .isNotNull
-            .hasFieldOrPropertyWithValue("name", "To find")
-            .hasFieldOrPropertyWithValue("active", true)
+        verify(exactly = 1) { costCenterRepository.findByExternalId(externalId) }
+
+        confirmVerified(costCenterRepository)
     }
 
     @Test
-    fun `should return empty if not found by external id`() {
+    fun `should return not found if cost center does not exists`() {
 
-        val randomUuid = UUID.randomUUID()
+        val externalId = UUID.randomUUID()
 
-        mockMvc.get("$ENDPOINT_URL/$randomUuid") {
+        every { costCenterRepository.findByExternalId(externalId) } returns null
+
+        mockMvc.get("$ENDPOINT_URL/$externalId") {
             with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
-            status { isNoContent() }
+            status { isNotFound() }
         }
+
+        verify(exactly = 1) { costCenterRepository.findByExternalId(externalId) }
+
+        confirmVerified(costCenterRepository)
     }
 
     @Test
-    fun `should find all using pagination`() {
+    fun `should call get paged and using filters`() {
 
-        val toCreate = listOf(
-            CostCenter("Carro", true),
-            CostCenter("Casa", false),
-            CostCenter("Filhos", true),
-            CostCenter("Alimentação", false),
-            CostCenter("Empresa", true),
-            CostCenter("Educação", false)
-        )
-
-        costCenterRepository.saveAll(toCreate)
+        val pageRequest = PageRequest.of(0, 1)
+        val costCEnters = listOf(CostCenterFixture.create(1L, UUID.randomUUID()))
 
         val parameters = LinkedMultiValueMap<String, String>()
 
-        parameters.add("page", "0")
-        parameters.add("size", "2")
-
-        val result = mockMvc.get(ENDPOINT_URL) {
-            with(jwt().authorities(Authorities.REGISTRATION))
-            contentType = MediaType.APPLICATION_JSON
-            params = parameters
-        }.andExpect {
-            status { isOk() }
-        }.andExpect {
-            jsonPath("\$.totalElements", `is`(6))
-            jsonPath("\$.numberOfElements", `is`(2))
-            jsonPath("\$.totalPages", `is`(3))
-            jsonPath("\$.size", `is`(2))
-            jsonPath("\$.empty", `is`(false))
-        }.andReturn()
-
-        val content = jsonToObject(result.response.contentAsString, "/content", CostCenterView::class.java)
-
-        assertThat(content)
-            .hasSize(2)
-            .extracting("name", "active")
-            .containsExactlyInAnyOrder(tuple("Carro", true), tuple("Casa", false))
-    }
-
-    @Test
-    fun `should find using filters`() {
-
-        val toCreate = listOf(
-            CostCenter("Carro", true),
-            CostCenter("Casa", true),
-            CostCenter("Filhos", true),
-        )
-
-        costCenterRepository.saveAll(toCreate)
-
-        val parameters = LinkedMultiValueMap<String, String>()
-
-        parameters.add("page", "0")
-        parameters.add("size", "1")
+        parameters.add("page", pageRequest.pageNumber.toString())
+        parameters.add("size", pageRequest.pageSize.toString())
 
         parameters.add("status", "ACTIVE")
-        parameters.add("filter", "Filhos")
+        parameters.add("filter", "Some filter")
 
-        val result = mockMvc.get(ENDPOINT_URL) {
+        val pageableSlot = slot<Pageable>()
+        val specificationSlot = slot<Specification<CostCenter>>()
+
+        every { costCenterRepository.findAll(capture(specificationSlot), capture(pageableSlot)) } returns
+                PageImpl(costCEnters)
+
+        val jsonResponse = mockMvc.get(ENDPOINT_URL) {
             with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
             params = parameters
         }.andExpect {
             status { isOk() }
-        }.andExpect {
-            jsonPath("\$.totalElements", `is`(1))
-            jsonPath("\$.numberOfElements", `is`(1))
-            jsonPath("\$.totalPages", `is`(1))
-            jsonPath("\$.size", `is`(1))
-            jsonPath("\$.empty", `is`(false))
         }.andReturn()
+            .response
+            .contentAsString
 
-        val users = jsonToObject(result.response.contentAsString, "/content", CostCenterView::class.java)
+        assertThatJson(jsonResponse)
+            .isObject
+            .containsEntry("totalElements", 1)
+            .containsEntry("totalPages", 1)
+            .containsEntry("size", pageRequest.pageSize)
+            .containsEntry("number", pageRequest.pageNumber)
+            .containsEntry("empty", false)
+            .node("content").isArray.isNotEmpty
 
-        assertThat(users)
-            .hasSize(1)
-            .extracting("name", "active")
-            .contains(tuple("Filhos", true))
+        assertThat(pageableSlot.captured)
+            .isNotNull
+            .hasFieldOrPropertyWithValue("size", pageRequest.pageSize)
+            .hasFieldOrPropertyWithValue("page", pageRequest.pageNumber)
+
+        assertThat(specificationSlot.captured).isNotNull
+
+        verify(exactly = 1) { costCenterRepository.findAll(ofType<Specification<CostCenter>>(), ofType<Pageable>()) }
+
+        confirmVerified(costCenterRepository)
     }
 
     companion object {

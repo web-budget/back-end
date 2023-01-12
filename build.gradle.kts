@@ -40,6 +40,7 @@ val assertJVersion = "3.23.1"
 val mockkVersion = "3.1.1"
 val jsonUnitVersion = "2.36.0"
 val awaitilityVersion = "4.2.0"
+val instancioVersion = "2.3.0"
 
 dependencies {
     // spring
@@ -86,6 +87,7 @@ dependencies {
     testImplementation("net.javacrumbs.json-unit:json-unit-assertj:$jsonUnitVersion")
     testImplementation("net.javacrumbs.json-unit:json-unit-spring:$jsonUnitVersion")
     testImplementation("org.awaitility:awaitility:$awaitilityVersion")
+    testImplementation("org.instancio:instancio-junit:$instancioVersion")
 
     // testcontainers
     testImplementation("org.testcontainers:junit-jupiter")

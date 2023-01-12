@@ -24,9 +24,9 @@ class TokenController(
             .toList()
 
         val username = authentication.name
-        val token = tokenService.generateFor(username, grantedAuthorities)
-
         val authenticatedUser = userRepository.findByEmail(username) ?: throw UsernameNotFoundException(username)
+
+        val token = tokenService.generateFor(username, grantedAuthorities)
 
         return ResponseEntity.ok(TokenResponse(authenticatedUser.name, authenticatedUser.email, token))
     }

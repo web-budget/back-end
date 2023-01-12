@@ -6,5 +6,5 @@ import org.springframework.web.bind.annotation.ResponseStatus
 import java.util.UUID
 
 @ResponseBody
-@ResponseStatus(HttpStatus.NO_CONTENT)
+@ResponseStatus(HttpStatus.NOT_FOUND)
 class ResourceNotFoundException(id: UUID) : RuntimeException("Can't find resource with id $id")

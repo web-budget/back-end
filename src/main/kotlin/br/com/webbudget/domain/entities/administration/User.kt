@@ -17,10 +17,10 @@ class User(
     var name: String,
     @field:Column(name = "email", length = 150, nullable = false)
     var email: String,
-    @field:Column(name = "password", nullable = false)
-    var password: String? = null,
     @field:Column(name = "active", nullable = false)
     var active: Boolean,
+    @field:Column(name = "password", nullable = false)
+    var password: String? = null,
     @field:OneToMany(mappedBy = "user", fetch = EAGER, cascade = [REMOVE])
     var grants: List<Grant>? = null
 ) : PersistentEntity<Long>(), UpdateSupport<User> {

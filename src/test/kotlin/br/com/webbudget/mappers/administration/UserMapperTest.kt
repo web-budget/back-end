@@ -1,11 +1,11 @@
 package br.com.webbudget.mappers.administration
 
-import br.com.webbudget.application.mappers.configuration.UserMapperImpl
 import br.com.webbudget.application.mappers.configuration.UserMapper
+import br.com.webbudget.application.mappers.configuration.UserMapperImpl
 import br.com.webbudget.application.payloads.configuration.UserForm
 import br.com.webbudget.domain.entities.administration.Authority
 import br.com.webbudget.domain.entities.administration.Grant
-import br.com.webbudget.domain.entities.administration.User
+import br.com.webbudget.utilities.fixture.UserFixture
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.util.UUID
@@ -34,7 +34,7 @@ class UserMapperTest {
     fun `should map user to user view`() {
 
         val externalId = UUID.randomUUID()
-        val user = User("Someone", "someone@test.com", "s3cr3t", true, listOf())
+        val user = UserFixture.create()
             .apply {
                 this.id = 1L
                 this.externalId = externalId

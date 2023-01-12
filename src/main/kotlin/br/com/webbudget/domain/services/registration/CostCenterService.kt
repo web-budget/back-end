@@ -4,6 +4,7 @@ import br.com.webbudget.domain.entities.registration.CostCenter
 import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.util.UUID
 
 @Service
 @Transactional(readOnly = true)
@@ -13,9 +14,10 @@ class CostCenterService(
 ) {
 
     @Transactional
-    fun create(costCenter: CostCenter): CostCenter {
+    fun create(costCenter: CostCenter): UUID {
         costCenterValidationService.validateOnCreate(costCenter)
-        return costCenterRepository.save(costCenter)
+        val created = costCenterRepository.save(costCenter)
+        return created.externalId!!
     }
 
     @Transactional

@@ -1,4 +1,5 @@
 {
   "name": "Carro",
-  "active": false
+  "active": false,
+  "description": "Updated description"
 }

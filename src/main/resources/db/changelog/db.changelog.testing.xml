@@ -5,14 +5,4 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <changeSet id="back-end#5" author="arthurshakal@gmail.com">
-        <sql>
-            INSERT INTO administration.users (external_id, version, created_on, name, email, password, active)
-            VALUES('e443f25b-2a6f-4a7a-8ecd-054dfba8fd19', 0, current_timestamp, 'Test User',
-            'test@webbudget.com.br', '$2a$11$j9T5R/vIJ/7W6yowvGYff.7r7BhYRKSiZKcDPY4dyF2V.tVYzMN76', true);
-            INSERT INTO administration.users (external_id, version, created_on, name, email, password, active)
-            VALUES('f4032b91-c4ff-4a4c-bf9e-43b28c909e1d', 0, current_timestamp, 'To be deleted',
-            'tobedeleted@webbudget.com.br', '$2a$11$j9T5R/vIJ/7W6yowvGYff.7r7BhYRKSiZKcDPY4dyF2V.tVYzMN76', true);
-        </sql>
-    </changeSet>
 </databaseChangeLog>

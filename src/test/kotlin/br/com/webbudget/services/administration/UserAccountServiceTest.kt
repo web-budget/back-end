@@ -2,12 +2,12 @@ package br.com.webbudget.services.administration
 
 import br.com.webbudget.domain.entities.administration.Authority
 import br.com.webbudget.domain.entities.administration.Grant
-import br.com.webbudget.domain.entities.administration.User
 import br.com.webbudget.domain.services.administration.UserAccountService
 import br.com.webbudget.domain.services.administration.UserAccountValidationService
 import br.com.webbudget.infrastructure.repository.administration.AuthorityRepository
 import br.com.webbudget.infrastructure.repository.administration.GrantRepository
 import br.com.webbudget.infrastructure.repository.administration.UserRepository
+import br.com.webbudget.utilities.fixture.UserFixture
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
@@ -46,7 +46,7 @@ class UserAccountServiceTest {
     @Test
     fun `should save when validation pass`() {
 
-        val toCreate = User("To create", "test@test.com", "secret", true, listOf())
+        val toCreate = UserFixture.create("secret")
 
         val authority = Authority("ROLE")
         val grant = Grant(toCreate, authority)
@@ -69,7 +69,7 @@ class UserAccountServiceTest {
     @Test
     fun `should not save when validation fail`() {
 
-        val toCreate = User("To create", "test@test.com", "secret", true, listOf())
+        val toCreate = UserFixture.create("secret")
 
         every { userAccountValidationService.validateOnCreate(any()) } throws RuntimeException()
 
@@ -89,7 +89,7 @@ class UserAccountServiceTest {
 
         val externalId = UUID.randomUUID()
 
-        val toUpdate = User("To update", "test@test.com", "secret", true, listOf())
+        val toUpdate = UserFixture.create("secret")
             .apply {
                 this.id = 1L
                 this.externalId = externalId
@@ -120,7 +120,7 @@ class UserAccountServiceTest {
 
         val externalId = UUID.randomUUID()
 
-        val toUpdate = User("To update", "test@test.com", "secret", true, listOf())
+        val toUpdate = UserFixture.create("secret")
             .apply {
                 this.id = 1L
                 this.externalId = externalId
@@ -144,7 +144,7 @@ class UserAccountServiceTest {
     @Test
     fun `should delete`() {
 
-        val toDelete = User("To delete", "test@test.com", "secret", true, listOf())
+        val toDelete = UserFixture.create("secret")
 
         every { userRepository.delete(toDelete) } just runs
 
@@ -157,7 +157,7 @@ class UserAccountServiceTest {
     fun `should update password`() {
 
         val newPassword = "new-secret"
-        val toUpdate = User("To update", "test@test.com", "secret", true, listOf())
+        val toUpdate = UserFixture.create("secret")
 
         every { passwordEncoder.encode(newPassword) } returns "n3w-s3cr3t"
         every { userRepository.save(toUpdate) } returns toUpdate
@@ -175,7 +175,7 @@ class UserAccountServiceTest {
     @Test
     fun `should grant for all authorities`() {
 
-        val toCreate = User("To create", "test@test.com", "secret", true, listOf())
+        val toCreate = UserFixture.create("secret")
 
         val authority = Authority("ROLE")
         val grant = Grant(toCreate, authority)
