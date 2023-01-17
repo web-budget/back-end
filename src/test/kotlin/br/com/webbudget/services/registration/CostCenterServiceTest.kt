@@ -1,6 +1,6 @@
 package br.com.webbudget.services.registration
 
-import br.com.webbudget.BaseJPAIntegrationTest
+import br.com.webbudget.BaseIntegrationTest
 import br.com.webbudget.domain.services.registration.CostCenterService
 import br.com.webbudget.domain.services.registration.CostCenterValidationService
 import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository
@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import java.util.UUID
 
-class CostCenterServiceTest : BaseJPAIntegrationTest() {
+class CostCenterServiceTest : BaseIntegrationTest() {
 
     @MockkBean
     private lateinit var costCenterValidationService: CostCenterValidationService
@@ -44,6 +44,7 @@ class CostCenterServiceTest : BaseJPAIntegrationTest() {
         val created = costCenterRepository.findByExternalId(externalId)
 
         assertThat(created)
+            .isNotNull
             .hasFieldOrProperty("id").isNotNull
             .hasFieldOrProperty("externalId").isNotNull
             .hasFieldOrProperty("createdOn").isNotNull
@@ -85,15 +86,18 @@ class CostCenterServiceTest : BaseJPAIntegrationTest() {
 
         val updated = costCenterService.update(toUpdate)
 
-        assertThat(updated.version).isGreaterThan(toUpdate.version)
-
         assertThat(updated)
+            .isNotNull
             .hasFieldOrPropertyWithValue("id", toUpdate.id)
             .hasFieldOrPropertyWithValue("externalId", toUpdate.externalId)
             .hasFieldOrPropertyWithValue("createdOn", toUpdate.createdOn)
             .hasFieldOrPropertyWithValue("active", toUpdate.active)
             .hasFieldOrPropertyWithValue("name", toUpdate.name)
             .hasFieldOrPropertyWithValue("description", toUpdate.description)
+            .extracting {
+                assertThat(it.version)
+                    .isGreaterThan(toUpdate.version)
+            }
     }
 
     @Test

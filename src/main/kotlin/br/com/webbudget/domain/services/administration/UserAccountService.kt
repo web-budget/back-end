@@ -28,11 +28,11 @@ class UserAccountService(
         val password = passwordEncoder.encode(user.password)
         user.password = password
 
-        val saved = userRepository.save(user)
+        val saved = userRepository.persist(user)
 
         authorities.forEach {
             authorityRepository.findByName(it)
-                ?.let { authority -> grantRepository.save(Grant(saved, authority)) }
+                ?.let { authority -> grantRepository.persist(Grant(saved, authority)) }
         }
 
         return saved.externalId!!
@@ -44,15 +44,14 @@ class UserAccountService(
         userAccountValidationService.validateOnUpdate(user)
 
         grantRepository.deleteByUserExternalId(user.externalId!!)
-
-        val saved = userRepository.save(user)
+        val saved = userRepository.update(user)
 
         authorities.forEach {
             authorityRepository.findByName(it)
-                ?.let { authority -> grantRepository.save(Grant(saved, authority)) }
+                ?.let { authority -> grantRepository.persist(Grant(saved, authority)) }
         }
 
-        return userRepository.findByExternalId(saved.externalId!!)!!
+        return saved
     }
 
     @Transactional
@@ -61,7 +60,7 @@ class UserAccountService(
         val newPassword = passwordEncoder.encode(password)
         user.password = newPassword
 
-        userRepository.save(user)
+        userRepository.update(user)
     }
 
     @Transactional

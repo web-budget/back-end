@@ -2,19 +2,19 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     // spring
-    id("org.springframework.boot") version "3.0.0"
+    id("org.springframework.boot") version "3.0.1"
     id("io.spring.dependency-management") version "1.1.0"
 
     // detekt
-    id("io.gitlab.arturbosch.detekt").version("1.21.0")
+    id("io.gitlab.arturbosch.detekt").version("1.22.0")
 
     // kotlin things
-    kotlin("jvm") version "1.7.21"
-    kotlin("plugin.spring") version "1.7.21"
-    kotlin("plugin.jpa") version "1.7.21"
+    kotlin("jvm") version "1.8.0"
+    kotlin("plugin.spring") version "1.8.0"
+    kotlin("plugin.jpa") version "1.8.0"
 
     // mapstruct
-    kotlin("kapt") version "1.7.21"
+    kotlin("kapt") version "1.8.0"
 }
 
 group = "br.com.webbudget"
@@ -40,7 +40,7 @@ val assertJVersion = "3.23.1"
 val mockkVersion = "3.1.1"
 val jsonUnitVersion = "2.36.0"
 val awaitilityVersion = "4.2.0"
-val instancioVersion = "2.3.0"
+val hypersistentceUtilsVersion = "3.1.1"
 
 dependencies {
     // spring
@@ -53,6 +53,7 @@ dependencies {
 
     // utilities
     implementation("com.google.guava:guava:$guavaVersion")
+    implementation("io.hypersistence:hypersistence-utils-hibernate-60:$hypersistentceUtilsVersion")
 
     // mapstruct
     kapt("org.mapstruct:mapstruct-processor:$mapstructVersion")
@@ -87,7 +88,6 @@ dependencies {
     testImplementation("net.javacrumbs.json-unit:json-unit-assertj:$jsonUnitVersion")
     testImplementation("net.javacrumbs.json-unit:json-unit-spring:$jsonUnitVersion")
     testImplementation("org.awaitility:awaitility:$awaitilityVersion")
-    testImplementation("org.instancio:instancio-junit:$instancioVersion")
 
     // testcontainers
     testImplementation("org.testcontainers:junit-jupiter")

@@ -21,7 +21,7 @@ object UserFixture {
 
     fun create(password: String, vararg authorities: String): User {
 
-        val user = User("User", "user@test.com", true, password)
+        val user = User("User", "user@test.com", false, password)
 
         val grants = authorities
             .map { Grant(user, Authority(it)) }

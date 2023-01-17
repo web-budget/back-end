@@ -16,14 +16,14 @@ class CostCenterService(
     @Transactional
     fun create(costCenter: CostCenter): UUID {
         costCenterValidationService.validateOnCreate(costCenter)
-        val created = costCenterRepository.save(costCenter)
+        val created = costCenterRepository.persist(costCenter)
         return created.externalId!!
     }
 
     @Transactional
     fun update(costCenter: CostCenter): CostCenter {
         costCenterValidationService.validateOnUpdate(costCenter)
-        return costCenterRepository.save(costCenter)
+        return costCenterRepository.update(costCenter)
     }
 
     @Transactional
