@@ -46,6 +46,7 @@ class TokenControllerTest : BaseControllerIntegrationTest() {
         val userEmail = "user@test.com"
         val userPassword = "admin"
         val expectedUser = UserFixture.create(passwordEncoder.encode(userPassword), "ADMINISTRATION")
+            .apply { this.active = true }
 
         every { authenticationService.loadUserByUsername(userEmail) } returns AuthenticableUser.from(expectedUser)
         every { userRepository.findByEmail(userEmail) } returns expectedUser
@@ -78,6 +79,7 @@ class TokenControllerTest : BaseControllerIntegrationTest() {
         val userEmail = "user@test.com"
         val userPassword = "admin"
         val expectedUser = UserFixture.create(passwordEncoder.encode(userPassword), "ADMINISTRATION")
+            .apply { this.active = true }
 
         every { authenticationService.loadUserByUsername(userEmail) } returns AuthenticableUser.from(expectedUser)
         every { userRepository.findByEmail(userEmail) } returns expectedUser

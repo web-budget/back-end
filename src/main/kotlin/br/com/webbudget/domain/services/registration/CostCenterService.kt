@@ -23,7 +23,7 @@ class CostCenterService(
     @Transactional
     fun update(costCenter: CostCenter): CostCenter {
         costCenterValidationService.validateOnUpdate(costCenter)
-        return costCenterRepository.update(costCenter)
+        return costCenterRepository.merge(costCenter)
     }
 
     @Transactional
