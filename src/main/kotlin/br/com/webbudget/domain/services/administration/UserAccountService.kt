@@ -43,15 +43,20 @@ class UserAccountService(
 
         userAccountValidationService.validateOnUpdate(user)
 
-        grantRepository.deleteByUserExternalId(user.externalId!!)
-        val saved = userRepository.update(user)
+        val userExternalId = user.externalId!!
+
+        grantRepository.deleteByUserExternalId(userExternalId)
+
+        val saved = userRepository.merge(user)
 
         authorities.forEach {
             authorityRepository.findByName(it)
                 ?.let { authority -> grantRepository.persist(Grant(saved, authority)) }
         }
 
-        return saved
+        val userGrants = grantRepository.findByUserExternalId(userExternalId)
+
+        return saved.apply { this.grants = userGrants }
     }
 
     @Transactional

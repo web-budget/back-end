@@ -11,7 +11,6 @@ import io.mockk.just
 import io.mockk.runs
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
 import org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -27,11 +26,6 @@ class CostCenterServiceTest : BaseIntegrationTest() {
 
     @Autowired
     private lateinit var costCenterRepository: CostCenterRepository
-
-    @BeforeEach
-    fun clearDatabase() {
-        costCenterRepository.deleteAllInBatch()
-    }
 
     @Test
     fun `should save when validation pass`() {

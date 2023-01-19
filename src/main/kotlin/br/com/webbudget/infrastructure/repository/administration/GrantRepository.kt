@@ -9,4 +9,6 @@ import java.util.UUID
 interface GrantRepository : DefaultRepository<Grant> {
 
     fun deleteByUserExternalId(userExternalId: UUID)
+
+    fun findByUserExternalId(userExternalId: UUID): List<Grant>
 }

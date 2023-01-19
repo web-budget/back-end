@@ -1,0 +1,1 @@
+TRUNCATE administration.authorities CASCADE;

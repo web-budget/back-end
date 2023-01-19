@@ -1,0 +1,1 @@
+TRUNCATE administration.grants CASCADE;

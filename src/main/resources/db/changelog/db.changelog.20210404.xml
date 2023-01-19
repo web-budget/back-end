@@ -88,9 +88,12 @@
                                  referencedTableName="authorities" referencedTableSchemaName="administration"
                                  referencedColumnNames="id"/>
 
-        <addUniqueConstraint columnNames="id,external_id" tableName="users" schemaName="administration"/>
-        <addUniqueConstraint columnNames="id,external_id" tableName="grants" schemaName="administration"/>
-        <addUniqueConstraint columnNames="id,external_id" tableName="authorities" schemaName="administration"/>
+        <addUniqueConstraint columnNames="id" tableName="users" schemaName="administration"/>
+        <addUniqueConstraint columnNames="external_id" tableName="users" schemaName="administration"/>
+        <addUniqueConstraint columnNames="id" tableName="grants" schemaName="administration"/>
+        <addUniqueConstraint columnNames="external_id" tableName="grants" schemaName="administration"/>
+        <addUniqueConstraint columnNames="id" tableName="authorities" schemaName="administration"/>
+        <addUniqueConstraint columnNames="external_id" tableName="authorities" schemaName="administration"/>
 
         <!--password means 'admin'-->
         <sql>
@@ -114,11 +117,11 @@
             INSERT INTO administration.grants (external_id, version, created_on, id_user, id_authority)
             VALUES('05e9d984-8bff-4842-9feb-fd2c513a08e8', 0, current_timestamp, 1, 1);
             INSERT INTO administration.grants (external_id, version, created_on, id_user, id_authority)
-            VALUES('05e9d984-8bff-4842-9feb-fd2c513a08e8', 0, current_timestamp, 1, 2);
+            VALUES('d9f90b72-304e-47ea-857f-07dc84b267d7', 0, current_timestamp, 1, 2);
             INSERT INTO administration.grants (external_id, version, created_on, id_user, id_authority)
-            VALUES('05e9d984-8bff-4842-9feb-fd2c513a08e8', 0, current_timestamp, 1, 3);
+            VALUES('bef1ccb8-e5f4-481d-ba7e-d3ea0c6416d0', 0, current_timestamp, 1, 3);
             INSERT INTO administration.grants (external_id, version, created_on, id_user, id_authority)
-            VALUES('05e9d984-8bff-4842-9feb-fd2c513a08e8', 0, current_timestamp, 1, 4);
+            VALUES('a872753e-3dcf-4856-b524-99a0ee36b97c', 0, current_timestamp, 1, 4);
         </sql>
     </changeSet>
 </databaseChangeLog>
