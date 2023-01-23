@@ -1,6 +1,8 @@
 package br.com.webbudget.controllers.registration
 
 import br.com.webbudget.BaseControllerIntegrationTest
+import br.com.webbudget.application.controllers.registration.CostCenterController
+import br.com.webbudget.application.mappers.registration.CostCenterMapperImpl
 import br.com.webbudget.domain.entities.registration.CostCenter
 import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
 import br.com.webbudget.domain.services.registration.CostCenterService
@@ -21,6 +23,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.containsInAnyOrder
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
@@ -34,6 +38,8 @@ import org.springframework.test.web.servlet.put
 import org.springframework.util.LinkedMultiValueMap
 import java.util.UUID
 
+@WebMvcTest(CostCenterController::class)
+@Import(value = [CostCenterMapperImpl::class])
 class CostCenterControllerTest : BaseControllerIntegrationTest() {
 
     @MockkBean

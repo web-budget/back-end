@@ -1,6 +1,8 @@
 package br.com.webbudget.controllers.administration
 
 import br.com.webbudget.BaseControllerIntegrationTest
+import br.com.webbudget.application.controllers.administration.UserController
+import br.com.webbudget.application.mappers.configuration.UserMapperImpl
 import br.com.webbudget.domain.entities.administration.User
 import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
 import br.com.webbudget.domain.services.administration.UserAccountService
@@ -21,6 +23,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.containsInAnyOrder
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
@@ -35,6 +39,8 @@ import org.springframework.test.web.servlet.put
 import org.springframework.util.LinkedMultiValueMap
 import java.util.UUID
 
+@WebMvcTest(UserController::class)
+@Import(value = [UserMapperImpl::class])
 class UserControllerTest : BaseControllerIntegrationTest() {
 
     @MockkBean

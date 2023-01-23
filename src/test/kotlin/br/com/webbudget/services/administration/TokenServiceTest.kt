@@ -23,7 +23,7 @@ class TokenServiceTest {
 
     @BeforeEach
     fun setup() {
-        this.tokenService = TokenService(jwtEncoder, 2400)
+        this.tokenService = TokenService(jwtEncoder, 1)
     }
 
     @Test
@@ -38,7 +38,12 @@ class TokenServiceTest {
 
         every { jwtEncoder.encode(any()) } returns jwt
 
-        val token = tokenService.generateFor("someone", listOf())
+        val token = tokenService.generateFor("someone", listOf("ADMINISTRATION"))
         assertThat(token).isNotBlank
+    }
+
+    @Test
+    fun `should generate a token expiring soon`() {
+        TODO()
     }
 }

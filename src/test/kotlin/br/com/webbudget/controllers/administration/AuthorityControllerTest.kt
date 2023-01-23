@@ -1,6 +1,7 @@
 package br.com.webbudget.controllers.administration
 
 import br.com.webbudget.BaseControllerIntegrationTest
+import br.com.webbudget.application.controllers.administration.AuthorityController
 import br.com.webbudget.infrastructure.repository.administration.AuthorityRepository
 import br.com.webbudget.utilities.Authorities
 import com.ninjasquad.springmockk.MockkBean
@@ -9,10 +10,13 @@ import io.mockk.every
 import io.mockk.verify
 import net.javacrumbs.jsonunit.assertj.assertThatJson
 import org.junit.jupiter.api.Test
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt
 import org.springframework.test.web.servlet.get
 
+
+@WebMvcTest(AuthorityController::class)
 class AuthorityControllerTest : BaseControllerIntegrationTest() {
 
     @MockkBean
