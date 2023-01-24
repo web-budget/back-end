@@ -18,7 +18,7 @@ class User(
     @field:Column(name = "email", length = 150, nullable = false)
     var email: String,
     @field:Column(name = "active", nullable = false)
-    var active: Boolean,
+    var active: Boolean = false,
     @field:Column(name = "password", nullable = false)
     var password: String? = null,
     @field:OneToMany(mappedBy = "user", fetch = EAGER, cascade = [REMOVE])
@@ -27,7 +27,6 @@ class User(
 
     override fun updateFields(source: User): User {
         this.name = source.name
-        this.email = source.email
         this.active = source.active
         return this
     }

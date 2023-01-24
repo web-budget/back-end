@@ -2,9 +2,7 @@ package br.com.webbudget.application.payloads.configuration
 
 import br.com.webbudget.application.payloads.support.SpecificationSupport
 import br.com.webbudget.application.payloads.support.StatusFilter
-import br.com.webbudget.application.payloads.validation.OnCreate
 import br.com.webbudget.domain.entities.administration.User
-import java.util.UUID
 import jakarta.persistence.criteria.CriteriaBuilder
 import jakarta.persistence.criteria.CriteriaQuery
 import jakarta.persistence.criteria.Predicate
@@ -12,16 +10,24 @@ import jakarta.persistence.criteria.Root
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotEmpty
+import java.util.UUID
 
-data class UserForm(
-    val active: Boolean = false,
+data class UserCreateForm(
     @field:NotBlank(message = "users.errors.name-is-blank")
     val name: String,
     @field:Email(message = "users.errors.email-is-invalid")
     @field:NotBlank(message = "users.errors.email-is-blank")
     val email: String,
-    @field:NotBlank(message = "users.errors.password-is-blank", groups = [OnCreate::class])
-    val password: String?,
+    @field:NotBlank(message = "users.errors.password-is-blank")
+    val password: String,
+    @field:NotEmpty(message = "users.errors.empty-authorities")
+    val authorities: List<String>
+)
+
+data class UserUpdateForm(
+    val active: Boolean = false,
+    @field:NotBlank(message = "users.errors.name-is-blank")
+    val name: String,
     @field:NotEmpty(message = "users.errors.empty-authorities")
     val authorities: List<String>
 )

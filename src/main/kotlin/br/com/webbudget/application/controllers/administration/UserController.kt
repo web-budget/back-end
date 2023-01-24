@@ -1,11 +1,10 @@
 package br.com.webbudget.application.controllers.administration
 
 import br.com.webbudget.application.mappers.configuration.UserMapper
+import br.com.webbudget.application.payloads.configuration.UserCreateForm
 import br.com.webbudget.application.payloads.configuration.UserFilter
-import br.com.webbudget.application.payloads.configuration.UserForm
+import br.com.webbudget.application.payloads.configuration.UserUpdateForm
 import br.com.webbudget.application.payloads.configuration.UserView
-import br.com.webbudget.application.payloads.validation.OnCreateValidation
-import br.com.webbudget.application.payloads.validation.OnUpdateValidation
 import br.com.webbudget.domain.exceptions.ResourceNotFoundException
 import br.com.webbudget.domain.services.administration.UserAccountService
 import br.com.webbudget.infrastructure.repository.administration.UserRepository
@@ -13,6 +12,7 @@ import jakarta.validation.constraints.NotBlank
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
@@ -49,10 +49,10 @@ class UserController(
     }
 
     @PostMapping
-    fun create(@RequestBody @OnCreateValidation userForm: UserForm): ResponseEntity<Any> {
+    fun create(@RequestBody @Validated form: UserCreateForm): ResponseEntity<Any> {
 
-        val toCreate = userMapper.map(userForm)
-        val created = userAccountService.createAccount(toCreate, userForm.authorities)
+        val toCreate = userMapper.map(form)
+        val created = userAccountService.createAccount(toCreate, form.authorities)
 
         val location = ServletUriComponentsBuilder.fromCurrentRequest()
             .path("/{id}")
@@ -63,13 +63,13 @@ class UserController(
     }
 
     @PutMapping("/{id}")
-    fun update(@PathVariable id: UUID, @RequestBody @OnUpdateValidation userForm: UserForm): ResponseEntity<UserView> {
+    fun update(@PathVariable id: UUID, @RequestBody @Validated form: UserUpdateForm): ResponseEntity<UserView> {
 
-        val toUpdate = userMapper.map(userForm)
+        val toUpdate = userMapper.map(form)
 
         return userRepository.findByExternalId(id)
             ?.updateFields(toUpdate)
-            ?.let { userAccountService.updateAccount(it, userForm.authorities) }
+            ?.let { userAccountService.updateAccount(it, form.authorities) }
             ?.let { ResponseEntity.ok(userMapper.map(it)) }
             ?: throw ResourceNotFoundException(id)
     }

@@ -2,7 +2,7 @@ package br.com.webbudget.mappers.administration
 
 import br.com.webbudget.application.mappers.configuration.UserMapper
 import br.com.webbudget.application.mappers.configuration.UserMapperImpl
-import br.com.webbudget.application.payloads.configuration.UserForm
+import br.com.webbudget.application.payloads.configuration.UserCreateForm
 import br.com.webbudget.domain.entities.administration.Authority
 import br.com.webbudget.domain.entities.administration.Grant
 import br.com.webbudget.utilities.fixture.UserFixture
@@ -18,16 +18,16 @@ class UserMapperTest {
     fun `should map user form to user`() {
 
         val authorities = listOf("SOMETHING")
-        val userForm = UserForm(false, "Someone", "someone@test.com", "s3cr3t", authorities)
+        val userCreateForm = UserCreateForm("Someone", "someone@test.com", "s3cr3t", authorities)
 
-        val user = userMapper.map(userForm)
+        val user = userMapper.map(userCreateForm)
 
         assertThat(user)
             .isNotNull
-            .hasFieldOrPropertyWithValue("name", userForm.name)
-            .hasFieldOrPropertyWithValue("email", userForm.email)
-            .hasFieldOrPropertyWithValue("active", userForm.active)
-            .hasFieldOrPropertyWithValue("password", userForm.password)
+            .hasFieldOrPropertyWithValue("active", false)
+            .hasFieldOrPropertyWithValue("name", userCreateForm.name)
+            .hasFieldOrPropertyWithValue("email", userCreateForm.email)
+            .hasFieldOrPropertyWithValue("password", userCreateForm.password)
     }
 
     @Test
