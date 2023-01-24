@@ -41,9 +41,4 @@ class TokenServiceTest {
         val token = tokenService.generateFor("someone", listOf("ADMINISTRATION"))
         assertThat(token).isNotBlank
     }
-
-    @Test
-    fun `should generate a token expiring soon`() {
-        TODO()
-    }
 }

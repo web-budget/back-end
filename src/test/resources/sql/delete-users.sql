@@ -1,1 +1,0 @@
-TRUNCATE administration.users CASCADE;

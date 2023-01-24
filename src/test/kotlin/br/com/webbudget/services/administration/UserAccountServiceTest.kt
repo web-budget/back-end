@@ -32,12 +32,7 @@ class UserAccountServiceTest : BaseIntegrationTest() {
     private lateinit var userAccountService: UserAccountService
 
     @Test
-    @Sql(
-        "/sql/delete-grants.sql",
-        "/sql/delete-authorities.sql",
-        "/sql/delete-users.sql",
-        "/sql/create-authorities.sql"
-    )
+    @Sql("/sql/clear-database.sql", "/sql/create-authorities.sql")
     fun `should save when validation pass`() {
 
         val toCreate = User("User", "user@webbudget.com.br", false, "s3cr3t")
@@ -78,12 +73,7 @@ class UserAccountServiceTest : BaseIntegrationTest() {
     }
 
     @Test
-    @Sql(
-        "/sql/delete-grants.sql",
-        "/sql/delete-authorities.sql",
-        "/sql/delete-users.sql",
-        "/sql/create-authorities.sql"
-    )
+    @Sql("/sql/clear-database.sql", "/sql/create-authorities.sql")
     fun `should update when validation pass`() {
 
         val toCreate = User("User", "user@webbudget.com.br", false, "s3cr3t")
@@ -143,12 +133,7 @@ class UserAccountServiceTest : BaseIntegrationTest() {
     }
 
     @Test
-    @Sql(
-        "/sql/delete-grants.sql",
-        "/sql/delete-authorities.sql",
-        "/sql/delete-users.sql",
-        "/sql/create-authorities.sql"
-    )
+    @Sql("/sql/clear-database.sql", "/sql/create-authorities.sql")
     fun `should delete`() {
 
         every { userAccountValidationService.validateOnCreate(any()) } just runs
@@ -164,12 +149,7 @@ class UserAccountServiceTest : BaseIntegrationTest() {
     }
 
     @Test
-    @Sql(
-        "/sql/delete-grants.sql",
-        "/sql/delete-authorities.sql",
-        "/sql/delete-users.sql",
-        "/sql/create-authorities.sql"
-    )
+    @Sql("/sql/clear-database.sql", "/sql/create-authorities.sql")
     fun `should update password`() {
 
         every { userAccountValidationService.validateOnCreate(any()) } just runs
@@ -186,12 +166,7 @@ class UserAccountServiceTest : BaseIntegrationTest() {
     }
 
     @Test
-    @Sql(
-        "/sql/delete-grants.sql",
-        "/sql/delete-authorities.sql",
-        "/sql/delete-users.sql",
-        "/sql/create-authorities.sql"
-    )
+    @Sql("/sql/clear-database.sql", "/sql/create-authorities.sql")
     fun `should grant for all authorities`() {
 
         every { userAccountValidationService.validateOnCreate(any()) } just runs
