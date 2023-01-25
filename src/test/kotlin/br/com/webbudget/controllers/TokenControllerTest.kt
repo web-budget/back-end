@@ -64,6 +64,14 @@ class TokenControllerTest : BaseControllerIntegrationTest() {
         confirmVerified(userRepository, tokenService)
     }
 
+    override fun enableAuthorizationTest(): Boolean {
+        return false
+    }
+
+    override fun getEndpointUrl(): String {
+        return ENDPOINT_URL
+    }
+
     companion object {
         private const val ENDPOINT_URL = "/token"
     }

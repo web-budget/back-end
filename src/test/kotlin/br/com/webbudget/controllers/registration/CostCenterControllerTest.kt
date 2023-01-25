@@ -48,15 +48,6 @@ class CostCenterControllerTest : BaseControllerIntegrationTest() {
     private lateinit var costCenterRepository: CostCenterRepository
 
     @Test
-    fun `should require authentication`() {
-        mockMvc.get(ENDPOINT_URL) {
-            contentType = MediaType.APPLICATION_JSON
-        }.andExpect {
-            status { isUnauthorized() }
-        }
-    }
-
-    @Test
     fun `should call create and return created`(@ResourceAsString("cost-center/create.json") payload: String) {
 
         val externalId = UUID.randomUUID()
@@ -300,6 +291,10 @@ class CostCenterControllerTest : BaseControllerIntegrationTest() {
         verify(exactly = 1) { costCenterRepository.findAll(ofType<Specification<CostCenter>>(), ofType<Pageable>()) }
 
         confirmVerified(costCenterRepository)
+    }
+
+    override fun getEndpointUrl(): String {
+        return ENDPOINT_URL
     }
 
     companion object {

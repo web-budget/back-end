@@ -49,15 +49,6 @@ class UserControllerTest : BaseControllerIntegrationTest() {
     private lateinit var userAccountService: UserAccountService
 
     @Test
-    fun `should require authentication`() {
-        mockMvc.get(ENDPOINT_URL) {
-            contentType = MediaType.APPLICATION_JSON
-        }.andExpect {
-            status { isUnauthorized() }
-        }
-    }
-
-    @Test
     fun `should call account creation and return created`(@ResourceAsString("user/create.json") payload: String) {
 
         val externalId = UUID.randomUUID()
@@ -329,6 +320,10 @@ class UserControllerTest : BaseControllerIntegrationTest() {
         verify(exactly = 1) { userRepository.findAll(ofType<Specification<User>>(), ofType<Pageable>()) }
 
         confirmVerified(userRepository)
+    }
+
+    override fun getEndpointUrl(): String {
+        return ENDPOINT_URL
     }
 
     companion object {
