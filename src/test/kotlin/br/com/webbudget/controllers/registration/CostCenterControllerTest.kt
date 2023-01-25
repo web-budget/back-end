@@ -154,7 +154,9 @@ class CostCenterControllerTest : BaseControllerIntegrationTest() {
     }
 
     @Test
-    fun `should fail if required fields are not present`(@ResourceAsString("cost-center/invalid.json") payload: String) {
+    fun `should fail if required fields are not present`(
+        @ResourceAsString("cost-center/invalid.json") payload: String
+    ) {
 
         val requiredEntries = mapOf("name" to "cost-center.errors.name-is-blank")
 

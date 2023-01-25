@@ -9,7 +9,7 @@ import org.springframework.test.web.servlet.MockMvc
 
 @ActiveProfiles("test")
 @ExtendWith(MockKExtension::class, ResourceAsStringResolver::class)
-abstract class BaseControllerIntegrationTest {
+open class BaseControllerIntegrationTest {
 
     @Autowired
     protected lateinit var mockMvc: MockMvc
