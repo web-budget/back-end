@@ -39,7 +39,7 @@ class UserAccountEmailValidatorTest : BaseIntegrationTest() {
 
         assertThatThrownBy { userAccountEmailValidator.validate(toValidate) }
             .isInstanceOf(DuplicatedPropertyException::class.java)
-            .hasMessage("user.email")
+            .hasMessage("users.errors.duplicated-email")
     }
 
     @Test

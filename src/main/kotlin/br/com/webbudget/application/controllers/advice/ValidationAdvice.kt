@@ -1,52 +1,64 @@
 package br.com.webbudget.application.controllers.advice
 
-import br.com.webbudget.application.payloads.validation.ValidationError
-import br.com.webbudget.application.payloads.validation.Violation
-import br.com.webbudget.domain.exceptions.BusinessException
 import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
+import jakarta.validation.ConstraintViolationException
 import org.springframework.http.HttpStatus
+import org.springframework.http.ProblemDetail
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
-import org.springframework.web.bind.annotation.ResponseBody
-import org.springframework.web.bind.annotation.ResponseStatus
-import jakarta.validation.ConstraintViolationException
 
 @ControllerAdvice
 class ValidationAdvice {
 
-    @ResponseBody
-    @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(DuplicatedPropertyException::class)
-    fun handle(ex: BusinessException): Violation {
-        return Violation(ex.message!!, ex.detail) // FIXME remove the assert to not null
+    fun handle(ex: DuplicatedPropertyException): ProblemDetail {
+
+        val problemDetail = ProblemDetail.forStatusAndDetail(
+            HttpStatus.CONFLICT, "Other resource is using the same property value"
+        )
+
+        problemDetail.setProperty("error", ex.message!!)
+        problemDetail.setProperty("property", ex.property)
+
+        return problemDetail
     }
 
-    @ResponseBody
-    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     @ExceptionHandler(MethodArgumentNotValidException::class)
-    fun handle(ex: MethodArgumentNotValidException): ValidationError {
+    fun handle(ex: MethodArgumentNotValidException): ProblemDetail {
 
-        val violations = mutableListOf<Violation>()
-
+        val violations = mutableMapOf<String, String?>()
         for (error in ex.bindingResult.fieldErrors) {
-            violations.add(Violation(error.field, error.defaultMessage))
+            violations[error.field] = error.defaultMessage
         }
 
-        return ValidationError(violations)
+        val problemDetail = ProblemDetail.forStatusAndDetail(
+            HttpStatus.UNPROCESSABLE_ENTITY,
+            "Some fields are missing or invalid"
+        )
+
+        problemDetail.title = "Unprocessable payload"
+        problemDetail.setProperty("violations", violations)
+
+        return problemDetail
     }
 
-    @ResponseBody
-    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     @ExceptionHandler(ConstraintViolationException::class)
-    fun handle(ex: ConstraintViolationException): ValidationError {
+    fun handle(ex: ConstraintViolationException): ProblemDetail {
 
-        val violations = mutableListOf<Violation>()
-
-        for (constraintViolation in ex.constraintViolations) {
-            violations.add(Violation(constraintViolation.propertyPath.toString(), constraintViolation.message))
+        val violations = mutableMapOf<String, String?>()
+        for (violation in ex.constraintViolations) {
+            violations[violation.propertyPath.toString()] = violation.message
         }
 
-        return ValidationError(violations)
+        val problemDetail = ProblemDetail.forStatusAndDetail(
+            HttpStatus.UNPROCESSABLE_ENTITY,
+            "Some fields are missing or invalid"
+        )
+
+        problemDetail.title = "Unprocessable paylod"
+        problemDetail.setProperty("violations", violations)
+
+        return problemDetail
     }
 }

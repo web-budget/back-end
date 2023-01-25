@@ -20,7 +20,6 @@ import io.mockk.slot
 import io.mockk.verify
 import net.javacrumbs.jsonunit.assertj.assertThatJson
 import org.assertj.core.api.Assertions.assertThat
-import org.hamcrest.Matchers.containsInAnyOrder
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -85,17 +84,28 @@ class UserControllerTest : BaseControllerIntegrationTest() {
     @Test
     fun `should fail if required fields are not present`(@ResourceAsString("user/invalid.json") payload: String) {
 
-        val requiredFields = arrayOf("name", "email", "password", "authorities")
+        val requiredEntries = mapOf(
+            "name" to "users.errors.name-is-blank",
+            "email" to "users.errors.email-is-blank",
+            "password" to "users.errors.password-is-blank",
+            "authorities" to "users.errors.empty-authorities"
+        )
 
-        mockMvc.post(ENDPOINT_URL) {
+        val jsonResponse = mockMvc.post(ENDPOINT_URL) {
             with(jwt().authorities(Authorities.ADMINISTRATION))
             contentType = MediaType.APPLICATION_JSON
             content = payload
         }.andExpect {
             status { isUnprocessableEntity() }
-        }.andExpect {
-            jsonPath("\$.violations[*].property", containsInAnyOrder(*requiredFields))
-        }
+        }.andReturn()
+            .response
+            .contentAsString
+
+        assertThatJson(jsonResponse)
+            .node("violations")
+            .isObject
+            .hasSize(requiredEntries.size)
+            .containsExactlyInAnyOrderEntriesOf(requiredEntries)
 
         verify { userAccountService.createAccount(any(), any()) wasNot called }
 
@@ -163,7 +173,7 @@ class UserControllerTest : BaseControllerIntegrationTest() {
     fun `should get conflict if e-mail is duplicated`(@ResourceAsString("user/create.json") payload: String) {
 
         every { userAccountService.createAccount(any(), any()) } throws
-                DuplicatedPropertyException("user.email", "users.errors.duplicated-email")
+                DuplicatedPropertyException("users.errors.duplicated-email", "user.email")
 
         mockMvc.post(ENDPOINT_URL) {
             with(jwt().authorities(Authorities.ADMINISTRATION))
@@ -172,6 +182,7 @@ class UserControllerTest : BaseControllerIntegrationTest() {
         }.andExpect {
             status { isConflict() }
         }.andExpect {
+            jsonPath("\$.error", equalTo("users.errors.duplicated-email"))
             jsonPath("\$.property", equalTo("user.email"))
         }
 

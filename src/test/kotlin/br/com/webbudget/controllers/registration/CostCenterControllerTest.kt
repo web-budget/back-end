@@ -20,7 +20,6 @@ import io.mockk.slot
 import io.mockk.verify
 import net.javacrumbs.jsonunit.assertj.assertThatJson
 import org.assertj.core.api.Assertions.assertThat
-import org.hamcrest.Matchers.containsInAnyOrder
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -157,17 +156,23 @@ class CostCenterControllerTest : BaseControllerIntegrationTest() {
     @Test
     fun `should fail if required fields are not present`(@ResourceAsString("cost-center/invalid.json") payload: String) {
 
-        val requiredFields = arrayOf("name")
+        val requiredEntries = mapOf("name" to "cost-center.errors.name-is-blank")
 
-        mockMvc.post(ENDPOINT_URL) {
+        val jsonResponse = mockMvc.post(ENDPOINT_URL) {
             with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
             content = payload
         }.andExpect {
             status { isUnprocessableEntity() }
-        }.andExpect {
-            jsonPath("\$.violations[*].property", containsInAnyOrder(*requiredFields))
-        }
+        }.andReturn()
+            .response
+            .contentAsString
+
+        assertThatJson(jsonResponse)
+            .node("violations")
+            .isObject
+            .hasSize(requiredEntries.size)
+            .containsExactlyInAnyOrderEntriesOf(requiredEntries)
 
         verify { costCenterService.create(any()) wasNot called }
 
@@ -178,7 +183,7 @@ class CostCenterControllerTest : BaseControllerIntegrationTest() {
     fun `should return conflict if name is duplicated`(@ResourceAsString("cost-center/create.json") payload: String) {
 
         every { costCenterService.create(any()) } throws
-                DuplicatedPropertyException("cost-center.name", "cost-center.errors.duplicated-name")
+                DuplicatedPropertyException("cost-center.errors.duplicated-name", "cost-center.name")
 
         mockMvc.post(ENDPOINT_URL) {
             with(jwt().authorities(Authorities.REGISTRATION))
@@ -188,6 +193,7 @@ class CostCenterControllerTest : BaseControllerIntegrationTest() {
             status { isConflict() }
         }.andExpect {
             jsonPath("\$.property", equalTo("cost-center.name"))
+            jsonPath("\$.error", equalTo("cost-center.errors.duplicated-name"))
         }
 
         verify(exactly = 1) { costCenterService.create(any()) }

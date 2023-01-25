@@ -1,3 +1,3 @@
 package br.com.webbudget.domain.exceptions
 
-class DuplicatedPropertyException(message: String, detail: String) : BusinessException(message, detail)
+open class DuplicatedPropertyException(message: String, val property: String) : RuntimeException(message)
