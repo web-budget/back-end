@@ -27,7 +27,7 @@ class UserAccountEmailValidatorTest : BaseIntegrationTest() {
     @Test
     fun `should fail when duplicated email`() {
 
-        val duplicated = User("Duplicated", "test@test.com", false)
+        val duplicated = User(false, "Duplicated", "test@test.com")
             .apply {
                 this.id = 1L
                 this.externalId = UUID.randomUUID()
@@ -35,7 +35,7 @@ class UserAccountEmailValidatorTest : BaseIntegrationTest() {
 
         every { userRepository.findByEmail("test@test.com") } returns duplicated
 
-        val toValidate = User("Duplicated", "test@test.com", false)
+        val toValidate = User(false, "Duplicated", "test@test.com")
 
         assertThatThrownBy { userAccountEmailValidator.validate(toValidate) }
             .isInstanceOf(DuplicatedPropertyException::class.java)
@@ -47,7 +47,7 @@ class UserAccountEmailValidatorTest : BaseIntegrationTest() {
 
         val externalId = UUID.randomUUID()
 
-        val notDuplicated = User("Not Duplicated", "test@test.com", false)
+        val notDuplicated = User(false, "Not Duplicated", "test@test.com")
             .apply {
                 this.id = 1L
                 this.externalId = externalId

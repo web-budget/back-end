@@ -119,7 +119,9 @@ class UserControllerTest : BaseControllerIntegrationTest() {
             content = payload
         }.andExpect {
             status { isOk() }
-        }.andReturn().response.contentAsString
+        }.andReturn()
+            .response
+            .contentAsString
 
         assertThatJson(jsonResponse)
             .isObject

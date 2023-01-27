@@ -28,7 +28,7 @@ class TokenController(
 
         val token = tokenService.generateFor(username, grantedAuthorities)
 
-        return ResponseEntity.ok(TokenResponse(authenticatedUser.name, authenticatedUser.email, token))
+        return ResponseEntity.ok(TokenResponse(authenticatedUser.name, authenticatedUser.email!!, token))
     }
 
     data class TokenResponse(

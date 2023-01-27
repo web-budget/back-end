@@ -13,12 +13,12 @@ import jakarta.persistence.Table
 @Entity
 @Table(name = "users", schema = ADMINISTRATION)
 class User(
+    @field:Column(name = "active", nullable = false)
+    var active: Boolean = false,
     @field:Column(name = "name", length = 150, nullable = false)
     var name: String,
     @field:Column(name = "email", length = 150, nullable = false)
-    var email: String,
-    @field:Column(name = "active", nullable = false)
-    var active: Boolean = false,
+    var email: String? = null,
     @field:Column(name = "password", nullable = false)
     var password: String? = null,
     @field:OneToMany(mappedBy = "user", fetch = EAGER, cascade = [REMOVE])

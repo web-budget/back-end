@@ -35,7 +35,7 @@ class UserAccountServiceTest : BaseIntegrationTest() {
     @Sql("/sql/clear-database.sql", "/sql/create-authorities.sql")
     fun `should save when validation pass`() {
 
-        val toCreate = User("User", "user@webbudget.com.br", false, "s3cr3t")
+        val toCreate = User(false, "User", "user@webbudget.com.br", "s3cr3t")
 
         every { userAccountValidationService.validateOnCreate(any()) } just runs
 
@@ -63,7 +63,7 @@ class UserAccountServiceTest : BaseIntegrationTest() {
     @Test
     fun `should not save when validation fail`() {
 
-        val toCreate = User("User", "user@webbudget.com.br", false, "s3cr3t")
+        val toCreate = User(false, "User", "user@webbudget.com.br", "s3cr3t")
 
         every { userAccountValidationService.validateOnCreate(any()) } throws
                 RuntimeException("Ops, something went wrong!")
@@ -76,7 +76,7 @@ class UserAccountServiceTest : BaseIntegrationTest() {
     @Sql("/sql/clear-database.sql", "/sql/create-authorities.sql")
     fun `should update when validation pass`() {
 
-        val toCreate = User("User", "user@webbudget.com.br", false, "s3cr3t")
+        val toCreate = User(false, "User", "user@webbudget.com.br", "s3cr3t")
 
         every { userAccountValidationService.validateOnCreate(any()) } just runs
         every { userAccountValidationService.validateOnUpdate(any()) } just runs
@@ -119,7 +119,7 @@ class UserAccountServiceTest : BaseIntegrationTest() {
     @Test
     fun `should not update when validation fail`() {
 
-        val toUpdate = User("User", "user@webbudget.com.br", false, "s3cr3t")
+        val toUpdate = User(false, "User", "user@webbudget.com.br", "s3cr3t")
             .apply {
                 this.id = 1L
                 this.externalId = UUID.randomUUID()
@@ -138,7 +138,7 @@ class UserAccountServiceTest : BaseIntegrationTest() {
 
         every { userAccountValidationService.validateOnCreate(any()) } just runs
 
-        val toCreate = User("User", "user@webbudget.com.br", false, "s3cr3t")
+        val toCreate = User(false, "User", "user@webbudget.com.br", "s3cr3t")
         val externalId = userAccountService.createAccount(toCreate, listOf("ANY_AUTHORITY"))
 
         val toDelete = userRepository.findByExternalId(externalId)
@@ -155,7 +155,7 @@ class UserAccountServiceTest : BaseIntegrationTest() {
         every { userAccountValidationService.validateOnCreate(any()) } just runs
 
         val newPassword = "new-secret"
-        val toCreate = User("User", "user@webbudget.com.br", false, "s3cr3t")
+        val toCreate = User(false, "User", "user@webbudget.com.br", "s3cr3t")
         val externalId = userAccountService.createAccount(toCreate, listOf("ANY_AUTHORITY"))
 
         val toUpdate = userRepository.findByExternalId(externalId)!!
@@ -171,7 +171,7 @@ class UserAccountServiceTest : BaseIntegrationTest() {
 
         every { userAccountValidationService.validateOnCreate(any()) } just runs
 
-        val toCreate = User("User", "user@webbudget.com.br", false, "s3cr3t")
+        val toCreate = User(false, "User", "user@webbudget.com.br", "s3cr3t")
         val authorities = listOf("SOME_AUTHORITY", "ANY_AUTHORITY", "ANY_OTHER_AUTHORITY")
 
         val externalId = userAccountService.createAccount(toCreate, authorities)
