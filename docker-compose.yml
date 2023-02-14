@@ -3,7 +3,7 @@ version: "3.7"
 services:
   postgres:
     container_name: wb-database
-    image: postgres:13-alpine
+    image: postgres:15-alpine
     ports:
       - "5433:5432"
     environment:

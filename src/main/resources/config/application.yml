@@ -7,18 +7,12 @@ spring:
     username: sa_webbudget
     password: sa_webbudget
     hikari.pool-name: ${spring.application.name}_pool
-    type: com.zaxxer.hikari.HikariDataSource
-    driver-class-name: org.postgresql.Driver
     hikari.maximum-pool-size: 10
 
   jpa:
     hibernate:
       ddl-auto: validate
-    show-sql: false
     open-in-view: false
-    properties:
-      hibernate:
-        hibernate.dialect: org.hibernate.dialect.PostgreSQL10Dialect
 
   jackson:
     default-property-inclusion: non_null
@@ -36,7 +30,6 @@ spring:
     port: ${mail.port}
     username: ${mail.user}
     password: ${mail.password}
-    default-encoding: UTF-8
     properties:
       mail.transport.protocol: smtp
       mail.smtp.auth: true
@@ -45,11 +38,6 @@ spring:
 
 server:
   port: 8085
-  servlet:
-    encoding:
-      enabled: true
-      force: true
-      charset: UTF-8
 
 management:
   endpoints:
@@ -80,5 +68,6 @@ logging:
     org.springframework.context.support: INFO
 
 web-budget:
+  frontend-url: "http://localhost:8080"
   jwt:
     access-token-expiration: 2400 # seconds

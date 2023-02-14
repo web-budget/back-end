@@ -1,21 +1,26 @@
 [![build](https://github.com/web-budget/back-end/actions/workflows/gradle.yml/badge.svg)](https://github.com/web-budget/back-end/actions/workflows/gradle.yml)
 # webBudget back-end
 
-Welcome to the webBudget repository! Here you will find the back-end application responsible for all the API's used by 
-the current web interface and a future mobile app.
+Welcome to the back-end application for webBudget project!
+
+The project is based on:
+
+- Kotlin 1.8
+- Spring Boot 3
+- Postgres 15
+- Testcontainers
 
 ## Project setup
 
-Unlike the older versions of webBudget, now we use Kotlin and let Java just for the runtime with the JVM. If you are not 
-familiar with the language, don't worry! If you are a good Java developer, or an expert in script languages like 
-TypeScript, should be quite easy to understand and work with Kotlin. 
+If you are familiar with Java projects using maven, there is nothing too different here. The project is using Gradle as
+build tool and Kotlin will compile using it.
 
-> Before we start, make sure you have [Docker](https://docs.docker.com/get-docker/) in you system, the project makes use 
-> of it, our dev config is in a docker-compose file and our tests run inside a [TestContainers](https://www.testcontainers.org/) environment 
+> Quick note before start: your [docker](https://docs.docker.com/get-docker/) environment is running? Since we use 
+> testcontainers to run the tests and also do develop things in the project, is required to have a docker isntance running.
 
-After having cloned the project repository and assuming that you are already running your docker environment, run:
+Clone the project, and:
 
-1. `gradlew clean build` 
+`gradlew clean build` 
 
 This will clean (older builds), run [Detekt](https://detekt.github.io/detekt/), run some automated tests, and compile 
 the project. If everything goes well, you will see a message of _build success_ at the end of the process.
@@ -24,35 +29,24 @@ To just lint the project and check if the code is compliant with our Detekt rule
 run it should fix some simple problems, at the second run only the ones that require your manual intervention should be
 reported.
 
-If you plan to develop in the project, after cloning it, go to the folder named _docker_ and run this command:
+If you plan to develop in the project, after cloning it, go in the root of the project, run this command:
 
-2. `docker compose -p web-budget up`
+`docker compose -p web-budget up`
 
-It should create an instance of the PostgreSQL database and Redis (used here for cache) inside the docker runtime. 
-Everything will be exposed at those ports: _5433_ for postgres and _6379_ for redis.
-
-After that you just need to import the project in your favorite IDE and start coding.
+It should start some required services to run the project locally and after that you just need to import the project in 
+your favorite IDE and start coding.
 
 > Since this is a Kotlin project is highly recommended to use IntelliJ IDEA for development, if you don't have
 > it, please click [here](https://www.jetbrains.com/?from=webBudget) to download.
 
-## Tech stack
-
-- Kotlin 1.6
-- Spring Boot 2.6
-- PostgreSQL 13
-- Redis 6
-
 ## FAQ
 
-Questions? We try to answer some of them here:
+General questions about the project:
 
-1. Why separate back-end from front-end?
-> The answer is simple: flexibility and to let people who don't know about the front-end stuff work where they are good 
-> and productive without having to deal with things they didn't know/want
-
-2. Why changing from Java to Kotlin
-> Future! I believe in Kotlin being the future of Java or something very close to this. A lot of problems and pains that 
-> we used to have with Java are solved in Kotlin, and the most important: we don't need lombok anymore.
-> Jokes a part, of course Kotlin brings a lot of new things and perspectives to the JVM ecosystem and people around it 
-> are putting a lot of efforts to make Kotlin good and stable as Java is. 
+- **Why separate front-end and back-end?** Basically because this will make people more confortable to develop inside the
+  project, not everyone are able to work in big monolith full of files and with trick configurations to deal with. Doing
+  like this will help beginners searching for a cool project to start with some contributions.
+- **How can I start contributing?** You can start by looking to the [project board here](https://github.com/orgs/web-budget/projects/3/views/1)!
+- **Why not stay with Java?** For me Kotlin is more complete in terms of functional programming if compared to Java. This 
+makes it better? Ofcourse not, but is not possible to ignore the fact that Kotlin has a much more interesting toolset if 
+compared to his "old brother".
