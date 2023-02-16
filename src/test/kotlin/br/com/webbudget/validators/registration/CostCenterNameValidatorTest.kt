@@ -41,7 +41,7 @@ class CostCenterNameValidatorTest {
 
         assertThatThrownBy { costCenterNameValidator.validate(toValidate) }
             .isInstanceOf(DuplicatedPropertyException::class.java)
-            .hasMessage("cost-center.name")
+            .hasMessage("cost-center.errors.duplicated-name")
 
         verify(exactly = 1) { costCenterRepository.findByNameIgnoreCase("Duplicated") }
     }

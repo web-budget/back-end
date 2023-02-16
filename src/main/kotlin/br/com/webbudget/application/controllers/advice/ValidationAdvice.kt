@@ -27,9 +27,9 @@ class ValidationAdvice {
     @ExceptionHandler(MethodArgumentNotValidException::class)
     fun handle(ex: MethodArgumentNotValidException): ProblemDetail {
 
-        val violations = mutableMapOf<String, String?>()
+        val errors = mutableMapOf<String, String?>()
         for (error in ex.bindingResult.fieldErrors) {
-            violations[error.field] = error.defaultMessage
+            errors[error.field] = error.defaultMessage
         }
 
         val problemDetail = ProblemDetail.forStatusAndDetail(
@@ -38,7 +38,7 @@ class ValidationAdvice {
         )
 
         problemDetail.title = "Unprocessable payload"
-        problemDetail.setProperty("violations", violations)
+        problemDetail.setProperty(ERRORS_PROPERTY, errors)
 
         return problemDetail
     }
@@ -46,9 +46,9 @@ class ValidationAdvice {
     @ExceptionHandler(ConstraintViolationException::class)
     fun handle(ex: ConstraintViolationException): ProblemDetail {
 
-        val violations = mutableMapOf<String, String?>()
+        val errors = mutableMapOf<String, String?>()
         for (violation in ex.constraintViolations) {
-            violations[violation.propertyPath.toString()] = violation.message
+            errors[violation.propertyPath.toString()] = violation.message
         }
 
         val problemDetail = ProblemDetail.forStatusAndDetail(
@@ -57,8 +57,12 @@ class ValidationAdvice {
         )
 
         problemDetail.title = "Unprocessable paylod"
-        problemDetail.setProperty("violations", violations)
+        problemDetail.setProperty(ERRORS_PROPERTY, errors)
 
         return problemDetail
+    }
+
+    companion object {
+        private const val ERRORS_PROPERTY = "errors"
     }
 }
