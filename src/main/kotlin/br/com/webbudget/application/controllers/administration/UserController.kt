@@ -1,10 +1,10 @@
 package br.com.webbudget.application.controllers.administration
 
 import br.com.webbudget.application.mappers.configuration.UserMapper
-import br.com.webbudget.application.payloads.configuration.UserCreateForm
-import br.com.webbudget.application.payloads.configuration.UserFilter
-import br.com.webbudget.application.payloads.configuration.UserUpdateForm
-import br.com.webbudget.application.payloads.configuration.UserView
+import br.com.webbudget.application.payloads.administration.UserCreateForm
+import br.com.webbudget.application.payloads.administration.UserFilter
+import br.com.webbudget.application.payloads.administration.UserUpdateForm
+import br.com.webbudget.application.payloads.administration.UserView
 import br.com.webbudget.domain.exceptions.ResourceNotFoundException
 import br.com.webbudget.domain.services.administration.UserAccountService
 import br.com.webbudget.infrastructure.repository.administration.UserRepository

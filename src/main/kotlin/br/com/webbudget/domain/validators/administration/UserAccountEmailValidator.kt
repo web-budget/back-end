@@ -1,4 +1,4 @@
-package br.com.webbudget.domain.validators.configuration
+package br.com.webbudget.domain.validators.administration
 
 import br.com.webbudget.domain.entities.administration.User
 import br.com.webbudget.domain.exceptions.DuplicatedPropertyException

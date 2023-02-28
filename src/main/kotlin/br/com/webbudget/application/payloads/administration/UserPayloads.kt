@@ -1,7 +1,7 @@
-package br.com.webbudget.application.payloads.configuration
+package br.com.webbudget.application.payloads.administration
 
-import br.com.webbudget.application.payloads.support.SpecificationSupport
-import br.com.webbudget.application.payloads.support.StatusFilter
+import br.com.webbudget.application.payloads.SpecificationSupport
+import br.com.webbudget.application.payloads.StatusFilter
 import br.com.webbudget.domain.entities.administration.User
 import jakarta.persistence.criteria.CriteriaBuilder
 import jakarta.persistence.criteria.CriteriaQuery

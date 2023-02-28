@@ -2,7 +2,7 @@ package br.com.webbudget.mappers.administration
 
 import br.com.webbudget.application.mappers.configuration.UserMapper
 import br.com.webbudget.application.mappers.configuration.UserMapperImpl
-import br.com.webbudget.application.payloads.configuration.UserCreateForm
+import br.com.webbudget.application.payloads.administration.UserCreateForm
 import br.com.webbudget.domain.entities.administration.Authority
 import br.com.webbudget.domain.entities.administration.Grant
 import br.com.webbudget.utilities.fixture.UserFixture

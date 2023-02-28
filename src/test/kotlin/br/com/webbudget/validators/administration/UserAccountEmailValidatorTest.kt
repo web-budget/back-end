@@ -3,7 +3,7 @@ package br.com.webbudget.validators.administration
 import br.com.webbudget.BaseIntegrationTest
 import br.com.webbudget.domain.entities.administration.User
 import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
-import br.com.webbudget.domain.validators.configuration.UserAccountEmailValidator
+import br.com.webbudget.domain.validators.administration.UserAccountEmailValidator
 import br.com.webbudget.infrastructure.repository.administration.UserRepository
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs

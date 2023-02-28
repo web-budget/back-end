@@ -1,4 +1,4 @@
-package br.com.webbudget.application.payloads.support
+package br.com.webbudget.application.payloads
 
 import org.springframework.data.jpa.domain.Specification
 import jakarta.persistence.criteria.CriteriaBuilder

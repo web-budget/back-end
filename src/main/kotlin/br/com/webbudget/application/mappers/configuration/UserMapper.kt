@@ -1,9 +1,9 @@
 package br.com.webbudget.application.mappers.configuration
 
 import br.com.webbudget.application.mappers.MappingConfiguration
-import br.com.webbudget.application.payloads.configuration.UserCreateForm
-import br.com.webbudget.application.payloads.configuration.UserUpdateForm
-import br.com.webbudget.application.payloads.configuration.UserView
+import br.com.webbudget.application.payloads.administration.UserCreateForm
+import br.com.webbudget.application.payloads.administration.UserUpdateForm
+import br.com.webbudget.application.payloads.administration.UserView
 import br.com.webbudget.domain.entities.administration.Grant
 import br.com.webbudget.domain.entities.administration.User
 import org.mapstruct.Mapper

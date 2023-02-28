@@ -4,7 +4,7 @@ import br.com.webbudget.domain.entities.administration.User
 import br.com.webbudget.domain.services.ValidationService
 import br.com.webbudget.domain.validators.CreatingValidation
 import br.com.webbudget.domain.validators.UpdatingValidation
-import br.com.webbudget.domain.validators.configuration.UserValidator
+import br.com.webbudget.domain.validators.administration.UserValidator
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
