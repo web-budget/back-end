@@ -3,13 +3,13 @@ package br.com.webbudget.application.payloads.registration
 import br.com.webbudget.application.payloads.SpecificationSupport
 import br.com.webbudget.application.payloads.StatusFilter
 import br.com.webbudget.domain.entities.registration.CostCenter
-import java.util.UUID
-import jakarta.persistence.criteria.CriteriaBuilder
-import jakarta.persistence.criteria.CriteriaQuery
-import jakarta.persistence.criteria.Predicate
-import jakarta.persistence.criteria.Root
+import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository.Specifications.byActive
+import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository.Specifications.byDescription
+import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository.Specifications.byName
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
+import org.springframework.data.jpa.domain.Specification
+import java.util.UUID
 
 data class CostCenterForm(
     val active: Boolean = true,
@@ -31,27 +31,7 @@ data class CostCenterFilter(
     val status: StatusFilter?
 ) : SpecificationSupport<CostCenter> {
 
-    override fun buildPredicates(
-        root: Root<CostCenter>,
-        query: CriteriaQuery<*>,
-        builder: CriteriaBuilder
-    ): List<Predicate> {
-
-        val predicates = mutableListOf<Predicate>()
-
-        if (!filter.isNullOrBlank()) {
-            predicates.add(
-                builder.or(
-                    builder.like(builder.lower(root.get("name")), likeIgnoringCase(filter)),
-                    builder.like(builder.lower(root.get("description")), likeIgnoringCase(filter))
-                )
-            )
-        }
-
-        if (status != null && status != StatusFilter.ALL) {
-            predicates.add(builder.equal(root.get<Boolean>("active"), status.value))
-        }
-
-        return predicates
+    override fun toSpecification(): Specification<CostCenter> {
+        return byActive(status?.value).and(byName(filter).or(byDescription(filter)))
     }
 }

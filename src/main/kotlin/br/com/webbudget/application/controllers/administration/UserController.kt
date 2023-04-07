@@ -8,11 +8,11 @@ import br.com.webbudget.application.payloads.administration.UserView
 import br.com.webbudget.domain.exceptions.ResourceNotFoundException
 import br.com.webbudget.domain.services.administration.UserAccountService
 import br.com.webbudget.infrastructure.repository.administration.UserRepository
+import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
-import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
-import java.util.*
+import java.util.UUID
 
 @RestController
 @RequestMapping("/api/administration/users")
@@ -49,7 +49,7 @@ class UserController(
     }
 
     @PostMapping
-    fun create(@RequestBody @Validated form: UserCreateForm): ResponseEntity<Any> {
+    fun create(@RequestBody @Valid form: UserCreateForm): ResponseEntity<Any> {
 
         val toCreate = userMapper.map(form)
         val created = userAccountService.createAccount(toCreate, form.authorities)
@@ -63,7 +63,7 @@ class UserController(
     }
 
     @PutMapping("/{id}")
-    fun update(@PathVariable id: UUID, @RequestBody @Validated form: UserUpdateForm): ResponseEntity<UserView> {
+    fun update(@PathVariable id: UUID, @RequestBody @Valid form: UserUpdateForm): ResponseEntity<UserView> {
 
         val toUpdate = userMapper.map(form)
 

@@ -56,7 +56,7 @@ class ValidationAdvice {
             "Some fields are missing or invalid"
         )
 
-        problemDetail.title = "Unprocessable paylod"
+        problemDetail.title = "Unprocessable payload"
         problemDetail.setProperty(ERRORS_PROPERTY, errors)
 
         return problemDetail

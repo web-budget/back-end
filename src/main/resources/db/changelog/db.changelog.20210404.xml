@@ -113,6 +113,8 @@
             VALUES('d73e33fe-b54a-4516-b33b-60ad62ea5542', 0, current_timestamp, 'FINANCIAL');
             INSERT INTO administration.authorities(external_id, version, created_on, name)
             VALUES('8f7d81d6-0ccd-49af-b1dd-a588dbdebd62', 0, current_timestamp, 'ADMINISTRATION');
+            INSERT INTO administration.authorities(external_id, version, created_on, name)
+            VALUES('7d44bb5b-4f87-4eea-a1b5-1dd8418430d9', 0, current_timestamp, 'INVESTMENTS');
 
             INSERT INTO administration.grants (external_id, version, created_on, id_user, id_authority)
             VALUES('05e9d984-8bff-4842-9feb-fd2c513a08e8', 0, current_timestamp, 1, 1);

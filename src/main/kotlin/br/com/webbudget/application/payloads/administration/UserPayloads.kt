@@ -3,13 +3,13 @@ package br.com.webbudget.application.payloads.administration
 import br.com.webbudget.application.payloads.SpecificationSupport
 import br.com.webbudget.application.payloads.StatusFilter
 import br.com.webbudget.domain.entities.administration.User
-import jakarta.persistence.criteria.CriteriaBuilder
-import jakarta.persistence.criteria.CriteriaQuery
-import jakarta.persistence.criteria.Predicate
-import jakarta.persistence.criteria.Root
+import br.com.webbudget.infrastructure.repository.administration.UserRepository.Specifications.byActive
+import br.com.webbudget.infrastructure.repository.administration.UserRepository.Specifications.byEmail
+import br.com.webbudget.infrastructure.repository.administration.UserRepository.Specifications.byName
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotEmpty
+import org.springframework.data.jpa.domain.Specification
 import java.util.UUID
 
 data class UserCreateForm(
@@ -45,23 +45,7 @@ data class UserFilter(
     val status: StatusFilter?
 ) : SpecificationSupport<User> {
 
-    override fun buildPredicates(root: Root<User>, query: CriteriaQuery<*>, builder: CriteriaBuilder): List<Predicate> {
-
-        val predicates = mutableListOf<Predicate>()
-
-        if (!filter.isNullOrBlank()) {
-            predicates.add(
-                builder.or(
-                    builder.like(builder.lower(root.get("name")), likeIgnoringCase(filter)),
-                    builder.like(builder.lower(root.get("email")), likeIgnoringCase(filter))
-                )
-            )
-        }
-
-        if (status != null) {
-            predicates.add(builder.equal(root.get<Boolean>("active"), status.value))
-        }
-
-        return predicates
+    override fun toSpecification(): Specification<User> {
+        return byActive(status?.value).and(byName(filter).or(byEmail(filter)))
     }
 }

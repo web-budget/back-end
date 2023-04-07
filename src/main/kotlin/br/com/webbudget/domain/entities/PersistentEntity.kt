@@ -19,24 +19,24 @@ import jakarta.persistence.Version
 @EntityListeners(AuditingEntityListener::class)
 open class PersistentEntity<T : Serializable> {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", updatable = false, unique = true)
+    @field:Id
+    @field:GeneratedValue(strategy = GenerationType.IDENTITY)
+    @field:Column(name = "id", updatable = false, unique = true)
     var id: T? = null
 
-    @Column(name = "external_id", length = 36, updatable = false, unique = true)
+    @field:Column(name = "external_id", length = 36, updatable = false, unique = true)
     var externalId: UUID? = null
 
-    @CreatedDate
-    @Column(name = "created_on", nullable = false)
+    @field:CreatedDate
+    @field:Column(name = "created_on", nullable = false)
     var createdOn: LocalDateTime? = null
         private set
 
-    @Column(name = "last_update", nullable = false)
+    @field:Column(name = "last_update", nullable = false)
     var lastUpdate: LocalDateTime? = null
         private set
 
-    @Version
+    @field:Version
     var version: Short? = null
         private set
 

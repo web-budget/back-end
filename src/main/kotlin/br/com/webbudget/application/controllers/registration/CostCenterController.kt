@@ -4,11 +4,10 @@ import br.com.webbudget.application.mappers.registration.CostCenterMapper
 import br.com.webbudget.application.payloads.registration.CostCenterFilter
 import br.com.webbudget.application.payloads.registration.CostCenterForm
 import br.com.webbudget.application.payloads.registration.CostCenterView
-import br.com.webbudget.application.payloads.validation.OnCreateValidation
-import br.com.webbudget.application.payloads.validation.OnUpdateValidation
 import br.com.webbudget.domain.exceptions.ResourceNotFoundException
 import br.com.webbudget.domain.services.registration.CostCenterService
 import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository
+import jakarta.validation.Valid
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
@@ -47,7 +46,7 @@ class CostCenterController(
     }
 
     @PostMapping
-    fun create(@RequestBody @OnCreateValidation costCenterForm: CostCenterForm): ResponseEntity<Any> {
+    fun create(@RequestBody @Valid costCenterForm: CostCenterForm): ResponseEntity<Any> {
 
         val toCreate = costCenterMapper.map(costCenterForm)
         val created = costCenterService.create(toCreate)
@@ -63,7 +62,7 @@ class CostCenterController(
     @PutMapping("/{id}")
     fun update(
         @PathVariable id: UUID,
-        @RequestBody @OnUpdateValidation costCenterForm: CostCenterForm
+        @RequestBody @Valid costCenterForm: CostCenterForm
     ): ResponseEntity<CostCenterView> {
 
         val toUpdate = costCenterMapper.map(costCenterForm)

@@ -59,13 +59,6 @@ management:
 logging:
   file:
     name: /${user.home}/${spring.application.name}/${spring.application.name}.log
-  level:
-    root: INFO
-    org.hibernate: INFO
-    org.springframework: INFO
-    org.springframework.web: INFO
-    org.springframework.security: INFO
-    org.springframework.context.support: INFO
 
 web-budget:
   frontend-url: "http://localhost:8080"
