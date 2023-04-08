@@ -16,7 +16,7 @@ class ExceptionHandlerAdvice {
     }
 
     @ExceptionHandler(IllegalArgumentException::class)
-    fun handle(response: HttpServletResponse, ex: IllegalArgumentException): ProblemDetail {
+    fun handle(ex: IllegalArgumentException): ProblemDetail {
 
         val problemDetail = ProblemDetail.forStatusAndDetail(
             HttpStatus.BAD_REQUEST, "Could not fulfill your request"
