@@ -70,6 +70,7 @@ class UserAccountService(
 
     @Transactional
     fun deleteAccount(user: User) {
+        require(!user.isAdmin()) { "user.errors.cannot-delete-admin" }
         userRepository.delete(user)
     }
 }

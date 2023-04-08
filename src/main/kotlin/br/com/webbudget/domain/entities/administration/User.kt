@@ -25,9 +25,17 @@ class User(
     var grants: List<Grant>? = null
 ) : PersistentEntity<Long>(), UpdateSupport<User> {
 
+    fun isAdmin(): Boolean {
+        return this.email == ADMIN_USERNAME
+    }
+
     override fun updateFields(source: User): User {
         this.name = source.name
         this.active = source.active
         return this
+    }
+
+    companion object {
+        private const val ADMIN_USERNAME = "admin@webbudget.com.br"
     }
 }

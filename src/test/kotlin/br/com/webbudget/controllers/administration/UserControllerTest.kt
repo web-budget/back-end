@@ -36,6 +36,7 @@ import org.springframework.test.web.servlet.patch
 import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.put
 import org.springframework.util.LinkedMultiValueMap
+import java.lang.IllegalArgumentException
 import java.util.UUID
 
 @WebMvcTest(UserController::class)
@@ -270,6 +271,29 @@ class UserControllerTest : BaseControllerIntegrationTest() {
         }
 
         verify(exactly = 1) { userRepository.findByExternalId(externalId) }
+
+        confirmVerified(userRepository)
+    }
+
+    @Test
+    fun `should get bad request when try to delete admin user`() {
+
+        val externalId = UUID.randomUUID()
+        val adminUser = User(true, "Admin", "admin@webbudget.com.br", null, null)
+            .apply { this.externalId = externalId }
+
+        every { userRepository.findByExternalId(externalId) } returns adminUser
+        every { userAccountService.deleteAccount(adminUser) } throws IllegalArgumentException("Can't delete admin")
+
+        mockMvc.delete("$ENDPOINT_URL/$externalId") {
+            with(jwt().authorities(Authorities.ADMINISTRATION))
+            contentType = MediaType.APPLICATION_JSON
+        }.andExpect {
+            status { isBadRequest() }
+        }
+
+        verify(exactly = 1) { userRepository.findByExternalId(externalId) }
+        verify(exactly = 1) { userAccountService.deleteAccount(adminUser) }
 
         confirmVerified(userRepository)
     }

@@ -183,4 +183,19 @@ class UserAccountServiceTest : BaseIntegrationTest() {
                 .containsExactlyInAnyOrderElementsOf(authorities)
         }
     }
+
+    @Test
+    @Sql("/sql/clear-database.sql", "/sql/create-authorities.sql")
+    fun `should fail when try to delete admin user`() {
+
+        every { userAccountValidationService.validateOnCreate(any()) } just runs
+
+        val toCreate = User(false, "Admin", "admin@webbudget.com.br", "s3cr3t")
+        val externalId = userAccountService.createAccount(toCreate, listOf("ANY_AUTHORITY"))
+
+        val toDelete = userRepository.findByExternalId(externalId)
+
+        assertThatThrownBy { userAccountService.deleteAccount(toDelete!!) }
+            .isInstanceOf(IllegalArgumentException::class.java)
+    }
 }
