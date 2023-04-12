@@ -7,6 +7,7 @@ import com.nimbusds.jose.proc.SecurityContext
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.invoke
@@ -61,9 +62,18 @@ class SecurityConfiguration(
     @Bean
     fun corsConfigurationSource(@Value("\${web-budget.frontend-url}") frontendUrl: String): CorsConfigurationSource {
 
+        val httpMethods = listOf(
+            HttpMethod.GET.name(),
+            HttpMethod.POST.name(),
+            HttpMethod.PUT.name(),
+            HttpMethod.PATCH.name(),
+            HttpMethod.DELETE.name(),
+            HttpMethod.HEAD.name()
+        )
+
         val configuration = CorsConfiguration()
         configuration.allowedOrigins = listOf(frontendUrl)
-        configuration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "HEAD")
+        configuration.allowedMethods = httpMethods
         configuration.allowedHeaders = listOf("*")
 
         val source = UrlBasedCorsConfigurationSource()

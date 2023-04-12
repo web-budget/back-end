@@ -60,7 +60,10 @@ class UserAccountService(
     }
 
     @Transactional
-    fun updatePassword(user: User, password: String) {
+    fun updatePassword(user: User, password: String, temporary: Boolean = true) {
+
+        // TODO make the temporary thing work latter
+        println(temporary)
 
         val newPassword = passwordEncoder.encode(password)
         user.password = newPassword

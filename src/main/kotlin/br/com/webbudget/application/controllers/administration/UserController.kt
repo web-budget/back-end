@@ -1,6 +1,7 @@
 package br.com.webbudget.application.controllers.administration
 
 import br.com.webbudget.application.mappers.configuration.UserMapper
+import br.com.webbudget.application.payloads.administration.PasswordChangeForm
 import br.com.webbudget.application.payloads.administration.UserCreateForm
 import br.com.webbudget.application.payloads.administration.UserFilter
 import br.com.webbudget.application.payloads.administration.UserUpdateForm
@@ -9,7 +10,6 @@ import br.com.webbudget.domain.exceptions.ResourceNotFoundException
 import br.com.webbudget.domain.services.administration.UserAccountService
 import br.com.webbudget.infrastructure.repository.administration.UserRepository
 import jakarta.validation.Valid
-import jakarta.validation.constraints.NotBlank
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
@@ -75,10 +75,12 @@ class UserController(
     }
 
     @PatchMapping("/{id}/update-password")
-    fun updatePassword(@PathVariable id: UUID, @RequestBody @NotBlank password: String): ResponseEntity<Any> {
+    fun updatePassword(@PathVariable id: UUID, @RequestBody @Valid form: PasswordChangeForm): ResponseEntity<Any> {
+
+        val (temporary, password) = form
 
         userRepository.findByExternalId(id)
-            ?.let { userAccountService.updatePassword(it, password) }
+            ?.let { userAccountService.updatePassword(it, password, temporary) }
             ?: throw ResourceNotFoundException(id)
 
         return ResponseEntity.ok().build()

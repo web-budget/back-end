@@ -139,26 +139,25 @@ class UserControllerTest : BaseControllerIntegrationTest() {
     }
 
     @Test
-    fun `should call update for the password only`() {
+    fun `should call update for the password only`(@ResourceAsString("user/password-change.json") payload: String) {
 
-        val payload = "new-password"
-
+        val password = "P4ssw0rd1"
         val externalId = UUID.randomUUID()
         val expectedUser = UserFixture.create(1L, externalId)
 
         every { userRepository.findByExternalId(externalId) } returns expectedUser
-        every { userAccountService.updatePassword(expectedUser, payload) } just runs
+        every { userAccountService.updatePassword(expectedUser, password, true) } just runs
 
         mockMvc.patch("$ENDPOINT_URL/$externalId/update-password") {
             with(jwt().authorities(Authorities.ADMINISTRATION))
             contentType = MediaType.APPLICATION_JSON
-            content = payload
+            content = payload.replace("{new-password}", password)
         }.andExpect {
             status { isOk() }
         }
 
         verify(exactly = 1) { userRepository.findByExternalId(externalId) }
-        verify(exactly = 1) { userAccountService.updatePassword(expectedUser, payload) }
+        verify(exactly = 1) { userAccountService.updatePassword(expectedUser, password, true) }
 
         confirmVerified(userAccountService, userRepository)
     }

@@ -9,6 +9,7 @@ import br.com.webbudget.infrastructure.repository.administration.UserRepository.
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotEmpty
+import jakarta.validation.constraints.NotNull
 import org.springframework.data.jpa.domain.Specification
 import java.util.UUID
 
@@ -30,6 +31,13 @@ data class UserUpdateForm(
     val name: String,
     @field:NotEmpty(message = "users.errors.empty-authorities")
     val authorities: List<String>
+)
+
+data class PasswordChangeForm(
+    @field:NotNull(message = "users.errors.temporary-is-required")
+    val temporary: Boolean,
+    @field:NotBlank(message = "users.errors.password-is-blank")
+    val password: String
 )
 
 data class UserView(
