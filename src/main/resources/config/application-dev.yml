@@ -3,8 +3,8 @@ spring:
     contexts: dev
 
   mail:
-    host: smtp.mailtrap.io
-    port: 587
+    host: sandbox.smtp.mailtrap.io
+    port: 2525
     username: ${mailtrap.user}
     password: ${mailtrap.password}
     properties:
