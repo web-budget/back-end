@@ -2,7 +2,6 @@ package br.com.webbudget.application.mappers.configuration
 
 import br.com.webbudget.application.mappers.MappingConfiguration
 import br.com.webbudget.application.payloads.administration.UserCreateForm
-import br.com.webbudget.application.payloads.administration.UserUpdateForm
 import br.com.webbudget.application.payloads.administration.UserView
 import br.com.webbudget.domain.entities.administration.Grant
 import br.com.webbudget.domain.entities.administration.User
@@ -21,9 +20,7 @@ interface UserMapper {
     )
     fun map(user: User): UserView
 
-    fun map(userCreateForm: UserCreateForm): User
-
-    fun map(userUpdateForm: UserUpdateForm): User
+    fun map(form: UserCreateForm): User
 
     companion object {
         @JvmStatic

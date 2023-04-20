@@ -33,12 +33,14 @@ class AuthenticationServiceTest {
 
         assertThat(authenticable)
             .isNotNull
-            .hasFieldOrPropertyWithValue("username", expectedUser.email)
-            .hasFieldOrPropertyWithValue("password", expectedUser.password)
-            .hasFieldOrPropertyWithValue("enabled", expectedUser.active)
-            .hasFieldOrPropertyWithValue("credentialsNonExpired", expectedUser.active)
-            .hasFieldOrPropertyWithValue("accountNonExpired", expectedUser.active)
-            .hasFieldOrPropertyWithValue("accountNonLocked", expectedUser.active)
+            .satisfies({
+                assertThat(it.username).isEqualTo(expectedUser.email)
+                assertThat(it.password).isEqualTo(expectedUser.password)
+                assertThat(it.isEnabled).isEqualTo(expectedUser.active)
+                assertThat(it.isCredentialsNonExpired).isEqualTo(expectedUser.active)
+                assertThat(it.isAccountNonExpired).isEqualTo(expectedUser.active)
+                assertThat(it.isAccountNonLocked).isEqualTo(expectedUser.active)
+            })
     }
 
     @Test

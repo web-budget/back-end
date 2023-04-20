@@ -5,14 +5,10 @@ import java.util.UUID
 
 object CostCenterFixture {
 
-    fun create(id: Long, externalId: UUID): CostCenter {
-        return create().apply {
-            this.id = id
-            this.externalId = externalId
-        }
+    fun create(id: Long, externalId: UUID) = create().apply {
+        this.id = id
+        this.externalId = externalId
     }
 
-    fun create(): CostCenter {
-        return CostCenter("Cost Center", true, "Something to describe")
-    }
+    fun create() = CostCenter("Cost Center", true, "Something to describe")
 }

@@ -7,17 +7,13 @@ import java.util.UUID
 
 object UserFixture {
 
-    fun create(): User {
-        return create("s3cr3t")
-    }
+    fun create() = create("s3cr3t")
 
-    fun create(id: Long, externalId: UUID, vararg authorities: String): User {
-        return create("s3cr3t", *authorities)
-            .apply {
-                this.id = id
-                this.externalId = externalId
-            }
-    }
+    fun create(id: Long, externalId: UUID, vararg authorities: String) = create("s3cr3t", *authorities)
+        .apply {
+            this.id = id
+            this.externalId = externalId
+        }
 
     fun create(password: String, vararg authorities: String): User {
 

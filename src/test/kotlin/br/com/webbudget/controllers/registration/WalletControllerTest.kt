@@ -1,15 +1,16 @@
 package br.com.webbudget.controllers.registration
 
 import br.com.webbudget.BaseControllerIntegrationTest
-import br.com.webbudget.application.controllers.registration.CostCenterController
-import br.com.webbudget.application.mappers.registration.CostCenterMapperImpl
-import br.com.webbudget.domain.entities.registration.CostCenter
+import br.com.webbudget.application.controllers.registration.WalletController
+import br.com.webbudget.application.mappers.registration.WalletMapperImpl
+import br.com.webbudget.domain.entities.registration.Wallet
+import br.com.webbudget.domain.entities.registration.Wallet.Type.PERSONAL
 import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
-import br.com.webbudget.domain.services.registration.CostCenterService
-import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository
+import br.com.webbudget.domain.services.registration.WalletService
+import br.com.webbudget.infrastructure.repository.registration.WalletRepository
 import br.com.webbudget.utilities.Authorities
 import br.com.webbudget.utilities.ResourceAsString
-import br.com.webbudget.utilities.fixture.CostCenterFixture
+import br.com.webbudget.utilities.fixture.WalletFixture.create
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.Runs
 import io.mockk.called
@@ -20,7 +21,7 @@ import io.mockk.slot
 import io.mockk.verify
 import net.javacrumbs.jsonunit.assertj.assertThatJson
 import org.assertj.core.api.Assertions.assertThat
-import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.context.annotation.Import
@@ -37,22 +38,22 @@ import org.springframework.test.web.servlet.put
 import org.springframework.util.LinkedMultiValueMap
 import java.util.UUID
 
-@WebMvcTest(CostCenterController::class)
-@Import(value = [CostCenterMapperImpl::class])
-class CostCenterControllerTest : BaseControllerIntegrationTest() {
+@WebMvcTest(WalletController::class)
+@Import(value = [WalletMapperImpl::class])
+class WalletControllerTest : BaseControllerIntegrationTest() {
 
     @MockkBean
-    private lateinit var costCenterService: CostCenterService
+    private lateinit var walletService: WalletService
 
     @MockkBean
-    private lateinit var costCenterRepository: CostCenterRepository
+    private lateinit var walletRepository: WalletRepository
 
     @Test
-    fun `should call create and return created`(@ResourceAsString("cost-center/create.json") payload: String) {
+    fun `should call create and return created`(@ResourceAsString("wallet/create.json") payload: String) {
 
         val externalId = UUID.randomUUID()
 
-        every { costCenterService.create(any()) } returns externalId
+        every { walletService.create(any()) } returns externalId
 
         mockMvc.post(ENDPOINT_URL) {
             with(jwt().authorities(Authorities.REGISTRATION))
@@ -62,25 +63,25 @@ class CostCenterControllerTest : BaseControllerIntegrationTest() {
             status { isCreated() }
         }.andExpect {
             header {
-                stringValues("Location", "http://localhost$ENDPOINT_URL/$externalId")
+                stringValues("Location", "http://localhost${ENDPOINT_URL}/$externalId")
             }
         }
 
-        verify(exactly = 1) { costCenterService.create(any()) }
+        verify(exactly = 1) { walletService.create(any()) }
 
-        confirmVerified(costCenterService)
+        confirmVerified(walletService)
     }
 
     @Test
-    fun `should call update and return ok`(@ResourceAsString("cost-center/update.json") payload: String) {
+    fun `should call update and return ok`(@ResourceAsString("wallet/update.json") payload: String) {
 
         val externalId = UUID.randomUUID()
-        val expectedCostCenter = CostCenterFixture.create(1L, externalId)
+        val expectedWallet = create(1L, externalId, "The wallet", PERSONAL)
 
-        every { costCenterRepository.findByExternalId(externalId) } returns expectedCostCenter
-        every { costCenterService.update(any()) } returns expectedCostCenter
+        every { walletRepository.findByExternalId(externalId) } returns expectedWallet
+        every { walletService.update(any()) } returns expectedWallet
 
-        val jsonResponse = mockMvc.put("$ENDPOINT_URL/$externalId") {
+        val jsonResponse = mockMvc.put("${ENDPOINT_URL}/$externalId") {
             with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
             content = payload
@@ -92,64 +93,68 @@ class CostCenterControllerTest : BaseControllerIntegrationTest() {
 
         assertThatJson(jsonResponse)
             .isObject
-            .containsEntry("id", expectedCostCenter.externalId.toString())
-            .containsEntry("name", "Car")
+            .containsEntry("id", expectedWallet.externalId.toString())
+            .containsEntry("name", "Another Wallet")
             .containsEntry("active", false)
-            .containsEntry("description", "Updated description")
+            .containsEntry("description", "Another some wallet")
+            .containsEntry("type", "PERSONAL")
 
-        verify(exactly = 1) { costCenterRepository.findByExternalId(externalId) }
-        verify(exactly = 1) { costCenterService.update(any()) }
+        verify(exactly = 1) { walletRepository.findByExternalId(externalId) }
+        verify(exactly = 1) { walletService.update(any()) }
 
-        confirmVerified(costCenterService, costCenterRepository)
+        confirmVerified(walletService, walletRepository)
     }
 
     @Test
     fun `should call delete and return ok`() {
 
         val externalId = UUID.randomUUID()
-        val expectedCostCenter = CostCenterFixture.create(1L, externalId)
+        val expectedWallet = create(1L, externalId, "Wallet", PERSONAL)
 
-        every { costCenterRepository.findByExternalId(externalId) } returns expectedCostCenter
-        every { costCenterService.delete(expectedCostCenter) } just Runs
+        every { walletRepository.findByExternalId(externalId) } returns expectedWallet
+        every { walletService.delete(expectedWallet) } just Runs
 
-        mockMvc.delete("$ENDPOINT_URL/$externalId") {
+        mockMvc.delete("${ENDPOINT_URL}/$externalId") {
             with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isOk() }
         }
 
-        verify(exactly = 1) { costCenterRepository.findByExternalId(externalId) }
-        verify(exactly = 1) { costCenterService.delete(expectedCostCenter) }
+        verify(exactly = 1) { walletRepository.findByExternalId(externalId) }
+        verify(exactly = 1) { walletService.delete(expectedWallet) }
 
-        confirmVerified(costCenterService, costCenterRepository)
+        confirmVerified(walletService, walletRepository)
     }
 
     @Test
-    fun `should return not found if try to delete unknown cost center`() {
+    fun `should return not found if try to delete unknown wallet`() {
 
         val externalId = UUID.randomUUID()
 
-        every { costCenterRepository.findByExternalId(externalId) } returns null
+        every { walletRepository.findByExternalId(externalId) } returns null
 
-        mockMvc.delete("$ENDPOINT_URL/$externalId") {
+        mockMvc.delete("${ENDPOINT_URL}/$externalId") {
             with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isNotFound() }
         }
 
-        verify(exactly = 1) { costCenterRepository.findByExternalId(externalId) }
+        verify(exactly = 1) { walletRepository.findByExternalId(externalId) }
 
-        confirmVerified(costCenterService)
+        confirmVerified(walletService)
     }
 
     @Test
     fun `should fail if required fields are not present`(
-        @ResourceAsString("cost-center/invalid.json") payload: String
+        @ResourceAsString("wallet/invalid.json") payload: String
     ) {
 
-        val requiredEntries = mapOf("name" to "cost-center.errors.name-is-blank")
+        val requiredEntries = mapOf(
+            "name" to "wallet.errors.name-is-blank",
+            "type" to "wallet.errors.type-is-null"
+        )
 
         val jsonResponse = mockMvc.post(ENDPOINT_URL) {
             with(jwt().authorities(Authorities.REGISTRATION))
@@ -167,16 +172,16 @@ class CostCenterControllerTest : BaseControllerIntegrationTest() {
             .hasSize(requiredEntries.size)
             .containsExactlyInAnyOrderEntriesOf(requiredEntries)
 
-        verify { costCenterService.create(any()) wasNot called }
+        verify { walletService.create(any()) wasNot called }
 
-        confirmVerified(costCenterService)
+        confirmVerified(walletService)
     }
 
     @Test
-    fun `should return conflict if name is duplicated`(@ResourceAsString("cost-center/create.json") payload: String) {
+    fun `should return conflict if name is duplicated`(@ResourceAsString("wallet/create.json") payload: String) {
 
-        every { costCenterService.create(any()) } throws
-                DuplicatedPropertyException("cost-center.errors.duplicated-name", "cost-center.name")
+        every { walletService.create(any()) } throws
+                DuplicatedPropertyException("wallet.errors.duplicated-name", "wallet.name")
 
         mockMvc.post(ENDPOINT_URL) {
             with(jwt().authorities(Authorities.REGISTRATION))
@@ -185,24 +190,24 @@ class CostCenterControllerTest : BaseControllerIntegrationTest() {
         }.andExpect {
             status { isConflict() }
         }.andExpect {
-            jsonPath("\$.property", equalTo("cost-center.name"))
-            jsonPath("\$.error", equalTo("cost-center.errors.duplicated-name"))
+            jsonPath("\$.property", Matchers.equalTo("wallet.name"))
+            jsonPath("\$.error", Matchers.equalTo("wallet.errors.duplicated-name"))
         }
 
-        verify(exactly = 1) { costCenterService.create(any()) }
+        verify(exactly = 1) { walletService.create(any()) }
 
-        confirmVerified(costCenterService)
+        confirmVerified(walletService)
     }
 
     @Test
     fun `should call find by id and expect ok`() {
 
         val externalId = UUID.randomUUID()
-        val expectedCostCenter = CostCenterFixture.create(1L, externalId)
+        val expectedWallet = create(1L, externalId, "Wallet", PERSONAL)
 
-        every { costCenterRepository.findByExternalId(externalId) } returns expectedCostCenter
+        every { walletRepository.findByExternalId(externalId) } returns expectedWallet
 
-        val jsonResponse = mockMvc.get("$ENDPOINT_URL/$externalId") {
+        val jsonResponse = mockMvc.get("${ENDPOINT_URL}/$externalId") {
             with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
@@ -213,40 +218,41 @@ class CostCenterControllerTest : BaseControllerIntegrationTest() {
 
         assertThatJson(jsonResponse)
             .isObject
-            .containsEntry("id", expectedCostCenter.externalId.toString())
-            .containsEntry("name", "Cost Center")
-            .containsEntry("description", "Something to describe")
+            .containsEntry("id", expectedWallet.externalId.toString())
+            .containsEntry("name", "Wallet")
+            .containsEntry("type", "PERSONAL")
+            .containsEntry("description", "Some wallet")
             .containsEntry("active", true)
 
-        verify(exactly = 1) { costCenterRepository.findByExternalId(externalId) }
+        verify(exactly = 1) { walletRepository.findByExternalId(externalId) }
 
-        confirmVerified(costCenterRepository)
+        confirmVerified(walletRepository)
     }
 
     @Test
-    fun `should return not found if cost center does not exists`() {
+    fun `should return not found if wallet does not exists`() {
 
         val externalId = UUID.randomUUID()
 
-        every { costCenterRepository.findByExternalId(externalId) } returns null
+        every { walletRepository.findByExternalId(externalId) } returns null
 
-        mockMvc.get("$ENDPOINT_URL/$externalId") {
+        mockMvc.get("${ENDPOINT_URL}/$externalId") {
             with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isNotFound() }
         }
 
-        verify(exactly = 1) { costCenterRepository.findByExternalId(externalId) }
+        verify(exactly = 1) { walletRepository.findByExternalId(externalId) }
 
-        confirmVerified(costCenterRepository)
+        confirmVerified(walletRepository)
     }
 
     @Test
     fun `should call get paged and using filters`() {
 
         val pageRequest = PageRequest.of(0, 1)
-        val costCEnters = listOf(CostCenterFixture.create(1L, UUID.randomUUID()))
+        val wallets = listOf(create(1L, UUID.randomUUID(), "Wallet 1", PERSONAL))
 
         val parameters = LinkedMultiValueMap<String, String>()
 
@@ -257,10 +263,10 @@ class CostCenterControllerTest : BaseControllerIntegrationTest() {
         parameters.add("filter", "Some filter")
 
         val pageableSlot = slot<Pageable>()
-        val specificationSlot = slot<Specification<CostCenter>>()
+        val specificationSlot = slot<Specification<Wallet>>()
 
-        every { costCenterRepository.findAll(capture(specificationSlot), capture(pageableSlot)) } returns
-                PageImpl(costCEnters)
+        every { walletRepository.findAll(capture(specificationSlot), capture(pageableSlot)) } returns
+                PageImpl(wallets)
 
         val jsonResponse = mockMvc.get(ENDPOINT_URL) {
             with(jwt().authorities(Authorities.REGISTRATION))
@@ -288,14 +294,14 @@ class CostCenterControllerTest : BaseControllerIntegrationTest() {
 
         assertThat(specificationSlot.captured).isNotNull
 
-        verify(exactly = 1) { costCenterRepository.findAll(ofType<Specification<CostCenter>>(), ofType<Pageable>()) }
+        verify(exactly = 1) { walletRepository.findAll(ofType<Specification<Wallet>>(), ofType<Pageable>()) }
 
-        confirmVerified(costCenterRepository)
+        confirmVerified(walletRepository)
     }
 
     override fun getEndpointUrl() = ENDPOINT_URL
 
     companion object {
-        private const val ENDPOINT_URL = "/api/registration/cost-centers"
+        private const val ENDPOINT_URL = "/api/registration/wallets"
     }
 }

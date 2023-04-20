@@ -1,5 +1,6 @@
 package br.com.webbudget.domain.entities.administration
 
+import br.com.webbudget.application.payloads.administration.UserUpdateForm
 import br.com.webbudget.domain.entities.PersistentEntity
 import br.com.webbudget.domain.entities.UpdateSupport
 import br.com.webbudget.infrastructure.config.DefaultSchemas.ADMINISTRATION
@@ -23,16 +24,17 @@ class User(
     var password: String? = null,
     @field:OneToMany(mappedBy = "user", fetch = EAGER, cascade = [REMOVE])
     var grants: List<Grant>? = null
-) : PersistentEntity<Long>(), UpdateSupport<User> {
+) : PersistentEntity<Long>(), UpdateSupport<UserUpdateForm, User> {
 
     fun isAdmin(): Boolean {
         return this.email == ADMIN_USERNAME
     }
 
-    override fun updateFields(source: User): User {
-        this.name = source.name
-        this.active = source.active
-        return this
+    override fun updateFields(source: UserUpdateForm): User {
+        return this.apply {
+            name = source.name
+            active = source.active
+        }
     }
 
     companion object {

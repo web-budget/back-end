@@ -1,5 +1,6 @@
 package br.com.webbudget.domain.entities.registration
 
+import br.com.webbudget.application.payloads.registration.CostCenterForm
 import br.com.webbudget.domain.entities.PersistentEntity
 import br.com.webbudget.domain.entities.UpdateSupport
 import br.com.webbudget.infrastructure.config.DefaultSchemas
@@ -16,9 +17,9 @@ class CostCenter(
     var active: Boolean = true,
     @field:Column(name = "description", columnDefinition = "TEXT")
     var description: String? = null,
-) : PersistentEntity<Long>(), UpdateSupport<CostCenter> {
+) : PersistentEntity<Long>(), UpdateSupport<CostCenterForm, CostCenter> {
 
-    override fun updateFields(source: CostCenter): CostCenter {
+    override fun updateFields(source: CostCenterForm): CostCenter {
         return this.apply {
             name = source.name
             description = source.description

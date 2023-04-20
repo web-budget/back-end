@@ -13,36 +13,36 @@ class CostCenterMapperTest {
     private val costCenterMapper: CostCenterMapper = CostCenterMapperImpl()
 
     @Test
-    fun `should map cost center form to cost center`() {
+    fun `should map form to domain object`() {
 
-        val costCenterForm = CostCenterForm(true, "Cost Center", "Some cost center")
+        val form = CostCenterForm(true, "Cost Center", "Some cost center")
 
-        val costCenter = costCenterMapper.map(costCenterForm)
+        val domainObject = costCenterMapper.map(form)
 
-        assertThat(costCenter)
+        assertThat(domainObject)
             .isNotNull
-            .hasFieldOrPropertyWithValue("active", costCenterForm.active)
-            .hasFieldOrPropertyWithValue("name", costCenterForm.name)
-            .hasFieldOrPropertyWithValue("description", costCenterForm.description)
+            .hasFieldOrPropertyWithValue("active", form.active)
+            .hasFieldOrPropertyWithValue("name", form.name)
+            .hasFieldOrPropertyWithValue("description", form.description)
     }
 
     @Test
-    fun `should map cost center to cost center view`() {
+    fun `should map domain object to view`() {
 
         val externalId = UUID.randomUUID()
-        val costCenter = CostCenter("Cost Center", true, "Some cost center")
+        val domainObject = CostCenter("Cost Center", true, "Some cost center")
             .apply {
                 this.id = 1L
                 this.externalId = externalId
             }
 
-        val costCenterView = costCenterMapper.map(costCenter)
+        val view = costCenterMapper.map(domainObject)
 
-        assertThat(costCenterView)
+        assertThat(view)
             .isNotNull
             .hasFieldOrPropertyWithValue("id", externalId)
-            .hasFieldOrPropertyWithValue("active", costCenter.active)
-            .hasFieldOrPropertyWithValue("name", costCenter.name)
-            .hasFieldOrPropertyWithValue("description", costCenter.description)
+            .hasFieldOrPropertyWithValue("active", domainObject.active)
+            .hasFieldOrPropertyWithValue("name", domainObject.name)
+            .hasFieldOrPropertyWithValue("description", domainObject.description)
     }
 }

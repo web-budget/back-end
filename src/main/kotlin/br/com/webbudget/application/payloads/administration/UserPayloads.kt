@@ -15,18 +15,18 @@ import java.util.UUID
 
 data class UserCreateForm(
     @field:NotBlank(message = "users.errors.name-is-blank")
-    val name: String,
+    val name: String?,
     @field:Email(message = "users.errors.email-is-invalid")
     @field:NotBlank(message = "users.errors.email-is-blank")
-    val email: String,
+    val email: String?,
     @field:NotBlank(message = "users.errors.password-is-blank")
-    val password: String,
+    val password: String?,
     @field:NotEmpty(message = "users.errors.empty-authorities")
     val authorities: List<String>
 )
 
 data class UserUpdateForm(
-    val active: Boolean = false,
+    val active: Boolean,
     @field:NotBlank(message = "users.errors.name-is-blank")
     val name: String,
     @field:NotEmpty(message = "users.errors.empty-authorities")

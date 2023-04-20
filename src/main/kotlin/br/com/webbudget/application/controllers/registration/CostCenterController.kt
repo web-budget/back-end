@@ -46,9 +46,9 @@ class CostCenterController(
     }
 
     @PostMapping
-    fun create(@RequestBody @Valid costCenterForm: CostCenterForm): ResponseEntity<Any> {
+    fun create(@RequestBody @Valid form: CostCenterForm): ResponseEntity<Any> {
 
-        val toCreate = costCenterMapper.map(costCenterForm)
+        val toCreate = costCenterMapper.map(form)
         val created = costCenterService.create(toCreate)
 
         val location = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -60,15 +60,9 @@ class CostCenterController(
     }
 
     @PutMapping("/{id}")
-    fun update(
-        @PathVariable id: UUID,
-        @RequestBody @Valid costCenterForm: CostCenterForm
-    ): ResponseEntity<CostCenterView> {
-
-        val toUpdate = costCenterMapper.map(costCenterForm)
-
+    fun update(@PathVariable id: UUID, @RequestBody @Valid form: CostCenterForm): ResponseEntity<CostCenterView> {
         return costCenterRepository.findByExternalId(id)
-            ?.updateFields(toUpdate)
+            ?.updateFields(form)
             ?.let { costCenterService.update(it) }
             ?.let { ResponseEntity.ok(costCenterMapper.map(it)) }
             ?: throw ResourceNotFoundException(id)

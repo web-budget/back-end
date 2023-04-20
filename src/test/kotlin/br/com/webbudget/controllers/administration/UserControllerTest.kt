@@ -36,7 +36,6 @@ import org.springframework.test.web.servlet.patch
 import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.put
 import org.springframework.util.LinkedMultiValueMap
-import java.lang.IllegalArgumentException
 import java.util.UUID
 
 @WebMvcTest(UserController::class)
@@ -347,9 +346,7 @@ class UserControllerTest : BaseControllerIntegrationTest() {
         confirmVerified(userRepository)
     }
 
-    override fun getEndpointUrl(): String {
-        return ENDPOINT_URL
-    }
+    override fun getEndpointUrl() = ENDPOINT_URL
 
     companion object {
         private const val ENDPOINT_URL = "/api/administration/users"

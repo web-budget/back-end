@@ -29,6 +29,7 @@
     -->
     <include relativeToChangelogFile="true" file="db.changelog.20210404.xml"/>
     <include relativeToChangelogFile="true" file="db.changelog.20220620.xml"/>
+    <include relativeToChangelogFile="true" file="db.changelog.20230416.xml"/>
 
     <!--
         use this changelog to initialize testing database.

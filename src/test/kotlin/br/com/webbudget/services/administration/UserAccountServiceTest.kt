@@ -1,6 +1,7 @@
 package br.com.webbudget.services.administration
 
 import br.com.webbudget.BaseIntegrationTest
+import br.com.webbudget.application.payloads.administration.UserUpdateForm
 import br.com.webbudget.domain.entities.administration.User
 import br.com.webbudget.domain.services.administration.UserAccountService
 import br.com.webbudget.domain.services.administration.UserAccountValidationService
@@ -11,6 +12,7 @@ import io.mockk.just
 import io.mockk.runs
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.assertj.core.api.Assertions.fail
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -76,6 +78,7 @@ class UserAccountServiceTest : BaseIntegrationTest() {
     @Sql("/sql/clear-database.sql", "/sql/create-authorities.sql")
     fun `should update when validation pass`() {
 
+        val form = UserUpdateForm(true, "Other", listOf("ANY_OTHER_AUTHORITY"))
         val toCreate = User(false, "User", "user@webbudget.com.br", "s3cr3t")
 
         every { userAccountValidationService.validateOnCreate(any()) } just runs
@@ -83,17 +86,10 @@ class UserAccountServiceTest : BaseIntegrationTest() {
 
         val externalId = userAccountService.createAccount(toCreate, listOf("ANY_AUTHORITY"))
         val toUpdate = userRepository.findByExternalId(externalId)
+            ?: fail(OBJECT_NOT_FOUND_ERROR)
 
-        assertThat(toUpdate).isNotNull
-
-        toUpdate!!.apply {
-            this.name = "Other"
-            this.email = "other@webbudget.com.br"
-            this.active = true
-            this.grants = null
-        }
-
-        val updated = userAccountService.updateAccount(toUpdate, listOf("ANY_OTHER_AUTHORITY"))
+        toUpdate.updateFields(form)
+        val updated = userAccountService.updateAccount(toUpdate, form.authorities)
 
         assertThat(updated)
             .isNotNull

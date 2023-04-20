@@ -15,5 +15,6 @@ interface CostCenterMapper {
     @Mapping(source = "externalId", target = "id")
     fun map(costCenter: CostCenter): CostCenterView
 
-    fun map(costCenterForm: CostCenterForm): CostCenter
+    @Mapping(source = "active", target = "active", defaultValue = "true")
+    fun map(form: CostCenterForm): CostCenter
 }

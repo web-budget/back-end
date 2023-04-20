@@ -12,7 +12,7 @@ import org.springframework.data.jpa.domain.Specification
 import java.util.UUID
 
 data class CostCenterForm(
-    val active: Boolean = true,
+    val active: Boolean,
     @field:NotBlank(message = "cost-center.errors.name-is-blank")
     @field:Size(message = "cost-center.errors.name-max-150-chars", max = 150)
     val name: String,
@@ -21,8 +21,8 @@ data class CostCenterForm(
 
 data class CostCenterView(
     val id: UUID,
-    val active: Boolean,
     val name: String,
+    val active: Boolean,
     val description: String?,
 )
 

@@ -46,9 +46,7 @@ class AuthorityControllerTest : BaseControllerIntegrationTest() {
         confirmVerified(authorityRepository)
     }
 
-    override fun getEndpointUrl(): String {
-        return ENDPOINT_URL
-    }
+    override fun getEndpointUrl() = ENDPOINT_URL
 
     companion object {
         private const val ENDPOINT_URL = "/api/administration/authorities"

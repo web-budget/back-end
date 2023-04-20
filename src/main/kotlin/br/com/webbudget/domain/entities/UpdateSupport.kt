@@ -1,6 +1,6 @@
 package br.com.webbudget.domain.entities
 
-interface UpdateSupport<T : PersistentEntity<Long>> {
+interface UpdateSupport<S, T : PersistentEntity<Long>> {
 
-    fun updateFields(source: T): T
+    fun updateFields(source: S): T
 }

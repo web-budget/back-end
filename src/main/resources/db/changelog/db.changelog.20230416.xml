@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="back-end#25" author="${author}">
+        <createTable tableName="wallets" schemaName="registration">
+            <column name="id" autoIncrement="true" type="bigint">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="external_id" type="${uuid_type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="smallint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_on" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_update" type="timestamp"/>
+
+            <column name="name" type="varchar(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type" type="varchar(24)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="current_balance" type="numeric(15,6)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="active" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="clob" />
+            <column name="bank" type="varchar(150)" />
+            <column name="agency" type="varchar(16)" />
+            <column name="number" type="varchar(10)" />
+        </createTable>
+
+        <addUniqueConstraint columnNames="id,external_id" tableName="wallets" schemaName="registration"/>
+    </changeSet>
+</databaseChangeLog>
