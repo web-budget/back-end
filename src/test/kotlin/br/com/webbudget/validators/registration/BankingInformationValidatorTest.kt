@@ -72,6 +72,6 @@ class BankingInformationValidatorTest {
     @Test
     @Disabled
     fun `should not validate if no valid bank information`() {
-
+        // TODO add this test when issue #39 is fixed
     }
 }
