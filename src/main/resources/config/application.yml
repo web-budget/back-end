@@ -14,11 +14,6 @@ spring:
       ddl-auto: validate
     open-in-view: false
 
-  jackson:
-    default-property-inclusion: non_null
-    deserialization:
-      read_unknown_enum_values_as_null: true
-
   liquibase:
     enabled: true
     databaseChangeLogTable: database_changelog
