@@ -44,6 +44,10 @@ class Wallet(
         }
     }
 
+    fun hasValidBankInformation(): Boolean {
+        return bank != null && agency != null && number != null
+    }
+
     enum class Type {
         BANK_ACCOUNT, PERSONAL, INVESTMENT
     }

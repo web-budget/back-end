@@ -72,7 +72,7 @@ class CostCenterServiceTest : BaseIntegrationTest() {
         every { costCenterValidationService.validateOnUpdate(any()) } just runs
 
         val toCreate = create()
-        val form = CostCenterForm(false, "Updated", "Updated")
+        val form = CostCenterForm("Updated", "Updated", false)
 
         val externalId = costCenterService.create(toCreate)
         val toUpdate = costCenterRepository.findByExternalId(externalId)

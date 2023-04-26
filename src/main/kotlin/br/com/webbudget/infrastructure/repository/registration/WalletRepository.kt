@@ -4,6 +4,7 @@ import br.com.webbudget.domain.entities.registration.Wallet
 import br.com.webbudget.infrastructure.repository.DefaultRepository
 import br.com.webbudget.infrastructure.repository.SpecificationHelpers
 import org.springframework.data.jpa.domain.Specification
+import org.springframework.data.jpa.repository.Query
 import org.springframework.stereotype.Repository
 import java.util.UUID
 
@@ -13,6 +14,23 @@ interface WalletRepository : DefaultRepository<Wallet> {
     fun findByNameIgnoreCase(description: String): Wallet?
 
     fun findByNameIgnoreCaseAndExternalIdNot(description: String, externalId: UUID): Wallet?
+
+    @Query(
+        "from Wallet w " +
+                "where w.bank = :bank " +
+                "and w.agency = :agency " +
+                "and w.number = :number "
+    )
+    fun findByBankInfo(bank: String?, agency: String?, number: String?): Wallet?
+
+    @Query(
+        "from Wallet w " +
+                "where w.bank = :bank " +
+                "and w.agency = :agency " +
+                "and w.number = :number " +
+                "and w.externalId <> :externalId"
+    )
+    fun findByBankInfo(bank: String?, agency: String?, number: String?, externalId: UUID): Wallet?
 
     object Specifications : SpecificationHelpers {
 

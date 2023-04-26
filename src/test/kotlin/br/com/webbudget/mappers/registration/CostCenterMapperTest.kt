@@ -15,7 +15,7 @@ class CostCenterMapperTest {
     @Test
     fun `should map form to domain object`() {
 
-        val form = CostCenterForm(true, "Cost Center", "Some cost center")
+        val form = CostCenterForm("Cost Center", "Some cost center", true)
 
         val domainObject = costCenterMapper.map(form)
 

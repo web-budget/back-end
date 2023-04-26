@@ -27,6 +27,7 @@ data class WalletCreateForm(
     val bank: String? = null,
     val agency: String? = null,
     val number: String? = null,
+    val active: Boolean = true,
 )
 
 data class WalletUpdateForm(
