@@ -3,13 +3,9 @@ package br.com.webbudget.services.administration
 import br.com.webbudget.BaseIntegrationTest
 import br.com.webbudget.application.payloads.administration.UserUpdateForm
 import br.com.webbudget.domain.entities.administration.User
+import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
 import br.com.webbudget.domain.services.administration.UserAccountService
-import br.com.webbudget.domain.services.administration.UserAccountValidationService
 import br.com.webbudget.infrastructure.repository.administration.UserRepository
-import com.ninjasquad.springmockk.MockkBean
-import io.mockk.every
-import io.mockk.just
-import io.mockk.runs
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.assertj.core.api.Assertions.fail
@@ -17,12 +13,8 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.test.context.jdbc.Sql
-import java.util.UUID
 
 class UserAccountServiceTest : BaseIntegrationTest() {
-
-    @MockkBean
-    private lateinit var userAccountValidationService: UserAccountValidationService
 
     @Autowired
     private lateinit var userRepository: UserRepository
@@ -34,12 +26,10 @@ class UserAccountServiceTest : BaseIntegrationTest() {
     private lateinit var userAccountService: UserAccountService
 
     @Test
-    @Sql("/sql/clear-database.sql", "/sql/create-authorities.sql")
-    fun `should save when validation pass`() {
+    @Sql("/sql/administration/clear-tables.sql", "/sql/administration/create-authorities.sql")
+    fun `should save`() {
 
         val toCreate = User(false, "User", "user@webbudget.com.br", "s3cr3t")
-
-        every { userAccountValidationService.validateOnCreate(any()) } just runs
 
         val externalId = userAccountService.createAccount(toCreate, listOf("ANY_AUTHORITY"))
         val created = userRepository.findByExternalId(externalId)
@@ -63,26 +53,26 @@ class UserAccountServiceTest : BaseIntegrationTest() {
     }
 
     @Test
-    fun `should not save when validation fail`() {
+    @Sql("/sql/administration/clear-tables.sql", "/sql/administration/create-authorities.sql")
+    fun `should not save when duplicated username`() {
+
+        val authorities = listOf("ANY_AUTHORITY")
 
         val toCreate = User(false, "User", "user@webbudget.com.br", "s3cr3t")
+        userAccountService.createAccount(toCreate, authorities)
 
-        every { userAccountValidationService.validateOnCreate(any()) } throws
-                RuntimeException("Ops, something went wrong!")
+        val duplicated = User(false, "User", "user@webbudget.com.br", "s3cr3t")
 
-        assertThatThrownBy { userAccountService.createAccount(toCreate, listOf("ANY_AUTHORITY")) }
-            .isInstanceOf(RuntimeException::class.java)
+        assertThatThrownBy { userAccountService.createAccount(duplicated, authorities) }
+            .isInstanceOf(DuplicatedPropertyException::class.java)
     }
 
     @Test
-    @Sql("/sql/clear-database.sql", "/sql/create-authorities.sql")
-    fun `should update when validation pass`() {
+    @Sql("/sql/administration/clear-tables.sql", "/sql/administration/create-authorities.sql")
+    fun `should update`() {
 
         val form = UserUpdateForm(true, "Other", listOf("ANY_OTHER_AUTHORITY"))
         val toCreate = User(false, "User", "user@webbudget.com.br", "s3cr3t")
-
-        every { userAccountValidationService.validateOnCreate(any()) } just runs
-        every { userAccountValidationService.validateOnUpdate(any()) } just runs
 
         val externalId = userAccountService.createAccount(toCreate, listOf("ANY_AUTHORITY"))
         val toUpdate = userRepository.findByExternalId(externalId)
@@ -113,59 +103,66 @@ class UserAccountServiceTest : BaseIntegrationTest() {
     }
 
     @Test
+    @Sql("/sql/administration/clear-tables.sql", "/sql/administration/create-authorities.sql")
     fun `should not update when validation fail`() {
 
-        val toUpdate = User(false, "User", "user@webbudget.com.br", "s3cr3t")
-            .apply {
-                this.id = 1L
-                this.externalId = UUID.randomUUID()
-            }
+        val authorities = listOf("ANY_AUTHORITY")
 
-        every { userAccountValidationService.validateOnUpdate(any()) } throws
-                RuntimeException("Ops, something went wrong!")
+        val toCreate = User(false, "User", "user@webbudget.com.br", "s3cr3t")
+        userAccountService.createAccount(toCreate, authorities)
 
-        assertThatThrownBy { userAccountService.updateAccount(toUpdate, listOf("ANY_OTHER_AUTHORITY")) }
-            .isInstanceOf(RuntimeException::class.java)
+        val duplicated = User(false, "User", "duplicated@webbudget.com.br", "s3cr3t")
+        val externalId = userAccountService.createAccount(duplicated, authorities)
+
+        val toUpdate = userRepository.findByExternalId(externalId)
+            ?: fail(OBJECT_NOT_FOUND_ERROR)
+
+        toUpdate.apply {
+            this.email = "user@webbudget.com.br"
+        }
+
+        assertThatThrownBy { userAccountService.updateAccount(toUpdate, authorities) }
+            .isInstanceOf(DuplicatedPropertyException::class.java)
     }
 
     @Test
-    @Sql("/sql/clear-database.sql", "/sql/create-authorities.sql")
+    @Sql("/sql/administration/clear-tables.sql", "/sql/administration/create-authorities.sql")
     fun `should delete`() {
-
-        every { userAccountValidationService.validateOnCreate(any()) } just runs
 
         val toCreate = User(false, "User", "user@webbudget.com.br", "s3cr3t")
         val externalId = userAccountService.createAccount(toCreate, listOf("ANY_AUTHORITY"))
 
         val toDelete = userRepository.findByExternalId(externalId)
-        userAccountService.deleteAccount(toDelete!!)
+            ?: fail(OBJECT_NOT_FOUND_ERROR)
+
+        userAccountService.deleteAccount(toDelete)
 
         val found = userRepository.findByExternalId(externalId)
         assertThat(found).isNull()
     }
 
     @Test
-    @Sql("/sql/clear-database.sql", "/sql/create-authorities.sql")
+    @Sql("/sql/administration/clear-tables.sql", "/sql/administration/create-authorities.sql")
     fun `should update password`() {
-
-        every { userAccountValidationService.validateOnCreate(any()) } just runs
 
         val newPassword = "new-secret"
         val toCreate = User(false, "User", "user@webbudget.com.br", "s3cr3t")
         val externalId = userAccountService.createAccount(toCreate, listOf("ANY_AUTHORITY"))
 
-        val toUpdate = userRepository.findByExternalId(externalId)!!
+        val toUpdate = userRepository.findByExternalId(externalId)
+            ?: fail(OBJECT_NOT_FOUND_ERROR)
+
         userAccountService.updatePassword(toUpdate, newPassword)
 
-        val updated = userRepository.findByExternalId(externalId)!!
+        val updated = userRepository.findByExternalId(externalId)
+            ?: fail(OBJECT_NOT_FOUND_ERROR)
+
         assertThat(passwordEncoder.matches(newPassword, updated.password)).isTrue
     }
 
     @Test
-    @Sql("/sql/clear-database.sql", "/sql/create-authorities.sql")
+    @Sql("/sql/administration/clear-tables.sql", "/sql/administration/create-authorities.sql")
     fun `should grant for all authorities`() {
-
-        every { userAccountValidationService.validateOnCreate(any()) } just runs
 
         val toCreate = User(false, "User", "user@webbudget.com.br", "s3cr3t")
         val authorities = listOf("SOME_AUTHORITY", "ANY_AUTHORITY", "ANY_OTHER_AUTHORITY")
@@ -181,10 +178,8 @@ class UserAccountServiceTest : BaseIntegrationTest() {
     }
 
     @Test
-    @Sql("/sql/clear-database.sql", "/sql/create-authorities.sql")
+    @Sql("/sql/administration/clear-tables.sql", "/sql/administration/create-authorities.sql")
     fun `should fail when try to delete admin user`() {
-
-        every { userAccountValidationService.validateOnCreate(any()) } just runs
 
         val toCreate = User(false, "Admin", "admin@webbudget.com.br", "s3cr3t")
         val externalId = userAccountService.createAccount(toCreate, listOf("ANY_AUTHORITY"))

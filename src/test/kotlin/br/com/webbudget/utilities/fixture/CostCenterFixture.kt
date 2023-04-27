@@ -5,6 +5,8 @@ import java.util.UUID
 
 object CostCenterFixture {
 
+    fun create(name: String) = CostCenter(name, true, "Something to describe")
+
     fun create(id: Long, externalId: UUID) = create().apply {
         this.id = id
         this.externalId = externalId

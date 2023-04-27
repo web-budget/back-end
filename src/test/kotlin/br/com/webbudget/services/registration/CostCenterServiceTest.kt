@@ -2,26 +2,19 @@ package br.com.webbudget.services.registration
 
 import br.com.webbudget.BaseIntegrationTest
 import br.com.webbudget.application.payloads.registration.CostCenterForm
+import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
 import br.com.webbudget.domain.services.registration.CostCenterService
-import br.com.webbudget.domain.services.registration.CostCenterValidationService
 import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository
 import br.com.webbudget.utilities.fixture.CostCenterFixture.create
-import com.ninjasquad.springmockk.MockkBean
-import io.mockk.every
-import io.mockk.just
-import io.mockk.runs
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
 import org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
 import org.springframework.beans.factory.annotation.Autowired
-import java.util.UUID
+import org.springframework.test.context.jdbc.Sql
 
 class CostCenterServiceTest : BaseIntegrationTest() {
-
-    @MockkBean
-    private lateinit var costCenterValidationService: CostCenterValidationService
 
     @Autowired
     private lateinit var costCenterService: CostCenterService
@@ -30,11 +23,10 @@ class CostCenterServiceTest : BaseIntegrationTest() {
     private lateinit var costCenterRepository: CostCenterRepository
 
     @Test
-    fun `should save when validation pass`() {
+    @Sql("/sql/registration/clear-tables.sql")
+    fun `should save`() {
 
         val toCreate = create()
-
-        every { costCenterValidationService.validateOnCreate(any()) } just runs
 
         val externalId = costCenterService.create(toCreate)
 
@@ -54,25 +46,24 @@ class CostCenterServiceTest : BaseIntegrationTest() {
     }
 
     @Test
-    fun `should not save when validation fail`() {
+    @Sql("/sql/registration/clear-tables.sql")
+    fun `should not save when name is duplicated`() {
 
         val toCreate = create()
+        costCenterService.create(toCreate)
 
-        every { costCenterValidationService.validateOnCreate(any()) } throws
-                RuntimeException("Oops, something went wrong!")
+        val duplicated = create()
 
-        assertThatThrownBy { costCenterService.create(toCreate) }
-            .isInstanceOf(RuntimeException::class.java)
+        assertThatThrownBy { costCenterService.create(duplicated) }
+            .isInstanceOf(DuplicatedPropertyException::class.java)
     }
 
     @Test
-    fun `should update when validation pass`() {
-
-        every { costCenterValidationService.validateOnCreate(any()) } just runs
-        every { costCenterValidationService.validateOnUpdate(any()) } just runs
+    @Sql("/sql/registration/clear-tables.sql")
+    fun `should update`() {
 
         val toCreate = create()
-        val form = CostCenterForm("Updated", "Updated", false)
+        val form = CostCenterForm("updated", "updated", false)
 
         val externalId = costCenterService.create(toCreate)
         val toUpdate = costCenterRepository.findByExternalId(externalId)
@@ -95,33 +86,35 @@ class CostCenterServiceTest : BaseIntegrationTest() {
     }
 
     @Test
-    fun `should not update when validation fail`() {
+    @Sql("/sql/registration/clear-tables.sql")
+    fun `should not update when name is duplicated`() {
 
-        val toUpdate = create(1L, UUID.randomUUID())
+        costCenterService.create(create("Cost Center One"))
+        val externalId = costCenterService.create(create("Cost Center Two"))
 
-        every { costCenterValidationService.validateOnCreate(any()) } throws
-                RuntimeException("Oops, something went wrong!")
+        val toUpdate = costCenterRepository.findByExternalId(externalId)
+            ?: fail(OBJECT_NOT_FOUND_ERROR)
+
+        toUpdate.apply {
+            this.name = "Cost Center One"
+        }
 
         assertThatThrownBy { costCenterService.update(toUpdate) }
-            .isInstanceOf(RuntimeException::class.java)
+            .isInstanceOf(DuplicatedPropertyException::class.java)
     }
 
     @Test
+    @Sql("/sql/registration/clear-tables.sql")
     fun `should delete`() {
 
-        every { costCenterValidationService.validateOnCreate(any()) } just runs
-        every { costCenterValidationService.validateOnDelete(any()) } just runs
+        val externalId = costCenterService.create(create())
 
-        val toCreate = create()
-        val externalId = costCenterService.create(toCreate)
-        val toDelete = costCenterRepository.findByExternalId(externalId)!!
-
-        assertThat(toDelete).isNotNull
+        val toDelete = costCenterRepository.findByExternalId(externalId)
+            ?: fail(OBJECT_NOT_FOUND_ERROR)
 
         costCenterService.delete(toDelete)
 
         val deleted = costCenterRepository.findByExternalId(externalId)
-
         assertThat(deleted).isNull()
     }
 
