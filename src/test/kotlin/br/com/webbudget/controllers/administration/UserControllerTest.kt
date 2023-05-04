@@ -5,7 +5,7 @@ import br.com.webbudget.application.controllers.administration.UserController
 import br.com.webbudget.application.mappers.configuration.UserMapperImpl
 import br.com.webbudget.domain.entities.administration.User
 import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
-import br.com.webbudget.domain.services.administration.UserAccountService
+import br.com.webbudget.domain.services.administration.UserService
 import br.com.webbudget.infrastructure.repository.administration.UserRepository
 import br.com.webbudget.utilities.Authorities
 import br.com.webbudget.utilities.ResourceAsString
@@ -46,14 +46,14 @@ class UserControllerTest : BaseControllerIntegrationTest() {
     private lateinit var userRepository: UserRepository
 
     @MockkBean
-    private lateinit var userAccountService: UserAccountService
+    private lateinit var userService: UserService
 
     @Test
     fun `should call account creation and return created`(@ResourceAsString("user/create.json") payload: String) {
 
         val externalId = UUID.randomUUID()
 
-        every { userAccountService.createAccount(any(), any()) } returns externalId
+        every { userService.createAccount(any(), any()) } returns externalId
 
         mockMvc.post(ENDPOINT_URL) {
             with(jwt().authorities(Authorities.ADMINISTRATION))
@@ -67,9 +67,9 @@ class UserControllerTest : BaseControllerIntegrationTest() {
             }
         }
 
-        verify(exactly = 1) { userAccountService.createAccount(any(), any()) }
+        verify(exactly = 1) { userService.createAccount(any(), any()) }
 
-        confirmVerified(userAccountService)
+        confirmVerified(userService)
     }
 
     @Test
@@ -98,9 +98,9 @@ class UserControllerTest : BaseControllerIntegrationTest() {
             .hasSize(requiredEntries.size)
             .containsExactlyInAnyOrderEntriesOf(requiredEntries)
 
-        verify { userAccountService.createAccount(any(), any()) wasNot called }
+        verify { userService.createAccount(any(), any()) wasNot called }
 
-        confirmVerified(userAccountService)
+        confirmVerified(userService)
     }
 
     @Test
@@ -111,7 +111,7 @@ class UserControllerTest : BaseControllerIntegrationTest() {
         val expectedUser = UserFixture.create(1L, externalId, *authorties.toTypedArray())
 
         every { userRepository.findByExternalId(externalId) } returns expectedUser
-        every { userAccountService.updateAccount(expectedUser, authorties) } returns expectedUser
+        every { userService.updateAccount(expectedUser, authorties) } returns expectedUser
 
         val jsonResponse = mockMvc.put("$ENDPOINT_URL/$externalId") {
             with(jwt().authorities(Authorities.ADMINISTRATION))
@@ -132,9 +132,9 @@ class UserControllerTest : BaseControllerIntegrationTest() {
             .node("authorities").isArray.contains("FINANCIAL")
 
         verify(exactly = 1) { userRepository.findByExternalId(externalId) }
-        verify(exactly = 1) { userAccountService.updateAccount(expectedUser, authorties) }
+        verify(exactly = 1) { userService.updateAccount(expectedUser, authorties) }
 
-        confirmVerified(userAccountService, userRepository)
+        confirmVerified(userService, userRepository)
     }
 
     @Test
@@ -145,7 +145,7 @@ class UserControllerTest : BaseControllerIntegrationTest() {
         val expectedUser = UserFixture.create(1L, externalId)
 
         every { userRepository.findByExternalId(externalId) } returns expectedUser
-        every { userAccountService.updatePassword(expectedUser, password, true) } just runs
+        every { userService.updatePassword(expectedUser, password, true) } just runs
 
         mockMvc.patch("$ENDPOINT_URL/$externalId/update-password") {
             with(jwt().authorities(Authorities.ADMINISTRATION))
@@ -156,15 +156,15 @@ class UserControllerTest : BaseControllerIntegrationTest() {
         }
 
         verify(exactly = 1) { userRepository.findByExternalId(externalId) }
-        verify(exactly = 1) { userAccountService.updatePassword(expectedUser, password, true) }
+        verify(exactly = 1) { userService.updatePassword(expectedUser, password, true) }
 
-        confirmVerified(userAccountService, userRepository)
+        confirmVerified(userService, userRepository)
     }
 
     @Test
     fun `should get conflict if e-mail is duplicated`(@ResourceAsString("user/create.json") payload: String) {
 
-        every { userAccountService.createAccount(any(), any()) } throws
+        every { userService.createAccount(any(), any()) } throws
                 DuplicatedPropertyException("users.errors.duplicated-email", "user.email")
 
         mockMvc.post(ENDPOINT_URL) {
@@ -178,9 +178,9 @@ class UserControllerTest : BaseControllerIntegrationTest() {
             jsonPath("\$.property", equalTo("user.email"))
         }
 
-        verify(exactly = 1) { userAccountService.createAccount(any(), any()) }
+        verify(exactly = 1) { userService.createAccount(any(), any()) }
 
-        confirmVerified(userAccountService)
+        confirmVerified(userService)
     }
 
     @Test
@@ -239,7 +239,7 @@ class UserControllerTest : BaseControllerIntegrationTest() {
         val expectedUser = UserFixture.create(1L, externalId, "REGISTRATION")
 
         every { userRepository.findByExternalId(externalId) } returns expectedUser
-        every { userAccountService.deleteAccount(expectedUser) } just runs
+        every { userService.deleteAccount(expectedUser) } just runs
 
         mockMvc.delete("$ENDPOINT_URL/$externalId") {
             with(jwt().authorities(Authorities.ADMINISTRATION))
@@ -249,9 +249,9 @@ class UserControllerTest : BaseControllerIntegrationTest() {
         }
 
         verify(exactly = 1) { userRepository.findByExternalId(externalId) }
-        verify(exactly = 1) { userAccountService.deleteAccount(expectedUser) }
+        verify(exactly = 1) { userService.deleteAccount(expectedUser) }
 
-        confirmVerified(userAccountService, userRepository)
+        confirmVerified(userService, userRepository)
     }
 
     @Test
@@ -281,7 +281,7 @@ class UserControllerTest : BaseControllerIntegrationTest() {
             .apply { this.externalId = externalId }
 
         every { userRepository.findByExternalId(externalId) } returns adminUser
-        every { userAccountService.deleteAccount(adminUser) } throws IllegalArgumentException("Can't delete admin")
+        every { userService.deleteAccount(adminUser) } throws IllegalArgumentException("Can't delete admin")
 
         mockMvc.delete("$ENDPOINT_URL/$externalId") {
             with(jwt().authorities(Authorities.ADMINISTRATION))
@@ -291,7 +291,7 @@ class UserControllerTest : BaseControllerIntegrationTest() {
         }
 
         verify(exactly = 1) { userRepository.findByExternalId(externalId) }
-        verify(exactly = 1) { userAccountService.deleteAccount(adminUser) }
+        verify(exactly = 1) { userService.deleteAccount(adminUser) }
 
         confirmVerified(userRepository)
     }

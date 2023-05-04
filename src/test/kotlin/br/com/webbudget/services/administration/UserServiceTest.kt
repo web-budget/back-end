@@ -4,7 +4,7 @@ import br.com.webbudget.BaseIntegrationTest
 import br.com.webbudget.application.payloads.administration.UserUpdateForm
 import br.com.webbudget.domain.entities.administration.User
 import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
-import br.com.webbudget.domain.services.administration.UserAccountService
+import br.com.webbudget.domain.services.administration.UserService
 import br.com.webbudget.infrastructure.repository.administration.UserRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.test.context.jdbc.Sql
 
-class UserAccountServiceTest : BaseIntegrationTest() {
+class UserServiceTest : BaseIntegrationTest() {
 
     @Autowired
     private lateinit var userRepository: UserRepository
@@ -23,7 +23,7 @@ class UserAccountServiceTest : BaseIntegrationTest() {
     private lateinit var passwordEncoder: PasswordEncoder
 
     @Autowired
-    private lateinit var userAccountService: UserAccountService
+    private lateinit var userService: UserService
 
     @Test
     @Sql("/sql/administration/clear-tables.sql", "/sql/administration/create-authorities.sql")
@@ -31,7 +31,7 @@ class UserAccountServiceTest : BaseIntegrationTest() {
 
         val toCreate = User(false, "User", "user@webbudget.com.br", "s3cr3t")
 
-        val externalId = userAccountService.createAccount(toCreate, listOf("ANY_AUTHORITY"))
+        val externalId = userService.createAccount(toCreate, listOf("ANY_AUTHORITY"))
         val created = userRepository.findByExternalId(externalId)
 
         assertThat(created)
@@ -59,11 +59,11 @@ class UserAccountServiceTest : BaseIntegrationTest() {
         val authorities = listOf("ANY_AUTHORITY")
 
         val toCreate = User(false, "User", "user@webbudget.com.br", "s3cr3t")
-        userAccountService.createAccount(toCreate, authorities)
+        userService.createAccount(toCreate, authorities)
 
         val duplicated = User(false, "User", "user@webbudget.com.br", "s3cr3t")
 
-        assertThatThrownBy { userAccountService.createAccount(duplicated, authorities) }
+        assertThatThrownBy { userService.createAccount(duplicated, authorities) }
             .isInstanceOf(DuplicatedPropertyException::class.java)
     }
 
@@ -74,12 +74,12 @@ class UserAccountServiceTest : BaseIntegrationTest() {
         val form = UserUpdateForm(true, "Other", listOf("ANY_OTHER_AUTHORITY"))
         val toCreate = User(false, "User", "user@webbudget.com.br", "s3cr3t")
 
-        val externalId = userAccountService.createAccount(toCreate, listOf("ANY_AUTHORITY"))
+        val externalId = userService.createAccount(toCreate, listOf("ANY_AUTHORITY"))
         val toUpdate = userRepository.findByExternalId(externalId)
             ?: fail(OBJECT_NOT_FOUND_ERROR)
 
         toUpdate.updateFields(form)
-        val updated = userAccountService.updateAccount(toUpdate, form.authorities)
+        val updated = userService.updateAccount(toUpdate, form.authorities)
 
         assertThat(updated)
             .isNotNull
@@ -109,10 +109,10 @@ class UserAccountServiceTest : BaseIntegrationTest() {
         val authorities = listOf("ANY_AUTHORITY")
 
         val toCreate = User(false, "User", "user@webbudget.com.br", "s3cr3t")
-        userAccountService.createAccount(toCreate, authorities)
+        userService.createAccount(toCreate, authorities)
 
         val duplicated = User(false, "User", "duplicated@webbudget.com.br", "s3cr3t")
-        val externalId = userAccountService.createAccount(duplicated, authorities)
+        val externalId = userService.createAccount(duplicated, authorities)
 
         val toUpdate = userRepository.findByExternalId(externalId)
             ?: fail(OBJECT_NOT_FOUND_ERROR)
@@ -121,7 +121,7 @@ class UserAccountServiceTest : BaseIntegrationTest() {
             this.email = "user@webbudget.com.br"
         }
 
-        assertThatThrownBy { userAccountService.updateAccount(toUpdate, authorities) }
+        assertThatThrownBy { userService.updateAccount(toUpdate, authorities) }
             .isInstanceOf(DuplicatedPropertyException::class.java)
     }
 
@@ -130,12 +130,12 @@ class UserAccountServiceTest : BaseIntegrationTest() {
     fun `should delete`() {
 
         val toCreate = User(false, "User", "user@webbudget.com.br", "s3cr3t")
-        val externalId = userAccountService.createAccount(toCreate, listOf("ANY_AUTHORITY"))
+        val externalId = userService.createAccount(toCreate, listOf("ANY_AUTHORITY"))
 
         val toDelete = userRepository.findByExternalId(externalId)
             ?: fail(OBJECT_NOT_FOUND_ERROR)
 
-        userAccountService.deleteAccount(toDelete)
+        userService.deleteAccount(toDelete)
 
         val found = userRepository.findByExternalId(externalId)
         assertThat(found).isNull()
@@ -147,12 +147,12 @@ class UserAccountServiceTest : BaseIntegrationTest() {
 
         val newPassword = "new-secret"
         val toCreate = User(false, "User", "user@webbudget.com.br", "s3cr3t")
-        val externalId = userAccountService.createAccount(toCreate, listOf("ANY_AUTHORITY"))
+        val externalId = userService.createAccount(toCreate, listOf("ANY_AUTHORITY"))
 
         val toUpdate = userRepository.findByExternalId(externalId)
             ?: fail(OBJECT_NOT_FOUND_ERROR)
 
-        userAccountService.updatePassword(toUpdate, newPassword)
+        userService.updatePassword(toUpdate, newPassword)
 
         val updated = userRepository.findByExternalId(externalId)
             ?: fail(OBJECT_NOT_FOUND_ERROR)
@@ -167,7 +167,7 @@ class UserAccountServiceTest : BaseIntegrationTest() {
         val toCreate = User(false, "User", "user@webbudget.com.br", "s3cr3t")
         val authorities = listOf("SOME_AUTHORITY", "ANY_AUTHORITY", "ANY_OTHER_AUTHORITY")
 
-        val externalId = userAccountService.createAccount(toCreate, authorities)
+        val externalId = userService.createAccount(toCreate, authorities)
         val saved = userRepository.findByExternalId(externalId)!!
 
         assertThat(saved).extracting {
@@ -182,11 +182,11 @@ class UserAccountServiceTest : BaseIntegrationTest() {
     fun `should fail when try to delete admin user`() {
 
         val toCreate = User(false, "Admin", "admin@webbudget.com.br", "s3cr3t")
-        val externalId = userAccountService.createAccount(toCreate, listOf("ANY_AUTHORITY"))
+        val externalId = userService.createAccount(toCreate, listOf("ANY_AUTHORITY"))
 
         val toDelete = userRepository.findByExternalId(externalId)
 
-        assertThatThrownBy { userAccountService.deleteAccount(toDelete!!) }
+        assertThatThrownBy { userService.deleteAccount(toDelete!!) }
             .isInstanceOf(IllegalArgumentException::class.java)
     }
 }

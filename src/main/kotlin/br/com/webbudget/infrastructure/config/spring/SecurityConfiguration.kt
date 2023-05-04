@@ -41,6 +41,7 @@ class SecurityConfiguration(
             csrf { disable() }
             authorizeRequests {
                 authorize("/actuator/health/**", permitAll)
+                authorize("/user-account/**", permitAll)
                 authorize("/api/administration/**", hasAuthority("SCOPE_ADMINISTRATION"))
                 authorize("/api/registration/**", hasAuthority("SCOPE_REGISTRATION"))
                 authorize("/api/financial/**", hasAuthority("SCOPE_FINANCIAL"))

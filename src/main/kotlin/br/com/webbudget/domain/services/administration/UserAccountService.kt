@@ -1,79 +1,50 @@
 package br.com.webbudget.domain.services.administration
 
-import br.com.webbudget.domain.entities.administration.Grant
-import br.com.webbudget.domain.entities.administration.User
-import br.com.webbudget.infrastructure.repository.administration.AuthorityRepository
-import br.com.webbudget.infrastructure.repository.administration.GrantRepository
+import br.com.webbudget.domain.entities.administration.PasswordRecoverAttempt
+import br.com.webbudget.domain.mail.RecoverPasswordEmail
+import br.com.webbudget.domain.services.MailSenderService
+import br.com.webbudget.infrastructure.repository.administration.PasswordRecoverAttemptRepository
 import br.com.webbudget.infrastructure.repository.administration.UserRepository
-import org.springframework.security.crypto.password.PasswordEncoder
+import mu.KotlinLogging
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.format.DateTimeFormatter
 import java.util.UUID
+
+private val logger = KotlinLogging.logger {}
 
 @Service
 @Transactional(readOnly = true)
 class UserAccountService(
+    @Value("\${web-budget.front-end-url}")
+    private val frontendUrl: String,
     private val userRepository: UserRepository,
-    private val grantRepository: GrantRepository,
-    private val passwordEncoder: PasswordEncoder,
-    private val authorityRepository: AuthorityRepository,
-    private val userAccountValidationService: UserAccountValidationService
+    private val mailSenderService: MailSenderService,
+    private val passwordRecoverAttemptRepository: PasswordRecoverAttemptRepository
 ) {
 
     @Transactional
-    fun createAccount(user: User, authorities: List<String>): UUID {
+    fun recoverPassword(email: String) {
 
-        userAccountValidationService.validateOnCreate(user)
+        val user = userRepository.findByEmail(email)
 
-        val password = passwordEncoder.encode(user.password)
-        user.password = password
-
-        val saved = userRepository.persist(user)
-
-        authorities.forEach {
-            authorityRepository.findByName(it)
-                ?.let { authority -> grantRepository.persist(Grant(saved, authority)) }
+        if (user == null) {
+            logger.warn { "No user found with e-mail [${email}], ignoring password recover request" }
+            return
         }
 
-        return saved.externalId!!
-    }
+        val recoverAttempt = PasswordRecoverAttempt(UUID.randomUUID(), user)
+        passwordRecoverAttemptRepository.persist(recoverAttempt)
 
-    @Transactional
-    fun updateAccount(user: User, authorities: List<String>): User {
+        val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
+        val recoverPasswordUrl = "${frontendUrl}/login/recover-password" +
+                "?token=${recoverAttempt.token}&email=${user.email}"
 
-        userAccountValidationService.validateOnUpdate(user)
+        val mailMessage = RecoverPasswordEmail(user)
+        mailMessage.addVariable("recover-password-url", recoverPasswordUrl)
+        mailMessage.addVariable("valid-until", recoverAttempt.validity.format(formatter))
 
-        val userExternalId = user.externalId!!
-
-        grantRepository.deleteByUserExternalId(userExternalId)
-
-        val saved = userRepository.merge(user)
-
-        authorities.forEach {
-            authorityRepository.findByName(it)
-                ?.let { authority -> grantRepository.persist(Grant(saved, authority)) }
-        }
-
-        val userGrants = grantRepository.findByUserExternalId(userExternalId)
-
-        return saved.apply { this.grants = userGrants }
-    }
-
-    @Transactional
-    fun updatePassword(user: User, password: String, temporary: Boolean = true) {
-
-        // TODO make the temporary thing work latter
-        println(temporary)
-
-        val newPassword = passwordEncoder.encode(password)
-        user.password = newPassword
-
-        userRepository.update(user)
-    }
-
-    @Transactional
-    fun deleteAccount(user: User) {
-        require(!user.isAdmin()) { "user.errors.cannot-delete-admin" }
-        userRepository.delete(user)
+        mailSenderService.sendEmail(mailMessage)
     }
 }

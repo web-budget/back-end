@@ -7,7 +7,7 @@ import br.com.webbudget.application.payloads.administration.UserFilter
 import br.com.webbudget.application.payloads.administration.UserUpdateForm
 import br.com.webbudget.application.payloads.administration.UserView
 import br.com.webbudget.domain.exceptions.ResourceNotFoundException
-import br.com.webbudget.domain.services.administration.UserAccountService
+import br.com.webbudget.domain.services.administration.UserService
 import br.com.webbudget.infrastructure.repository.administration.UserRepository
 import jakarta.validation.Valid
 import org.springframework.data.domain.Page
@@ -30,7 +30,7 @@ import java.util.UUID
 class UserController(
     private val userMapper: UserMapper,
     private val userRepository: UserRepository,
-    private val userAccountService: UserAccountService
+    private val userService: UserService
 ) {
 
     @GetMapping
@@ -52,7 +52,7 @@ class UserController(
     fun create(@RequestBody @Valid form: UserCreateForm): ResponseEntity<Any> {
 
         val toCreate = userMapper.map(form)
-        val created = userAccountService.createAccount(toCreate, form.authorities)
+        val created = userService.createAccount(toCreate, form.authorities)
 
         val location = ServletUriComponentsBuilder.fromCurrentRequest()
             .path("/{id}")
@@ -66,7 +66,7 @@ class UserController(
     fun update(@PathVariable id: UUID, @RequestBody @Valid form: UserUpdateForm): ResponseEntity<UserView> {
         return userRepository.findByExternalId(id)
             ?.updateFields(form)
-            ?.let { userAccountService.updateAccount(it, form.authorities) }
+            ?.let { userService.updateAccount(it, form.authorities) }
             ?.let { ResponseEntity.ok(userMapper.map(it)) }
             ?: throw ResourceNotFoundException(id)
     }
@@ -77,7 +77,7 @@ class UserController(
         val (temporary, password) = form
 
         userRepository.findByExternalId(id)
-            ?.let { userAccountService.updatePassword(it, password, temporary) }
+            ?.let { userService.updatePassword(it, password, temporary) }
             ?: throw ResourceNotFoundException(id)
 
         return ResponseEntity.ok().build()
@@ -86,7 +86,7 @@ class UserController(
     @DeleteMapping("/{id}")
     fun delete(@PathVariable id: UUID): ResponseEntity<Any> {
         userRepository.findByExternalId(id)
-            ?.let { userAccountService.deleteAccount(it) }
+            ?.let { userService.deleteAccount(it) }
             ?: throw ResourceNotFoundException(id)
         return ResponseEntity.ok().build()
     }

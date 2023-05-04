@@ -1,12 +1,35 @@
 package br.com.webbudget.infrastructure.config.spring
 
+import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing
 import org.springframework.scheduling.annotation.EnableAsync
 import org.springframework.scheduling.annotation.EnableScheduling
+import org.thymeleaf.spring6.SpringTemplateEngine
+import org.thymeleaf.spring6.templateresolver.SpringResourceTemplateResolver
+import org.thymeleaf.templatemode.TemplateMode.HTML
+import java.nio.charset.StandardCharsets
 
 @EnableAsync
 @Configuration
 @EnableScheduling
 @EnableJpaAuditing
-class CommonsConfiguration
+class CommonsConfiguration {
+
+    @Bean
+    fun configureTemplateEngine(): SpringTemplateEngine {
+
+        val templateResolver = SpringResourceTemplateResolver()
+
+        templateResolver.prefix = "classpath:/mail-templates/"
+        templateResolver.suffix = ".html"
+        templateResolver.templateMode = HTML
+        templateResolver.characterEncoding = StandardCharsets.UTF_8.name()
+
+        val engine = SpringTemplateEngine()
+
+        engine.addTemplateResolver(templateResolver)
+        
+        return engine
+    }
+}

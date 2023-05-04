@@ -60,6 +60,10 @@ logging:
     name: /${user.home}/${spring.application.name}/${spring.application.name}.log
 
 web-budget:
+  mail:
+    reply-to-address: "noreply@webbudget.com.br"
+    default-from-address: "noreply@webbudget.com.br"
+    logo-url: "http://localhost:8080/webbudget-logo.png"
   frontend-url: "http://localhost:8080"
   jwt:
     access-token-expiration: 2400 # seconds

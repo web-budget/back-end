@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="back-end#28" author="${author}">
+        <createTable tableName="password_recover_attempts" schemaName="administration">
+            <column name="id" autoIncrement="true" type="bigint">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="external_id" type="${uuid_type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="smallint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_on" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_update" type="timestamp"/>
+
+            <column name="token" type="${uuid_type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="valid_until" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id_user" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addUniqueConstraint columnNames="id"
+                             tableName="password_recover_attempts"
+                             schemaName="administration"/>
+        <addUniqueConstraint columnNames="external_id"
+                             tableName="password_recover_attempts"
+                             schemaName="administration"/>
+
+        <addForeignKeyConstraint constraintName="fk_users_on_password_recover_attempts"
+                                 baseColumnNames="id_user"
+                                 baseTableName="password_recover_attempts"
+                                 baseTableSchemaName="administration"
+                                 referencedTableName="users"
+                                 referencedTableSchemaName="administration"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+</databaseChangeLog>

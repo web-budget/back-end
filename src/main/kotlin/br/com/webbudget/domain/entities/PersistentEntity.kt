@@ -1,10 +1,5 @@
 package br.com.webbudget.domain.entities
 
-import org.springframework.data.annotation.CreatedDate
-import org.springframework.data.jpa.domain.support.AuditingEntityListener
-import java.io.Serializable
-import java.time.LocalDateTime
-import java.util.UUID
 import jakarta.persistence.Column
 import jakarta.persistence.EntityListeners
 import jakarta.persistence.GeneratedValue
@@ -14,6 +9,11 @@ import jakarta.persistence.MappedSuperclass
 import jakarta.persistence.PrePersist
 import jakarta.persistence.PreUpdate
 import jakarta.persistence.Version
+import org.springframework.data.annotation.CreatedDate
+import org.springframework.data.jpa.domain.support.AuditingEntityListener
+import java.io.Serializable
+import java.time.LocalDateTime
+import java.util.UUID
 
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener::class)
@@ -61,11 +61,8 @@ open class PersistentEntity<T : Serializable> {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is PersistentEntity<*>) return false
-
         if (id != other.id) return false
-        if (externalId != other.externalId) return false
-
-        return true
+        return externalId == other.externalId
     }
 
     override fun hashCode(): Int {

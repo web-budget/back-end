@@ -33,6 +33,9 @@
             <column name="active" type="boolean">
                 <constraints nullable="false"/>
             </column>
+            <column name="default_language" type="varchar(5)">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
 
         <createTable tableName="authorities" schemaName="administration">

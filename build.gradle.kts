@@ -41,6 +41,7 @@ val mockkVersion = "3.1.1"
 val jsonUnitVersion = "2.36.0"
 val awaitilityVersion = "4.2.0"
 val hypersistentceUtilsVersion = "3.1.1"
+val kotlinLoggingJvmVersion = "3.0.5"
 
 dependencies {
     // spring
@@ -50,6 +51,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation("org.springframework.boot:spring-boot-starter-mail")
+    implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
 
     // utilities
     implementation("com.google.guava:guava:$guavaVersion")
@@ -58,6 +61,7 @@ dependencies {
     // mapstruct
     kapt("org.mapstruct:mapstruct-processor:$mapstructVersion")
     implementation("org.mapstruct:mapstruct:$mapstructVersion")
+    implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingJvmVersion")
 
     // dev tools
     developmentOnly("org.springframework.boot:spring-boot-devtools")
