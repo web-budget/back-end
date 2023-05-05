@@ -20,8 +20,9 @@ interface UserMapper {
     )
     fun map(user: User): UserView
 
-    // FIXME this default value should be removed when task #43 is done
+    // FIXME this default value for language should be removed when task #43 is done
     @Mappings(
+        Mapping(target = "grants", expression = "java(java.util.List.of())"),
         Mapping(
             target = "defaultLanguage",
             expression = "java(br.com.webbudget.domain.entities.administration.Language.PT_BR)"
