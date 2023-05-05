@@ -19,5 +19,10 @@ class PasswordRecoverAttempt(
     @field:JoinColumn(name = "id_user", nullable = false)
     val user: User,
     @field:Column(name = "valid_until", nullable = false)
-    var validity: LocalDateTime = LocalDateTime.now().plusHours(3),
-) : PersistentEntity<Long>()
+    var validity: LocalDateTime = LocalDateTime.now().plusHours(VALIDITY_TIME_LIMIT_HOURS),
+) : PersistentEntity<Long>() {
+
+    companion object {
+        private const val VALIDITY_TIME_LIMIT_HOURS = 3L
+    }
+}

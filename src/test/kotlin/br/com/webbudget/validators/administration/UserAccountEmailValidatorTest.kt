@@ -1,10 +1,9 @@
 package br.com.webbudget.validators.administration
 
-import br.com.webbudget.BaseIntegrationTest
-import br.com.webbudget.domain.entities.administration.User
 import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
 import br.com.webbudget.domain.validators.administration.UserAccountEmailValidator
 import br.com.webbudget.infrastructure.repository.administration.UserRepository
+import br.com.webbudget.utilities.fixture.UserFixture.create
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
@@ -16,7 +15,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import java.util.UUID
 
 @ExtendWith(MockKExtension::class)
-class UserAccountEmailValidatorTest : BaseIntegrationTest() {
+class UserAccountEmailValidatorTest {
 
     @MockK
     lateinit var userRepository: UserRepository
@@ -27,15 +26,15 @@ class UserAccountEmailValidatorTest : BaseIntegrationTest() {
     @Test
     fun `should fail when duplicated email`() {
 
-        val duplicated = User(false, "Duplicated", "test@test.com")
+        val duplicated = create()
             .apply {
                 this.id = 1L
                 this.externalId = UUID.randomUUID()
             }
 
-        every { userRepository.findByEmail("test@test.com") } returns duplicated
+        every { userRepository.findByEmail("user@test.com") } returns duplicated
 
-        val toValidate = User(false, "Duplicated", "test@test.com")
+        val toValidate = create()
 
         assertThatThrownBy { userAccountEmailValidator.validate(toValidate) }
             .isInstanceOf(DuplicatedPropertyException::class.java)
@@ -47,14 +46,14 @@ class UserAccountEmailValidatorTest : BaseIntegrationTest() {
 
         val externalId = UUID.randomUUID()
 
-        val notDuplicated = User(false, "Not Duplicated", "test@test.com")
+        val notDuplicated = create()
             .apply {
                 this.id = 1L
                 this.externalId = externalId
             }
 
         every {
-            userRepository.findByEmailAndExternalIdNot("test@test.com", externalId)
+            userRepository.findByEmailAndExternalIdNot("user@test.com", externalId)
         } returns null
 
         assertThatNoException()

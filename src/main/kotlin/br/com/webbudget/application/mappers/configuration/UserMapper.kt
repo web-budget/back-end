@@ -20,6 +20,13 @@ interface UserMapper {
     )
     fun map(user: User): UserView
 
+    // FIXME this default value should be removed when task #43 is done
+    @Mappings(
+        Mapping(
+            target = "defaultLanguage",
+            expression = "java(br.com.webbudget.domain.entities.administration.Language.PT_BR)"
+        )
+    )
     fun map(form: UserCreateForm): User
 
     companion object {

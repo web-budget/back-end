@@ -2,6 +2,14 @@ spring:
   liquibase:
     contexts: test
 
+  mail:
+    host: 127.0.0.1
+    port: 3025
+    username: mail_user
+    password: mail_password
+    properties:
+      mail.debug: true
+
 logging:
   level:
-    org.springframework.security: DEBUG
+    br.com.webbudget: DEBUG

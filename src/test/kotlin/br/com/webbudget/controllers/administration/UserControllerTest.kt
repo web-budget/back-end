@@ -277,7 +277,7 @@ class UserControllerTest : BaseControllerIntegrationTest() {
     fun `should get bad request when try to delete admin user`() {
 
         val externalId = UUID.randomUUID()
-        val adminUser = User(true, "Admin", "admin@webbudget.com.br", null, null)
+        val adminUser = User(true, "Admin", "admin@webbudget.com.br", "s3cr3t")
             .apply { this.externalId = externalId }
 
         every { userRepository.findByExternalId(externalId) } returns adminUser

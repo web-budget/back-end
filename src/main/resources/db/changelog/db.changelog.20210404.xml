@@ -100,9 +100,9 @@
 
         <!--password means 'admin'-->
         <sql>
-            INSERT INTO administration.users (external_id, version, created_on, name, email, password, active)
+            INSERT INTO administration.users (external_id, version, created_on, name, email, password, active, default_language)
             VALUES('6706a395-6690-4bad-948a-5c3c823e93d2', 0, current_timestamp, 'Administrador',
-            'admin@webbudget.com.br', '$2a$11$gofMXY5BBXVbwoPHbYiCd.6PJ.2pIZk01XRiI8gnVut8t6kFWoOle', true);
+            'admin@webbudget.com.br', '$2a$11$gofMXY5BBXVbwoPHbYiCd.6PJ.2pIZk01XRiI8gnVut8t6kFWoOle', true, 'PT_BR');
         </sql>
     </changeSet>
 

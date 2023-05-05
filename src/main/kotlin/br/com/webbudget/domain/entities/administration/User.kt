@@ -29,7 +29,7 @@ class User(
     @field:Column(name = "default_language", nullable = false)
     var defaultLanguage: Language = PT_BR,
     @field:OneToMany(mappedBy = "user", fetch = EAGER, cascade = [REMOVE])
-    var grants: List<Grant>
+    var grants: List<Grant> = mutableListOf(),
 ) : PersistentEntity<Long>(), UpdateSupport<UserUpdateForm, User> {
 
     fun isAdmin(): Boolean {

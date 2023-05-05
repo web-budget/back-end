@@ -16,20 +16,33 @@ import java.nio.charset.StandardCharsets
 @EnableJpaAuditing
 class CommonsConfiguration {
 
+    private lateinit var templateResolver: SpringResourceTemplateResolver
+
     @Bean
     fun configureTemplateEngine(): SpringTemplateEngine {
 
-        val templateResolver = SpringResourceTemplateResolver()
+        val templateResolver = configureTemplateResolver()
+
+        val engine = SpringTemplateEngine()
+        engine.addTemplateResolver(templateResolver)
+
+        return engine
+    }
+
+    @Bean
+    fun configureTemplateResolver(): SpringResourceTemplateResolver {
+
+        if (::templateResolver.isInitialized) {
+            return templateResolver
+        }
+
+        templateResolver = SpringResourceTemplateResolver()
 
         templateResolver.prefix = "classpath:/mail-templates/"
         templateResolver.suffix = ".html"
         templateResolver.templateMode = HTML
         templateResolver.characterEncoding = StandardCharsets.UTF_8.name()
 
-        val engine = SpringTemplateEngine()
-
-        engine.addTemplateResolver(templateResolver)
-        
-        return engine
+        return templateResolver
     }
 }

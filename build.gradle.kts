@@ -41,7 +41,8 @@ val mockkVersion = "3.1.1"
 val jsonUnitVersion = "2.36.0"
 val awaitilityVersion = "4.2.0"
 val hypersistentceUtilsVersion = "3.1.1"
-val kotlinLoggingJvmVersion = "3.0.5"
+val kotlinLoggingJvmVersion = "4.0.0-beta-27"
+val greenMailVersion = "2.0.0"
 
 dependencies {
     // spring
@@ -61,7 +62,7 @@ dependencies {
     // mapstruct
     kapt("org.mapstruct:mapstruct-processor:$mapstructVersion")
     implementation("org.mapstruct:mapstruct:$mapstructVersion")
-    implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingJvmVersion")
+    implementation("io.github.oshai:kotlin-logging-jvm:$kotlinLoggingJvmVersion")
 
     // dev tools
     developmentOnly("org.springframework.boot:spring-boot-devtools")
@@ -92,6 +93,8 @@ dependencies {
     testImplementation("net.javacrumbs.json-unit:json-unit-assertj:$jsonUnitVersion")
     testImplementation("net.javacrumbs.json-unit:json-unit-spring:$jsonUnitVersion")
     testImplementation("org.awaitility:awaitility:$awaitilityVersion")
+    testImplementation("org.awaitility:awaitility-kotlin:$awaitilityVersion")
+    testImplementation("com.icegreen:greenmail-junit5:$greenMailVersion")
 
     // testcontainers
     testImplementation("org.testcontainers:junit-jupiter")
@@ -122,15 +125,6 @@ tasks.withType<Test> {
 extensions.findByName("buildScan")?.withGroovyBuilder {
     setProperty("termsOfServiceUrl", "https://gradle.com/terms-of-service")
     setProperty("termsOfServiceAgree", "yes")
-}
-
-kapt {
-    correctErrorTypes = true
-    arguments {
-        arg("mapstruct.verbose", "false")
-        arg("mapstruct.suppressGeneratorTimestamp", "true")
-        arg("mapstruct.suppressGeneratorVersionInfoComment", "true")
-    }
 }
 
 springBoot {

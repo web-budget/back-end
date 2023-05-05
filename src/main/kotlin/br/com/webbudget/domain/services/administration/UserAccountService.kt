@@ -5,7 +5,7 @@ import br.com.webbudget.domain.mail.RecoverPasswordEmail
 import br.com.webbudget.domain.services.MailSenderService
 import br.com.webbudget.infrastructure.repository.administration.PasswordRecoverAttemptRepository
 import br.com.webbudget.infrastructure.repository.administration.UserRepository
-import mu.KotlinLogging
+import io.github.oshai.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
