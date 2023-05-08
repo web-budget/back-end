@@ -37,8 +37,8 @@ class MailSenderService(
 
         context.setVariables(mailTemplate.variables)
 
-        context.setVariable("logo-url", logoUrl)
-        context.setVariable("application-url", frontendUrl)
+        context.setVariable("logoUrl", logoUrl)
+        context.setVariable("applicationUrl", frontendUrl)
 
         val template = templateEngine.process(mailTemplate.name, context)
 

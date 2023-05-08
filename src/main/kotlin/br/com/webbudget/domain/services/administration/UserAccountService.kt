@@ -42,8 +42,8 @@ class UserAccountService(
                 "?token=${recoverAttempt.token}&email=${user.email}"
 
         val mailMessage = RecoverPasswordEmail(user)
-        mailMessage.addVariable("recover-password-url", recoverPasswordUrl)
-        mailMessage.addVariable("valid-until", recoverAttempt.validity.format(formatter))
+        mailMessage.addVariable("recoverPasswordUrl", recoverPasswordUrl)
+        mailMessage.addVariable("validUntil", recoverAttempt.validity.format(formatter))
 
         mailSenderService.sendEmail(mailMessage)
     }
