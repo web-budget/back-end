@@ -43,6 +43,7 @@ val awaitilityVersion = "4.2.0"
 val hypersistentceUtilsVersion = "3.1.1"
 val kotlinLoggingJvmVersion = "4.0.0-beta-27"
 val greenMailVersion = "2.0.0"
+val arrowVersion = "1.2.0-RC"
 
 dependencies {
     // spring
@@ -56,6 +57,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
 
     // utilities
+    implementation("io.arrow-kt:arrow-core:$arrowVersion")
     implementation("com.google.guava:guava:$guavaVersion")
     implementation("io.hypersistence:hypersistence-utils-hibernate-60:$hypersistentceUtilsVersion")
 

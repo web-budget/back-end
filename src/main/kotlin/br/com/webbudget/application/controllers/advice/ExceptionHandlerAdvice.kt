@@ -1,5 +1,6 @@
 package br.com.webbudget.application.controllers.advice
 
+import br.com.webbudget.domain.exceptions.BusinessException
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.HttpStatus
 import org.springframework.http.ProblemDetail
@@ -22,6 +23,15 @@ class ExceptionHandlerAdvice {
             HttpStatus.BAD_REQUEST, "Could not fulfill your request"
         )
 
+        problemDetail.setProperty("error", ex.message!!)
+
+        return problemDetail
+    }
+
+    @ExceptionHandler(BusinessException::class)
+    fun handle(ex: BusinessException): ProblemDetail {
+
+        val problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.detail)
         problemDetail.setProperty("error", ex.message!!)
 
         return problemDetail

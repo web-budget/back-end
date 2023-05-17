@@ -63,6 +63,9 @@ class UserAccountServiceTest : BaseIntegrationTest() {
         stopMemoryLoggerAppender()
     }
 
+    // TODO create a test to check when the token is invalid, should throw error
+    // TODO create a test to check the correct flow, when token is valid and pwd is changed and attempt used
+
     companion object {
 
         @JvmStatic

@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
-@Suppress("UnusedPrivateMember")
-
 @RestController
 @RequestMapping("/user-account")
 class UserAccountController(
@@ -31,7 +29,13 @@ class UserAccountController(
 
     @PatchMapping("/recover-password")
     fun recoverPassword(@RequestBody form: RecoverPasswordForm): ResponseEntity<Any> {
-        println(form)
+
+        val token = requireNotNull(form.token)
+        val userEmail = requireNotNull(form.email)
+        val newPassword = requireNotNull(form.password)
+
+        userAccountService.changePassword(newPassword, token, userEmail)
+
         return ResponseEntity.ok().build()
     }
 }

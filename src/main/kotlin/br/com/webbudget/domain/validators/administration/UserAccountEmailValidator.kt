@@ -23,7 +23,7 @@ class UserAccountEmailValidator(
     }
 
     private fun validateSaved(value: User) {
-        userRepository.findByEmailAndExternalIdNot(value.email!!, value.externalId!!)
+        userRepository.findByEmailAndExternalIdNot(value.email, value.externalId!!)
             ?.let { throw DuplicatedPropertyException("users.errors.duplicated-email", "user.email") }
     }
 

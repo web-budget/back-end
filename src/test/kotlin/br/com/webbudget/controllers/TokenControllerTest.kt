@@ -64,9 +64,7 @@ class TokenControllerTest : BaseControllerIntegrationTest() {
         confirmVerified(userRepository, tokenService)
     }
 
-    override fun enableAuthorizationTest(): Boolean {
-        return false
-    }
+    override fun enableAuthorizationTest() = false
 
     override fun getEndpointUrl(): String {
         return ENDPOINT_URL

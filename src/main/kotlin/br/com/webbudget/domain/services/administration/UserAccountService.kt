@@ -1,6 +1,7 @@
 package br.com.webbudget.domain.services.administration
 
 import br.com.webbudget.domain.entities.administration.PasswordRecoverAttempt
+import br.com.webbudget.domain.exceptions.InvalidPasswordRecoverToken
 import br.com.webbudget.domain.mail.RecoverPasswordEmail
 import br.com.webbudget.domain.services.MailSenderService
 import br.com.webbudget.infrastructure.repository.administration.PasswordRecoverAttemptRepository
@@ -9,6 +10,7 @@ import io.github.oshai.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.UUID
 
@@ -19,6 +21,7 @@ private val logger = KotlinLogging.logger {}
 class UserAccountService(
     @Value("\${web-budget.front-end-url}")
     private val frontendUrl: String,
+    private val userService: UserService,
     private val userRepository: UserRepository,
     private val mailSenderService: MailSenderService,
     private val passwordRecoverAttemptRepository: PasswordRecoverAttemptRepository
@@ -46,5 +49,23 @@ class UserAccountService(
         mailMessage.addVariable("validUntil", recoverAttempt.validity.format(formatter))
 
         mailSenderService.sendEmail(mailMessage)
+    }
+
+    @Transactional
+    fun changePassword(newPassword: String, token: UUID, userEmail: String) {
+
+        val recoverAttempt = passwordRecoverAttemptRepository.findByTokenAndUserEmail(token, userEmail)
+            ?: throw InvalidPasswordRecoverToken(userEmail)
+
+        if (recoverAttempt.validity.isBefore(LocalDateTime.now())) {
+            logger.debug { "Recover password toke has expired on [${recoverAttempt.validity}]" }
+            throw InvalidPasswordRecoverToken(userEmail)
+        }
+
+        userService.updatePassword(recoverAttempt.user, newPassword, false)
+
+        recoverAttempt
+            .apply { this.used = true }
+            .also { passwordRecoverAttemptRepository.merge(it) }
     }
 }

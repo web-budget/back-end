@@ -27,6 +27,9 @@
             <column name="valid_until" type="timestamp">
                 <constraints nullable="false"/>
             </column>
+            <column name="used" type="boolean">
+                <constraints nullable="false"/>
+            </column>
             <column name="id_user" type="bigint">
                 <constraints nullable="false"/>
             </column>

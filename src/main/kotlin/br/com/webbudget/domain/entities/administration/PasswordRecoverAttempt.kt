@@ -18,6 +18,8 @@ class PasswordRecoverAttempt(
     @field:ManyToOne(optional = false)
     @field:JoinColumn(name = "id_user", nullable = false)
     val user: User,
+    @field:Column(name = "used", nullable = false)
+    var used: Boolean = false,
     @field:Column(name = "valid_until", nullable = false)
     var validity: LocalDateTime = LocalDateTime.now().plusHours(VALIDITY_TIME_LIMIT_HOURS),
 ) : PersistentEntity<Long>() {

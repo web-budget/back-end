@@ -53,6 +53,6 @@ class MailSenderService(
 
         mailSender.send(mimeMessage)
 
-        logger.debug { "E-mail [${mailTemplate.subject}] to [${mailTemplate.to}] sent" }
+        logger.debug { "E-mail [${mailTemplate.subject}] to ${mailTemplate.to} sent" }
     }
 }
