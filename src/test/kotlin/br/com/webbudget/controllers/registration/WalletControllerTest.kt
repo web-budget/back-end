@@ -49,6 +49,15 @@ class WalletControllerTest : BaseControllerIntegrationTest() {
     private lateinit var walletRepository: WalletRepository
 
     @Test
+    fun `should require authorization`() {
+        mockMvc.get(ENDPOINT_URL) {
+            contentType = MediaType.APPLICATION_JSON
+        }.andExpect {
+            status { isUnauthorized() }
+        }
+    }
+
+    @Test
     fun `should call create and return created`(@ResourceAsString("wallet/create.json") payload: String) {
 
         val externalId = UUID.randomUUID()
@@ -298,8 +307,6 @@ class WalletControllerTest : BaseControllerIntegrationTest() {
 
         confirmVerified(walletRepository)
     }
-
-    override fun getEndpointUrl() = ENDPOINT_URL
 
     companion object {
         private const val ENDPOINT_URL = "/api/registration/wallets"

@@ -1,18 +1,19 @@
 package br.com.webbudget.services.administration
 
 import br.com.webbudget.BaseIntegrationTest
+import br.com.webbudget.domain.exceptions.InvalidPasswordRecoverTokenException
 import br.com.webbudget.domain.services.administration.UserAccountService
 import br.com.webbudget.infrastructure.repository.administration.PasswordRecoverAttemptRepository
 import com.icegreen.greenmail.configuration.GreenMailConfiguration
 import com.icegreen.greenmail.junit5.GreenMailExtension
 import com.icegreen.greenmail.util.ServerSetupTest
 import org.assertj.core.api.Assertions.assertThat
-import org.awaitility.Awaitility.await
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.jdbc.Sql
-import java.util.concurrent.TimeUnit.SECONDS
+import java.util.UUID
 
 class UserAccountServiceTest : BaseIntegrationTest() {
 
@@ -29,15 +30,11 @@ class UserAccountServiceTest : BaseIntegrationTest() {
         val userEmail = "user@webbudget.com.br"
         userAccountService.recoverPassword(userEmail)
 
-        await()
-            .atMost(5, SECONDS)
-            .untilAsserted {
-                assertThat(greenMail.receivedMessages.size).isEqualTo(1)
-                assertThat(greenMail.receivedMessages[0])
-                    .satisfies({
-                        assertThat(it.allRecipients[0].toString()).isEqualTo(userEmail)
-                    })
-            }
+        assertThat(greenMail.waitForIncomingEmail(3000, 1)).isTrue()
+        assertThat(greenMail.receivedMessages[0])
+            .satisfies({
+                assertThat(it.allRecipients[0].toString()).isEqualTo(userEmail)
+            })
 
         val attempts = passwordRecoverAttemptRepository.findByUserEmail(userEmail)
 
@@ -63,8 +60,34 @@ class UserAccountServiceTest : BaseIntegrationTest() {
         stopMemoryLoggerAppender()
     }
 
-    // TODO create a test to check when the token is invalid, should throw error
-    // TODO create a test to check the correct flow, when token is valid and pwd is changed and attempt used
+    @Test
+    fun `should fail if recover password token is not valid`() {
+
+        val userEmail = "user@webbudget.com.br"
+
+        assertThatThrownBy { userAccountService.changePassword("s3cr3t", UUID.randomUUID(), userEmail) }
+            .isInstanceOf(InvalidPasswordRecoverTokenException::class.java)
+            .hasMessage("recover-password.errors.invalid-token")
+    }
+
+    @Test
+    @Sql("/sql/administration/clear-tables.sql", "/sql/administration/create-dummy-user.sql")
+    fun `should change the password and mark recover attempt as used`() {
+
+        val userEmail = "user@webbudget.com.br"
+
+        userAccountService.recoverPassword(userEmail)
+
+        val unusedAttempt = passwordRecoverAttemptRepository.findByUserEmail(userEmail).first()
+
+        userAccountService.changePassword("s3cr3t", unusedAttempt.token, userEmail)
+
+        val usedAttempt = passwordRecoverAttemptRepository.findByUserEmail(userEmail).first()
+
+        assertThat(usedAttempt.used).isTrue()
+        assertThat(usedAttempt.user.password).isNotEqualTo(unusedAttempt.user.password)
+    }
+
 
     companion object {
 

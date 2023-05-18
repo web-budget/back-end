@@ -13,6 +13,6 @@ spring:
 logging:
   level:
     br.com.webbudget: DEBUG
-    org.hibernate: DEBUG
+    org.hibernate: INFO
     org.springframework.web: INFO
     org.springframework.security: INFO

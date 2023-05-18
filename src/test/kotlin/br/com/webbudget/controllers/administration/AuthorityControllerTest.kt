@@ -23,6 +23,15 @@ class AuthorityControllerTest : BaseControllerIntegrationTest() {
     private lateinit var authorityRepository: AuthorityRepository
 
     @Test
+    fun `should require authorization`() {
+        mockMvc.get(ENDPOINT_URL) {
+            contentType = MediaType.APPLICATION_JSON
+        }.andExpect {
+            status { isUnauthorized() }
+        }
+    }
+
+    @Test
     fun `should get all authorities`() {
 
         every { authorityRepository.findAll() } returns Authorities.asList()
@@ -45,8 +54,6 @@ class AuthorityControllerTest : BaseControllerIntegrationTest() {
 
         confirmVerified(authorityRepository)
     }
-
-    override fun getEndpointUrl() = ENDPOINT_URL
 
     companion object {
         private const val ENDPOINT_URL = "/api/administration/authorities"

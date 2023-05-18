@@ -49,6 +49,15 @@ class UserControllerTest : BaseControllerIntegrationTest() {
     private lateinit var userService: UserService
 
     @Test
+    fun `should require authorization`() {
+        mockMvc.get(ENDPOINT_URL) {
+            contentType = MediaType.APPLICATION_JSON
+        }.andExpect {
+            status { isUnauthorized() }
+        }
+    }
+
+    @Test
     fun `should call account creation and return created`(@ResourceAsString("user/create.json") payload: String) {
 
         val externalId = UUID.randomUUID()
@@ -345,8 +354,6 @@ class UserControllerTest : BaseControllerIntegrationTest() {
 
         confirmVerified(userRepository)
     }
-
-    override fun getEndpointUrl() = ENDPOINT_URL
 
     companion object {
         private const val ENDPOINT_URL = "/api/administration/users"

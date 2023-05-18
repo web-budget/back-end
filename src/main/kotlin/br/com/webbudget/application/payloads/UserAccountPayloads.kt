@@ -6,22 +6,22 @@ import jakarta.validation.constraints.NotNull
 import java.util.UUID
 
 data class ActivateAccountForm(
-    @NotNull(message = "account-activation.errors.invalid-token")
+    @field:NotNull(message = "account-activation.errors.invalid-token")
     val token: UUID?
 )
 
 data class ForgotPasswordForm(
-    @Email
-    @NotBlank(message = "forgot-password.errors.invalid-email")
+    @field:Email
+    @field:NotBlank(message = "forgot-password.errors.invalid-email")
     val email: String?
 )
 
 data class RecoverPasswordForm(
-    @NotNull(message = "recover-password.errors.invalid-token")
+    @field:NotNull(message = "recover-password.errors.invalid-token")
     val token: UUID?,
-    @Email
-    @NotBlank(message = "recover-password.errors.invalid-email")
+    @field:Email
+    @field:NotBlank(message = "recover-password.errors.invalid-email")
     val email: String?,
-    @NotBlank(message = "recover-password.errors.null-password")
+    @field:NotBlank(message = "recover-password.errors.null-password")
     val password: String?
 )
