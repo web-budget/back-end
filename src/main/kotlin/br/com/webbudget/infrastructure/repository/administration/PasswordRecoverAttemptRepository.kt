@@ -8,7 +8,7 @@ import java.util.UUID
 @Repository
 interface PasswordRecoverAttemptRepository : DefaultRepository<PasswordRecoverAttempt> {
 
-    fun findByTokenAndUserEmail(token: UUID, email: String): PasswordRecoverAttempt?
+    fun findByTokenAndUserEmailAndUsedFalse(token: UUID, email: String): PasswordRecoverAttempt?
 
     fun findByUserEmail(email: String): List<PasswordRecoverAttempt>
 }

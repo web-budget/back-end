@@ -88,6 +88,27 @@ class UserAccountServiceTest : BaseIntegrationTest() {
         assertThat(usedAttempt.user.password).isNotEqualTo(unusedAttempt.user.password)
     }
 
+    @Test
+    @Sql("/sql/administration/clear-tables.sql", "/sql/administration/create-dummy-user.sql")
+    fun `should fail if try to use same token to change password again`() {
+
+        val userEmail = "user@webbudget.com.br"
+
+        userAccountService.recoverPassword(userEmail)
+
+        val unusedAttempt = passwordRecoverAttemptRepository.findByUserEmail(userEmail).first()
+
+        userAccountService.changePassword("s3cr3t", unusedAttempt.token, userEmail)
+
+        val usedAttempt = passwordRecoverAttemptRepository.findByUserEmail(userEmail).first()
+
+        assertThat(usedAttempt.used).isTrue()
+        assertThat(usedAttempt.user.password).isNotEqualTo(unusedAttempt.user.password)
+
+        assertThatThrownBy { userAccountService.changePassword("s3cr3t", unusedAttempt.token, userEmail) }
+            .isInstanceOf(InvalidPasswordRecoverTokenException::class.java)
+            .hasMessage("recover-password.errors.invalid-token")
+    }
 
     companion object {
 

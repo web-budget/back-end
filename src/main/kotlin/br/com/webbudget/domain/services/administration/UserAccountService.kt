@@ -54,7 +54,7 @@ class UserAccountService(
     @Transactional
     fun changePassword(newPassword: String, token: UUID, userEmail: String) {
 
-        val recoverAttempt = passwordRecoverAttemptRepository.findByTokenAndUserEmail(token, userEmail)
+        val recoverAttempt = passwordRecoverAttemptRepository.findByTokenAndUserEmailAndUsedFalse(token, userEmail)
             ?: throw InvalidPasswordRecoverTokenException(userEmail)
 
         if (recoverAttempt.validity.isBefore(LocalDateTime.now())) {
