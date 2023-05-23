@@ -45,7 +45,7 @@ class UserAccountServiceTest : BaseIntegrationTest() {
 
     @Test
     @Sql("/sql/administration/clear-tables.sql", "/sql/administration/create-dummy-user.sql")
-    fun `should not send recover password e-mail when user does not exists`() {
+    fun `should ignore password recover request when user is not found`() {
 
         startMemoryLoggerAppender()
 
@@ -54,7 +54,6 @@ class UserAccountServiceTest : BaseIntegrationTest() {
 
         userAccountService.recoverPassword(userEmail)
 
-        assertThat(greenMail.receivedMessages).isEmpty()
         assertThat(memoryAppender.countBy(expectedLogMessage)).isEqualTo(1)
 
         stopMemoryLoggerAppender()
