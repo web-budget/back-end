@@ -115,12 +115,12 @@ class UserControllerTest : BaseControllerIntegrationTest() {
     @Test
     fun `should call account update and return ok`(@ResourceAsString("user/update.json") payload: String) {
 
-        val authorties = listOf("FINANCIAL")
+        val authorities = listOf("FINANCIAL")
         val externalId = UUID.randomUUID()
-        val expectedUser = UserFixture.create(1L, externalId, *authorties.toTypedArray())
+        val expectedUser = UserFixture.create(1L, externalId, *authorities.toTypedArray())
 
         every { userRepository.findByExternalId(externalId) } returns expectedUser
-        every { userService.updateAccount(expectedUser, authorties) } returns expectedUser
+        every { userService.updateAccount(expectedUser, authorities) } returns expectedUser
 
         val jsonResponse = mockMvc.put("$ENDPOINT_URL/$externalId") {
             with(jwt().authorities(Authorities.ADMINISTRATION))
@@ -137,11 +137,12 @@ class UserControllerTest : BaseControllerIntegrationTest() {
             .containsEntry("name", expectedUser.name)
             .containsEntry("email", expectedUser.email)
             .containsEntry("active", expectedUser.active)
+            .containsEntry("defaultLanguage", expectedUser.defaultLanguage.name)
             .containsEntry("id", expectedUser.externalId.toString())
             .node("authorities").isArray.contains("FINANCIAL")
 
         verify(exactly = 1) { userRepository.findByExternalId(externalId) }
-        verify(exactly = 1) { userService.updateAccount(expectedUser, authorties) }
+        verify(exactly = 1) { userService.updateAccount(expectedUser, authorities) }
 
         confirmVerified(userService, userRepository)
     }

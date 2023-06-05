@@ -2,5 +2,6 @@
   "name": "User",
   "email": "user@webbudget.com.br",
   "password": "user",
+  "defaultLanguage": "PT_BR",
   "authorities": ["REGISTRATION"]
 }

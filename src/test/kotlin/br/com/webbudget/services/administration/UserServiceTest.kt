@@ -2,6 +2,7 @@ package br.com.webbudget.services.administration
 
 import br.com.webbudget.BaseIntegrationTest
 import br.com.webbudget.application.payloads.administration.UserUpdateForm
+import br.com.webbudget.domain.entities.administration.Language.PT_BR
 import br.com.webbudget.domain.entities.administration.User
 import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
 import br.com.webbudget.domain.services.administration.UserService
@@ -71,7 +72,7 @@ class UserServiceTest : BaseIntegrationTest() {
     @Sql("/sql/administration/clear-tables.sql", "/sql/administration/create-authorities.sql")
     fun `should update`() {
 
-        val form = UserUpdateForm(true, "Other", listOf("ANY_OTHER_AUTHORITY"))
+        val form = UserUpdateForm(true, "Other", listOf("ANY_OTHER_AUTHORITY"), PT_BR)
         val toCreate = User(false, "User", "user@webbudget.com.br", "s3cr3t")
 
         val externalId = userService.createAccount(toCreate, listOf("ANY_AUTHORITY"))

@@ -28,6 +28,7 @@ class UserMapperTest {
             .hasFieldOrPropertyWithValue("name", userCreateForm.name)
             .hasFieldOrPropertyWithValue("email", userCreateForm.email)
             .hasFieldOrPropertyWithValue("password", userCreateForm.password)
+            .hasFieldOrPropertyWithValue("defaultLanguage", userCreateForm.defaultLanguage)
     }
 
     @Test
@@ -51,6 +52,7 @@ class UserMapperTest {
             .hasFieldOrPropertyWithValue("name", user.name)
             .hasFieldOrPropertyWithValue("email", user.email)
             .hasFieldOrPropertyWithValue("active", user.active)
+            .hasFieldOrPropertyWithValue("defaultLanguage", user.defaultLanguage)
             .hasFieldOrPropertyWithValue("authorities", listOf("SOMETHING"))
     }
 }
