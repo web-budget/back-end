@@ -3,7 +3,6 @@ package br.com.webbudget.application.payloads.administration
 import br.com.webbudget.application.payloads.SpecificationSupport
 import br.com.webbudget.application.payloads.StatusFilter
 import br.com.webbudget.domain.entities.administration.Language
-import br.com.webbudget.domain.entities.administration.Language.PT_BR
 import br.com.webbudget.domain.entities.administration.User
 import br.com.webbudget.infrastructure.repository.administration.UserRepository.Specifications.byActive
 import br.com.webbudget.infrastructure.repository.administration.UserRepository.Specifications.byEmail
@@ -23,20 +22,20 @@ data class UserCreateForm(
     val email: String?,
     @field:NotBlank(message = "users.errors.password-is-blank")
     val password: String?,
+    @field:NotNull(message = "users.errors.null-default-language")
+    val defaultLanguage: Language?,
     @field:NotEmpty(message = "users.errors.empty-authorities")
     val authorities: List<String>,
-    @field:NotNull(message = "users.errors.null-default-language")
-    val defaultLanguage: Language? = PT_BR
 )
 
 data class UserUpdateForm(
     val active: Boolean,
     @field:NotBlank(message = "users.errors.name-is-blank")
     val name: String,
+    @field:NotNull(message = "users.errors.null-default-language")
+    val defaultLanguage: Language,
     @field:NotEmpty(message = "users.errors.empty-authorities")
     val authorities: List<String>,
-    @field:NotNull(message = "users.errors.null-default-language")
-    val defaultLanguage: Language
 )
 
 data class PasswordChangeForm(

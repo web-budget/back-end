@@ -5,6 +5,7 @@ import br.com.webbudget.application.mappers.configuration.UserMapperImpl
 import br.com.webbudget.application.payloads.administration.UserCreateForm
 import br.com.webbudget.domain.entities.administration.Authority
 import br.com.webbudget.domain.entities.administration.Grant
+import br.com.webbudget.domain.entities.administration.Language.PT_BR
 import br.com.webbudget.utilities.fixture.UserFixture
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -18,7 +19,7 @@ class UserMapperTest {
     fun `should map user form to user`() {
 
         val authorities = listOf("SOMETHING")
-        val userCreateForm = UserCreateForm("Someone", "someone@test.com", "s3cr3t", authorities)
+        val userCreateForm = UserCreateForm("Someone", "someone@test.com", "s3cr3t", PT_BR, authorities)
 
         val user = userMapper.map(userCreateForm)
 

@@ -3,6 +3,7 @@ package br.com.webbudget.controllers.administration
 import br.com.webbudget.BaseControllerIntegrationTest
 import br.com.webbudget.application.controllers.administration.UserController
 import br.com.webbudget.application.mappers.configuration.UserMapperImpl
+import br.com.webbudget.domain.entities.administration.Language.PT_BR
 import br.com.webbudget.domain.entities.administration.User
 import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
 import br.com.webbudget.domain.services.administration.UserService
@@ -88,7 +89,8 @@ class UserControllerTest : BaseControllerIntegrationTest() {
             "name" to "users.errors.name-is-blank",
             "email" to "users.errors.email-is-blank",
             "password" to "users.errors.password-is-blank",
-            "authorities" to "users.errors.empty-authorities"
+            "authorities" to "users.errors.empty-authorities",
+            "defaultLanguage" to "users.errors.null-default-language"
         )
 
         val jsonResponse = mockMvc.post(ENDPOINT_URL) {
@@ -287,7 +289,7 @@ class UserControllerTest : BaseControllerIntegrationTest() {
     fun `should get bad request when try to delete admin user`() {
 
         val externalId = UUID.randomUUID()
-        val adminUser = User(true, "Admin", "admin@webbudget.com.br", "s3cr3t")
+        val adminUser = User(true, "Admin", "admin@webbudget.com.br", "s3cr3t", PT_BR)
             .apply { this.externalId = externalId }
 
         every { userRepository.findByExternalId(externalId) } returns adminUser

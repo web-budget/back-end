@@ -3,7 +3,6 @@ package br.com.webbudget.domain.entities.administration
 import br.com.webbudget.application.payloads.administration.UserUpdateForm
 import br.com.webbudget.domain.entities.PersistentEntity
 import br.com.webbudget.domain.entities.UpdateSupport
-import br.com.webbudget.domain.entities.administration.Language.PT_BR
 import br.com.webbudget.infrastructure.config.DefaultSchemas.ADMINISTRATION
 import jakarta.persistence.CascadeType.REMOVE
 import jakarta.persistence.Column
@@ -27,7 +26,7 @@ class User(
     var password: String,
     @field:Enumerated(STRING)
     @field:Column(name = "default_language", nullable = false)
-    var defaultLanguage: Language = PT_BR,
+    var defaultLanguage: Language,
     @field:OneToMany(mappedBy = "user", fetch = EAGER, cascade = [REMOVE])
     var grants: List<Grant> = mutableListOf(),
 ) : PersistentEntity<Long>(), UpdateSupport<UserUpdateForm, User> {
@@ -40,6 +39,7 @@ class User(
         return this.apply {
             name = source.name
             active = source.active
+            defaultLanguage = source.defaultLanguage
         }
     }
 
