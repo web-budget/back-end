@@ -3,7 +3,7 @@ package br.com.webbudget.controllers
 import br.com.webbudget.BaseControllerIntegrationTest
 import br.com.webbudget.application.controllers.UserAccountController
 import br.com.webbudget.domain.exceptions.InvalidPasswordRecoverTokenException
-import br.com.webbudget.domain.services.administration.UserAccountService
+import br.com.webbudget.domain.services.administration.RecoverPasswordService
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.confirmVerified
 import io.mockk.every
@@ -21,7 +21,7 @@ import java.util.UUID
 class UserAccountControllerTest : BaseControllerIntegrationTest() {
 
     @MockkBean
-    private lateinit var userAccountService: UserAccountService
+    private lateinit var recoverPasswordService: RecoverPasswordService
 
     @Test
     fun `should call forgot password and get accepted`() {
@@ -30,7 +30,7 @@ class UserAccountControllerTest : BaseControllerIntegrationTest() {
 
         val body = "{\"email\": \"$userEmail\"}"
 
-        every { userAccountService.recoverPassword(userEmail) } just runs
+        every { recoverPasswordService.registerRecoveryAttempt(userEmail) } just runs
 
         mockMvc.patch("$ENDPOINT_URL/forgot-password") {
             with(csrf())
@@ -40,9 +40,9 @@ class UserAccountControllerTest : BaseControllerIntegrationTest() {
             status { isAccepted() }
         }
 
-        verify(exactly = 1) { userAccountService.recoverPassword(userEmail) }
+        verify(exactly = 1) { recoverPasswordService.registerRecoveryAttempt(userEmail) }
 
-        confirmVerified(userAccountService)
+        confirmVerified(recoverPasswordService)
     }
 
     @Test
@@ -72,7 +72,7 @@ class UserAccountControllerTest : BaseControllerIntegrationTest() {
                 "\"password\": \"$newPassword\"" +
                 "}"
 
-        every { userAccountService.changePassword(newPassword, token, userEmail) } just runs
+        every { recoverPasswordService.recover(newPassword, token, userEmail) } just runs
 
         mockMvc.patch("$ENDPOINT_URL/recover-password") {
             with(csrf())
@@ -82,9 +82,9 @@ class UserAccountControllerTest : BaseControllerIntegrationTest() {
             status { isOk() }
         }
 
-        verify(exactly = 1) { userAccountService.changePassword(newPassword, token, userEmail) }
+        verify(exactly = 1) { recoverPasswordService.recover(newPassword, token, userEmail) }
 
-        confirmVerified(userAccountService)
+        confirmVerified(recoverPasswordService)
     }
 
     @Test
@@ -100,7 +100,7 @@ class UserAccountControllerTest : BaseControllerIntegrationTest() {
                 "\"password\": \"$newPassword\"" +
                 "}"
 
-        every { userAccountService.changePassword(newPassword, token, userEmail) } throws
+        every { recoverPasswordService.recover(newPassword, token, userEmail) } throws
                 InvalidPasswordRecoverTokenException(userEmail)
 
         mockMvc.patch("$ENDPOINT_URL/recover-password") {
@@ -111,9 +111,9 @@ class UserAccountControllerTest : BaseControllerIntegrationTest() {
             status { isBadRequest() }
         }
 
-        verify(exactly = 1) { userAccountService.changePassword(newPassword, token, userEmail) }
+        verify(exactly = 1) { recoverPasswordService.recover(newPassword, token, userEmail) }
 
-        confirmVerified(userAccountService)
+        confirmVerified(recoverPasswordService)
     }
 
     @Test
@@ -133,6 +133,8 @@ class UserAccountControllerTest : BaseControllerIntegrationTest() {
             status { isUnprocessableEntity() }
         }
     }
+
+    // TODO add tests to the account activation flow
 
     companion object {
         private const val ENDPOINT_URL = "/user-account"

@@ -3,7 +3,7 @@
 <head>
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
     <title></title>
-    <meta name="description" content="webBudget - Recuperar senha">
+    <meta name="description" content="webBudget - Ativar conta de usuário">
     <style type="text/css">
         a:hover {
             text-decoration: underline !important;
@@ -110,21 +110,18 @@
                             <tr>
                                 <td style="padding:0 35px;">
                                     <h1 class="heading">
-                                        Esqueceu sua senha?
+                                        Bem vindo <span th:text="${user}"></span>
                                     </h1>
                                     <span class="line-divider"></span>
                                     <p class="text-paragraph">
-                                        Olá <strong th:text="${user}"></strong>, você solicitou a recuperação de sua senha de acesso ao
-                                        webBudget? Se sim, clique no botão abaixo para continuar.
-                                        Caso não tenha solicitado, entre em contato com o administrador para
-                                        reportar o problema.
+                                        Você foi cadastrado no webBudget e agora precisar ativar sua conta clicando no botão abaixo!
                                     </p>
-                                    <a th:href="${recoverPasswordUrl}" class="reset-button">
-                                        Recuperar Senha
+                                    <a th:href="${activateAccountUrl}" class="reset-button">
+                                        Ativar minha conta
                                     </a>
                                     <p class="text-paragraph">
                                         O link é válido até <span th:text="${validUntil}"></span>, caso tenha dificuldades ao clicar
-                                        no botão, copie este endereço e cole no seu navegador: <span th:text="${recoverPasswordUrl}"></span>
+                                        no botão, copie este endereço e cole no seu navegador: <span th:text="${activateAccountUrl}"></span>
                                     </p>
                                 </td>
                             </tr>

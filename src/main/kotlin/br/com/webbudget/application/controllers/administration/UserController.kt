@@ -52,7 +52,7 @@ class UserController(
     fun create(@RequestBody @Valid form: UserCreateForm): ResponseEntity<Any> {
 
         val toCreate = userMapper.map(form)
-        val created = userService.createAccount(toCreate, form.authorities)
+        val created = userService.createAccount(toCreate, form.authorities, form.sendActivationEmail)
 
         val location = ServletUriComponentsBuilder.fromCurrentRequest()
             .path("/{id}")

@@ -26,6 +26,7 @@ data class UserCreateForm(
     val defaultLanguage: Language?,
     @field:NotEmpty(message = "users.errors.empty-authorities")
     val authorities: List<String>,
+    val sendActivationEmail: Boolean = false
 )
 
 data class UserUpdateForm(

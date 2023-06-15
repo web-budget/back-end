@@ -7,7 +7,10 @@ import java.util.UUID
 
 data class ActivateAccountForm(
     @field:NotNull(message = "account-activation.errors.invalid-token")
-    val token: UUID?
+    val token: UUID?,
+    @field:Email
+    @field:NotBlank(message = "account-activation.errors.invalid-email")
+    val email: String?
 )
 
 data class ForgotPasswordForm(

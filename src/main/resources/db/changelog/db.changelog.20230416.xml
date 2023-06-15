@@ -33,10 +33,10 @@
             <column name="active" type="boolean">
                 <constraints nullable="false"/>
             </column>
-            <column name="description" type="clob" />
-            <column name="bank" type="varchar(150)" />
-            <column name="agency" type="varchar(16)" />
-            <column name="number" type="varchar(10)" />
+            <column name="description" type="clob"/>
+            <column name="bank" type="varchar(150)"/>
+            <column name="agency" type="varchar(16)"/>
+            <column name="number" type="varchar(10)"/>
         </createTable>
 
         <addUniqueConstraint columnNames="id" tableName="wallets" schemaName="registration"/>

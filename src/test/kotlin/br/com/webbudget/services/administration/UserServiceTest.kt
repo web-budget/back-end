@@ -27,6 +27,8 @@ class UserServiceTest : BaseIntegrationTest() {
     @Autowired
     private lateinit var userService: UserService
 
+    // TODO on user creation, add test/check to validate creation event been fired
+
     @Test
     @Sql("/sql/administration/clear-tables.sql", "/sql/administration/create-authorities.sql")
     fun `should save`() {

@@ -2,7 +2,7 @@ package br.com.webbudget.services.administration
 
 import br.com.webbudget.BaseIntegrationTest
 import br.com.webbudget.domain.exceptions.InvalidPasswordRecoverTokenException
-import br.com.webbudget.domain.services.administration.UserAccountService
+import br.com.webbudget.domain.services.administration.RecoverPasswordService
 import br.com.webbudget.infrastructure.repository.administration.PasswordRecoverAttemptRepository
 import com.icegreen.greenmail.configuration.GreenMailConfiguration
 import com.icegreen.greenmail.junit5.GreenMailExtension
@@ -15,20 +15,20 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.jdbc.Sql
 import java.util.UUID
 
-class UserAccountServiceTest : BaseIntegrationTest() {
+class RecoverPasswordServiceTest : BaseIntegrationTest() {
 
     @Autowired
     private lateinit var passwordRecoverAttemptRepository: PasswordRecoverAttemptRepository
 
     @Autowired
-    private lateinit var userAccountService: UserAccountService
+    private lateinit var recoverPasswordService: RecoverPasswordService
 
     @Test
     @Sql("/sql/administration/clear-tables.sql", "/sql/administration/create-dummy-user.sql")
     fun `should send recover password e-mail when user exists and register attempt`() {
 
         val userEmail = "user@webbudget.com.br"
-        userAccountService.recoverPassword(userEmail)
+        recoverPasswordService.registerRecoveryAttempt(userEmail)
 
         assertThat(greenMail.waitForIncomingEmail(3000, 1)).isTrue()
         assertThat(greenMail.receivedMessages[0])
@@ -52,7 +52,7 @@ class UserAccountServiceTest : BaseIntegrationTest() {
         val userEmail = "other_user@webbudget.com.br"
         val expectedLogMessage = "No user found with e-mail [${userEmail}], ignoring password recover request"
 
-        userAccountService.recoverPassword(userEmail)
+        recoverPasswordService.registerRecoveryAttempt(userEmail)
 
         assertThat(memoryAppender.countBy(expectedLogMessage)).isEqualTo(1)
 
@@ -64,7 +64,7 @@ class UserAccountServiceTest : BaseIntegrationTest() {
 
         val userEmail = "user@webbudget.com.br"
 
-        assertThatThrownBy { userAccountService.changePassword("s3cr3t", UUID.randomUUID(), userEmail) }
+        assertThatThrownBy { recoverPasswordService.recover("s3cr3t", UUID.randomUUID(), userEmail) }
             .isInstanceOf(InvalidPasswordRecoverTokenException::class.java)
             .hasMessage("recover-password.errors.invalid-token")
     }
@@ -75,11 +75,11 @@ class UserAccountServiceTest : BaseIntegrationTest() {
 
         val userEmail = "user@webbudget.com.br"
 
-        userAccountService.recoverPassword(userEmail)
+        recoverPasswordService.registerRecoveryAttempt(userEmail)
 
         val unusedAttempt = passwordRecoverAttemptRepository.findByUserEmail(userEmail).first()
 
-        userAccountService.changePassword("s3cr3t", unusedAttempt.token, userEmail)
+        recoverPasswordService.recover("s3cr3t", unusedAttempt.token, userEmail)
 
         val usedAttempt = passwordRecoverAttemptRepository.findByUserEmail(userEmail).first()
 
@@ -93,18 +93,18 @@ class UserAccountServiceTest : BaseIntegrationTest() {
 
         val userEmail = "user@webbudget.com.br"
 
-        userAccountService.recoverPassword(userEmail)
+        recoverPasswordService.registerRecoveryAttempt(userEmail)
 
         val unusedAttempt = passwordRecoverAttemptRepository.findByUserEmail(userEmail).first()
 
-        userAccountService.changePassword("s3cr3t", unusedAttempt.token, userEmail)
+        recoverPasswordService.recover("s3cr3t", unusedAttempt.token, userEmail)
 
         val usedAttempt = passwordRecoverAttemptRepository.findByUserEmail(userEmail).first()
 
         assertThat(usedAttempt.used).isTrue()
         assertThat(usedAttempt.user.password).isNotEqualTo(unusedAttempt.user.password)
 
-        assertThatThrownBy { userAccountService.changePassword("s3cr3t", unusedAttempt.token, userEmail) }
+        assertThatThrownBy { recoverPasswordService.recover("s3cr3t", unusedAttempt.token, userEmail) }
             .isInstanceOf(InvalidPasswordRecoverTokenException::class.java)
             .hasMessage("recover-password.errors.invalid-token")
     }

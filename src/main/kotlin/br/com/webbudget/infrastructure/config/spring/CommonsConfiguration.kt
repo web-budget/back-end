@@ -2,6 +2,9 @@ package br.com.webbudget.infrastructure.config.spring
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.event.ApplicationEventMulticaster
+import org.springframework.context.event.SimpleApplicationEventMulticaster
+import org.springframework.core.task.SimpleAsyncTaskExecutor
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing
 import org.springframework.scheduling.annotation.EnableAsync
 import org.springframework.scheduling.annotation.EnableScheduling
@@ -44,5 +47,12 @@ class CommonsConfiguration {
         templateResolver.characterEncoding = StandardCharsets.UTF_8.name()
 
         return templateResolver
+    }
+
+    @Bean
+    fun configureEventMulticaster(): ApplicationEventMulticaster {
+        val eventMulticaster = SimpleApplicationEventMulticaster()
+        eventMulticaster.setTaskExecutor(SimpleAsyncTaskExecutor())
+        return eventMulticaster
     }
 }

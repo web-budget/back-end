@@ -12,28 +12,28 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.UUID
+import java.util.*
 
 private val logger = KotlinLogging.logger {}
 
 @Service
 @Transactional(readOnly = true)
-class UserAccountService(
+class RecoverPasswordService(
     @Value("\${web-budget.front-end-url}")
     private val frontendUrl: String,
     private val userService: UserService,
     private val userRepository: UserRepository,
     private val mailSenderService: MailSenderService,
-    private val passwordRecoverAttemptRepository: PasswordRecoverAttemptRepository
+    private val passwordRecoverAttemptRepository: PasswordRecoverAttemptRepository,
 ) {
 
     @Transactional
-    fun recoverPassword(email: String) {
+    fun registerRecoveryAttempt(userEmail: String) {
 
-        val user = userRepository.findByEmail(email)
+        val user = userRepository.findByEmail(userEmail)
 
         if (user == null) {
-            logger.warn { "No user found with e-mail [${email}], ignoring password recover request" }
+            logger.warn { "No user found with e-mail [${userEmail}], ignoring password recover request" }
             return
         }
 
@@ -52,19 +52,19 @@ class UserAccountService(
     }
 
     @Transactional
-    fun changePassword(newPassword: String, token: UUID, userEmail: String) {
+    fun recover(newPassword: String, recoveryToken: UUID, userEmail: String) {
 
-        val recoverAttempt = passwordRecoverAttemptRepository.findByTokenAndUserEmailAndUsedFalse(token, userEmail)
+        val attempt = passwordRecoverAttemptRepository.findByTokenAndUserEmailAndUsedFalse(recoveryToken, userEmail)
             ?: throw InvalidPasswordRecoverTokenException(userEmail)
 
-        if (recoverAttempt.validity.isBefore(LocalDateTime.now())) {
-            logger.debug { "Recover password toke has expired on [${recoverAttempt.validity}]" }
+        if (attempt.validity.isBefore(LocalDateTime.now())) {
+            logger.debug { "Recover password token has expired on [${attempt.validity}]" }
             throw InvalidPasswordRecoverTokenException(userEmail)
         }
 
-        userService.updatePassword(recoverAttempt.user, newPassword, false)
+        userService.updatePassword(attempt.user, newPassword, false)
 
-        recoverAttempt
+        attempt
             .apply { this.used = true }
             .also { passwordRecoverAttemptRepository.merge(it) }
     }
