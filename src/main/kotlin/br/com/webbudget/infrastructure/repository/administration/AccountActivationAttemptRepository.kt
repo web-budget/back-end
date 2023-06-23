@@ -8,5 +8,7 @@ import java.util.UUID
 @Repository
 interface AccountActivationAttemptRepository : DefaultRepository<AccountActivationAttempt> {
 
+    fun findByUserEmail(email: String): List<AccountActivationAttempt>
+
     fun findByTokenAndUserEmailAndActivatedOnIsNull(token: UUID, email: String): AccountActivationAttempt?
 }

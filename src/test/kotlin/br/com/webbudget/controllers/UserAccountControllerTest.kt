@@ -3,6 +3,7 @@ package br.com.webbudget.controllers
 import br.com.webbudget.BaseControllerIntegrationTest
 import br.com.webbudget.application.controllers.UserAccountController
 import br.com.webbudget.domain.exceptions.InvalidPasswordRecoverTokenException
+import br.com.webbudget.domain.services.administration.AccountActivationService
 import br.com.webbudget.domain.services.administration.RecoverPasswordService
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.confirmVerified
@@ -22,6 +23,9 @@ class UserAccountControllerTest : BaseControllerIntegrationTest() {
 
     @MockkBean
     private lateinit var recoverPasswordService: RecoverPasswordService
+
+    @MockkBean
+    private lateinit var accountActivationService: AccountActivationService
 
     @Test
     fun `should call forgot password and get accepted`() {
@@ -117,7 +121,7 @@ class UserAccountControllerTest : BaseControllerIntegrationTest() {
     }
 
     @Test
-    fun `should call recover password and unprocessable entity if toke, email or password are empty`() {
+    fun `should call recover password and get unprocessable entity if token, email or password are empty`() {
 
         val body = "{" +
                 "\"token\": \"\"," +
@@ -134,7 +138,48 @@ class UserAccountControllerTest : BaseControllerIntegrationTest() {
         }
     }
 
-    // TODO add tests to the account activation flow
+    @Test
+    fun `should call account action and receive ok`() {
+
+        val token = UUID.randomUUID()
+        val userEmail = "some@user.com"
+
+        val body = "{" +
+                "\"token\": \"$token\"," +
+                "\"email\": \"$userEmail\"" +
+                "}"
+
+        every { accountActivationService.activate(token, userEmail) } just runs
+
+        mockMvc.patch("$ENDPOINT_URL/activate") {
+            with(csrf())
+            content = body
+            contentType = MediaType.APPLICATION_JSON
+        }.andExpect {
+            status { isOk() }
+        }
+
+        verify(exactly = 1) { accountActivationService.activate(token, userEmail) }
+
+        confirmVerified(accountActivationService)
+    }
+
+    @Test
+    fun `should call account activation and get unprocessable entity if token or email are empty`() {
+
+        val body = "{" +
+                "\"token\": \"\"," +
+                "\"email\": \"\"" +
+                "}"
+
+        mockMvc.patch("$ENDPOINT_URL/activate") {
+            with(csrf())
+            content = body
+            contentType = MediaType.APPLICATION_JSON
+        }.andExpect {
+            status { isUnprocessableEntity() }
+        }
+    }
 
     companion object {
         private const val ENDPOINT_URL = "/user-account"

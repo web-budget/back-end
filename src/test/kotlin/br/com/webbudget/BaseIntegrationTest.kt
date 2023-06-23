@@ -5,7 +5,6 @@ import ch.qos.logback.classic.LoggerContext
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.scheduling.annotation.EnableAsync
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_CLASS
 import org.springframework.test.context.ActiveProfiles
@@ -15,7 +14,6 @@ import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 
-@EnableAsync
 @Testcontainers
 @ActiveProfiles("test")
 @DirtiesContext(classMode = AFTER_CLASS)

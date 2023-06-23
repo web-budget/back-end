@@ -54,7 +54,7 @@ class RecoverPasswordServiceTest : BaseIntegrationTest() {
 
         recoverPasswordService.registerRecoveryAttempt(userEmail)
 
-        assertThat(memoryAppender.countBy(expectedLogMessage)).isEqualTo(1)
+        assertThat(memoryAppender.countBy(expectedLogMessage)).isOne()
 
         stopMemoryLoggerAppender()
     }

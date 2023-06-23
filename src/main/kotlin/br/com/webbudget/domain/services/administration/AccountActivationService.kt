@@ -11,7 +11,6 @@ import io.github.oshai.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.event.EventListener
 import org.springframework.scheduling.annotation.Async
-import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -36,7 +35,11 @@ class AccountActivationService(
     fun requestActivation(event: UserCreatedEvent) {
 
         val user = userRepository.findByEmail(event.userName)
-            ?: throw UsernameNotFoundException(event.userName)
+
+        if (user == null) {
+            logger.warn { "Can't find any account with username [${event.userName}], ignoring event" }
+            return
+        }
 
         val activationAttempt = AccountActivationAttempt(UUID.randomUUID(), user)
         accountActivationAttemptRepository.merge(activationAttempt)

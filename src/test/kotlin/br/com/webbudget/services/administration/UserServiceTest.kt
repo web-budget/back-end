@@ -4,6 +4,7 @@ import br.com.webbudget.BaseIntegrationTest
 import br.com.webbudget.application.payloads.administration.UserUpdateForm
 import br.com.webbudget.domain.entities.administration.Language.PT_BR
 import br.com.webbudget.domain.entities.administration.User
+import br.com.webbudget.domain.events.UserCreatedEvent
 import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
 import br.com.webbudget.domain.services.administration.UserService
 import br.com.webbudget.infrastructure.repository.administration.UserRepository
@@ -14,8 +15,19 @@ import org.assertj.core.api.Assertions.fail
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.test.context.event.ApplicationEvents
+import org.springframework.test.context.event.RecordApplicationEvents
 import org.springframework.test.context.jdbc.Sql
+import org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD
 
+@Sql(
+    executionPhase = BEFORE_TEST_METHOD,
+    scripts = [
+        "/sql/administration/clear-tables.sql",
+        "/sql/administration/create-authorities.sql"
+    ]
+)
+@RecordApplicationEvents
 class UserServiceTest : BaseIntegrationTest() {
 
     @Autowired
@@ -27,11 +39,11 @@ class UserServiceTest : BaseIntegrationTest() {
     @Autowired
     private lateinit var userService: UserService
 
-    // TODO on user creation, add test/check to validate creation event been fired
+    @Autowired
+    private lateinit var applicationEvents: ApplicationEvents
 
     @Test
-    @Sql("/sql/administration/clear-tables.sql", "/sql/administration/create-authorities.sql")
-    fun `should save`() {
+    fun `should save and not fire user created event`() {
 
         val toCreate = User(false, "User", "user@webbudget.com.br", "s3cr3t", PT_BR)
 
@@ -54,10 +66,39 @@ class UserServiceTest : BaseIntegrationTest() {
                     .extracting("authority.name")
                     .containsExactlyInAnyOrder("ANY_AUTHORITY")
             }
+
+        assertThat(applicationEvents.stream(UserCreatedEvent::class.java).count()).isZero()
     }
 
     @Test
-    @Sql("/sql/administration/clear-tables.sql", "/sql/administration/create-authorities.sql")
+    fun `should save and fire user created event`() {
+
+        val toCreate = User(false, "User", "user@webbudget.com.br", "s3cr3t", PT_BR)
+
+        val externalId = userService.createAccount(toCreate, listOf("ANY_AUTHORITY"), true)
+        val created = userRepository.findByExternalId(externalId)
+
+        assertThat(created)
+            .isNotNull
+            .hasFieldOrProperty("id").isNotNull
+            .hasFieldOrProperty("externalId").isNotNull
+            .hasFieldOrProperty("createdOn").isNotNull
+            .hasFieldOrProperty("version").isNotNull
+            .hasFieldOrProperty("password").isNotNull
+            .hasFieldOrPropertyWithValue("active", toCreate.active)
+            .hasFieldOrPropertyWithValue("name", toCreate.name)
+            .hasFieldOrPropertyWithValue("email", toCreate.email)
+            .extracting {
+                assertThat(it!!.grants)
+                    .hasSize(1)
+                    .extracting("authority.name")
+                    .containsExactlyInAnyOrder("ANY_AUTHORITY")
+            }
+
+        assertThat(applicationEvents.stream(UserCreatedEvent::class.java).count()).isOne()
+    }
+
+    @Test
     fun `should not save when duplicated username`() {
 
         val authorities = listOf("ANY_AUTHORITY")
@@ -72,7 +113,6 @@ class UserServiceTest : BaseIntegrationTest() {
     }
 
     @Test
-    @Sql("/sql/administration/clear-tables.sql", "/sql/administration/create-authorities.sql")
     fun `should update`() {
 
         val toCreate = UserFixture.create()
@@ -107,7 +147,6 @@ class UserServiceTest : BaseIntegrationTest() {
     }
 
     @Test
-    @Sql("/sql/administration/clear-tables.sql", "/sql/administration/create-authorities.sql")
     fun `should not update when validation fail`() {
 
         val authorities = listOf("ANY_AUTHORITY")
@@ -130,7 +169,6 @@ class UserServiceTest : BaseIntegrationTest() {
     }
 
     @Test
-    @Sql("/sql/administration/clear-tables.sql", "/sql/administration/create-authorities.sql")
     fun `should delete`() {
 
         val toCreate = UserFixture.create()
@@ -146,7 +184,6 @@ class UserServiceTest : BaseIntegrationTest() {
     }
 
     @Test
-    @Sql("/sql/administration/clear-tables.sql", "/sql/administration/create-authorities.sql")
     fun `should update password`() {
 
         val newPassword = "new-secret"
@@ -165,7 +202,6 @@ class UserServiceTest : BaseIntegrationTest() {
     }
 
     @Test
-    @Sql("/sql/administration/clear-tables.sql", "/sql/administration/create-authorities.sql")
     fun `should grant for all authorities`() {
 
         val toCreate = UserFixture.create()
@@ -182,7 +218,6 @@ class UserServiceTest : BaseIntegrationTest() {
     }
 
     @Test
-    @Sql("/sql/administration/clear-tables.sql", "/sql/administration/create-authorities.sql")
     fun `should fail when try to delete admin user`() {
 
         val toCreate = UserFixture.create(email = "admin@webbudget.com.br")
