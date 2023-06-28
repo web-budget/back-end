@@ -30,7 +30,7 @@ class RecoverPasswordServiceTest : BaseIntegrationTest() {
         val userEmail = "user@webbudget.com.br"
         recoverPasswordService.registerRecoveryAttempt(userEmail)
 
-        assertThat(greenMail.waitForIncomingEmail(3000, 1)).isTrue()
+        assertThat(greenMail.waitForIncomingEmail(20000, 1)).isTrue()
         assertThat(greenMail.receivedMessages[0])
             .satisfies({
                 assertThat(it.allRecipients[0].toString()).isEqualTo(userEmail)

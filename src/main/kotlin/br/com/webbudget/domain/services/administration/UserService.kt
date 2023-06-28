@@ -2,11 +2,9 @@ package br.com.webbudget.domain.services.administration
 
 import br.com.webbudget.domain.entities.administration.Grant
 import br.com.webbudget.domain.entities.administration.User
-import br.com.webbudget.domain.events.UserCreatedEvent
 import br.com.webbudget.infrastructure.repository.administration.AuthorityRepository
 import br.com.webbudget.infrastructure.repository.administration.GrantRepository
 import br.com.webbudget.infrastructure.repository.administration.UserRepository
-import org.springframework.context.ApplicationEventPublisher
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -19,8 +17,8 @@ class UserService(
     private val grantRepository: GrantRepository,
     private val passwordEncoder: PasswordEncoder,
     private val authorityRepository: AuthorityRepository,
-    private val eventPublisher: ApplicationEventPublisher,
-    private val userValidationService: UserValidationService
+    private val userValidationService: UserValidationService,
+    private val accountActivationService: AccountActivationService
 ) {
 
     @Transactional
@@ -39,7 +37,7 @@ class UserService(
         }
 
         if (notifyAccountCreated) {
-            eventPublisher.publishEvent(UserCreatedEvent(saved.email))
+            accountActivationService.requestActivation(saved.email)
         }
 
         return saved.externalId!!

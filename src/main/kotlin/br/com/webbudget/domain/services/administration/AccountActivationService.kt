@@ -1,7 +1,6 @@
 package br.com.webbudget.domain.services.administration
 
 import br.com.webbudget.domain.entities.administration.AccountActivationAttempt
-import br.com.webbudget.domain.events.UserCreatedEvent
 import br.com.webbudget.domain.exceptions.InvalidAccountActivationTokenException
 import br.com.webbudget.domain.mail.AccountActivationEmail
 import br.com.webbudget.domain.services.MailSenderService
@@ -9,8 +8,6 @@ import br.com.webbudget.infrastructure.repository.administration.AccountActivati
 import br.com.webbudget.infrastructure.repository.administration.UserRepository
 import io.github.oshai.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.context.event.EventListener
-import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -29,15 +26,13 @@ class AccountActivationService(
     private val accountActivationAttemptRepository: AccountActivationAttemptRepository
 ) {
 
-    @Async
     @Transactional
-    @EventListener
-    fun requestActivation(event: UserCreatedEvent) {
+    fun requestActivation(userName: String) {
 
-        val user = userRepository.findByEmail(event.userName)
+        val user = userRepository.findByEmail(userName)
 
         if (user == null) {
-            logger.warn { "Can't find any account with username [${event.userName}], ignoring event" }
+            logger.warn { "Can't find any account with username [$userName], ignoring event" }
             return
         }
 
@@ -45,7 +40,7 @@ class AccountActivationService(
         accountActivationAttemptRepository.merge(activationAttempt)
 
         val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
-        val recoverPasswordUrl = "${frontendUrl}/login/activate-account" +
+        val recoverPasswordUrl = "${frontendUrl}/login/account-activation" +
                 "?token=${activationAttempt.token}&email=${user.email}"
 
         val mailMessage = AccountActivationEmail(user)
@@ -69,5 +64,9 @@ class AccountActivationService(
         attempt
             .apply { this.activatedOn = LocalDateTime.now() }
             .also { accountActivationAttemptRepository.merge(it) }
+            .also {
+                it.user.active = true
+                userRepository.merge(it.user)
+            }
     }
 }

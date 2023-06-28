@@ -4,18 +4,19 @@ import br.com.webbudget.BaseIntegrationTest
 import br.com.webbudget.application.payloads.administration.UserUpdateForm
 import br.com.webbudget.domain.entities.administration.Language.PT_BR
 import br.com.webbudget.domain.entities.administration.User
-import br.com.webbudget.domain.events.UserCreatedEvent
 import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
+import br.com.webbudget.domain.services.administration.AccountActivationService
 import br.com.webbudget.domain.services.administration.UserService
 import br.com.webbudget.infrastructure.repository.administration.UserRepository
 import br.com.webbudget.utilities.fixture.UserFixture
+import com.ninjasquad.springmockk.SpykBean
+import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.assertj.core.api.Assertions.fail
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.crypto.password.PasswordEncoder
-import org.springframework.test.context.event.ApplicationEvents
 import org.springframework.test.context.event.RecordApplicationEvents
 import org.springframework.test.context.jdbc.Sql
 import org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD
@@ -39,13 +40,14 @@ class UserServiceTest : BaseIntegrationTest() {
     @Autowired
     private lateinit var userService: UserService
 
-    @Autowired
-    private lateinit var applicationEvents: ApplicationEvents
+    @SpykBean
+    private lateinit var accountActivationService: AccountActivationService
 
     @Test
-    fun `should save and not fire user created event`() {
+    fun `should save and not send account activation request`() {
 
-        val toCreate = User(false, "User", "user@webbudget.com.br", "s3cr3t", PT_BR)
+        val userEmail = "user@webbudget.com.br"
+        val toCreate = User(false, "User", userEmail, "s3cr3t", PT_BR)
 
         val externalId = userService.createAccount(toCreate, listOf("ANY_AUTHORITY"))
         val created = userRepository.findByExternalId(externalId)
@@ -67,13 +69,14 @@ class UserServiceTest : BaseIntegrationTest() {
                     .containsExactlyInAnyOrder("ANY_AUTHORITY")
             }
 
-        assertThat(applicationEvents.stream(UserCreatedEvent::class.java).count()).isZero()
+        verify(exactly = 0) { accountActivationService.requestActivation(userEmail) }
     }
 
     @Test
-    fun `should save and fire user created event`() {
+    fun `should save and send account activation request`() {
 
-        val toCreate = User(false, "User", "user@webbudget.com.br", "s3cr3t", PT_BR)
+        val userEmail = "user@webbudget.com.br"
+        val toCreate = User(false, "User", userEmail, "s3cr3t", PT_BR)
 
         val externalId = userService.createAccount(toCreate, listOf("ANY_AUTHORITY"), true)
         val created = userRepository.findByExternalId(externalId)
@@ -95,7 +98,7 @@ class UserServiceTest : BaseIntegrationTest() {
                     .containsExactlyInAnyOrder("ANY_AUTHORITY")
             }
 
-        assertThat(applicationEvents.stream(UserCreatedEvent::class.java).count()).isOne()
+        verify(exactly = 1) { accountActivationService.requestActivation(userEmail) }
     }
 
     @Test
