@@ -2,8 +2,10 @@ package br.com.webbudget.domain.services.administration
 
 import br.com.webbudget.domain.entities.administration.Grant
 import br.com.webbudget.domain.entities.administration.User
+import br.com.webbudget.infrastructure.repository.administration.AccountActivationAttemptRepository
 import br.com.webbudget.infrastructure.repository.administration.AuthorityRepository
 import br.com.webbudget.infrastructure.repository.administration.GrantRepository
+import br.com.webbudget.infrastructure.repository.administration.PasswordRecoverAttemptRepository
 import br.com.webbudget.infrastructure.repository.administration.UserRepository
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
@@ -18,7 +20,9 @@ class UserService(
     private val passwordEncoder: PasswordEncoder,
     private val authorityRepository: AuthorityRepository,
     private val userValidationService: UserValidationService,
-    private val accountActivationService: AccountActivationService
+    private val accountActivationService: AccountActivationService,
+    private val passwordRecoverAttemptRepository: PasswordRecoverAttemptRepository,
+    private val accountActivationAttemptRepository: AccountActivationAttemptRepository
 ) {
 
     @Transactional
@@ -32,8 +36,7 @@ class UserService(
         val saved = userRepository.persist(user)
 
         authorities.forEach {
-            authorityRepository.findByName(it)
-                ?.let { authority -> grantRepository.persist(Grant(saved, authority)) }
+            authorityRepository.findByName(it)?.let { authority -> grantRepository.persist(Grant(saved, authority)) }
         }
 
         if (notifyAccountCreated) {
@@ -55,8 +58,7 @@ class UserService(
         val saved = userRepository.merge(user)
 
         authorities.forEach {
-            authorityRepository.findByName(it)
-                ?.let { authority -> grantRepository.persist(Grant(saved, authority)) }
+            authorityRepository.findByName(it)?.let { authority -> grantRepository.persist(Grant(saved, authority)) }
         }
 
         val userGrants = grantRepository.findByUserExternalId(userExternalId)
@@ -78,7 +80,14 @@ class UserService(
 
     @Transactional
     fun deleteAccount(user: User) {
+
         require(!user.isAdmin()) { "user.errors.cannot-delete-admin" }
+
+        val userExternalId = requireNotNull(user.externalId) { "user.errors.null-external-id" }
+
+        passwordRecoverAttemptRepository.deleteByUserExternalId(userExternalId)
+        accountActivationAttemptRepository.deleteByUserExternalId(userExternalId)
+
         userRepository.delete(user)
     }
 }

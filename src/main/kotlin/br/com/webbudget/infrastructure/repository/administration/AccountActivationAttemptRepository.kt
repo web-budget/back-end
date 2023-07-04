@@ -8,6 +8,8 @@ import java.util.UUID
 @Repository
 interface AccountActivationAttemptRepository : DefaultRepository<AccountActivationAttempt> {
 
+    fun deleteByUserExternalId(externalId: UUID)
+
     fun findByUserEmail(email: String): List<AccountActivationAttempt>
 
     fun findByTokenAndUserEmailAndActivatedOnIsNull(token: UUID, email: String): AccountActivationAttempt?

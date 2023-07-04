@@ -8,6 +8,8 @@ import java.util.UUID
 @Repository
 interface PasswordRecoverAttemptRepository : DefaultRepository<PasswordRecoverAttempt> {
 
+    fun deleteByUserExternalId(externalId: UUID)
+
     fun findByTokenAndUserEmailAndUsedFalse(token: UUID, email: String): PasswordRecoverAttempt?
 
     fun findByUserEmail(email: String): List<PasswordRecoverAttempt>
