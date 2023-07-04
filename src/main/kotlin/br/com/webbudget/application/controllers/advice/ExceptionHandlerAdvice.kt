@@ -2,7 +2,9 @@ package br.com.webbudget.application.controllers.advice
 
 import br.com.webbudget.domain.exceptions.BusinessException
 import jakarta.servlet.http.HttpServletResponse
+import org.springframework.dao.NonTransientDataAccessException
 import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.ProblemDetail
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.web.bind.annotation.ControllerAdvice
@@ -19,21 +21,37 @@ class ExceptionHandlerAdvice {
     @ExceptionHandler(IllegalArgumentException::class)
     fun handle(ex: IllegalArgumentException): ProblemDetail {
 
-        val problemDetail = ProblemDetail.forStatusAndDetail(
-            HttpStatus.BAD_REQUEST, "Could not fulfill your request"
-        )
+        val error = MappedErrors.errors.getOrDefault(ex::class, NO_ERROR_PROVIDED)
+        val detail = ex.message ?: NO_DETAIL_PROVIDED
 
-        problemDetail.setProperty("error", ex.message!!)
+        return asProblemDetail(error, detail)
+    }
 
-        return problemDetail
+    @ExceptionHandler(NonTransientDataAccessException::class)
+    fun handle(ex: NonTransientDataAccessException): ProblemDetail {
+
+        val error = MappedErrors.errors.getOrDefault(ex::class, NO_ERROR_PROVIDED)
+        val detail = ex.message ?: NO_DETAIL_PROVIDED
+
+        return asProblemDetail(error, detail)
     }
 
     @ExceptionHandler(BusinessException::class)
     fun handle(ex: BusinessException): ProblemDetail {
+        val error = MappedErrors.errors.getOrDefault(ex::class, NO_ERROR_PROVIDED)
+        return asProblemDetail(error, ex.detail)
+    }
 
-        val problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.detail)
-        problemDetail.setProperty("error", ex.message!!)
+    private fun asProblemDetail(error: String, detail: String, status: HttpStatus = BAD_REQUEST): ProblemDetail {
+
+        val problemDetail = ProblemDetail.forStatusAndDetail(status, detail)
+        problemDetail.setProperty("error", error)
 
         return problemDetail
+    }
+
+    companion object {
+        private const val NO_ERROR_PROVIDED = "No error message provided"
+        private const val NO_DETAIL_PROVIDED = "No detail message provided"
     }
 }

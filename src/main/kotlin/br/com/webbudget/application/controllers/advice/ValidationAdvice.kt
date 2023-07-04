@@ -14,14 +14,12 @@ class ValidationAdvice {
     @ExceptionHandler(DuplicatedPropertyException::class)
     fun handle(ex: DuplicatedPropertyException): ProblemDetail {
 
-        val problemDetail = ProblemDetail.forStatusAndDetail(
-            HttpStatus.CONFLICT, "Other resource is using the same property value"
-        )
+        val detail = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, CONFLICT_ERROR)
 
-        problemDetail.setProperty("error", ex.message!!)
-        problemDetail.setProperty("property", ex.property)
+        detail.setProperty("error", ex.message!!)
+        detail.setProperty("property", ex.property)
 
-        return problemDetail
+        return detail
     }
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
@@ -32,15 +30,12 @@ class ValidationAdvice {
             errors[error.field] = error.defaultMessage
         }
 
-        val problemDetail = ProblemDetail.forStatusAndDetail(
-            HttpStatus.UNPROCESSABLE_ENTITY,
-            "Some fields are missing or invalid"
-        )
+        val detail = ProblemDetail.forStatusAndDetail(HttpStatus.UNPROCESSABLE_ENTITY, INVALID_OR_MISSING_FIELDS)
 
-        problemDetail.title = "Unprocessable payload"
-        problemDetail.setProperty(ERRORS_PROPERTY, errors)
+        detail.title = UNPROCESSABLE_PAYLOAD
+        detail.setProperty(ERRORS_PROPERTY, errors)
 
-        return problemDetail
+        return detail
     }
 
     @ExceptionHandler(ConstraintViolationException::class)
@@ -51,18 +46,18 @@ class ValidationAdvice {
             errors[violation.propertyPath.toString()] = violation.message
         }
 
-        val problemDetail = ProblemDetail.forStatusAndDetail(
-            HttpStatus.UNPROCESSABLE_ENTITY,
-            "Some fields are missing or invalid"
-        )
+        val detail = ProblemDetail.forStatusAndDetail(HttpStatus.UNPROCESSABLE_ENTITY, INVALID_OR_MISSING_FIELDS)
 
-        problemDetail.title = "Unprocessable payload"
-        problemDetail.setProperty(ERRORS_PROPERTY, errors)
+        detail.title = UNPROCESSABLE_PAYLOAD
+        detail.setProperty(ERRORS_PROPERTY, errors)
 
-        return problemDetail
+        return detail
     }
 
     companion object {
         private const val ERRORS_PROPERTY = "errors"
+        private const val UNPROCESSABLE_PAYLOAD = "Unprocessable payload"
+        private const val INVALID_OR_MISSING_FIELDS = "Some fields are missing or invalid"
+        private const val CONFLICT_ERROR = "Other resource is using the same property value"
     }
 }
