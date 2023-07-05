@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_8
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -6,7 +8,7 @@ plugins {
     id("io.spring.dependency-management") version "1.1.0"
 
     // detekt
-    id("io.gitlab.arturbosch.detekt").version("1.22.0")
+    id("io.gitlab.arturbosch.detekt") version "1.22.0"
 
     // kotlin things
     kotlin("jvm") version "1.8.0"
@@ -109,24 +111,26 @@ dependencyManagement {
     }
 }
 
-tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
-    this.archiveFileName.set("back-end.${archiveExtension.get()}")
-}
-
 tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        freeCompilerArgs = listOf("-Xjsr305=strict")
-        jvmTarget = "17"
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_17)
+        languageVersion.set(KOTLIN_1_8)
+        freeCompilerArgs.set(
+            listOf(
+                "-Xjsr305=strict",
+                "-Xjdk-release=${java.sourceCompatibility}"
+            )
+        )
     }
 }
 
-tasks.withType<Test> {
-    useJUnitPlatform()
-}
-
-extensions.findByName("buildScan")?.withGroovyBuilder {
-    setProperty("termsOfServiceUrl", "https://gradle.com/terms-of-service")
-    setProperty("termsOfServiceAgree", "yes")
+tasks {
+    test {
+        useJUnitPlatform()
+    }
+    bootJar {
+        archiveFileName.set("back-end.${archiveExtension.get()}")
+    }
 }
 
 springBoot {
