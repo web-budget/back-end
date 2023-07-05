@@ -4,19 +4,19 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     // spring
-    id("org.springframework.boot") version "3.0.5"
+    id("org.springframework.boot") version "3.1.1"
     id("io.spring.dependency-management") version "1.1.0"
 
     // detekt
-    id("io.gitlab.arturbosch.detekt") version "1.22.0"
+    id("io.gitlab.arturbosch.detekt") version "1.23.0"
 
     // kotlin things
-    kotlin("jvm") version "1.8.0"
-    kotlin("plugin.spring") version "1.8.0"
-    kotlin("plugin.jpa") version "1.8.0"
+    kotlin("jvm") version "1.8.22"
+    kotlin("plugin.spring") version "1.8.22"
+    kotlin("plugin.jpa") version "1.8.22"
 
     // mapstruct
-    kotlin("kapt") version "1.8.0"
+    kotlin("kapt") version "1.8.22"
 }
 
 group = "br.com.webbudget"
@@ -34,16 +34,16 @@ repositories {
     mavenCentral()
 }
 
-val testcontainersVersion = "1.17.5"
-val guavaVersion = "31.1-jre"
-val mapstructVersion = "1.5.3.Final"
+val testcontainersVersion = "1.18.3"
+val guavaVersion = "32.1.1-jre"
+val mapstructVersion = "1.5.5.Final"
 val mapstructExtVersion = "0.1.1"
-val assertJVersion = "3.23.1"
-val mockkVersion = "3.1.1"
-val jsonUnitVersion = "2.36.0"
+val assertJVersion = "3.24.2"
+val mockkVersion = "4.0.2"
+val jsonUnitVersion = "2.38.0"
 val awaitilityVersion = "4.2.0"
-val hypersistentceUtilsVersion = "3.1.1"
-val kotlinLoggingJvmVersion = "4.0.0-beta-27"
+val hypersistentceUtilsVersion = "3.5.1"
+val kotlinLoggingJvmVersion = "4.0.1"
 val greenMailVersion = "2.0.0"
 val arrowVersion = "1.2.0-RC"
 
@@ -92,12 +92,17 @@ dependencies {
         exclude("org.mockito", "mockito-core")
         exclude("org.junit.vintage", "junit-vintage-engine")
     }
+
     testImplementation("org.assertj:assertj-core:$assertJVersion")
+
     testImplementation("com.ninja-squad:springmockk:$mockkVersion")
+
     testImplementation("net.javacrumbs.json-unit:json-unit-assertj:$jsonUnitVersion")
     testImplementation("net.javacrumbs.json-unit:json-unit-spring:$jsonUnitVersion")
+
     testImplementation("org.awaitility:awaitility:$awaitilityVersion")
     testImplementation("org.awaitility:awaitility-kotlin:$awaitilityVersion")
+
     testImplementation("com.icegreen:greenmail-junit5:$greenMailVersion")
 
     // testcontainers

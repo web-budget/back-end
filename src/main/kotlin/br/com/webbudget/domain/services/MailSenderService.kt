@@ -1,7 +1,7 @@
 package br.com.webbudget.domain.services
 
 import br.com.webbudget.domain.mail.MailTemplate
-import io.github.oshai.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.mail.internet.InternetAddress
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.mail.javamail.JavaMailSender

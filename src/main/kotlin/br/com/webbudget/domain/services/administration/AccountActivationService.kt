@@ -6,7 +6,7 @@ import br.com.webbudget.domain.mail.AccountActivationEmail
 import br.com.webbudget.domain.services.MailSenderService
 import br.com.webbudget.infrastructure.repository.administration.AccountActivationAttemptRepository
 import br.com.webbudget.infrastructure.repository.administration.UserRepository
-import io.github.oshai.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional

@@ -41,7 +41,7 @@ class BaseIntegrationTest internal constructor() {
         const val OBJECT_NOT_FOUND_ERROR = "Invalid state, object not found"
 
         @Container
-        private val postgresContainer = PostgreSQLContainer<Nothing>("postgres:13-alpine")
+        private val postgresContainer = PostgreSQLContainer<Nothing>("postgres:15-alpine")
             .apply {
                 withExposedPorts(5432)
                 withUsername("sa_webbudget")
