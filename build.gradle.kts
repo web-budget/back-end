@@ -11,12 +11,12 @@ plugins {
     id("io.gitlab.arturbosch.detekt") version "1.23.0"
 
     // kotlin things
-    kotlin("jvm") version "1.8.22"
-    kotlin("plugin.spring") version "1.8.22"
-    kotlin("plugin.jpa") version "1.8.22"
+    kotlin("jvm") version "1.8.21"
+    kotlin("plugin.spring") version "1.8.21"
+    kotlin("plugin.jpa") version "1.8.21"
 
     // mapstruct
-    kotlin("kapt") version "1.8.22"
+    kotlin("kapt") version "1.8.21"
 }
 
 group = "br.com.webbudget"
