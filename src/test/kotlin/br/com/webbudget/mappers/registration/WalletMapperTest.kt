@@ -7,6 +7,7 @@ import br.com.webbudget.domain.entities.registration.Wallet
 import br.com.webbudget.domain.entities.registration.Wallet.Type.BANK_ACCOUNT
 import br.com.webbudget.domain.entities.registration.Wallet.Type.INVESTMENT
 import br.com.webbudget.domain.entities.registration.Wallet.Type.PERSONAL
+import br.com.webbudget.utilities.fixture.createWallet
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -77,9 +78,17 @@ class WalletMapperTest {
 
         @JvmStatic
         fun buildWalletParams() = listOf(
-            Arguments.of(Wallet("Personal", PERSONAL, BigDecimal.ZERO, true, "Personal")),
-            Arguments.of(Wallet("Investments", INVESTMENT, BigDecimal.ONE, false, "Investments", "1", "1", "1")),
-            Arguments.of(Wallet("Bank", BANK_ACCOUNT, BigDecimal.TEN, true, "Bank account", "1", "1", "1"))
+            Arguments.of(createWallet(name = "Personal", type = PERSONAL, description = "Personal")),
+            Arguments.of(createWallet(name = "Bank", balance = BigDecimal.TEN)),
+            Arguments.of(
+                createWallet(
+                    name = "Investments",
+                    type = INVESTMENT,
+                    balance = BigDecimal.ONE,
+                    active = false,
+                    description = "Investments"
+                )
+            )
         )
     }
 }

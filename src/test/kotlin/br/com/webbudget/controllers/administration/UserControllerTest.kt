@@ -10,7 +10,7 @@ import br.com.webbudget.domain.services.administration.UserService
 import br.com.webbudget.infrastructure.repository.administration.UserRepository
 import br.com.webbudget.utilities.Authorities
 import br.com.webbudget.utilities.ResourceAsString
-import br.com.webbudget.utilities.fixture.UserFixture
+import br.com.webbudget.utilities.fixture.createUser
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.called
 import io.mockk.confirmVerified
@@ -119,7 +119,7 @@ class UserControllerTest : BaseControllerIntegrationTest() {
 
         val authorities = listOf("FINANCIAL")
         val externalId = UUID.randomUUID()
-        val expectedUser = UserFixture.create(1L, externalId, *authorities.toTypedArray())
+        val expectedUser = createUser(externalId = externalId, authorities = authorities.toTypedArray())
 
         every { userRepository.findByExternalId(externalId) } returns expectedUser
         every { userService.updateAccount(expectedUser, authorities) } returns expectedUser
@@ -154,7 +154,7 @@ class UserControllerTest : BaseControllerIntegrationTest() {
 
         val password = "P4ssw0rd1"
         val externalId = UUID.randomUUID()
-        val expectedUser = UserFixture.create(1L, externalId)
+        val expectedUser = createUser(1L, externalId)
 
         every { userRepository.findByExternalId(externalId) } returns expectedUser
         every { userService.updatePassword(expectedUser, password, true) } just runs
@@ -199,7 +199,7 @@ class UserControllerTest : BaseControllerIntegrationTest() {
     fun `should call find by id and expect ok`() {
 
         val externalId = UUID.randomUUID()
-        val expectedUser = UserFixture.create(1L, externalId, "REGISTRATION")
+        val expectedUser = createUser(externalId = externalId, authorities = arrayOf("REGISTRATION"))
 
         every { userRepository.findByExternalId(externalId) } returns expectedUser
 
@@ -248,7 +248,7 @@ class UserControllerTest : BaseControllerIntegrationTest() {
     fun `should call delete and return ok`() {
 
         val externalId = UUID.randomUUID()
-        val expectedUser = UserFixture.create(1L, externalId, "REGISTRATION")
+        val expectedUser = createUser(externalId = externalId, authorities = arrayOf("REGISTRATION"))
 
         every { userRepository.findByExternalId(externalId) } returns expectedUser
         every { userService.deleteAccount(expectedUser) } just runs
@@ -312,7 +312,7 @@ class UserControllerTest : BaseControllerIntegrationTest() {
     fun `should call get paged and using filters`() {
 
         val pageRequest = PageRequest.of(0, 1)
-        val users = listOf(UserFixture.create(1L, UUID.randomUUID()))
+        val users = listOf(createUser(1L, UUID.randomUUID()))
 
         val parameters = LinkedMultiValueMap<String, String>()
 

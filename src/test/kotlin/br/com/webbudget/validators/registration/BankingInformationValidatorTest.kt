@@ -1,10 +1,10 @@
 package br.com.webbudget.validators.registration
 
-import br.com.webbudget.domain.entities.registration.Wallet.Type.BANK_ACCOUNT
 import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
 import br.com.webbudget.domain.validators.registration.BankingInformationValidator
 import br.com.webbudget.infrastructure.repository.registration.WalletRepository
-import br.com.webbudget.utilities.fixture.WalletFixture.create
+import br.com.webbudget.utilities.fixture.createWallet
+import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
@@ -29,44 +29,37 @@ class BankingInformationValidatorTest {
     @Test
     fun `should fail for different entities with same banking information`() {
 
-        val duplicated = create("Duplicated", BANK_ACCOUNT, "1", "1", "1")
-            .apply {
-                this.id = 1L
-                this.externalId = UUID.randomUUID()
-            }
+        every { walletRepository.findByBankInfo("Bank", "123", "456789") } returns createWallet()
 
-        every { walletRepository.findByBankInfo("1", "1", "1") } returns duplicated
-
-        val toValidate = create("Duplicated", BANK_ACCOUNT, "1", "1", "1")
+        val toValidate = createWallet(id = null, externalId = null)
 
         assertThatThrownBy { bankingInformationValidator.validate(toValidate) }
             .isInstanceOf(DuplicatedPropertyException::class.java)
             .hasMessage("wallet.errors.duplicated-bank-info")
 
-        verify(exactly = 1) { walletRepository.findByBankInfo("1", "1", "1") }
+        verify(exactly = 1) { walletRepository.findByBankInfo("Bank", "123", "456789") }
+
+        confirmVerified(walletRepository)
     }
 
     @Test
     fun `should not fail if entities are equal`() {
 
         val externalId = UUID.randomUUID()
-
-        val notDuplicated = create("Not duplicated", BANK_ACCOUNT, "1", "1", "1")
-            .apply {
-                this.id = 1L
-                this.externalId = externalId
-            }
+        val toValidate = createWallet(externalId = externalId)
 
         every {
-            walletRepository.findByBankInfo("1", "1", "1", externalId)
+            walletRepository.findByBankInfo("Bank", "123", "456789", externalId)
         } returns null
 
         assertThatNoException()
-            .isThrownBy { bankingInformationValidator.validate(notDuplicated) }
+            .isThrownBy { bankingInformationValidator.validate(toValidate) }
 
         verify(exactly = 1) {
-            walletRepository.findByBankInfo("1", "1", "1", externalId)
+            walletRepository.findByBankInfo("Bank", "123", "456789", externalId)
         }
+
+        confirmVerified(walletRepository)
     }
 
     @Test

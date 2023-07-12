@@ -2,7 +2,7 @@ package br.com.webbudget.services.administration
 
 import br.com.webbudget.domain.services.administration.AuthenticationService
 import br.com.webbudget.infrastructure.repository.administration.UserRepository
-import br.com.webbudget.utilities.fixture.UserFixture
+import br.com.webbudget.utilities.fixture.createUser
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
@@ -25,7 +25,7 @@ class AuthenticationServiceTest {
     @Test
     fun `should find user and return as authenticable user`() {
 
-        val expectedUser = UserFixture.create()
+        val expectedUser = createUser()
 
         every { userRepository.findByEmail(any()) } returns expectedUser
 

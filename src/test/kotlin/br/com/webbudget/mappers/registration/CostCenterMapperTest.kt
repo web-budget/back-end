@@ -3,7 +3,7 @@ package br.com.webbudget.mappers.registration
 import br.com.webbudget.application.mappers.registration.CostCenterMapper
 import br.com.webbudget.application.mappers.registration.CostCenterMapperImpl
 import br.com.webbudget.application.payloads.registration.CostCenterForm
-import br.com.webbudget.domain.entities.registration.CostCenter
+import br.com.webbudget.utilities.fixture.createCostCenter
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.util.UUID
@@ -30,11 +30,7 @@ class CostCenterMapperTest {
     fun `should map domain object to view`() {
 
         val externalId = UUID.randomUUID()
-        val domainObject = CostCenter("Cost Center", true, "Some cost center")
-            .apply {
-                this.id = 1L
-                this.externalId = externalId
-            }
+        val domainObject = createCostCenter(externalId = externalId)
 
         val view = costCenterMapper.map(domainObject)
 

@@ -6,7 +6,7 @@ import br.com.webbudget.application.payloads.administration.UserCreateForm
 import br.com.webbudget.domain.entities.administration.Authority
 import br.com.webbudget.domain.entities.administration.Grant
 import br.com.webbudget.domain.entities.administration.Language.PT_BR
-import br.com.webbudget.utilities.fixture.UserFixture
+import br.com.webbudget.utilities.fixture.createUser
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.util.UUID
@@ -36,11 +36,7 @@ class UserMapperTest {
     fun `should map user to user view`() {
 
         val externalId = UUID.randomUUID()
-        val user = UserFixture.create()
-            .apply {
-                this.id = 1L
-                this.externalId = externalId
-            }
+        val user = createUser(externalId = externalId)
 
         val grants = listOf(Grant(user, Authority("SOMETHING")))
         user.apply { this.grants = grants }

@@ -8,7 +8,7 @@ import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
 import br.com.webbudget.domain.services.administration.AccountActivationService
 import br.com.webbudget.domain.services.administration.UserService
 import br.com.webbudget.infrastructure.repository.administration.UserRepository
-import br.com.webbudget.utilities.fixture.UserFixture
+import br.com.webbudget.utilities.fixture.createUser
 import com.ninjasquad.springmockk.SpykBean
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
@@ -106,10 +106,10 @@ class UserServiceTest : BaseIntegrationTest() {
 
         val authorities = listOf("ANY_AUTHORITY")
 
-        val toCreate = UserFixture.create()
+        val toCreate = createUser()
         userService.createAccount(toCreate, authorities)
 
-        val duplicated = UserFixture.create()
+        val duplicated = createUser()
 
         assertThatThrownBy { userService.createAccount(duplicated, authorities) }
             .isInstanceOf(DuplicatedPropertyException::class.java)
@@ -118,7 +118,7 @@ class UserServiceTest : BaseIntegrationTest() {
     @Test
     fun `should update`() {
 
-        val toCreate = UserFixture.create()
+        val toCreate = createUser()
         val form = UserUpdateForm(true, "Other", PT_BR, listOf("ANY_OTHER_AUTHORITY"))
 
         val externalId = userService.createAccount(toCreate, listOf("ANY_AUTHORITY"))
@@ -154,10 +154,10 @@ class UserServiceTest : BaseIntegrationTest() {
 
         val authorities = listOf("ANY_AUTHORITY")
 
-        val toCreate = UserFixture.create()
+        val toCreate = createUser()
         userService.createAccount(toCreate, authorities)
 
-        val duplicated = UserFixture.create(email = "duplicated@test.com")
+        val duplicated = createUser(email = "duplicated@test.com")
         val externalId = userService.createAccount(duplicated, authorities)
 
         val toUpdate = userRepository.findByExternalId(externalId)
@@ -174,7 +174,7 @@ class UserServiceTest : BaseIntegrationTest() {
     @Test
     fun `should delete`() {
 
-        val toCreate = UserFixture.create()
+        val toCreate = createUser()
         val externalId = userService.createAccount(toCreate, listOf("ANY_AUTHORITY"))
 
         val toDelete = userRepository.findByExternalId(externalId)
@@ -190,7 +190,7 @@ class UserServiceTest : BaseIntegrationTest() {
     fun `should update password`() {
 
         val newPassword = "new-secret"
-        val toCreate = UserFixture.create()
+        val toCreate = createUser()
         val externalId = userService.createAccount(toCreate, listOf("ANY_AUTHORITY"))
 
         val toUpdate = userRepository.findByExternalId(externalId)
@@ -207,7 +207,7 @@ class UserServiceTest : BaseIntegrationTest() {
     @Test
     fun `should grant for all authorities`() {
 
-        val toCreate = UserFixture.create()
+        val toCreate = createUser()
         val authorities = listOf("SOME_AUTHORITY", "ANY_AUTHORITY", "ANY_OTHER_AUTHORITY")
 
         val externalId = userService.createAccount(toCreate, authorities)
@@ -223,7 +223,7 @@ class UserServiceTest : BaseIntegrationTest() {
     @Test
     fun `should fail when try to delete admin user`() {
 
-        val toCreate = UserFixture.create(email = "admin@webbudget.com.br")
+        val toCreate = createUser(email = "admin@webbudget.com.br")
         val externalId = userService.createAccount(toCreate, listOf("ANY_AUTHORITY"))
 
         val toDelete = userRepository.findByExternalId(externalId)

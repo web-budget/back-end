@@ -3,11 +3,13 @@ package br.com.webbudget.validators.administration
 import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
 import br.com.webbudget.domain.validators.administration.UserAccountEmailValidator
 import br.com.webbudget.infrastructure.repository.administration.UserRepository
-import br.com.webbudget.utilities.fixture.UserFixture.create
+import br.com.webbudget.utilities.fixture.createUser
+import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
+import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThatNoException
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
@@ -24,39 +26,36 @@ class UserAccountEmailValidatorTest {
     lateinit var userAccountEmailValidator: UserAccountEmailValidator
 
     @Test
-    fun `should fail when duplicated email`() {
+    fun `should fail for different entities and equal email`() {
 
-        val duplicated = create()
-            .apply {
-                this.id = 1L
-                this.externalId = UUID.randomUUID()
-            }
+        every { userRepository.findByEmail("user@test.com") } returns createUser()
 
-        every { userRepository.findByEmail("user@test.com") } returns duplicated
-
-        val toValidate = create()
+        val toValidate = createUser(id = null, externalId = null)
 
         assertThatThrownBy { userAccountEmailValidator.validate(toValidate) }
             .isInstanceOf(DuplicatedPropertyException::class.java)
             .hasMessage("users.errors.duplicated-email")
+
+        verify(exactly = 1) { userRepository.findByEmail("user@test.com") }
+
+        confirmVerified(userRepository)
     }
 
     @Test
-    fun `should pass when same entity is checked for duplicated email`() {
+    fun `should not fail if entities are equal`() {
 
         val externalId = UUID.randomUUID()
-
-        val notDuplicated = create()
-            .apply {
-                this.id = 1L
-                this.externalId = externalId
-            }
+        val toValidate = createUser(externalId = externalId)
 
         every {
             userRepository.findByEmailAndExternalIdNot("user@test.com", externalId)
         } returns null
 
         assertThatNoException()
-            .isThrownBy { userAccountEmailValidator.validate(notDuplicated) }
+            .isThrownBy { userAccountEmailValidator.validate(toValidate) }
+
+        verify(exactly = 1) { userRepository.findByEmailAndExternalIdNot("user@test.com", externalId) }
+
+        confirmVerified(userRepository)
     }
 }

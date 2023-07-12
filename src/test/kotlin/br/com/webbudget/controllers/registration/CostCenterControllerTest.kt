@@ -9,7 +9,7 @@ import br.com.webbudget.domain.services.registration.CostCenterService
 import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository
 import br.com.webbudget.utilities.Authorities
 import br.com.webbudget.utilities.ResourceAsString
-import br.com.webbudget.utilities.fixture.CostCenterFixture
+import br.com.webbudget.utilities.fixture.createCostCenter
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.Runs
 import io.mockk.called
@@ -84,7 +84,7 @@ class CostCenterControllerTest : BaseControllerIntegrationTest() {
     fun `should call update and return ok`(@ResourceAsString("cost-center/update.json") payload: String) {
 
         val externalId = UUID.randomUUID()
-        val expectedCostCenter = CostCenterFixture.create(1L, externalId)
+        val expectedCostCenter = createCostCenter(externalId = externalId)
 
         every { costCenterRepository.findByExternalId(externalId) } returns expectedCostCenter
         every { costCenterService.update(any()) } returns expectedCostCenter
@@ -116,7 +116,7 @@ class CostCenterControllerTest : BaseControllerIntegrationTest() {
     fun `should call delete and return ok`() {
 
         val externalId = UUID.randomUUID()
-        val expectedCostCenter = CostCenterFixture.create(1L, externalId)
+        val expectedCostCenter = createCostCenter(externalId = externalId)
 
         every { costCenterRepository.findByExternalId(externalId) } returns expectedCostCenter
         every { costCenterService.delete(expectedCostCenter) } just Runs
@@ -207,7 +207,7 @@ class CostCenterControllerTest : BaseControllerIntegrationTest() {
     fun `should call find by id and expect ok`() {
 
         val externalId = UUID.randomUUID()
-        val expectedCostCenter = CostCenterFixture.create(1L, externalId)
+        val expectedCostCenter = createCostCenter(externalId = externalId)
 
         every { costCenterRepository.findByExternalId(externalId) } returns expectedCostCenter
 
@@ -224,7 +224,7 @@ class CostCenterControllerTest : BaseControllerIntegrationTest() {
             .isObject
             .containsEntry("id", expectedCostCenter.externalId.toString())
             .containsEntry("name", "Cost Center")
-            .containsEntry("description", "Something to describe")
+            .containsEntry("description", "Some description")
             .containsEntry("active", true)
 
         verify(exactly = 1) { costCenterRepository.findByExternalId(externalId) }
@@ -255,7 +255,7 @@ class CostCenterControllerTest : BaseControllerIntegrationTest() {
     fun `should call get paged and using filters`() {
 
         val pageRequest = PageRequest.of(0, 1)
-        val costCEnters = listOf(CostCenterFixture.create(1L, UUID.randomUUID()))
+        val costCenters = listOf(createCostCenter())
 
         val parameters = LinkedMultiValueMap<String, String>()
 
@@ -269,7 +269,7 @@ class CostCenterControllerTest : BaseControllerIntegrationTest() {
         val specificationSlot = slot<Specification<CostCenter>>()
 
         every { costCenterRepository.findAll(capture(specificationSlot), capture(pageableSlot)) } returns
-                PageImpl(costCEnters)
+                PageImpl(costCenters)
 
         val jsonResponse = mockMvc.get(ENDPOINT_URL) {
             with(jwt().authorities(Authorities.REGISTRATION))

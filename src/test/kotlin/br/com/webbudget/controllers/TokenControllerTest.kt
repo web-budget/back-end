@@ -4,7 +4,7 @@ import br.com.webbudget.BaseControllerIntegrationTest
 import br.com.webbudget.application.controllers.TokenController
 import br.com.webbudget.domain.services.administration.TokenService
 import br.com.webbudget.infrastructure.repository.administration.UserRepository
-import br.com.webbudget.utilities.fixture.UserFixture
+import br.com.webbudget.utilities.fixture.createUser
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.confirmVerified
 import io.mockk.every
@@ -35,7 +35,7 @@ class TokenControllerTest : BaseControllerIntegrationTest() {
         val userEmail = "user@test.com"
         val userPassword = "admin"
         val authorities = arrayOf("ROLE_ADMINISTRATION")
-        val expectedUser = UserFixture.create(password = userPassword, authorities = authorities)
+        val expectedUser = createUser(password = userPassword, authorities = authorities)
             .apply { this.active = true }
 
         every { userRepository.findByEmail(userEmail) } returns expectedUser

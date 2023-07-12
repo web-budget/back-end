@@ -1,9 +1,10 @@
 package br.com.webbudget.validators.registration
 
-import br.com.webbudget.domain.entities.registration.CostCenter
 import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
 import br.com.webbudget.domain.validators.registration.CostCenterNameValidator
 import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository
+import br.com.webbudget.utilities.fixture.createCostCenter
+import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
@@ -27,45 +28,38 @@ class CostCenterNameValidatorTest {
     @Test
     fun `should fail for different entities and equal name`() {
 
-        val duplicated = CostCenter("Duplicated", true)
-            .apply {
-                this.id = 1L
-                this.externalId = UUID.randomUUID()
-            }
-
         every {
-            costCenterRepository.findByNameIgnoreCase("Duplicated")
-        } returns duplicated
+            costCenterRepository.findByNameIgnoreCase("Cost Center")
+        } returns createCostCenter()
 
-        val toValidate = CostCenter("Duplicated", true)
+        val toValidate = createCostCenter(id = null, externalId = null)
 
         assertThatThrownBy { costCenterNameValidator.validate(toValidate) }
             .isInstanceOf(DuplicatedPropertyException::class.java)
             .hasMessage("cost-center.errors.duplicated-name")
 
-        verify(exactly = 1) { costCenterRepository.findByNameIgnoreCase("Duplicated") }
+        verify(exactly = 1) { costCenterRepository.findByNameIgnoreCase("Cost Center") }
+
+        confirmVerified(costCenterRepository)
     }
 
     @Test
     fun `should not fail if entities are equal`() {
 
         val externalId = UUID.randomUUID()
-
-        val notDuplicated = CostCenter("Not duplicated", true)
-            .apply {
-                this.id = 1L
-                this.externalId = externalId
-            }
+        val toValidate = createCostCenter(externalId = externalId)
 
         every {
-            costCenterRepository.findByNameIgnoreCaseAndExternalIdNot("Not duplicated", externalId)
+            costCenterRepository.findByNameIgnoreCaseAndExternalIdNot("Cost Center", externalId)
         } returns null
 
         assertThatNoException()
-            .isThrownBy { costCenterNameValidator.validate(notDuplicated) }
+            .isThrownBy { costCenterNameValidator.validate(toValidate) }
 
         verify(exactly = 1) {
-            costCenterRepository.findByNameIgnoreCaseAndExternalIdNot("Not duplicated", externalId)
+            costCenterRepository.findByNameIgnoreCaseAndExternalIdNot("Cost Center", externalId)
         }
+
+        confirmVerified(costCenterRepository)
     }
 }

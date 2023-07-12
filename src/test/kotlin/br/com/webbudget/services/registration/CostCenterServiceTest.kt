@@ -5,7 +5,7 @@ import br.com.webbudget.application.payloads.registration.CostCenterForm
 import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
 import br.com.webbudget.domain.services.registration.CostCenterService
 import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository
-import br.com.webbudget.utilities.fixture.CostCenterFixture.create
+import br.com.webbudget.utilities.fixture.createCostCenter
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
 import org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy
 import org.junit.jupiter.api.Disabled
@@ -26,7 +26,7 @@ class CostCenterServiceTest : BaseIntegrationTest() {
     @Sql("/sql/registration/clear-tables.sql")
     fun `should save`() {
 
-        val toCreate = create()
+        val toCreate = createCostCenter()
 
         val externalId = costCenterService.create(toCreate)
 
@@ -49,10 +49,10 @@ class CostCenterServiceTest : BaseIntegrationTest() {
     @Sql("/sql/registration/clear-tables.sql")
     fun `should not save when name is duplicated`() {
 
-        val toCreate = create()
+        val toCreate = createCostCenter()
         costCenterService.create(toCreate)
 
-        val duplicated = create()
+        val duplicated = createCostCenter()
 
         assertThatThrownBy { costCenterService.create(duplicated) }
             .isInstanceOf(DuplicatedPropertyException::class.java)
@@ -62,7 +62,7 @@ class CostCenterServiceTest : BaseIntegrationTest() {
     @Sql("/sql/registration/clear-tables.sql")
     fun `should update`() {
 
-        val toCreate = create()
+        val toCreate = createCostCenter()
         val form = CostCenterForm("updated", "updated", false)
 
         val externalId = costCenterService.create(toCreate)
@@ -89,8 +89,8 @@ class CostCenterServiceTest : BaseIntegrationTest() {
     @Sql("/sql/registration/clear-tables.sql")
     fun `should not update when name is duplicated`() {
 
-        costCenterService.create(create("Cost Center One"))
-        val externalId = costCenterService.create(create("Cost Center Two"))
+        costCenterService.create(createCostCenter(name = "Cost Center One"))
+        val externalId = costCenterService.create(createCostCenter(name = "Cost Center Two"))
 
         val toUpdate = costCenterRepository.findByExternalId(externalId)
             ?: fail(OBJECT_NOT_FOUND_ERROR)
@@ -107,7 +107,7 @@ class CostCenterServiceTest : BaseIntegrationTest() {
     @Sql("/sql/registration/clear-tables.sql")
     fun `should delete`() {
 
-        val externalId = costCenterService.create(create())
+        val externalId = costCenterService.create(createCostCenter())
 
         val toDelete = costCenterRepository.findByExternalId(externalId)
             ?: fail(OBJECT_NOT_FOUND_ERROR)

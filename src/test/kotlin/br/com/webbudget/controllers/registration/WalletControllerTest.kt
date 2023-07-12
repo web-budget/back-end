@@ -4,13 +4,12 @@ import br.com.webbudget.BaseControllerIntegrationTest
 import br.com.webbudget.application.controllers.registration.WalletController
 import br.com.webbudget.application.mappers.registration.WalletMapperImpl
 import br.com.webbudget.domain.entities.registration.Wallet
-import br.com.webbudget.domain.entities.registration.Wallet.Type.PERSONAL
 import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
 import br.com.webbudget.domain.services.registration.WalletService
 import br.com.webbudget.infrastructure.repository.registration.WalletRepository
 import br.com.webbudget.utilities.Authorities
 import br.com.webbudget.utilities.ResourceAsString
-import br.com.webbudget.utilities.fixture.WalletFixture.create
+import br.com.webbudget.utilities.fixture.createWallet
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.Runs
 import io.mockk.called
@@ -85,7 +84,7 @@ class WalletControllerTest : BaseControllerIntegrationTest() {
     fun `should call update and return ok`(@ResourceAsString("wallet/update.json") payload: String) {
 
         val externalId = UUID.randomUUID()
-        val expectedWallet = create(1L, externalId, "The wallet", PERSONAL)
+        val expectedWallet = createWallet()
 
         every { walletRepository.findByExternalId(externalId) } returns expectedWallet
         every { walletService.update(any()) } returns expectedWallet
@@ -106,7 +105,7 @@ class WalletControllerTest : BaseControllerIntegrationTest() {
             .containsEntry("name", "Another Wallet")
             .containsEntry("active", false)
             .containsEntry("description", "Another some wallet")
-            .containsEntry("type", "PERSONAL")
+            .containsEntry("type", "BANK_ACCOUNT")
 
         verify(exactly = 1) { walletRepository.findByExternalId(externalId) }
         verify(exactly = 1) { walletService.update(any()) }
@@ -118,7 +117,7 @@ class WalletControllerTest : BaseControllerIntegrationTest() {
     fun `should call delete and return ok`() {
 
         val externalId = UUID.randomUUID()
-        val expectedWallet = create(1L, externalId, "Wallet", PERSONAL)
+        val expectedWallet = createWallet()
 
         every { walletRepository.findByExternalId(externalId) } returns expectedWallet
         every { walletService.delete(expectedWallet) } just Runs
@@ -212,7 +211,7 @@ class WalletControllerTest : BaseControllerIntegrationTest() {
     fun `should call find by id and expect ok`() {
 
         val externalId = UUID.randomUUID()
-        val expectedWallet = create(1L, externalId, "Wallet", PERSONAL)
+        val expectedWallet = createWallet()
 
         every { walletRepository.findByExternalId(externalId) } returns expectedWallet
 
@@ -229,8 +228,8 @@ class WalletControllerTest : BaseControllerIntegrationTest() {
             .isObject
             .containsEntry("id", expectedWallet.externalId.toString())
             .containsEntry("name", "Wallet")
-            .containsEntry("type", "PERSONAL")
-            .containsEntry("description", "Some wallet")
+            .containsEntry("type", "BANK_ACCOUNT")
+            .containsEntry("description", "Some description")
             .containsEntry("active", true)
 
         verify(exactly = 1) { walletRepository.findByExternalId(externalId) }
@@ -261,7 +260,7 @@ class WalletControllerTest : BaseControllerIntegrationTest() {
     fun `should call get paged and using filters`() {
 
         val pageRequest = PageRequest.of(0, 1)
-        val wallets = listOf(create(1L, UUID.randomUUID(), "Wallet 1", PERSONAL))
+        val wallets = listOf(createWallet())
 
         val parameters = LinkedMultiValueMap<String, String>()
 

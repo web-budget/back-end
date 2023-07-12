@@ -3,13 +3,12 @@ package br.com.webbudget.services.registration
 import br.com.webbudget.BaseIntegrationTest
 import br.com.webbudget.application.payloads.registration.WalletUpdateForm
 import br.com.webbudget.domain.entities.registration.Wallet
-import br.com.webbudget.domain.entities.registration.Wallet.Type.BANK_ACCOUNT
 import br.com.webbudget.domain.entities.registration.Wallet.Type.INVESTMENT
 import br.com.webbudget.domain.entities.registration.Wallet.Type.PERSONAL
 import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
 import br.com.webbudget.domain.services.registration.WalletService
 import br.com.webbudget.infrastructure.repository.registration.WalletRepository
-import br.com.webbudget.utilities.fixture.WalletFixture.create
+import br.com.webbudget.utilities.fixture.createWallet
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
 import org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy
 import org.junit.jupiter.api.Disabled
@@ -62,7 +61,7 @@ class WalletServiceTest : BaseIntegrationTest() {
     @Sql("/sql/registration/clear-tables.sql", "/sql/registration/create-wallets.sql")
     fun `should not save when name is duplicated`() {
 
-        val toCreate = create("Pessoal", PERSONAL)
+        val toCreate = createWallet()
 
         assertThatThrownBy { walletService.create(toCreate) }
             .isInstanceOf(DuplicatedPropertyException::class.java)
@@ -72,7 +71,7 @@ class WalletServiceTest : BaseIntegrationTest() {
     @Sql("/sql/registration/clear-tables.sql", "/sql/registration/create-wallets.sql")
     fun `should not save when banking information is duplicated`() {
 
-        val toCreate = create("Conta Bancaria", BANK_ACCOUNT, "Banco", "1", "1")
+        val toCreate = createWallet(name = "Bank account")
 
         assertThatThrownBy { walletService.create(toCreate) }
             .isInstanceOf(DuplicatedPropertyException::class.java)
@@ -116,7 +115,7 @@ class WalletServiceTest : BaseIntegrationTest() {
         val toUpdate = walletRepository.findByExternalId(externalId)
             ?: fail(OBJECT_NOT_FOUND_ERROR)
 
-        toUpdate.apply { this.name = "Conta bancaria" }
+        toUpdate.apply { this.name = "Investments" }
 
         assertThatThrownBy { walletService.update(toUpdate) }
             .isInstanceOf(DuplicatedPropertyException::class.java)
@@ -126,15 +125,15 @@ class WalletServiceTest : BaseIntegrationTest() {
     @Sql("/sql/registration/clear-tables.sql", "/sql/registration/create-wallets.sql")
     fun `should not update when banking information is duplicated`() {
 
-        val externalId = UUID.fromString("cd00845c-ae27-47e4-8282-c8df1c42acfe")
+        val externalId = UUID.fromString("4ade8a17-460b-40fc-b200-1504bcd4aaf7")
 
         val toUpdate = walletRepository.findByExternalId(externalId)
             ?: fail(OBJECT_NOT_FOUND_ERROR)
 
         toUpdate.apply {
-            this.bank = "Corretora"
-            this.agency = "1"
-            this.number = "1"
+            this.bank = "Bank"
+            this.agency = "123"
+            this.number = "456789"
         }
 
         assertThatThrownBy { walletService.update(toUpdate) }
@@ -181,9 +180,33 @@ class WalletServiceTest : BaseIntegrationTest() {
 
         @JvmStatic
         fun buildCreateParams() = listOf(
-            Arguments.of(Wallet("Personal", PERSONAL, BigDecimal.ZERO, true, "Personal")),
-            Arguments.of(Wallet("Investments", INVESTMENT, BigDecimal.ONE, true, "Investments", "Bank", "1", "1")),
-            Arguments.of(Wallet("Bank Account", BANK_ACCOUNT, BigDecimal.TEN, true, "Bank account", "Bank", "2", "2"))
+            Arguments.of(
+                createWallet(
+                    name = "Other personal",
+                    type = PERSONAL,
+                    bank = null,
+                    agency = null,
+                    number = null
+                )
+            ),
+            Arguments.of(
+                createWallet(
+                    name = "Other investments",
+                    type = INVESTMENT,
+                    balance = BigDecimal.ONE,
+                    bank = "Broker",
+                    agency = "1",
+                    number = "1"
+                )
+            ),
+            Arguments.of(
+                createWallet(
+                    name = "Other bank account",
+                    balance = BigDecimal.TEN,
+                    agency = "2",
+                    number = "2"
+                )
+            )
         )
     }
 }
