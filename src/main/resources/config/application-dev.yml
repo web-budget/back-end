@@ -5,14 +5,9 @@ spring:
   mail:
     host: sandbox.smtp.mailtrap.io
     port: 2525
-    username: ${mailtrap.user}
-    password: ${mailtrap.password}
     properties:
       mail.debug: true
 
 logging:
   level:
     br.com.webbudget: DEBUG
-    org.hibernate: INFO
-    org.springframework.web: INFO
-    org.springframework.security: INFO

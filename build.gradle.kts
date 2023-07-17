@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_8
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -9,6 +10,9 @@ plugins {
 
     // detekt
     id("io.gitlab.arturbosch.detekt") version "1.23.0"
+
+    // docker plugin
+    id("com.palantir.docker") version "0.35.0"
 
     // kotlin things
     kotlin("jvm") version "1.8.21"
@@ -118,7 +122,7 @@ dependencyManagement {
 
 tasks.withType<KotlinCompile> {
     compilerOptions {
-        jvmTarget.set(JvmTarget.JVM_17)
+        jvmTarget.set(JVM_17)
         languageVersion.set(KOTLIN_1_8)
         freeCompilerArgs.set(
             listOf(
@@ -134,7 +138,26 @@ tasks {
         useJUnitPlatform()
     }
     bootJar {
-        archiveFileName.set("back-end.${archiveExtension.get()}")
+        layered {
+            enabled.set(true)
+            application {
+                intoLayer("spring-boot-loader") {
+                    include("org/springframework/boot/loader/**")
+                }
+                intoLayer("application")
+            }
+            dependencies {
+                intoLayer("application") {
+                    includeProjectDependencies()
+                }
+                intoLayer("snapshot-dependencies") {
+                    include("*:*:*SNAPSHOT")
+                }
+                intoLayer("dependencies")
+            }
+            layerOrder.set(listOf("dependencies", "spring-boot-loader", "snapshot-dependencies", "application"))
+        }
+        archiveFileName.set("${project.name}.${archiveExtension.get()}")
     }
 }
 
@@ -143,8 +166,24 @@ springBoot {
         properties {
             group.set(project.group as String)
             version.set(project.version as String)
-            artifact.set("web-budget_backend")
+            artifact.set("back-end")
             name.set("webBudget backend application")
         }
     }
+}
+
+docker {
+    name = "arthurgregorio/webbudget-backend:${project.version}"
+
+    copySpec.from(file("entrypoint.sh")).into("")
+    copySpec.from(file("build/libs/${project.name}.jar")).into("")
+
+    buildArgs(
+        mapOf(
+            "JAVA_VERSION" to java.sourceCompatibility.toString(),
+            "ARTIFACT_PATH" to "${project.name}.jar",
+        )
+    )
+
+    setDockerfile(file("Dockerfile"))
 }
