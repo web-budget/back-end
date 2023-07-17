@@ -38,8 +38,7 @@ class ExceptionHandlerAdvice {
 
     @ExceptionHandler(BusinessException::class)
     fun handle(ex: BusinessException): ProblemDetail {
-        val error = MappedErrors.errors.getOrDefault(ex::class, NO_ERROR_PROVIDED)
-        return asProblemDetail(error, ex.detail)
+        return asProblemDetail(ex.message ?: NO_ERROR_PROVIDED, ex.detail, ex.httpStatus)
     }
 
     private fun asProblemDetail(error: String, detail: String, status: HttpStatus = BAD_REQUEST): ProblemDetail {

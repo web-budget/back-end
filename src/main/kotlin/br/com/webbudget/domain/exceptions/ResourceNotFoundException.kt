@@ -1,10 +1,6 @@
 package br.com.webbudget.domain.exceptions
 
-import org.springframework.http.HttpStatus
-import org.springframework.web.bind.annotation.ResponseBody
-import org.springframework.web.bind.annotation.ResponseStatus
-import java.util.UUID
+import org.springframework.http.HttpStatus.NOT_FOUND
 
-@ResponseBody
-@ResponseStatus(HttpStatus.NOT_FOUND)
-class ResourceNotFoundException(id: UUID) : RuntimeException("Can't find resource with id $id")
+class ResourceNotFoundException(filter: Map<String, *>) :
+    BusinessException("Can't find resource with the filters provided", filter.toString(), NOT_FOUND)

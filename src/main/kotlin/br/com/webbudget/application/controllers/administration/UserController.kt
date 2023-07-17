@@ -45,7 +45,7 @@ class UserController(
         return userRepository.findByExternalId(id)
             ?.let { userMapper.map(it) }
             ?.let { ResponseEntity.ok(it) }
-            ?: throw ResourceNotFoundException(id)
+            ?: throw ResourceNotFoundException(mapOf("id" to id))
     }
 
     @PostMapping
@@ -68,7 +68,7 @@ class UserController(
             ?.updateFields(form)
             ?.let { userService.updateAccount(it, form.authorities) }
             ?.let { ResponseEntity.ok(userMapper.map(it)) }
-            ?: throw ResourceNotFoundException(id)
+            ?: throw ResourceNotFoundException(mapOf("id" to id))
     }
 
     @PatchMapping("/{id}/update-password")
@@ -78,7 +78,7 @@ class UserController(
 
         userRepository.findByExternalId(id)
             ?.let { userService.updatePassword(it, password, temporary) }
-            ?: throw ResourceNotFoundException(id)
+            ?: throw ResourceNotFoundException(mapOf("id" to id))
 
         return ResponseEntity.ok().build()
     }
@@ -87,7 +87,7 @@ class UserController(
     fun delete(@PathVariable id: UUID): ResponseEntity<Any> {
         userRepository.findByExternalId(id)
             ?.let { userService.deleteAccount(it) }
-            ?: throw ResourceNotFoundException(id)
+            ?: throw ResourceNotFoundException(mapOf("id" to id))
         return ResponseEntity.ok().build()
     }
 }
