@@ -167,7 +167,10 @@ springBoot {
             group.set(project.group as String)
             version.set(project.version as String)
             artifact.set("back-end")
-            name.set("webBudget backend application")
+
+            description = "webBudget backend application"
+
+            name.set("webBudget Backend")
         }
     }
 }

@@ -43,7 +43,7 @@ RUN jlink \
 
 FROM debian:stable-slim AS package
 
-MAINTAINER arthurshakal@gmail.com
+MAINTAINER contato@webbudget.com.br
 
 ENV JAVA_HOME="/opt/java-minimal"
 ENV PATH="$PATH:$JAVA_HOME/bin"
