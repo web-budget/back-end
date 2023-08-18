@@ -1,26 +1,22 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_8
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     // spring
-    id("org.springframework.boot") version "3.1.1"
-    id("io.spring.dependency-management") version "1.1.0"
+    id("org.springframework.boot") version "3.1.2"
+    id("io.spring.dependency-management") version "1.1.2"
 
     // detekt
     id("io.gitlab.arturbosch.detekt") version "1.23.0"
 
-    // docker plugin
-    id("com.palantir.docker") version "0.35.0"
-
     // kotlin things
-    kotlin("jvm") version "1.8.21"
-    kotlin("plugin.spring") version "1.8.21"
-    kotlin("plugin.jpa") version "1.8.21"
+    kotlin("jvm") version "1.8.22"
+    kotlin("plugin.spring") version "1.8.22"
+    kotlin("plugin.jpa") version "1.8.22"
 
     // mapstruct
-    kotlin("kapt") version "1.8.21"
+    kotlin("kapt") version "1.8.22"
 }
 
 group = "br.com.webbudget"
@@ -47,7 +43,7 @@ val mockkVersion = "4.0.2"
 val jsonUnitVersion = "2.38.0"
 val awaitilityVersion = "4.2.0"
 val hypersistentceUtilsVersion = "3.5.1"
-val kotlinLoggingJvmVersion = "4.0.1"
+val kotlinLoggingJvmVersion = "5.1.0"
 val greenMailVersion = "2.0.0"
 val arrowVersion = "1.2.0-RC"
 
@@ -65,7 +61,7 @@ dependencies {
     // utilities
     implementation("io.arrow-kt:arrow-core:$arrowVersion")
     implementation("com.google.guava:guava:$guavaVersion")
-    implementation("io.hypersistence:hypersistence-utils-hibernate-60:$hypersistentceUtilsVersion")
+    implementation("io.hypersistence:hypersistence-utils-hibernate-62:$hypersistentceUtilsVersion")
 
     // mapstruct
     kapt("org.mapstruct:mapstruct-processor:$mapstructVersion")
@@ -173,20 +169,4 @@ springBoot {
             name.set("webBudget Backend")
         }
     }
-}
-
-docker {
-    name = "arthurgregorio/webbudget-backend:${project.version}"
-
-    copySpec.from(file("entrypoint.sh")).into("")
-    copySpec.from(file("build/libs/${project.name}.jar")).into("")
-
-    buildArgs(
-        mapOf(
-            "JAVA_VERSION" to java.sourceCompatibility.toString(),
-            "ARTIFACT_PATH" to "${project.name}.jar",
-        )
-    )
-
-    setDockerfile(file("Dockerfile"))
 }
