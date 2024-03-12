@@ -9,4 +9,4 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories
     basePackages = ["br.com.webbudget.infrastructure.repository"],
     repositoryBaseClass = BaseJpaRepositoryImpl::class
 )
-class PersistenceConfig
+class PersistenceConfiguration

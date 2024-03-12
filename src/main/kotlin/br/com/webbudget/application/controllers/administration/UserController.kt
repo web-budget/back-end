@@ -35,9 +35,9 @@ class UserController(
 
     @GetMapping
     fun get(filter: UserFilter, pageable: Pageable): ResponseEntity<Page<UserView>> {
-        val response = userRepository.findAll(filter.toSpecification(), pageable)
+        return userRepository.findAll(filter.toSpecification(), pageable)
             .map { userMapper.map(it) }
-        return ResponseEntity.ok(response)
+            .let { ResponseEntity.ok(it) }
     }
 
     @GetMapping("/{id}")

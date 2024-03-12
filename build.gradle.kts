@@ -1,28 +1,28 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_8
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     // spring
-    id("org.springframework.boot") version "3.1.2"
-    id("io.spring.dependency-management") version "1.1.2"
+    id("org.springframework.boot") version "3.2.3"
+    id("io.spring.dependency-management") version "1.1.4"
 
     // detekt
-    id("io.gitlab.arturbosch.detekt") version "1.22.0"
+    id("io.gitlab.arturbosch.detekt") version "1.23.5"
 
     // kotlin things
-    kotlin("jvm") version "1.8.22"
-    kotlin("plugin.spring") version "1.8.22"
-    kotlin("plugin.jpa") version "1.8.22"
+    kotlin("jvm") version "1.9.22"
+    kotlin("plugin.spring") version "1.9.22"
+    kotlin("plugin.jpa") version "1.9.22"
 
     // mapstruct
-    kotlin("kapt") version "1.8.22"
+    kotlin("kapt") version "1.9.22"
 }
 
 group = "br.com.webbudget"
 version = "4.0.0"
 
-java.sourceCompatibility = JavaVersion.VERSION_17
+java.sourceCompatibility = JavaVersion.VERSION_21
 
 configurations {
     compileOnly {
@@ -34,18 +34,17 @@ repositories {
     mavenCentral()
 }
 
-val testcontainersVersion = "1.18.3"
-val guavaVersion = "32.1.1-jre"
+val testcontainersVersion = "1.19.7"
+val guavaVersion = "33.0.0-jre"
 val mapstructVersion = "1.5.5.Final"
-val mapstructExtVersion = "0.1.1"
-val assertJVersion = "3.24.2"
+val assertJVersion = "3.25.3"
 val mockkVersion = "4.0.2"
-val jsonUnitVersion = "2.38.0"
+val jsonUnitVersion = "3.2.7"
 val awaitilityVersion = "4.2.0"
-val hypersistentceUtilsVersion = "3.5.1"
-val kotlinLoggingJvmVersion = "5.1.0"
-val greenMailVersion = "2.0.0"
-val arrowVersion = "1.2.0-RC"
+val hypersistentceUtilsVersion = "3.7.3"
+val kotlinLoggingJvmVersion = "6.0.3"
+val greenMailVersion = "2.0.1"
+val arrowVersion = "1.2.3"
 
 dependencies {
     // spring
@@ -61,7 +60,7 @@ dependencies {
     // utilities
     implementation("io.arrow-kt:arrow-core:$arrowVersion")
     implementation("com.google.guava:guava:$guavaVersion")
-    implementation("io.hypersistence:hypersistence-utils-hibernate-62:$hypersistentceUtilsVersion")
+    implementation("io.hypersistence:hypersistence-utils-hibernate-63:$hypersistentceUtilsVersion")
 
     // mapstruct
     kapt("org.mapstruct:mapstruct-processor:$mapstructVersion")
@@ -118,8 +117,8 @@ dependencyManagement {
 
 tasks.withType<KotlinCompile> {
     compilerOptions {
-        jvmTarget.set(JVM_17)
-        languageVersion.set(KOTLIN_1_8)
+        jvmTarget.set(JVM_21)
+        languageVersion.set(KOTLIN_1_9)
         freeCompilerArgs.set(
             listOf(
                 "-Xjsr305=strict",

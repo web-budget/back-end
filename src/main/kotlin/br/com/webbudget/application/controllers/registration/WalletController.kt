@@ -33,9 +33,9 @@ class WalletController(
 
     @GetMapping
     fun get(filter: WalletFilter, pageable: Pageable): ResponseEntity<Page<WalletView>> {
-        val response = walletRepository.findAll(filter.toSpecification(), pageable)
+        return walletRepository.findAll(filter.toSpecification(), pageable)
             .map { walletMapper.map(it) }
-        return ResponseEntity.ok(response)
+            .let { ResponseEntity.ok(it) }
     }
 
     @GetMapping("/{id}")

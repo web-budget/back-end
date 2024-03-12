@@ -35,15 +35,15 @@ interface WalletRepository : DefaultRepository<Wallet> {
     object Specifications : SpecificationHelpers {
 
         fun byName(name: String?) = Specification<Wallet> { root, _, builder ->
-            name?.let { builder.like(builder.lower(root.get("name")), likeIgnoringCase(name)) }
+            name?.let { builder.like(builder.lower(root["name"]), likeIgnoringCase(name)) }
         }
 
         fun byDescription(description: String?) = Specification<Wallet> { root, _, builder ->
-            description?.let { builder.like(builder.lower(root.get("description")), likeIgnoringCase(description)) }
+            description?.let { builder.like(builder.lower(root["description"]), likeIgnoringCase(description)) }
         }
 
         fun byBankName(bankName: String?) = Specification<Wallet> { root, _, builder ->
-            bankName?.let { builder.like(builder.lower(root.get("bank")), likeIgnoringCase(bankName)) }
+            bankName?.let { builder.like(builder.lower(root["bank"]), likeIgnoringCase(bankName)) }
         }
 
         fun byAgency(agency: String?) = Specification<Wallet> { root, _, builder ->

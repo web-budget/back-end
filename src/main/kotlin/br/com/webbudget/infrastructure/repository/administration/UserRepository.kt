@@ -17,11 +17,11 @@ interface UserRepository : DefaultRepository<User> {
     object Specifications : SpecificationHelpers {
 
         fun byName(name: String?) = Specification<User> { root, _, builder ->
-            name?.let { builder.like(builder.lower(root.get("name")), likeIgnoringCase(name)) }
+            name?.let { builder.like(builder.lower(root["name"]), likeIgnoringCase(name)) }
         }
 
         fun byEmail(email: String?) = Specification<User> { root, _, builder ->
-            email?.let { builder.like(builder.lower(root.get("email")), likeIgnoringCase(email)) }
+            email?.let { builder.like(builder.lower(root["email"]), likeIgnoringCase(email)) }
         }
 
         fun byActive(active: Boolean?) = Specification<User> { root, _, builder ->

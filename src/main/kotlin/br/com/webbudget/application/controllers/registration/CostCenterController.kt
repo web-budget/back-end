@@ -32,9 +32,9 @@ class CostCenterController(
 
     @GetMapping
     fun get(filter: CostCenterFilter, pageable: Pageable): ResponseEntity<Page<CostCenterView>> {
-        val response = costCenterRepository.findAll(filter.toSpecification(), pageable)
+        return costCenterRepository.findAll(filter.toSpecification(), pageable)
             .map { costCenterMapper.map(it) }
-        return ResponseEntity.ok(response)
+            .let { ResponseEntity.ok(it) }
     }
 
     @GetMapping("/{id}")

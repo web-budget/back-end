@@ -17,11 +17,11 @@ interface CostCenterRepository : DefaultRepository<CostCenter> {
     object Specifications : SpecificationHelpers {
 
         fun byName(name: String?) = Specification<CostCenter> { root, _, builder ->
-            name?.let { builder.like(builder.lower(root.get("name")), likeIgnoringCase(name)) }
+            name?.let { builder.like(builder.lower(root["name"]), likeIgnoringCase(name)) }
         }
 
         fun byDescription(description: String?) = Specification<CostCenter> { root, _, builder ->
-            description?.let { builder.like(builder.lower(root.get("description")), likeIgnoringCase(description)) }
+            description?.let { builder.like(builder.lower(root["description"]), likeIgnoringCase(description)) }
         }
 
         fun byActive(active: Boolean?) = Specification<CostCenter> { root, _, builder ->
