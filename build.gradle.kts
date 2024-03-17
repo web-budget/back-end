@@ -78,8 +78,6 @@ dependencies {
     // jackson
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.fasterxml.jackson.module:jackson-module-parameter-names")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8")
 
     // database
     runtimeOnly("org.postgresql:postgresql")
@@ -87,6 +85,7 @@ dependencies {
 
     // testing
     testImplementation("org.springframework.security:spring-security-test")
+    testImplementation("org.springframework.boot:spring-boot-testcontainers")
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude("org.mockito", "mockito-core")
         exclude("org.junit.vintage", "junit-vintage-engine")

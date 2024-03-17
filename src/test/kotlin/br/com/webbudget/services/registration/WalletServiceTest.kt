@@ -31,7 +31,7 @@ class WalletServiceTest : BaseIntegrationTest() {
     private lateinit var walletRepository: WalletRepository
 
     @ParameterizedTest
-    @MethodSource("buildCreateParams")
+    @MethodSource("costCentersToCreate")
     @Sql("/sql/registration/clear-tables.sql", "/sql/registration/create-wallets.sql")
     fun `should save`(toCreate: Wallet) {
 
@@ -78,7 +78,7 @@ class WalletServiceTest : BaseIntegrationTest() {
     }
 
     @ParameterizedTest
-    @MethodSource("buildUpdateParams")
+    @MethodSource("costCentersToUpdate")
     @Sql("/sql/registration/clear-tables.sql", "/sql/registration/create-wallets.sql")
     fun `should update`(idToUpdate: UUID, updateForm: WalletUpdateForm) {
 
@@ -163,7 +163,7 @@ class WalletServiceTest : BaseIntegrationTest() {
     companion object {
 
         @JvmStatic
-        fun buildUpdateParams() = listOf(
+        fun costCentersToUpdate() = listOf(
             Arguments.of(
                 UUID.fromString("d6421251-7b38-4765-88e0-4d70bc3bc4c7"),
                 WalletUpdateForm("updated", false, "updated")
@@ -179,7 +179,7 @@ class WalletServiceTest : BaseIntegrationTest() {
         )
 
         @JvmStatic
-        fun buildCreateParams() = listOf(
+        fun costCentersToCreate() = listOf(
             Arguments.of(
                 createWallet(
                     name = "Other personal",

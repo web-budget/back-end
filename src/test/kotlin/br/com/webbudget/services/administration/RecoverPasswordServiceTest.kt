@@ -4,6 +4,9 @@ import br.com.webbudget.BaseIntegrationTest
 import br.com.webbudget.domain.exceptions.InvalidPasswordRecoverTokenException
 import br.com.webbudget.domain.services.administration.RecoverPasswordService
 import br.com.webbudget.infrastructure.repository.administration.PasswordRecoverAttemptRepository
+import br.com.webbudget.utilities.memoryLogAppender
+import br.com.webbudget.utilities.startMemoryLogAppender
+import br.com.webbudget.utilities.stopMemoryLogAppender
 import com.icegreen.greenmail.configuration.GreenMailConfiguration
 import com.icegreen.greenmail.junit5.GreenMailExtension
 import com.icegreen.greenmail.util.ServerSetupTest
@@ -47,16 +50,16 @@ class RecoverPasswordServiceTest : BaseIntegrationTest() {
     @Sql("/sql/administration/clear-tables.sql", "/sql/administration/create-dummy-user.sql")
     fun `should ignore password recover request when user is not found`() {
 
-        startMemoryLoggerAppender()
+        startMemoryLogAppender()
 
         val userEmail = "other_user@webbudget.com.br"
         val expectedLogMessage = "No user found with e-mail [${userEmail}], ignoring password recover request"
 
         recoverPasswordService.registerRecoveryAttempt(userEmail)
 
-        assertThat(memoryAppender.countBy(expectedLogMessage)).isOne()
+        assertThat(memoryLogAppender.countBy(expectedLogMessage)).isOne()
 
-        stopMemoryLoggerAppender()
+        stopMemoryLogAppender()
     }
 
     @Test

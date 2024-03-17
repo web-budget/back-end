@@ -297,8 +297,10 @@ class WalletControllerTest : BaseControllerIntegrationTest() {
 
         assertThat(pageableSlot.captured)
             .isNotNull
-            .hasFieldOrPropertyWithValue("size", pageRequest.pageSize)
-            .hasFieldOrPropertyWithValue("page", pageRequest.pageNumber)
+            .satisfies({
+                assertThat(it.pageNumber).isEqualTo(pageRequest.pageNumber)
+                assertThat(it.pageSize).isEqualTo(pageRequest.pageSize)
+            })
 
         assertThat(specificationSlot.captured).isNotNull
 

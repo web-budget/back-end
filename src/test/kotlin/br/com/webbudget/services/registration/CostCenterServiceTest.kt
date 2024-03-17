@@ -27,7 +27,6 @@ class CostCenterServiceTest : BaseIntegrationTest() {
     fun `should save`() {
 
         val toCreate = createCostCenter()
-
         val externalId = costCenterService.create(toCreate)
 
         val created = costCenterRepository.findByExternalId(externalId)

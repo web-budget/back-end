@@ -7,6 +7,7 @@ import com.nimbusds.jose.proc.SecurityContext
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing
 import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
@@ -27,8 +28,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
 
-@Configuration
 @EnableWebSecurity
+@Configuration(proxyBeanMethods = false)
 class SecurityConfiguration(
     private val publicKey: RSAPublicKey = KeyPairGenerator.getPublicKey(),
     private val privateKey: RSAPrivateKey = KeyPairGenerator.getPrivateKey()

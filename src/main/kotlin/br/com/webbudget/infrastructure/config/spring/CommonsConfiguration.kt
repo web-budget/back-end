@@ -13,10 +13,8 @@ import org.thymeleaf.spring6.templateresolver.SpringResourceTemplateResolver
 import org.thymeleaf.templatemode.TemplateMode.HTML
 import java.nio.charset.StandardCharsets
 
-@EnableAsync
 @Configuration
 @EnableScheduling
-@EnableJpaAuditing
 class CommonsConfiguration {
 
     private lateinit var templateResolver: SpringResourceTemplateResolver
