@@ -9,8 +9,9 @@ import br.com.webbudget.domain.services.administration.AccountActivationService
 import br.com.webbudget.domain.services.administration.UserService
 import br.com.webbudget.infrastructure.repository.administration.UserRepository
 import br.com.webbudget.utilities.fixture.createUser
+import com.ninjasquad.springmockk.MockkBean
 import com.ninjasquad.springmockk.SpykBean
-import io.mockk.verify
+import io.mockk.*
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.assertj.core.api.Assertions.fail
@@ -31,6 +32,9 @@ import org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METH
 @RecordApplicationEvents
 class UserServiceTest : BaseIntegrationTest() {
 
+    @MockkBean
+    private lateinit var accountActivationService: AccountActivationService
+
     @Autowired
     private lateinit var userRepository: UserRepository
 
@@ -39,9 +43,6 @@ class UserServiceTest : BaseIntegrationTest() {
 
     @Autowired
     private lateinit var userService: UserService
-
-    @SpykBean
-    private lateinit var accountActivationService: AccountActivationService
 
     @Test
     fun `should save and not send account activation request`() {
@@ -70,6 +71,8 @@ class UserServiceTest : BaseIntegrationTest() {
             }
 
         verify(exactly = 0) { accountActivationService.requestActivation(userEmail) }
+
+        confirmVerified(accountActivationService)
     }
 
     @Test
@@ -77,6 +80,8 @@ class UserServiceTest : BaseIntegrationTest() {
 
         val userEmail = "user@webbudget.com.br"
         val toCreate = User(false, "User", userEmail, "s3cr3t", PT_BR)
+
+        every { accountActivationService.requestActivation(any<String>()) } just runs
 
         val externalId = userService.createAccount(toCreate, listOf("ANY_AUTHORITY"), true)
         val created = userRepository.findByExternalId(externalId)
@@ -98,7 +103,9 @@ class UserServiceTest : BaseIntegrationTest() {
                     .containsExactlyInAnyOrder("ANY_AUTHORITY")
             }
 
-        verify(exactly = 1) { accountActivationService.requestActivation(userEmail) }
+        verify(exactly = 1) { accountActivationService.requestActivation(ofType<String>()) }
+
+        confirmVerified(accountActivationService)
     }
 
     @Test

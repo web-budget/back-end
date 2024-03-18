@@ -47,7 +47,7 @@ class CostCenterNameValidatorTest {
     fun `should not fail if entities are equal`() {
 
         val externalId = UUID.randomUUID()
-        val toValidate = createCostCenter(externalId = externalId)
+        val toValidate = createCostCenter(id = 1L, externalId = externalId)
 
         every {
             costCenterRepository.findByNameIgnoreCaseAndExternalIdNot("Cost Center", externalId)

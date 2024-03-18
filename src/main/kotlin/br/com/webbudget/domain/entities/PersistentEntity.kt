@@ -37,6 +37,7 @@ open class PersistentEntity<T : Serializable> {
         private set
 
     @field:Version
+    @field:Column(name = "version", nullable = false)
     var version: Short? = null
         private set
 

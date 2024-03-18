@@ -3,7 +3,7 @@ spring:
   jmx.enabled: false
 
   datasource:
-    url: jdbc:postgresql://${DATABASE_URL:localhost:5433}/${DATABASE_NAME:webbudget}
+    url: jdbc:postgresql://${DATABASE_URL:localhost:5433/webbudget}
     username: ${DATABASE_USER:sa_webbudget}
     password: ${DATABASE_PASSWORD:sa_webbudget}
     hikari.pool-name: ${spring.application.name}_pool

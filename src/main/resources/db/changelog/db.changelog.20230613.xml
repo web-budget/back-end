@@ -33,10 +33,7 @@
             </column>
         </createTable>
 
-        <addUniqueConstraint columnNames="id"
-                             tableName="account_activation_attempt"
-                             schemaName="administration"/>
-        <addUniqueConstraint columnNames="external_id"
+        <addUniqueConstraint columnNames="id,external_id"
                              tableName="account_activation_attempt"
                              schemaName="administration"/>
 

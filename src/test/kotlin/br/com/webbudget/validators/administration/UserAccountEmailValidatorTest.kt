@@ -45,7 +45,7 @@ class UserAccountEmailValidatorTest {
     fun `should not fail if entities are equal`() {
 
         val externalId = UUID.randomUUID()
-        val toValidate = createUser(externalId = externalId)
+        val toValidate = createUser(id = 1L, externalId = externalId)
 
         every {
             userRepository.findByEmailAndExternalIdNot("user@test.com", externalId)

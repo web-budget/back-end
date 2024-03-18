@@ -30,7 +30,6 @@
             </column>
         </createTable>
 
-        <addUniqueConstraint columnNames="id" tableName="cost_centers" schemaName="registration"/>
-        <addUniqueConstraint columnNames="external_id" tableName="cost_centers" schemaName="registration"/>
+        <addUniqueConstraint columnNames="id,external_id" tableName="cost_centers" schemaName="registration"/>
     </changeSet>
 </databaseChangeLog>

@@ -7,7 +7,7 @@ import java.util.UUID
 
 @Suppress("LongParameterList")
 fun createWallet(
-    id: Long? = 1L,
+    id: Long? = null,
     externalId: UUID? = UUID.randomUUID(),
     name: String = "Wallet",
     type: Wallet.Type = Wallet.Type.BANK_ACCOUNT,
@@ -25,7 +25,7 @@ fun createWallet(
 
 @Suppress("LongParameterList")
 fun createCostCenter(
-    id: Long? = 1L,
+    id: Long? = null,
     externalId: UUID? = UUID.randomUUID(),
     name: String = "Cost Center",
     active: Boolean = true,

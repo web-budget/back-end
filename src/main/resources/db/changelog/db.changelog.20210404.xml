@@ -91,12 +91,9 @@
                                  referencedTableName="authorities" referencedTableSchemaName="administration"
                                  referencedColumnNames="id"/>
 
-        <addUniqueConstraint columnNames="id" tableName="users" schemaName="administration"/>
-        <addUniqueConstraint columnNames="external_id" tableName="users" schemaName="administration"/>
-        <addUniqueConstraint columnNames="id" tableName="grants" schemaName="administration"/>
-        <addUniqueConstraint columnNames="external_id" tableName="grants" schemaName="administration"/>
-        <addUniqueConstraint columnNames="id" tableName="authorities" schemaName="administration"/>
-        <addUniqueConstraint columnNames="external_id" tableName="authorities" schemaName="administration"/>
+        <addUniqueConstraint columnNames="id,external_id" tableName="users" schemaName="administration"/>
+        <addUniqueConstraint columnNames="id,external_id" tableName="grants" schemaName="administration"/>
+        <addUniqueConstraint columnNames="id,external_id" tableName="authorities" schemaName="administration"/>
 
         <!--password means 'admin'-->
         <sql>

@@ -35,10 +35,7 @@
             </column>
         </createTable>
 
-        <addUniqueConstraint columnNames="id"
-                             tableName="password_recover_attempts"
-                             schemaName="administration"/>
-        <addUniqueConstraint columnNames="external_id"
+        <addUniqueConstraint columnNames="id,external_id"
                              tableName="password_recover_attempts"
                              schemaName="administration"/>
 

@@ -46,7 +46,7 @@ class BankingInformationValidatorTest {
     fun `should not fail if entities are equal`() {
 
         val externalId = UUID.randomUUID()
-        val toValidate = createWallet(externalId = externalId)
+        val toValidate = createWallet(id = 1L, externalId = externalId)
 
         every {
             walletRepository.findByBankInfo("Bank", "123", "456789", externalId)

@@ -39,8 +39,7 @@
             <column name="number" type="varchar(10)"/>
         </createTable>
 
-        <addUniqueConstraint columnNames="id" tableName="wallets" schemaName="registration"/>
-        <addUniqueConstraint columnNames="external_id" tableName="wallets" schemaName="registration"/>
+        <addUniqueConstraint columnNames="id,external_id" tableName="wallets" schemaName="registration"/>
         <addUniqueConstraint columnNames="bank,agency,number" tableName="wallets" schemaName="registration"/>
     </changeSet>
 </databaseChangeLog>

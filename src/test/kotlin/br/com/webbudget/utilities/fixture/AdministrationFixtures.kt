@@ -9,7 +9,7 @@ import java.util.UUID
 
 @Suppress("LongParameterList")
 fun createUser(
-    id: Long? = 1L,
+    id: Long? = null,
     externalId: UUID? = UUID.randomUUID(),
     active: Boolean = false,
     name: String = "User",
