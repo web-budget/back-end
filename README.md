@@ -1,4 +1,5 @@
-[![build](https://github.com/web-budget/back-end/actions/workflows/gradle.yml/badge.svg)](https://github.com/web-budget/back-end/actions/workflows/gradle.yml)
+[![build](https://github.com/web-budget/back-end/actions/workflows/build.yml/badge.svg)](https://github.com/web-budget/back-end/actions/workflows/build.yml)
+
 # webBudget back-end
 
 Welcome to the back-end application for webBudget project!
