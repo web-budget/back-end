@@ -1,12 +1,12 @@
 package br.com.webbudget.infrastructure.repository.administration
 
 import br.com.webbudget.domain.entities.administration.Authority
-import br.com.webbudget.infrastructure.repository.DefaultRepository
+import br.com.webbudget.infrastructure.repository.BaseRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.stereotype.Repository
 
 @Repository
-interface AuthorityRepository : DefaultRepository<Authority> {
+interface AuthorityRepository : BaseRepository<Authority> {
 
     fun findByName(name: String): Authority?
 

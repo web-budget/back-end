@@ -1,6 +1,6 @@
 package br.com.webbudget.infrastructure.config
 
-object DefaultSchemas {
+object ApplicationSchemas {
     const val REGISTRATION = "registration"
     const val ADMINISTRATION = "administration"
 }

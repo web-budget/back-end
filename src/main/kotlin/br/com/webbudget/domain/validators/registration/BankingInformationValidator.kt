@@ -2,14 +2,14 @@ package br.com.webbudget.domain.validators.registration
 
 import br.com.webbudget.domain.entities.registration.Wallet
 import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
-import br.com.webbudget.domain.validators.CreatingValidation
-import br.com.webbudget.domain.validators.UpdatingValidation
+import br.com.webbudget.domain.validators.OnCreateValidation
+import br.com.webbudget.domain.validators.OnUpdateValidation
 import br.com.webbudget.infrastructure.repository.registration.WalletRepository
 import org.springframework.stereotype.Component
 
 @Component
-@UpdatingValidation
-@CreatingValidation
+@OnUpdateValidation
+@OnCreateValidation
 class BankingInformationValidator(
     private val walletRepository: WalletRepository
 ) : WalletValidator {

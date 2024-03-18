@@ -3,7 +3,7 @@ package br.com.webbudget.domain.entities.registration
 import br.com.webbudget.application.payloads.registration.WalletUpdateForm
 import br.com.webbudget.domain.entities.PersistentEntity
 import br.com.webbudget.domain.entities.UpdateSupport
-import br.com.webbudget.infrastructure.config.DefaultSchemas
+import br.com.webbudget.infrastructure.config.ApplicationSchemas
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType.STRING
@@ -12,7 +12,7 @@ import jakarta.persistence.Table
 import java.math.BigDecimal
 
 @Entity
-@Table(name = "wallets", schema = DefaultSchemas.REGISTRATION)
+@Table(name = "wallets", schema = ApplicationSchemas.REGISTRATION)
 class Wallet(
     @field:Column(name = "name", length = 150, nullable = false)
     var name: String,
@@ -45,7 +45,7 @@ class Wallet(
     }
 
     fun hasValidBankInformation(): Boolean {
-        return bank != null && agency != null && number != null
+        return bank != null && agency != null && number != null // FIXME refactor to use stream
     }
 
     enum class Type {

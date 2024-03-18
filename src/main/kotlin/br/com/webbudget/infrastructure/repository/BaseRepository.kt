@@ -7,7 +7,7 @@ import org.springframework.data.repository.NoRepositoryBean
 import java.util.UUID
 
 @NoRepositoryBean
-interface DefaultRepository<T : PersistentEntity<Long>> : BaseJpaRepository<T, Long>, JpaSpecificationExecutor<T> {
+interface BaseRepository<T : PersistentEntity<Long>> : BaseJpaRepository<T, Long>, JpaSpecificationExecutor<T> {
 
     fun findByExternalId(uuid: UUID): T?
 }
