@@ -142,7 +142,7 @@ class UserServiceTest : BaseIntegrationTest() {
             .isNotNull
             .hasFieldOrProperty("password").isNotNull
             .hasFieldOrPropertyWithValue("id", toUpdate.id)
-            .hasFieldOrPropertyWithValue("externalId", toUpdate.externalId)
+            .hasFieldOrPropertyWithValue("externalId", toUpdate.externalId!!)
             .hasFieldOrPropertyWithValue("createdOn", toUpdate.createdOn)
             .hasFieldOrPropertyWithValue("active", toUpdate.active)
             .hasFieldOrPropertyWithValue("name", toUpdate.name)

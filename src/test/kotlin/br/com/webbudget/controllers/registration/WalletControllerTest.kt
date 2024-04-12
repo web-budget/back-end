@@ -101,7 +101,7 @@ class WalletControllerTest : BaseControllerIntegrationTest() {
 
         assertThatJson(jsonResponse)
             .isObject
-            .containsEntry("id", expectedWallet.externalId.toString())
+            .containsEntry("id", expectedWallet.externalId!!.toString())
             .containsEntry("name", "Another Wallet")
             .containsEntry("active", false)
             .containsEntry("description", "Another some wallet")
@@ -226,7 +226,7 @@ class WalletControllerTest : BaseControllerIntegrationTest() {
 
         assertThatJson(jsonResponse)
             .isObject
-            .containsEntry("id", expectedWallet.externalId.toString())
+            .containsEntry("id", expectedWallet.externalId!!.toString())
             .containsEntry("name", "Wallet")
             .containsEntry("type", "BANK_ACCOUNT")
             .containsEntry("description", "Some description")
@@ -238,7 +238,7 @@ class WalletControllerTest : BaseControllerIntegrationTest() {
     }
 
     @Test
-    fun `should return not found if wallet does not exists`() {
+    fun `should call find by id and expect not found if nothing is found`() {
 
         val externalId = UUID.randomUUID()
 
@@ -257,7 +257,7 @@ class WalletControllerTest : BaseControllerIntegrationTest() {
     }
 
     @Test
-    fun `should call get paged and using filters`() {
+    fun `should call get and expect paged result`() {
 
         val pageRequest = PageRequest.of(0, 1)
         val wallets = listOf(createWallet())

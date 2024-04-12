@@ -1,11 +1,11 @@
 package br.com.webbudget.utilities.fixture
 
 import br.com.webbudget.domain.entities.registration.CostCenter
+import br.com.webbudget.domain.entities.registration.MovementClass
 import br.com.webbudget.domain.entities.registration.Wallet
 import java.math.BigDecimal
 import java.util.UUID
 
-@Suppress("LongParameterList")
 fun createWallet(
     id: Long? = null,
     externalId: UUID? = UUID.randomUUID(),
@@ -23,7 +23,6 @@ fun createWallet(
         this.externalId = externalId
     }
 
-@Suppress("LongParameterList")
 fun createCostCenter(
     id: Long? = null,
     externalId: UUID? = UUID.randomUUID(),
@@ -31,6 +30,21 @@ fun createCostCenter(
     active: Boolean = true,
     description: String = "Some description"
 ) = CostCenter(name, active, description)
+    .apply {
+        this.id = id
+        this.externalId = externalId
+    }
+
+fun createMovementClass(
+    id: Long? = null,
+    externalId: UUID? = UUID.randomUUID(),
+    name: String = "Movement Class",
+    type: MovementClass.Type = MovementClass.Type.INCOME,
+    active: Boolean = true,
+    costCenter: CostCenter = createCostCenter(),
+    budget: BigDecimal = BigDecimal.ONE,
+    description: String = "Some description"
+) = MovementClass(name, type, active, costCenter, budget, description)
     .apply {
         this.id = id
         this.externalId = externalId

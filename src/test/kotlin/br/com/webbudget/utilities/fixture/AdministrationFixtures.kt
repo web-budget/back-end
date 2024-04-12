@@ -7,7 +7,6 @@ import br.com.webbudget.domain.entities.administration.Language.PT_BR
 import br.com.webbudget.domain.entities.administration.User
 import java.util.UUID
 
-@Suppress("LongParameterList")
 fun createUser(
     id: Long? = null,
     externalId: UUID? = UUID.randomUUID(),

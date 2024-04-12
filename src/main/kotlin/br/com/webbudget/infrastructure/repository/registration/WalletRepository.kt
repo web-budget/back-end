@@ -16,19 +16,23 @@ interface WalletRepository : BaseRepository<Wallet> {
     fun findByNameIgnoreCaseAndExternalIdNot(description: String, externalId: UUID): Wallet?
 
     @Query(
-        "from Wallet w " +
-                "where w.bank = :bank " +
-                "and w.agency = :agency " +
-                "and w.number = :number "
+        """
+        from Wallet w 
+        where w.bank = :bank
+        and w.agency = :agency
+        and w.number = :number
+    """
     )
     fun findByBankInfo(bank: String?, agency: String?, number: String?): Wallet?
 
     @Query(
-        "from Wallet w " +
-                "where w.bank = :bank " +
-                "and w.agency = :agency " +
-                "and w.number = :number " +
-                "and w.externalId <> :externalId"
+        """
+        from Wallet w 
+        where w.bank = :bank
+        and w.agency = :agency
+        and w.number = :number
+        and w.externalId <> :externalId
+    """
     )
     fun findByBankInfo(bank: String?, agency: String?, number: String?, externalId: UUID): Wallet?
 

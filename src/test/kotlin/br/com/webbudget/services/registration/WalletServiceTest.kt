@@ -43,7 +43,7 @@ class WalletServiceTest : BaseIntegrationTest() {
         assertThat(created)
             .satisfies({
                 assertThat(it.id).isNotNull()
-                assertThat(it.externalId).isNotNull()
+                assertThat(it.externalId).isEqualTo(externalId)
                 assertThat(it.version).isNotNull()
                 assertThat(it.createdOn).isNotNull()
                 assertThat(it.active).isEqualTo(toCreate.active)
@@ -92,7 +92,7 @@ class WalletServiceTest : BaseIntegrationTest() {
             .isNotNull
             .satisfies({
                 assertThat(it.id).isEqualTo(toUpdate.id)
-                assertThat(it.externalId).isEqualTo(toUpdate.externalId)
+                assertThat(it.externalId!!).isEqualTo(toUpdate.externalId!!)
                 assertThat(it.version).isGreaterThan(toUpdate.version)
                 assertThat(it.createdOn).isEqualTo(toUpdate.createdOn)
                 assertThat(it.active).isEqualTo(toUpdate.active)

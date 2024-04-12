@@ -1,6 +1,5 @@
 package br.com.webbudget.mappers.registration
 
-import br.com.webbudget.application.mappers.registration.WalletMapper
 import br.com.webbudget.application.mappers.registration.WalletMapperImpl
 import br.com.webbudget.application.payloads.registration.WalletCreateForm
 import br.com.webbudget.domain.entities.registration.Wallet
@@ -17,7 +16,7 @@ import java.util.UUID
 
 class WalletMapperTest {
 
-    private val walletMapper: WalletMapper = WalletMapperImpl()
+    private val walletMapper = WalletMapperImpl()
 
     @ParameterizedTest
     @MethodSource("buildCreateFormParams")
@@ -55,7 +54,7 @@ class WalletMapperTest {
         assertThat(view)
             .isNotNull
             .satisfies({
-                assertThat(it.id).isEqualTo(domainObject.externalId)
+                assertThat(it.id).isEqualTo(domainObject.externalId!!)
                 assertThat(it.active).isEqualTo(domainObject.active)
                 assertThat(it.name).isEqualTo(domainObject.name)
                 assertThat(it.description).isEqualTo(domainObject.description)

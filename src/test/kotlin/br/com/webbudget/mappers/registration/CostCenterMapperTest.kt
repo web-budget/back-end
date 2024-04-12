@@ -1,6 +1,5 @@
 package br.com.webbudget.mappers.registration
 
-import br.com.webbudget.application.mappers.registration.CostCenterMapper
 import br.com.webbudget.application.mappers.registration.CostCenterMapperImpl
 import br.com.webbudget.application.payloads.registration.CostCenterForm
 import br.com.webbudget.utilities.fixture.createCostCenter
@@ -10,7 +9,7 @@ import java.util.UUID
 
 class CostCenterMapperTest {
 
-    private val costCenterMapper: CostCenterMapper = CostCenterMapperImpl()
+    private val costCenterMapper = CostCenterMapperImpl()
 
     @Test
     fun `should map form to domain object`() {

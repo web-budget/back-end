@@ -101,7 +101,7 @@ class CostCenterControllerTest : BaseControllerIntegrationTest() {
 
         assertThatJson(jsonResponse)
             .isObject
-            .containsEntry("id", expectedCostCenter.externalId.toString())
+            .containsEntry("id", expectedCostCenter.externalId!!.toString())
             .containsEntry("name", "Car")
             .containsEntry("active", false)
             .containsEntry("description", "Updated description")
@@ -222,7 +222,7 @@ class CostCenterControllerTest : BaseControllerIntegrationTest() {
 
         assertThatJson(jsonResponse)
             .isObject
-            .containsEntry("id", expectedCostCenter.externalId.toString())
+            .containsEntry("id", expectedCostCenter.externalId!!.toString())
             .containsEntry("name", "Cost Center")
             .containsEntry("description", "Some description")
             .containsEntry("active", true)
@@ -233,7 +233,7 @@ class CostCenterControllerTest : BaseControllerIntegrationTest() {
     }
 
     @Test
-    fun `should return not found if cost center does not exists`() {
+    fun `should call find by id and expect not found if nothing is found`() {
 
         val externalId = UUID.randomUUID()
 
@@ -252,7 +252,7 @@ class CostCenterControllerTest : BaseControllerIntegrationTest() {
     }
 
     @Test
-    fun `should call get paged and using filters`() {
+    fun `should call get and expect paged result`() {
 
         val pageRequest = PageRequest.of(0, 1)
         val costCenters = listOf(createCostCenter())

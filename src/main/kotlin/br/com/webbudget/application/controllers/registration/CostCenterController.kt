@@ -42,7 +42,7 @@ class CostCenterController(
         return costCenterRepository.findByExternalId(id)
             ?.let { costCenterMapper.map(it) }
             ?.let { ResponseEntity.ok(it) }
-            ?: throw ResourceNotFoundException(mapOf("id" to id))
+            ?: throw ResourceNotFoundException(mapOf("costCenterId" to id))
     }
 
     @PostMapping
@@ -65,14 +65,14 @@ class CostCenterController(
             ?.updateFields(form)
             ?.let { costCenterService.update(it) }
             ?.let { ResponseEntity.ok(costCenterMapper.map(it)) }
-            ?: throw ResourceNotFoundException(mapOf("id" to id))
+            ?: throw ResourceNotFoundException(mapOf("costCenterId" to id))
     }
 
     @DeleteMapping("/{id}")
     fun delete(@PathVariable id: UUID): ResponseEntity<Any> {
         costCenterRepository.findByExternalId(id)
             ?.let { costCenterService.delete(it) }
-            ?: throw ResourceNotFoundException(mapOf("id" to id))
+            ?: throw ResourceNotFoundException(mapOf("costCenterId" to id))
         return ResponseEntity.ok().build()
     }
 }

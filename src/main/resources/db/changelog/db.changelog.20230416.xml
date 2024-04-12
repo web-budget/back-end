@@ -27,7 +27,7 @@
             <column name="type" type="varchar(24)">
                 <constraints nullable="false"/>
             </column>
-            <column name="current_balance" type="numeric(15,6)">
+            <column name="current_balance" type="numeric(15,2)">
                 <constraints nullable="false"/>
             </column>
             <column name="active" type="boolean">

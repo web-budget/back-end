@@ -24,7 +24,7 @@ class CostCenterServiceTest : BaseIntegrationTest() {
 
     @Test
     @Sql("/sql/registration/clear-tables.sql")
-    fun `should save`() {
+    fun `should create`() {
 
         val toCreate = createCostCenter()
         val externalId = costCenterService.create(toCreate)
@@ -35,7 +35,7 @@ class CostCenterServiceTest : BaseIntegrationTest() {
         assertThat(created)
             .satisfies({
                 assertThat(it.id).isNotNull()
-                assertThat(it.externalId).isNotNull()
+                assertThat(it.externalId).isEqualTo(externalId)
                 assertThat(it.version).isNotNull()
                 assertThat(it.createdOn).isNotNull()
                 assertThat(it.active).isEqualTo(toCreate.active)
@@ -46,7 +46,7 @@ class CostCenterServiceTest : BaseIntegrationTest() {
 
     @Test
     @Sql("/sql/registration/clear-tables.sql")
-    fun `should not save when name is duplicated`() {
+    fun `should not create when name is duplicated`() {
 
         val toCreate = createCostCenter()
         costCenterService.create(toCreate)
@@ -75,7 +75,7 @@ class CostCenterServiceTest : BaseIntegrationTest() {
             .isNotNull
             .satisfies({
                 assertThat(it.id).isEqualTo(toUpdate.id)
-                assertThat(it.externalId).isEqualTo(toUpdate.externalId)
+                assertThat(it.externalId).isEqualTo(externalId)
                 assertThat(it.version).isGreaterThan(toUpdate.version)
                 assertThat(it.createdOn).isEqualTo(toUpdate.createdOn)
                 assertThat(it.active).isEqualTo(toUpdate.active)
@@ -120,6 +120,6 @@ class CostCenterServiceTest : BaseIntegrationTest() {
     @Test
     @Disabled
     fun `should fail to delete when in use`() {
-        // TODO do the logic to test constraint violation here
+        TODO("Not yet implemented")
     }
 }

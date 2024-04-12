@@ -43,7 +43,7 @@ class WalletController(
         return walletRepository.findByExternalId(id)
             ?.let { walletMapper.map(it) }
             ?.let { ResponseEntity.ok(it) }
-            ?: throw ResourceNotFoundException(mapOf("id" to id))
+            ?: throw ResourceNotFoundException(mapOf("walletId" to id))
     }
 
     @PostMapping
@@ -66,14 +66,14 @@ class WalletController(
             ?.updateFields(form)
             ?.let { walletService.update(it) }
             ?.let { ResponseEntity.ok(walletMapper.map(it)) }
-            ?: throw ResourceNotFoundException(mapOf("id" to id))
+            ?: throw ResourceNotFoundException(mapOf("walletId" to id))
     }
 
     @DeleteMapping("/{id}")
     fun delete(@PathVariable id: UUID): ResponseEntity<Any> {
         walletRepository.findByExternalId(id)
             ?.let { walletService.delete(it) }
-            ?: throw ResourceNotFoundException(mapOf("id" to id))
+            ?: throw ResourceNotFoundException(mapOf("walletId" to id))
         return ResponseEntity.ok().build()
     }
 }

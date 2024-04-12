@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="back-end#55" author="${author}">
+        <createTable tableName="movement_classes" schemaName="registration">
+            <column name="id" autoIncrement="true" type="bigint">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="external_id" type="${uuid_type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="smallint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_on" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_update" type="timestamp"/>
+
+            <column name="active" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="name" type="varchar(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type" type="varchar(45)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="description" type="clob"/>
+            <column name="budget" type="decimal(15,2)"/>
+
+            <column name="id_cost_center" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint constraintName="fk_cost_centers_on_movement_classes"
+                                 baseColumnNames="id_cost_center"
+                                 baseTableName="movement_classes"
+                                 baseTableSchemaName="registration"
+                                 referencedTableName="cost_centers"
+                                 referencedTableSchemaName="registration"
+                                 referencedColumnNames="id"/>
+
+        <addUniqueConstraint columnNames="id,external_id"
+                             tableName="movement_classes"
+                             schemaName="registration"/>
+
+        <addUniqueConstraint columnNames="name"
+                             tableName="movement_classes"
+                             schemaName="registration"/>
+    </changeSet>
+</databaseChangeLog>

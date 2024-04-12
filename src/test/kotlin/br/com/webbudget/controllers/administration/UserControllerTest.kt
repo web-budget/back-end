@@ -140,7 +140,7 @@ class UserControllerTest : BaseControllerIntegrationTest() {
             .containsEntry("email", expectedUser.email)
             .containsEntry("active", expectedUser.active)
             .containsEntry("defaultLanguage", expectedUser.defaultLanguage.name)
-            .containsEntry("id", expectedUser.externalId.toString())
+            .containsEntry("id", expectedUser.externalId!!.toString())
             .node("authorities").isArray.contains("FINANCIAL")
 
         verify(exactly = 1) { userRepository.findByExternalId(externalId) }
@@ -217,7 +217,7 @@ class UserControllerTest : BaseControllerIntegrationTest() {
             .containsEntry("name", expectedUser.name)
             .containsEntry("email", expectedUser.email)
             .containsEntry("active", expectedUser.active)
-            .containsEntry("id", expectedUser.externalId.toString())
+            .containsEntry("id", expectedUser.externalId!!.toString())
             .node("authorities").isArray.contains("REGISTRATION")
 
         verify(exactly = 1) { userRepository.findByExternalId(externalId) }
@@ -290,7 +290,9 @@ class UserControllerTest : BaseControllerIntegrationTest() {
 
         val externalId = UUID.randomUUID()
         val adminUser = User(true, "Admin", "admin@webbudget.com.br", "s3cr3t", PT_BR)
-            .apply { this.externalId = externalId }
+            .apply {
+                this.externalId = externalId
+            }
 
         every { userRepository.findByExternalId(externalId) } returns adminUser
         every { userService.deleteAccount(adminUser) } throws IllegalArgumentException("Can't delete admin")
