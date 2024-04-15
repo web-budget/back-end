@@ -1,0 +1,8 @@
+{
+  "name": "Manutenção",
+  "type": "EXPENSE",
+  "active": true,
+  "costCenter": "468a465e-9117-4c21-a859-ef5f15a3e3b1",
+  "budget": 2000,
+  "description": "Manutenção do carro"
+}
