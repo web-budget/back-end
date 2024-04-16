@@ -86,8 +86,8 @@ class CostCenterControllerTest : BaseControllerIntegrationTest() {
         val externalId = UUID.randomUUID()
         val expectedCostCenter = createCostCenter(externalId = externalId)
 
-        every { costCenterRepository.findByExternalId(externalId) } returns expectedCostCenter
-        every { costCenterService.update(any()) } returns expectedCostCenter
+        every { costCenterRepository.findByExternalId(eq(externalId)) } returns expectedCostCenter
+        every { costCenterService.update(any<CostCenter>()) } returns expectedCostCenter
 
         val jsonResponse = mockMvc.put("$ENDPOINT_URL/$externalId") {
             with(jwt().authorities(Authorities.REGISTRATION))
@@ -101,13 +101,13 @@ class CostCenterControllerTest : BaseControllerIntegrationTest() {
 
         assertThatJson(jsonResponse)
             .isObject
-            .containsEntry("id", expectedCostCenter.externalId!!.toString())
+            .containsEntry("id", externalId.toString())
             .containsEntry("name", "Car")
             .containsEntry("active", false)
             .containsEntry("description", "Updated description")
 
-        verify(exactly = 1) { costCenterRepository.findByExternalId(externalId) }
-        verify(exactly = 1) { costCenterService.update(any()) }
+        verify(exactly = 1) { costCenterRepository.findByExternalId(eq(externalId)) }
+        verify(exactly = 1) { costCenterService.update(ofType<CostCenter>()) }
 
         confirmVerified(costCenterService, costCenterRepository)
     }
@@ -157,7 +157,6 @@ class CostCenterControllerTest : BaseControllerIntegrationTest() {
     fun `should fail if required fields are not present`(
         @ResourceAsString("cost-center/invalid.json") payload: String
     ) {
-
         val requiredEntries = mapOf("name" to "cost-center.errors.name-is-blank")
 
         val jsonResponse = mockMvc.post(ENDPOINT_URL) {

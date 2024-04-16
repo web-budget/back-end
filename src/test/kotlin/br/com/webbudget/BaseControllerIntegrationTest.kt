@@ -1,5 +1,6 @@
 package br.com.webbudget
 
+import br.com.webbudget.infrastructure.config.spring.JacksonConfiguration
 import br.com.webbudget.infrastructure.config.spring.SecurityConfiguration
 import br.com.webbudget.utilities.ResourceAsStringResolver
 import io.mockk.junit5.MockKExtension
@@ -9,8 +10,9 @@ import org.springframework.context.annotation.Import
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
 
-@Import(SecurityConfiguration::class)
+@ActiveProfiles("test")
 @ExtendWith(MockKExtension::class, ResourceAsStringResolver::class)
+@Import(value = [SecurityConfiguration::class, JacksonConfiguration::class])
 abstract class BaseControllerIntegrationTest {
 
     @Autowired
