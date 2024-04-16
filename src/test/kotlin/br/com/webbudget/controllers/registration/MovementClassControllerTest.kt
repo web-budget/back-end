@@ -4,7 +4,6 @@ import br.com.webbudget.BaseControllerIntegrationTest
 import br.com.webbudget.application.controllers.registration.MovementClassController
 import br.com.webbudget.application.mappers.registration.CostCenterMapperImpl
 import br.com.webbudget.application.mappers.registration.MovementClassMapperImpl
-import br.com.webbudget.domain.entities.registration.CostCenter
 import br.com.webbudget.domain.entities.registration.MovementClass
 import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
 import br.com.webbudget.domain.services.registration.MovementClassService
