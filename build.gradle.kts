@@ -1,3 +1,4 @@
+import io.gitlab.arturbosch.detekt.Detekt
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -125,6 +126,10 @@ tasks.withType<KotlinCompile> {
             )
         )
     }
+}
+
+tasks.withType<Detekt> {
+    exclude("**/fixture/**")
 }
 
 tasks {
