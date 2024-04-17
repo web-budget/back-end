@@ -301,9 +301,11 @@ class MovementClassControllerTest : BaseControllerIntegrationTest() {
         val pageableSlot = slot<Pageable>()
         val specificationSlot = slot<Specification<MovementClass>>()
 
+        val thePage = PageImpl(movementClasses, pageRequest, movementClasses.size.toLong())
+
         every {
             movementClassRepository.findAll(capture(specificationSlot), capture(pageableSlot))
-        } returns PageImpl(movementClasses)
+        } returns thePage
 
         val jsonResponse = mockMvc.get(ENDPOINT_URL) {
             with(jwt().authorities(Authorities.REGISTRATION))
@@ -321,7 +323,11 @@ class MovementClassControllerTest : BaseControllerIntegrationTest() {
             .containsEntry("size", pageRequest.pageSize)
             .containsEntry("number", pageRequest.pageNumber)
             .containsEntry("empty", false)
-            .node("content").isArray.isNotEmpty
+
+        assertThatJson(jsonResponse)
+            .node("content")
+            .isArray
+            .isNotEmpty
 
         assertThat(pageableSlot.captured)
             .isNotNull

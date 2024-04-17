@@ -154,7 +154,7 @@ class CostCenterControllerTest : BaseControllerIntegrationTest() {
     }
 
     @Test
-    fun `should fail if required fields are not present`(
+    fun `should expect unprocessable entity if required fields are not present`(
         @ResourceAsString("cost-center/invalid.json") payload: String
     ) {
         val requiredEntries = mapOf("name" to "cost-center.errors.name-is-blank")
@@ -267,8 +267,9 @@ class CostCenterControllerTest : BaseControllerIntegrationTest() {
         val pageableSlot = slot<Pageable>()
         val specificationSlot = slot<Specification<CostCenter>>()
 
-        every { costCenterRepository.findAll(capture(specificationSlot), capture(pageableSlot)) } returns
-                PageImpl(costCenters)
+        val thePage = PageImpl(costCenters, pageRequest, costCenters.size.toLong())
+
+        every { costCenterRepository.findAll(capture(specificationSlot), capture(pageableSlot)) } returns thePage
 
         val jsonResponse = mockMvc.get(ENDPOINT_URL) {
             with(jwt().authorities(Authorities.REGISTRATION))
@@ -287,7 +288,11 @@ class CostCenterControllerTest : BaseControllerIntegrationTest() {
             .containsEntry("size", pageRequest.pageSize)
             .containsEntry("number", pageRequest.pageNumber)
             .containsEntry("empty", false)
-            .node("content").isArray.isNotEmpty
+
+        assertThatJson(jsonResponse)
+            .node("content")
+            .isArray
+            .isNotEmpty
 
         assertThat(pageableSlot.captured)
             .isNotNull

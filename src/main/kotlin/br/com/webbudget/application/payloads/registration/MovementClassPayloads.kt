@@ -16,11 +16,11 @@ import java.util.UUID
 data class MovementClassCreateForm(
     @field:NotBlank(message = "movement-class.errors.name-is-blank")
     @field:Size(message = "movement-class.errors.name-max-150-chars", max = 150)
-    val name: String,
+    val name: String?,
     @field:NotNull(message = "movement-class.errors.type-is-null")
-    val type: MovementClass.Type,
+    val type: MovementClass.Type?,
     @field:NotNull(message = "movement-class.errors.cost-center-is-null")
-    val costCenter: UUID,
+    val costCenter: UUID?,
     val budget: BigDecimal?,
     val description: String?,
     val active: Boolean = true
@@ -29,9 +29,9 @@ data class MovementClassCreateForm(
 data class MovementClassUpdateForm(
     @field:NotBlank(message = "movement-class.errors.name-is-blank")
     @field:Size(message = "movement-class.errors.name-max-150-chars", max = 150)
-    val name: String,
+    val name: String?,
     @field:NotNull(message = "movement-class.errors.cost-center-is-null")
-    val costCenter: UUID,
+    val costCenter: UUID?,
     val budget: BigDecimal?,
     val description: String?,
     val active: Boolean = true

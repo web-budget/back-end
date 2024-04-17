@@ -155,7 +155,7 @@ class WalletControllerTest : BaseControllerIntegrationTest() {
     }
 
     @Test
-    fun `should fail if required fields are not present`(
+    fun `should expect unprocessable entity if required fields are not present`(
         @ResourceAsString("wallet/invalid.json") payload: String
     ) {
 
@@ -273,8 +273,9 @@ class WalletControllerTest : BaseControllerIntegrationTest() {
         val pageableSlot = slot<Pageable>()
         val specificationSlot = slot<Specification<Wallet>>()
 
-        every { walletRepository.findAll(capture(specificationSlot), capture(pageableSlot)) } returns
-                PageImpl(wallets)
+        val thePage = PageImpl(wallets, pageRequest, wallets.size.toLong())
+
+        every { walletRepository.findAll(capture(specificationSlot), capture(pageableSlot)) } returns thePage
 
         val jsonResponse = mockMvc.get(ENDPOINT_URL) {
             with(jwt().authorities(Authorities.REGISTRATION))
@@ -293,7 +294,11 @@ class WalletControllerTest : BaseControllerIntegrationTest() {
             .containsEntry("size", pageRequest.pageSize)
             .containsEntry("number", pageRequest.pageNumber)
             .containsEntry("empty", false)
-            .node("content").isArray.isNotEmpty
+
+        assertThatJson(jsonResponse)
+            .node("content")
+            .isArray
+            .isNotEmpty
 
         assertThat(pageableSlot.captured)
             .isNotNull

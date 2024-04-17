@@ -21,7 +21,7 @@ class CostCenter(
 
     override fun updateFields(source: CostCenterForm): CostCenter {
         return this.apply {
-            name = source.name
+            name = source.name!!
             description = source.description
             active = source.active
         }

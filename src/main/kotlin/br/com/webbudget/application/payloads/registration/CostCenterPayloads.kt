@@ -14,7 +14,7 @@ import java.util.UUID
 data class CostCenterForm(
     @field:NotBlank(message = "cost-center.errors.name-is-blank")
     @field:Size(message = "cost-center.errors.name-max-150-chars", max = 150)
-    val name: String,
+    val name: String?,
     val description: String?,
     val active: Boolean = true,
 )

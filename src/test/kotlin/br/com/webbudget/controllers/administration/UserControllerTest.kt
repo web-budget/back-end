@@ -327,7 +327,9 @@ class UserControllerTest : BaseControllerIntegrationTest() {
         val pageableSlot = slot<Pageable>()
         val specificationSlot = slot<Specification<User>>()
 
-        every { userRepository.findAll(capture(specificationSlot), capture(pageableSlot)) } returns PageImpl(users)
+        val thePage = PageImpl(users, pageRequest, users.size.toLong())
+
+        every { userRepository.findAll(capture(specificationSlot), capture(pageableSlot)) } returns thePage
 
         val jsonResponse = mockMvc.get(ENDPOINT_URL) {
             with(jwt().authorities(Authorities.ADMINISTRATION))
@@ -346,7 +348,11 @@ class UserControllerTest : BaseControllerIntegrationTest() {
             .containsEntry("size", pageRequest.pageSize)
             .containsEntry("number", pageRequest.pageNumber)
             .containsEntry("empty", false)
-            .node("content").isArray.isNotEmpty
+
+        assertThatJson(jsonResponse)
+            .node("content")
+            .isArray
+            .isNotEmpty
 
         assertThat(pageableSlot.captured)
             .isNotNull

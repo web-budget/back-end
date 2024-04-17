@@ -22,4 +22,5 @@ server:
 
 logging:
   level:
-    br.com.webbudget: DEBUG
+    br.com.webbudget: debug
+    org.springframework.web: debug
