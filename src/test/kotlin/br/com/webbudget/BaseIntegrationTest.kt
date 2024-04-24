@@ -1,15 +1,12 @@
 package br.com.webbudget
 
+import br.com.webbudget.utilities.TestContainersInitializer
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.Import
-import org.springframework.test.annotation.DirtiesContext
-import org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_CLASS
 import org.springframework.test.context.ActiveProfiles
-import org.testcontainers.junit.jupiter.Testcontainers
+import org.springframework.test.context.ContextConfiguration
 
 @ActiveProfiles("test")
-@DirtiesContext(classMode = AFTER_CLASS)
-@Import(TestContainersConfiguration::class)
+@ContextConfiguration(initializers = [TestContainersInitializer::class])
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class BaseIntegrationTest internal constructor() {
 
