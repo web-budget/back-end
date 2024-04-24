@@ -2,12 +2,14 @@ package br.com.webbudget.mappers.registration
 
 import br.com.webbudget.application.mappers.registration.WalletMapperImpl
 import br.com.webbudget.application.payloads.registration.WalletCreateForm
+import br.com.webbudget.application.payloads.registration.WalletUpdateForm
 import br.com.webbudget.domain.entities.registration.Wallet
 import br.com.webbudget.domain.entities.registration.Wallet.Type.BANK_ACCOUNT
 import br.com.webbudget.domain.entities.registration.Wallet.Type.INVESTMENT
 import br.com.webbudget.domain.entities.registration.Wallet.Type.PERSONAL
 import br.com.webbudget.utilities.fixture.createWallet
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -35,6 +37,26 @@ class WalletMapperTest {
                 assertThat(it.agency).isEqualTo(form.agency)
                 assertThat(it.active).isTrue()
                 assertThat(it.currentBalance).isEqualTo(BigDecimal.ZERO)
+            })
+    }
+
+    @Test
+    fun `should map create form to domain object`() {
+
+        val domainObject = createWallet()
+        val form = WalletUpdateForm("Wallet X", false, "Some wallet", "1", "2", "3")
+
+        walletMapper.map(form, domainObject)
+
+        assertThat(domainObject)
+            .isNotNull
+            .satisfies({
+                assertThat(it.name).isEqualTo(form.name)
+                assertThat(it.description).isEqualTo(form.description)
+                assertThat(it.active).isEqualTo(form.active)
+                assertThat(it.bank).isEqualTo(form.bank)
+                assertThat(it.agency).isEqualTo(form.agency)
+                assertThat(it.number).isEqualTo(form.number)
             })
     }
 

@@ -27,7 +27,7 @@ class RecoverPasswordServiceTest : BaseIntegrationTest() {
     private lateinit var recoverPasswordService: RecoverPasswordService
 
     @Test
-    @Sql("/sql/administration/clear-tables.sql", "/sql/administration/create-dummy-user.sql")
+    @Sql("/sql/administration/clear-tables.sql", "/sql/administration/create-user.sql")
     fun `should send recover password e-mail when user exists and register attempt`() {
 
         val userEmail = "user@webbudget.com.br"
@@ -47,7 +47,7 @@ class RecoverPasswordServiceTest : BaseIntegrationTest() {
     }
 
     @Test
-    @Sql("/sql/administration/clear-tables.sql", "/sql/administration/create-dummy-user.sql")
+    @Sql("/sql/administration/clear-tables.sql", "/sql/administration/create-user.sql")
     fun `should ignore password recover request when user is not found`() {
 
         startMemoryLogAppender()
@@ -73,7 +73,7 @@ class RecoverPasswordServiceTest : BaseIntegrationTest() {
     }
 
     @Test
-    @Sql("/sql/administration/clear-tables.sql", "/sql/administration/create-dummy-user.sql")
+    @Sql("/sql/administration/clear-tables.sql", "/sql/administration/create-user.sql")
     fun `should change the password and mark recover attempt as used`() {
 
         val userEmail = "user@webbudget.com.br"
@@ -91,7 +91,7 @@ class RecoverPasswordServiceTest : BaseIntegrationTest() {
     }
 
     @Test
-    @Sql("/sql/administration/clear-tables.sql", "/sql/administration/create-dummy-user.sql")
+    @Sql("/sql/administration/clear-tables.sql", "/sql/administration/create-user.sql")
     fun `should fail if try to use same token to change password again`() {
 
         val userEmail = "user@webbudget.com.br"

@@ -1,8 +1,6 @@
 package br.com.webbudget.domain.entities.registration
 
-import br.com.webbudget.application.payloads.registration.WalletUpdateForm
 import br.com.webbudget.domain.entities.PersistentEntity
-import br.com.webbudget.domain.entities.UpdateSupport
 import br.com.webbudget.infrastructure.config.ApplicationSchemas.REGISTRATION
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -31,18 +29,7 @@ class Wallet(
     var agency: String? = null,
     @field:Column(name = "number", length = 16)
     var number: String? = null,
-) : PersistentEntity<Long>(), UpdateSupport<WalletUpdateForm, Wallet> {
-
-    override fun updateFields(source: WalletUpdateForm): Wallet {
-        return this.apply {
-            name = source.name
-            active = source.active
-            description = source.description
-            bank = source.bank
-            number = source.number
-            agency = source.agency
-        }
-    }
+) : PersistentEntity<Long>() {
 
     fun hasValidBankInformation(): Boolean {
         return bank != null && agency != null && number != null // FIXME refactor to use stream

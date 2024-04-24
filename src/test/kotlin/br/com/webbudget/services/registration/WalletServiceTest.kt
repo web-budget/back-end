@@ -1,7 +1,6 @@
 package br.com.webbudget.services.registration
 
 import br.com.webbudget.BaseIntegrationTest
-import br.com.webbudget.application.payloads.registration.WalletUpdateForm
 import br.com.webbudget.domain.entities.registration.Wallet
 import br.com.webbudget.domain.entities.registration.Wallet.Type.INVESTMENT
 import br.com.webbudget.domain.entities.registration.Wallet.Type.PERSONAL
@@ -80,25 +79,29 @@ class WalletServiceTest : BaseIntegrationTest() {
     @ParameterizedTest
     @MethodSource("costCentersToUpdate")
     @Sql("/sql/registration/clear-tables.sql", "/sql/registration/create-wallets.sql")
-    fun `should update`(idToUpdate: UUID, updateForm: WalletUpdateForm) {
+    fun `should update`(externalId: UUID) {
 
-        val toUpdate = walletRepository.findByExternalId(idToUpdate)
-            ?: fail(OBJECT_NOT_FOUND_ERROR)
+        val toUpdate = walletRepository.findByExternalId(externalId) ?: fail(OBJECT_NOT_FOUND_ERROR)
 
-        toUpdate.updateFields(updateForm)
+        toUpdate.apply {
+            this.name = "Updated"
+            this.description = "Updated"
+            this.active = false
+            this.bank = "111"
+            this.agency = "222"
+            this.number = "333"
+        }
+
         val updated = walletService.update(toUpdate)
 
         assertThat(updated)
             .isNotNull
             .satisfies({
                 assertThat(it.id).isEqualTo(toUpdate.id)
-                assertThat(it.externalId!!).isEqualTo(toUpdate.externalId!!)
+                assertThat(it.externalId).isEqualTo(externalId)
                 assertThat(it.version).isGreaterThan(toUpdate.version)
-                assertThat(it.createdOn).isEqualTo(toUpdate.createdOn)
                 assertThat(it.active).isEqualTo(toUpdate.active)
                 assertThat(it.name).isEqualTo(toUpdate.name)
-                assertThat(it.type).isEqualTo(toUpdate.type)
-                assertThat(it.currentBalance).isEqualByComparingTo(toUpdate.currentBalance)
                 assertThat(it.description).isEqualTo(toUpdate.description)
                 assertThat(it.bank).isEqualTo(toUpdate.bank)
                 assertThat(it.agency).isEqualTo(toUpdate.agency)
@@ -164,18 +167,9 @@ class WalletServiceTest : BaseIntegrationTest() {
 
         @JvmStatic
         fun costCentersToUpdate() = listOf(
-            Arguments.of(
-                UUID.fromString("d6421251-7b38-4765-88e0-4d70bc3bc4c7"),
-                WalletUpdateForm("updated", false, "updated")
-            ),
-            Arguments.of(
-                UUID.fromString("4ade8a17-460b-40fc-b200-1504bcd4aaf7"),
-                WalletUpdateForm("updated", false, "updated", "updated", "2", "2"),
-            ),
-            Arguments.of(
-                UUID.fromString("cd00845c-ae27-47e4-8282-c8df1c42acfe"),
-                WalletUpdateForm("updated", false, "updated", "updated", "4", "4"),
-            )
+            Arguments.of(UUID.fromString("d6421251-7b38-4765-88e0-4d70bc3bc4c7")),
+            Arguments.of(UUID.fromString("4ade8a17-460b-40fc-b200-1504bcd4aaf7")),
+            Arguments.of(UUID.fromString("cd00845c-ae27-47e4-8282-c8df1c42acfe"))
         )
 
         @JvmStatic

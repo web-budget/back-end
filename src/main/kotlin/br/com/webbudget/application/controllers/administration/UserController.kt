@@ -64,11 +64,14 @@ class UserController(
 
     @PutMapping("/{id}")
     fun update(@PathVariable id: UUID, @RequestBody @Valid form: UserUpdateForm): ResponseEntity<UserView> {
-        return userRepository.findByExternalId(id)
-            ?.updateFields(form)
-            ?.let { userService.updateAccount(it, form.authorities) }
-            ?.let { ResponseEntity.ok(userMapper.map(it)) }
+
+        val user = userRepository.findByExternalId(id)
             ?: throw ResourceNotFoundException(mapOf("userId" to id))
+
+        userMapper.map(form, user)
+        userService.updateAccount(user, form.authorities)
+
+        return ResponseEntity.ok(userMapper.map(user))
     }
 
     @PatchMapping("/{id}/update-password")

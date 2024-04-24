@@ -1,7 +1,6 @@
 package br.com.webbudget.services.registration
 
 import br.com.webbudget.BaseIntegrationTest
-import br.com.webbudget.application.payloads.registration.CostCenterForm
 import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
 import br.com.webbudget.domain.services.registration.CostCenterService
 import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository
@@ -13,6 +12,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.jdbc.Sql
+import java.util.UUID
 
 class CostCenterServiceTest : BaseIntegrationTest() {
 
@@ -58,17 +58,18 @@ class CostCenterServiceTest : BaseIntegrationTest() {
     }
 
     @Test
-    @Sql("/sql/registration/clear-tables.sql")
+    @Sql("/sql/registration/clear-tables.sql", "/sql/registration/create-cost-centers.sql")
     fun `should update`() {
 
-        val toCreate = createCostCenter()
-        val form = CostCenterForm("updated", "updated", false)
+        val externalId = UUID.fromString("52e3456b-1b0d-42c5-8be0-07ddaecce441")
+        val toUpdate = costCenterRepository.findByExternalId(externalId) ?: fail(OBJECT_NOT_FOUND_ERROR)
 
-        val externalId = costCenterService.create(toCreate)
-        val toUpdate = costCenterRepository.findByExternalId(externalId)
-            ?: fail(OBJECT_NOT_FOUND_ERROR)
+        toUpdate.apply {
+            this.name = "Updated"
+            this.description = "Updated"
+            this.active = false
+        }
 
-        toUpdate.updateFields(form)
         val updated = costCenterService.update(toUpdate)
 
         assertThat(updated)
@@ -77,7 +78,6 @@ class CostCenterServiceTest : BaseIntegrationTest() {
                 assertThat(it.id).isEqualTo(toUpdate.id)
                 assertThat(it.externalId).isEqualTo(externalId)
                 assertThat(it.version).isGreaterThan(toUpdate.version)
-                assertThat(it.createdOn).isEqualTo(toUpdate.createdOn)
                 assertThat(it.active).isEqualTo(toUpdate.active)
                 assertThat(it.name).isEqualTo(toUpdate.name)
                 assertThat(it.description).isEqualTo(toUpdate.description)

@@ -1,7 +1,7 @@
 package br.com.webbudget.services.administration
 
 import br.com.webbudget.BaseIntegrationTest
-import br.com.webbudget.application.payloads.administration.UserUpdateForm
+import br.com.webbudget.domain.entities.administration.Language.EN_US
 import br.com.webbudget.domain.entities.administration.Language.PT_BR
 import br.com.webbudget.domain.entities.administration.User
 import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
@@ -24,6 +24,7 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.test.context.event.RecordApplicationEvents
 import org.springframework.test.context.jdbc.Sql
 import org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD
+import java.util.UUID
 
 @Sql(
     executionPhase = BEFORE_TEST_METHOD,
@@ -126,37 +127,38 @@ class UserServiceTest : BaseIntegrationTest() {
     }
 
     @Test
+    @Sql("/sql/administration/clear-tables.sql", "/sql/administration/create-user.sql")
     fun `should update`() {
 
-        val toCreate = createUser()
-        val form = UserUpdateForm(true, "Other", PT_BR, listOf("ANY_OTHER_AUTHORITY"))
+        val externalId = UUID.fromString("6706a395-6690-4bad-948a-5c3c823e93d2")
+        val toUpdate = userRepository.findByExternalId(externalId) ?: fail(OBJECT_NOT_FOUND_ERROR)
 
-        val externalId = userService.createAccount(toCreate, listOf("ANY_AUTHORITY"))
-        val toUpdate = userRepository.findByExternalId(externalId)
-            ?: fail(OBJECT_NOT_FOUND_ERROR)
+        toUpdate.apply {
+            this.name = "Updated"
+            this.active = false
+            this.defaultLanguage = EN_US
+        }
 
-        toUpdate.updateFields(form)
-        val updated = userService.updateAccount(toUpdate, form.authorities)
+        val updated = userService.updateAccount(toUpdate, listOf("OTHER"))
 
         assertThat(updated)
             .isNotNull
-            .hasFieldOrProperty("password").isNotNull
-            .hasFieldOrPropertyWithValue("id", toUpdate.id)
-            .hasFieldOrPropertyWithValue("externalId", toUpdate.externalId!!)
-            .hasFieldOrPropertyWithValue("createdOn", toUpdate.createdOn)
-            .hasFieldOrPropertyWithValue("active", toUpdate.active)
-            .hasFieldOrPropertyWithValue("name", toUpdate.name)
-            .hasFieldOrPropertyWithValue("email", toUpdate.email)
-            .extracting {
-                assertThat(it.version)
-                    .isGreaterThan(toUpdate.version)
+            .satisfies({
+                assertThat(it.id).isEqualTo(toUpdate.id)
+                assertThat(it.version).isGreaterThan(toUpdate.version)
+                assertThat(it.password).isNotNull()
+                assertThat(it.externalId).isEqualTo(externalId)
+                assertThat(it.active).isEqualTo(toUpdate.active)
+                assertThat(it.name).isEqualTo(toUpdate.name)
+                assertThat(it.email).isEqualTo(toUpdate.email)
+                assertThat(it.defaultLanguage).isEqualTo(toUpdate.defaultLanguage)
+            })
 
-                assertThat(it.grants)
-                    .isNotNull
-                    .hasSize(1)
-                    .extracting("authority.name")
-                    .containsExactlyInAnyOrder("ANY_OTHER_AUTHORITY")
-            }
+        assertThat(updated.grants)
+            .isNotNull
+            .hasSize(1)
+            .extracting("authority.name")
+            .containsExactlyInAnyOrder("OTHER")
     }
 
     @Test

@@ -1,8 +1,9 @@
 package br.com.webbudget.application.controllers.registration
 
 import br.com.webbudget.application.mappers.registration.CostCenterMapper
+import br.com.webbudget.application.payloads.registration.CostCenterCreateForm
 import br.com.webbudget.application.payloads.registration.CostCenterFilter
-import br.com.webbudget.application.payloads.registration.CostCenterForm
+import br.com.webbudget.application.payloads.registration.CostCenterUpdateForm
 import br.com.webbudget.application.payloads.registration.CostCenterView
 import br.com.webbudget.domain.exceptions.ResourceNotFoundException
 import br.com.webbudget.domain.services.registration.CostCenterService
@@ -46,7 +47,7 @@ class CostCenterController(
     }
 
     @PostMapping
-    fun create(@RequestBody @Valid form: CostCenterForm): ResponseEntity<Any> {
+    fun create(@RequestBody @Valid form: CostCenterCreateForm): ResponseEntity<Any> {
 
         val toCreate = costCenterMapper.map(form)
         val created = costCenterService.create(toCreate)
@@ -60,12 +61,15 @@ class CostCenterController(
     }
 
     @PutMapping("/{id}")
-    fun update(@PathVariable id: UUID, @RequestBody @Valid form: CostCenterForm): ResponseEntity<CostCenterView> {
-        return costCenterRepository.findByExternalId(id)
-            ?.updateFields(form)
-            ?.let { costCenterService.update(it) }
-            ?.let { ResponseEntity.ok(costCenterMapper.map(it)) }
+    fun update(@PathVariable id: UUID, @RequestBody @Valid form: CostCenterUpdateForm): ResponseEntity<CostCenterView> {
+
+        val costCenter = costCenterRepository.findByExternalId(id)
             ?: throw ResourceNotFoundException(mapOf("costCenterId" to id))
+
+        costCenterMapper.map(form, costCenter)
+        costCenterService.update(costCenter)
+
+        return ResponseEntity.ok(costCenterMapper.map(costCenter))
     }
 
     @DeleteMapping("/{id}")

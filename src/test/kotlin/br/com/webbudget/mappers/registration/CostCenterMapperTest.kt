@@ -1,7 +1,8 @@
 package br.com.webbudget.mappers.registration
 
 import br.com.webbudget.application.mappers.registration.CostCenterMapperImpl
-import br.com.webbudget.application.payloads.registration.CostCenterForm
+import br.com.webbudget.application.payloads.registration.CostCenterCreateForm
+import br.com.webbudget.application.payloads.registration.CostCenterUpdateForm
 import br.com.webbudget.utilities.fixture.createCostCenter
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -12,9 +13,9 @@ class CostCenterMapperTest {
     private val costCenterMapper = CostCenterMapperImpl()
 
     @Test
-    fun `should map form to domain object`() {
+    fun `should map create form to domain object`() {
 
-        val form = CostCenterForm("Cost Center", "Some cost center", true)
+        val form = CostCenterCreateForm("Cost Center", "Some cost center", true)
 
         val domainObject = costCenterMapper.map(form)
 
@@ -23,6 +24,23 @@ class CostCenterMapperTest {
             .hasFieldOrPropertyWithValue("active", form.active)
             .hasFieldOrPropertyWithValue("name", form.name)
             .hasFieldOrPropertyWithValue("description", form.description)
+    }
+
+    @Test
+    fun `should map update form to domain object`() {
+
+        val domainObject = createCostCenter()
+        val form = CostCenterUpdateForm("Other", "Other", false)
+
+        costCenterMapper.map(form, domainObject)
+
+        assertThat(domainObject)
+            .isNotNull
+            .satisfies({
+                assertThat(it.name).isEqualTo(form.name)
+                assertThat(it.description).isEqualTo(form.description)
+                assertThat(it.active).isEqualTo(form.active)
+            })
     }
 
     @Test

@@ -29,7 +29,7 @@ class AccountActivationServiceTest : BaseIntegrationTest() {
     private lateinit var accountActivationAttemptRepository: AccountActivationAttemptRepository
 
     @Test
-    @Sql("/sql/administration/clear-tables.sql", "/sql/administration/create-dummy-user.sql")
+    @Sql("/sql/administration/clear-tables.sql", "/sql/administration/create-user.sql")
     fun `should send activation e-mail`() {
 
         val userName = "user@webbudget.com.br"
@@ -46,7 +46,7 @@ class AccountActivationServiceTest : BaseIntegrationTest() {
     }
 
     @Test
-    @Sql("/sql/administration/clear-tables.sql", "/sql/administration/create-dummy-user.sql")
+    @Sql("/sql/administration/clear-tables.sql", "/sql/administration/create-user.sql")
     fun `should activate account, mark token as activated and user as active`() {
 
         val userName = "user@webbudget.com.br"
@@ -76,7 +76,7 @@ class AccountActivationServiceTest : BaseIntegrationTest() {
     }
 
     @Test
-    @Sql("/sql/administration/clear-tables.sql", "/sql/administration/create-dummy-user.sql")
+    @Sql("/sql/administration/clear-tables.sql", "/sql/administration/create-user.sql")
     fun `should fail when try to activate an already activated token`() {
 
         val userName = "user@webbudget.com.br"

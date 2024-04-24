@@ -62,11 +62,14 @@ class WalletController(
 
     @PutMapping("/{id}")
     fun update(@PathVariable id: UUID, @RequestBody @Valid form: WalletUpdateForm): ResponseEntity<WalletView> {
-        return walletRepository.findByExternalId(id)
-            ?.updateFields(form)
-            ?.let { walletService.update(it) }
-            ?.let { ResponseEntity.ok(walletMapper.map(it)) }
+
+        val wallet = walletRepository.findByExternalId(id)
             ?: throw ResourceNotFoundException(mapOf("walletId" to id))
+
+        walletMapper.map(form, wallet)
+        walletService.update(wallet)
+
+        return ResponseEntity.ok(walletMapper.map(wallet))
     }
 
     @DeleteMapping("/{id}")

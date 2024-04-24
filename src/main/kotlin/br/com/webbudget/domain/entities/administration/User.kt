@@ -1,8 +1,6 @@
 package br.com.webbudget.domain.entities.administration
 
-import br.com.webbudget.application.payloads.administration.UserUpdateForm
 import br.com.webbudget.domain.entities.PersistentEntity
-import br.com.webbudget.domain.entities.UpdateSupport
 import br.com.webbudget.infrastructure.config.ApplicationSchemas.ADMINISTRATION
 import jakarta.persistence.CascadeType.REMOVE
 import jakarta.persistence.Column
@@ -29,18 +27,10 @@ class User(
     var defaultLanguage: Language,
     @field:OneToMany(mappedBy = "user", fetch = EAGER, cascade = [REMOVE])
     var grants: List<Grant> = mutableListOf(),
-) : PersistentEntity<Long>(), UpdateSupport<UserUpdateForm, User> {
+) : PersistentEntity<Long>() {
 
     fun isAdmin(): Boolean {
         return this.email == ADMIN_USERNAME
-    }
-
-    override fun updateFields(source: UserUpdateForm): User {
-        return this.apply {
-            name = source.name
-            active = source.active
-            defaultLanguage = source.defaultLanguage
-        }
     }
 
     companion object {
