@@ -62,17 +62,8 @@ data class WalletFilter(
 ) : SpecificationSupport<Wallet> {
 
     override fun toSpecification(): Specification<Wallet> {
-        return byActive(status?.value)
-            .and(
-                byName(filter).or(
-                    byDescription(filter).or(
-                        byBankName(filter).or(
-                            byAgency(filter).or(
-                                byNumber(filter)
-                            )
-                        )
-                    )
-                )
-            )
+        return byActive(status?.value).and(
+            byName(filter).or(byDescription(filter).or(byBankName(filter).or(byAgency(filter).or(byNumber(filter)))))
+        )
     }
 }

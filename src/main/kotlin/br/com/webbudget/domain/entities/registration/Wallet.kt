@@ -8,6 +8,7 @@ import jakarta.persistence.EnumType.STRING
 import jakarta.persistence.Enumerated
 import jakarta.persistence.Table
 import java.math.BigDecimal
+import java.util.stream.Stream
 
 @Entity
 @Table(name = "wallets", schema = REGISTRATION)
@@ -32,7 +33,7 @@ class Wallet(
 ) : PersistentEntity<Long>() {
 
     fun hasValidBankInformation(): Boolean {
-        return bank != null && agency != null && number != null // FIXME refactor to use stream
+        return Stream.of(bank, agency, number).anyMatch { it.isNullOrBlank().not() }
     }
 
     enum class Type {
