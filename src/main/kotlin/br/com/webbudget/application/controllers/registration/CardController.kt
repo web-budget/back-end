@@ -25,7 +25,7 @@ import java.util.UUID
 
 @RestController
 @RequestMapping("/api/registration/cards")
-class CreditCardController(
+class CardController(
     private val cardMapper: CardMapper,
     private val cardService: CardService,
     private val cardRepository: CardRepository

@@ -15,20 +15,20 @@ import jakarta.persistence.Table
 class Card(
     @field:Column(name = "name", length = 150, nullable = false)
     var name: String,
-    @field:Column(name = "flag", length = 150, nullable = false)
-    var flag: String,
     @field:Column(name = "last_four_digits", length = 4, nullable = false)
     var lastFourDigits: String,
     @field:Column(name = "invoice_payment_day", length = 2, nullable = false)
     var invoicePaymentDay: Int,
     @field:Enumerated(STRING)
-    @field:Column(name = "type", nullable = false, length = 15)
+    @field:Column(name = "type", nullable = false, length = 45)
     var type: Type,
     @field:Column(name = "active", nullable = false)
     var active: Boolean = true,
+    @field:Column(name = "flag", length = 50)
+    var flag: String? = null,
     @field:ManyToOne
     @field:JoinColumn(name = "id_wallet")
-    private val wallet: Wallet
+    var wallet: Wallet?
 ) : PersistentEntity<Long>() {
 
     enum class Type {

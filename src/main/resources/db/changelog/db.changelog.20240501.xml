@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="back-end#58" author="${author}">
+        <createTable tableName="cards" schemaName="registration">
+            <column name="id" autoIncrement="true" type="bigint">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="external_id" type="${uuid_type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="smallint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_on" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_update" type="timestamp"/>
+
+            <column name="active" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="name" type="varchar(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_four_digits" type="varchar(4)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="invoice_payment_day" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type" type="varchar(45)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="flag" type="varchar(50)"/>
+
+            <column name="id_wallet" type="bigint" />
+        </createTable>
+
+        <addForeignKeyConstraint constraintName="fk_wallets_on_cards"
+                                 baseColumnNames="id_wallet"
+                                 baseTableName="cards"
+                                 baseTableSchemaName="registration"
+                                 referencedTableName="wallets"
+                                 referencedTableSchemaName="registration"
+                                 referencedColumnNames="id"/>
+
+        <addUniqueConstraint columnNames="id,external_id"
+                             tableName="cards"
+                             schemaName="registration"/>
+
+        <addUniqueConstraint columnNames="name"
+                             tableName="cards"
+                             schemaName="registration"/>
+
+        <addUniqueConstraint columnNames="last_four_digits"
+                             tableName="cards"
+                             schemaName="registration"/>
+
+        <addUniqueConstraint columnNames="name,last_four_digits,type"
+                             tableName="cards"
+                             schemaName="registration"/>
+    </changeSet>
+</databaseChangeLog>
