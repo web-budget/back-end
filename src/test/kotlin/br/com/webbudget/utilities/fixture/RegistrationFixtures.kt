@@ -1,5 +1,6 @@
 package br.com.webbudget.utilities.fixture
 
+import br.com.webbudget.domain.entities.registration.Card
 import br.com.webbudget.domain.entities.registration.CostCenter
 import br.com.webbudget.domain.entities.registration.MovementClass
 import br.com.webbudget.domain.entities.registration.Wallet
@@ -45,6 +46,22 @@ fun createMovementClass(
     budget: BigDecimal = BigDecimal.ONE,
     description: String = "Some description"
 ) = MovementClass(name, type, active, costCenter, budget, description)
+    .apply {
+        this.id = id
+        this.externalId = externalId
+    }
+
+fun createCard(
+    id: Long? = null,
+    externalId: UUID? = UUID.randomUUID(),
+    name: String = "Card",
+    lastFourDigits: String = "1234",
+    invoicePaymentDay: Int = 1,
+    type: Card.Type = Card.Type.CREDIT,
+    active: Boolean = true,
+    flag: String = "Flag",
+    wallet: Wallet? = null
+) = Card(name, lastFourDigits, invoicePaymentDay, type, active, flag, wallet)
     .apply {
         this.id = id
         this.externalId = externalId

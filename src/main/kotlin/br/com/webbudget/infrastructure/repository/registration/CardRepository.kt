@@ -5,9 +5,14 @@ import br.com.webbudget.infrastructure.repository.BaseRepository
 import br.com.webbudget.infrastructure.repository.SpecificationHelpers
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.stereotype.Repository
+import java.util.UUID
 
 @Repository
 interface CardRepository : BaseRepository<Card> {
+
+    fun findByTypeAndLastFourDigits(type: Card.Type, lastFourDigits: String): Card?
+
+    fun findByTypeAndLastFourDigitsAndExternalIdNot(type: Card.Type, lastFourDigits: String, externalId: UUID): Card?
 
     object Specifications : SpecificationHelpers {
 
