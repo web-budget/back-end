@@ -32,13 +32,11 @@ class MovementClassMapperTest {
     @MockK
     private lateinit var costCenterRepository: CostCenterRepository
 
-    private val costCenterMapper = CostCenterMapperImpl()
-
     private val movementClassMapper = MovementClassMapperImpl()
 
     @BeforeEach
     fun setup() {
-        ReflectionTestUtils.setField(movementClassMapper, "costCenterMapper", costCenterMapper)
+        ReflectionTestUtils.setField(movementClassMapper, "costCenterMapper", CostCenterMapperImpl())
         ReflectionTestUtils.setField(movementClassMapper, "costCenterRepository", costCenterRepository)
     }
 

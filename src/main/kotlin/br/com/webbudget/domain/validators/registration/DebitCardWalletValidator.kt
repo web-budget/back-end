@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component
 class DebitCardWalletValidator : CardValidator {
 
     override fun validate(value: Card) {
-        check(value.type == Type.DEBIT && value.wallet != null) {
+        if (value.type == Type.DEBIT && value.wallet == null) {
             throw IllegalStateException("card.errors.debit-without-wallet")
         }
     }
