@@ -1,0 +1,7 @@
+{
+  "name": "Visa Infinite",
+  "lastFourDigits": "5431",
+  "invoicePaymentDay": 5,
+  "type": "CREDIT",
+  "flag": "VISA"
+}

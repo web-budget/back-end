@@ -118,6 +118,34 @@ class CardServiceTest : BaseIntegrationTest() {
     )
     fun `should update credit card`() {
 
+        val externalId = UUID.fromString("1dc82330-34c9-4f4a-b2ca-14fcd10c299f")
+
+        val toUpdate = cardRepository.findByExternalId(externalId) ?: fail(OBJECT_NOT_FOUND_ERROR)
+
+        toUpdate.apply {
+            name = "Updated Name"
+            lastFourDigits = "4321"
+            invoicePaymentDay = 1
+            flag = "Master"
+        }
+
+        val updated = cardService.update(toUpdate)
+
+        assertThat(updated)
+            .satisfies({
+                assertThat(it.externalId).isEqualTo(externalId)
+                assertThat(it.id).isEqualTo(toUpdate.id)
+                assertThat(it.version).isGreaterThan(toUpdate.version)
+                assertThat(it.createdOn).isEqualTo(toUpdate.createdOn)
+                assertThat(it.lastUpdate).isAfter(toUpdate.lastUpdate)
+                assertThat(it.active).isEqualTo(toUpdate.active)
+                assertThat(it.name).isEqualTo(toUpdate.name)
+                assertThat(it.type).isEqualTo(toUpdate.type)
+                assertThat(it.lastFourDigits).isEqualTo(toUpdate.lastFourDigits)
+                assertThat(it.invoicePaymentDay).isEqualTo(toUpdate.invoicePaymentDay)
+                assertThat(it.flag).isEqualTo(toUpdate.flag)
+                assertThat(it.wallet).isEqualTo(toUpdate.wallet)
+            })
     }
 
     @Test
@@ -128,12 +156,37 @@ class CardServiceTest : BaseIntegrationTest() {
     )
     fun `should update debit card`() {
 
-    }
+        val newWallet = walletRepository.findByExternalId(UUID.fromString("4ade8a17-460b-40fc-b200-1504bcd4aaf7"))
+            ?: fail(OBJECT_NOT_FOUND_ERROR)
 
-    @Test
-    @Sql("/sql/registration/clear-tables.sql")
-    fun `should not update when name is duplicated`() {
+        val externalId = UUID.fromString("07a25a3d-ac5c-46b0-9174-24f69b2dc36c")
+        val toUpdate = cardRepository.findByExternalId(externalId) ?: fail(OBJECT_NOT_FOUND_ERROR)
 
+        toUpdate.apply {
+            name = "Updated Name"
+            lastFourDigits = "4321"
+            invoicePaymentDay = 1
+            flag = "Master"
+            wallet = newWallet
+        }
+
+        val updated = cardService.update(toUpdate)
+
+        assertThat(updated)
+            .satisfies({
+                assertThat(it.externalId).isEqualTo(externalId)
+                assertThat(it.id).isEqualTo(toUpdate.id)
+                assertThat(it.version).isGreaterThan(toUpdate.version)
+                assertThat(it.createdOn).isEqualTo(toUpdate.createdOn)
+                assertThat(it.lastUpdate).isAfter(toUpdate.lastUpdate)
+                assertThat(it.active).isEqualTo(toUpdate.active)
+                assertThat(it.name).isEqualTo(toUpdate.name)
+                assertThat(it.type).isEqualTo(toUpdate.type)
+                assertThat(it.lastFourDigits).isEqualTo(toUpdate.lastFourDigits)
+                assertThat(it.invoicePaymentDay).isEqualTo(toUpdate.invoicePaymentDay)
+                assertThat(it.flag).isEqualTo(toUpdate.flag)
+                assertThat(it.wallet).isEqualTo(toUpdate.wallet)
+            })
     }
 
     @Test
