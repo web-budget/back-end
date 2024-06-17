@@ -5,6 +5,8 @@ import br.com.webbudget.application.controllers.registration.CardController
 import br.com.webbudget.application.mappers.registration.CardMapperImpl
 import br.com.webbudget.application.mappers.registration.WalletMapperImpl
 import br.com.webbudget.domain.entities.registration.Card
+import br.com.webbudget.domain.exceptions.BusinessException
+import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
 import br.com.webbudget.domain.services.registration.CardService
 import br.com.webbudget.infrastructure.repository.registration.CardRepository
 import br.com.webbudget.infrastructure.repository.registration.WalletRepository
@@ -13,6 +15,7 @@ import br.com.webbudget.utilities.ResourceAsString
 import br.com.webbudget.utilities.fixture.createCard
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.Runs
+import io.mockk.called
 import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
@@ -20,6 +23,7 @@ import io.mockk.slot
 import io.mockk.verify
 import net.javacrumbs.jsonunit.assertj.assertThatJson
 import org.assertj.core.api.Assertions.assertThat
+import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.context.annotation.Import
@@ -63,7 +67,7 @@ class CardControllerTest : BaseControllerIntegrationTest() {
 
         val externalId = UUID.randomUUID()
 
-        every { cardService.create(any()) } returns externalId
+        every { cardService.create(any<Card>()) } returns externalId
 
         mockMvc.post(ENDPOINT_URL) {
             with(jwt().authorities(Authorities.REGISTRATION))
@@ -77,7 +81,33 @@ class CardControllerTest : BaseControllerIntegrationTest() {
             }
         }
 
-        verify(exactly = 1) { cardService.create(any()) }
+        verify(exactly = 1) { cardService.create(ofType<Card>()) }
+
+        confirmVerified(cardService)
+    }
+
+    @Test
+    fun `should search wallet before create debit card and return created`(
+        @ResourceAsString("card/create.json") payload: String
+    ) {
+
+        val externalId = UUID.randomUUID()
+
+        every { cardService.create(any<Card>()) } returns externalId
+
+        mockMvc.post(ENDPOINT_URL) {
+            with(jwt().authorities(Authorities.REGISTRATION))
+            contentType = MediaType.APPLICATION_JSON
+            content = payload
+        }.andExpect {
+            status { isCreated() }
+        }.andExpect {
+            header {
+                stringValues("Location", "http://localhost${ENDPOINT_URL}/$externalId")
+            }
+        }
+
+        verify(exactly = 1) { cardService.create(ofType<Card>()) }
 
         confirmVerified(cardService)
     }
@@ -163,16 +193,80 @@ class CardControllerTest : BaseControllerIntegrationTest() {
         @ResourceAsString("card/invalid.json") payload: String
     ) {
 
+        val requiredEntries = mapOf(
+            "type" to "card.errors.type-is-null",
+            "name" to "card.errors.name-is-blank",
+            "lastFourDigits" to "card.errors.last-four-digits-is-blank",
+            "invoicePaymentDay" to "card.errors.invoice-payment-day-is-blank"
+        )
+
+        val response = mockMvc.post(ENDPOINT_URL) {
+            with(jwt().authorities(Authorities.REGISTRATION))
+            contentType = MediaType.APPLICATION_JSON
+            content = payload
+        }.andExpect {
+            status { isUnprocessableEntity() }
+        }.andReturn()
+            .response
+            .contentAsString
+
+        assertThatJson(response)
+            .node("errors")
+            .isObject
+            .hasSize(requiredEntries.size)
+            .containsExactlyInAnyOrderEntriesOf(requiredEntries)
+
+        verify { cardService.create(ofType<Card>()) wasNot called }
+
+        confirmVerified(cardService)
     }
 
     @Test
-    fun `should return conflict if number and type are duplicated`(@ResourceAsString("card/create.json") payload: String) {
+    fun `should return conflict if number and type are duplicated`(
+        @ResourceAsString("card/create.json") payload: String
+    ) {
 
+        every { cardService.create(any<Card>()) } throws
+                DuplicatedPropertyException("card.errors.duplicated-card", "card.type-and-last-four-digits")
+
+        mockMvc.post(ENDPOINT_URL) {
+            with(jwt().authorities(Authorities.REGISTRATION))
+            contentType = MediaType.APPLICATION_JSON
+            content = payload
+        }.andExpect {
+            status { isConflict() }
+        }.andExpect {
+            jsonPath("\$.property", equalTo("card.type-and-last-four-digits"))
+            jsonPath("\$.error", equalTo("card.errors.duplicated-card"))
+        }
+
+        verify(exactly = 1) { cardService.create(ofType<Card>()) }
+
+        confirmVerified(cardService)
     }
 
     @Test
-    fun `should return bad request debit card has no wallet`(@ResourceAsString("card/create.json") payload: String) {
+    fun `should return bad request if debit card has no wallet`(@ResourceAsString("card/create.json") payload: String) {
 
+        every { cardService.create(any<Card>()) } throws BusinessException(
+            "Debit card has no wallet",
+            "card.errors.debit-without-wallet"
+        )
+
+        mockMvc.post(ENDPOINT_URL) {
+            with(jwt().authorities(Authorities.REGISTRATION))
+            contentType = MediaType.APPLICATION_JSON
+            content = payload
+        }.andExpect {
+            status { isBadRequest() }
+        }.andExpect {
+            jsonPath("\$.detail", equalTo("card.errors.debit-without-wallet"))
+            jsonPath("\$.error", equalTo("Debit card has no wallet"))
+        }
+
+        verify(exactly = 1) { cardService.create(ofType<Card>()) }
+
+        confirmVerified(cardService)
     }
 
     @Test

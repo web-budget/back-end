@@ -2,6 +2,7 @@ package br.com.webbudget.services.registration
 
 import br.com.webbudget.BaseIntegrationTest
 import br.com.webbudget.domain.entities.registration.Card
+import br.com.webbudget.domain.exceptions.BusinessException
 import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
 import br.com.webbudget.domain.services.registration.CardService
 import br.com.webbudget.infrastructure.repository.registration.CardRepository
@@ -93,7 +94,7 @@ class CardServiceTest : BaseIntegrationTest() {
         val toCreate = createCard(type = Card.Type.DEBIT, wallet = null)
 
         assertThatThrownBy { cardService.create(toCreate) }
-            .isInstanceOf(IllegalStateException::class.java)
+            .isInstanceOf(BusinessException::class.java)
     }
 
     @Test

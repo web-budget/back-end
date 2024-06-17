@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 
 @ControllerAdvice
-class ValidationAdvice {
+class ValidationHandlerAdvice {
 
     @ExceptionHandler(DuplicatedPropertyException::class)
     fun handle(ex: DuplicatedPropertyException): ProblemDetail {

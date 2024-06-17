@@ -1,6 +1,7 @@
 package br.com.webbudget.validators.registration
 
 import br.com.webbudget.domain.entities.registration.Card
+import br.com.webbudget.domain.exceptions.BusinessException
 import br.com.webbudget.domain.validators.registration.DebitCardWalletValidator
 import br.com.webbudget.utilities.fixture.createCard
 import br.com.webbudget.utilities.fixture.createWallet
@@ -32,6 +33,6 @@ class DebitCardWalletValidatorTest {
         val card = createCard(type = Card.Type.DEBIT, wallet = null)
 
         assertThatThrownBy { debitCardWalletValidator.validate(card) }
-            .isInstanceOf(IllegalStateException::class.java)
+            .isInstanceOf(BusinessException::class.java)
     }
 }
