@@ -63,7 +63,7 @@ class CardControllerTest : BaseControllerIntegrationTest() {
     }
 
     @Test
-    fun `should call create and return created`(@ResourceAsString("card/create.json") payload: String) {
+    fun `should call create and return created`(@ResourceAsString("card/create-credit.json") payload: String) {
 
         val externalId = UUID.randomUUID()
 
@@ -88,7 +88,7 @@ class CardControllerTest : BaseControllerIntegrationTest() {
 
     @Test
     fun `should search wallet before create debit card and return created`(
-        @ResourceAsString("card/create.json") payload: String
+        @ResourceAsString("card/create-credit.json") payload: String
     ) {
 
         val externalId = UUID.randomUUID()
@@ -189,15 +189,46 @@ class CardControllerTest : BaseControllerIntegrationTest() {
     }
 
     @Test
-    fun `should expect unprocessable entity if required fields are not present`(
-        @ResourceAsString("card/invalid.json") payload: String
+    fun `should expect unprocessable entity if required fields are not present for credit card`(
+        @ResourceAsString("card/invalid-credit.json") payload: String
     ) {
 
         val requiredEntries = mapOf(
             "type" to "card.errors.type-is-null",
             "name" to "card.errors.name-is-blank",
-            "lastFourDigits" to "card.errors.last-four-digits-is-blank",
-            "invoicePaymentDay" to "card.errors.invoice-payment-day-is-blank"
+            "lastFourDigits" to "card.errors.last-four-digits-is-blank"
+        )
+
+        val response = mockMvc.post(ENDPOINT_URL) {
+            with(jwt().authorities(Authorities.REGISTRATION))
+            contentType = MediaType.APPLICATION_JSON
+            content = payload
+        }.andExpect {
+            status { isUnprocessableEntity() }
+        }.andReturn()
+            .response
+            .contentAsString
+
+        assertThatJson(response)
+            .node("errors")
+            .isObject
+            .hasSize(requiredEntries.size)
+            .containsExactlyInAnyOrderEntriesOf(requiredEntries)
+
+        verify { cardService.create(ofType<Card>()) wasNot called }
+
+        confirmVerified(cardService)
+    }
+
+    @Test
+    fun `should expect unprocessable entity if required fields are not present for debit card`(
+        @ResourceAsString("card/invalid-debit.json") payload: String
+    ) {
+
+        val requiredEntries = mapOf(
+            "type" to "card.errors.type-is-null",
+            "name" to "card.errors.name-is-blank",
+            "lastFourDigits" to "card.errors.last-four-digits-is-blank"
         )
 
         val response = mockMvc.post(ENDPOINT_URL) {
@@ -223,7 +254,7 @@ class CardControllerTest : BaseControllerIntegrationTest() {
 
     @Test
     fun `should return conflict if number and type are duplicated`(
-        @ResourceAsString("card/create.json") payload: String
+        @ResourceAsString("card/create-credit.json") payload: String
     ) {
 
         every { cardService.create(any<Card>()) } throws
@@ -246,7 +277,9 @@ class CardControllerTest : BaseControllerIntegrationTest() {
     }
 
     @Test
-    fun `should return bad request if debit card has no wallet`(@ResourceAsString("card/create.json") payload: String) {
+    fun `should return bad request if debit card has no wallet`(
+        @ResourceAsString("card/create-debit-invalid.json") payload: String
+    ) {
 
         every { cardService.create(any<Card>()) } throws BusinessException(
             "Debit card has no wallet",
@@ -262,6 +295,31 @@ class CardControllerTest : BaseControllerIntegrationTest() {
         }.andExpect {
             jsonPath("\$.detail", equalTo("card.errors.debit-without-wallet"))
             jsonPath("\$.error", equalTo("Debit card has no wallet"))
+        }
+
+        verify(exactly = 1) { cardService.create(ofType<Card>()) }
+
+        confirmVerified(cardService)
+    }
+
+    @Test
+    fun `should return bad request if credit card has invalid invoice payment day`(
+        @ResourceAsString("card/create-credit-invalid.json") payload: String
+    ) {
+        every { cardService.create(any<Card>()) } throws BusinessException(
+            "Credit card has has invalid invoice payment day",
+            "card.errors.credit-invalid-payment-day"
+        )
+
+        mockMvc.post(ENDPOINT_URL) {
+            with(jwt().authorities(Authorities.REGISTRATION))
+            contentType = MediaType.APPLICATION_JSON
+            content = payload
+        }.andExpect {
+            status { isBadRequest() }
+        }.andExpect {
+            jsonPath("\$.detail", equalTo("card.errors.credit-invalid-payment-day"))
+            jsonPath("\$.error", equalTo("Credit card has has invalid invoice payment day"))
         }
 
         verify(exactly = 1) { cardService.create(ofType<Card>()) }

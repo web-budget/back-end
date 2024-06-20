@@ -10,13 +10,13 @@ import br.com.webbudget.infrastructure.repository.registration.WalletRepository
 import br.com.webbudget.utilities.fixture.createWallet
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
 import org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.test.context.jdbc.Sql
 import java.math.BigDecimal
 import java.util.UUID
@@ -158,9 +158,19 @@ class WalletServiceTest : BaseIntegrationTest() {
     }
 
     @Test
-    @Disabled
+    @Sql(
+        "/sql/registration/clear-tables.sql",
+        "/sql/registration/create-wallets.sql",
+        "/sql/registration/create-cards.sql"
+    )
     fun `should fail to delete when in use`() {
-        // TODO do the logic to test constraint violation here
+
+        val externalId = UUID.fromString("cd00845c-ae27-47e4-8282-c8df1c42acfe")
+
+        val toDelete = walletRepository.findByExternalId(externalId) ?: fail(OBJECT_NOT_FOUND_ERROR)
+
+        assertThatThrownBy { walletService.delete(toDelete) }
+            .isInstanceOf(DataIntegrityViolationException::class.java)
     }
 
     companion object {

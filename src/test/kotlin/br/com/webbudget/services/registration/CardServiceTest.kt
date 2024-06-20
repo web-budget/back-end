@@ -88,10 +88,18 @@ class CardServiceTest : BaseIntegrationTest() {
     }
 
     @Test
-    @Sql("/sql/registration/clear-tables.sql")
-    fun `should fail to create debit card has no wallet`() {
+    fun `should fail to create debit card without wallet`() {
 
         val toCreate = createCard(type = Card.Type.DEBIT, wallet = null)
+
+        assertThatThrownBy { cardService.create(toCreate) }
+            .isInstanceOf(BusinessException::class.java)
+    }
+
+    @Test
+    fun `should fail to create credit card without invoice payment day`() {
+
+        val toCreate = createCard(type = Card.Type.CREDIT, invoicePaymentDay = null)
 
         assertThatThrownBy { cardService.create(toCreate) }
             .isInstanceOf(BusinessException::class.java)

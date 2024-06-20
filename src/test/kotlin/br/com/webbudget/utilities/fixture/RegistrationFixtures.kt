@@ -56,12 +56,12 @@ fun createCard(
     externalId: UUID? = UUID.randomUUID(),
     name: String = "Card",
     lastFourDigits: String = "1234",
-    invoicePaymentDay: Int = 1,
+    invoicePaymentDay: Int? = 1,
     type: Card.Type = Card.Type.CREDIT,
     active: Boolean = true,
     flag: String = "Flag",
     wallet: Wallet? = null
-) = Card(name, lastFourDigits, invoicePaymentDay, type, active, flag, wallet)
+) = Card(name, lastFourDigits, type, active, invoicePaymentDay, flag, wallet)
     .apply {
         this.id = id
         this.externalId = externalId

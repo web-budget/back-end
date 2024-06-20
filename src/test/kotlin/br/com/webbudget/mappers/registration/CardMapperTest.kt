@@ -8,6 +8,7 @@ import br.com.webbudget.domain.entities.registration.Card
 import br.com.webbudget.domain.entities.registration.Card.Type.CREDIT
 import br.com.webbudget.domain.entities.registration.Card.Type.DEBIT
 import br.com.webbudget.infrastructure.repository.registration.WalletRepository
+import br.com.webbudget.utilities.fixture.createCard
 import br.com.webbudget.utilities.fixture.createWallet
 import io.mockk.confirmVerified
 import io.mockk.every
@@ -130,26 +131,18 @@ class CardMapperTest {
             val creditCardForm = CardUpdateForm("The Credit", "2222", 3, null, "M", true)
             val debitCardForm = CardUpdateForm("The Debit", "1111", 2, UUID.randomUUID(), "V", true)
 
-            val wallet = createWallet(id = 1L, externalId = UUID.randomUUID())
-
-            val creditCard = Card("Credit", "4321", 1, CREDIT, true, "Visa", null)
-            val debitCard = Card("Debit", "1234", 1, DEBIT, true, "Master", wallet)
+            val debitCard = createCard(type = DEBIT, wallet = createWallet(id = 1L, externalId = UUID.randomUUID()))
 
             return Stream.of(
-                Arguments.of(creditCardForm, creditCard, 0),
+                Arguments.of(creditCardForm, createCard(), 0),
                 Arguments.of(debitCardForm, debitCard, 1)
             )
         }
 
         @JvmStatic
         fun viewObjects(): Stream<Arguments> {
-
             val wallet = createWallet(id = 1L, externalId = UUID.randomUUID())
-
-            return Stream.of(
-                Arguments.of(Card("Credit", "4321", 1, CREDIT, true, "Visa", null)),
-                Arguments.of(Card("Debit", "1234", 1, DEBIT, true, "Master", wallet))
-            )
+            return Stream.of(Arguments.of(createCard()), Arguments.of(createCard(type = DEBIT, wallet = wallet)))
         }
     }
 }

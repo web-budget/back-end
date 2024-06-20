@@ -31,15 +31,12 @@
             <column name="last_four_digits" type="varchar(4)">
                 <constraints nullable="false"/>
             </column>
-            <column name="invoice_payment_day" type="int">
-                <constraints nullable="false"/>
-            </column>
             <column name="type" type="varchar(45)">
                 <constraints nullable="false"/>
             </column>
 
+            <column name="invoice_payment_day" type="int"/>
             <column name="flag" type="varchar(50)"/>
-
             <column name="id_wallet" type="bigint" />
         </createTable>
 

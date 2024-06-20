@@ -21,7 +21,6 @@ data class CardCreateForm(
     @field:NotBlank(message = "card.errors.last-four-digits-is-blank")
     @field:Size(message = "card.errors.last-four-digits-max-4-chars", max = 4)
     val lastFourDigits: String?,
-    @field:NotNull(message = "card.errors.invoice-payment-day-is-blank")
     val invoicePaymentDay: Int?,
     @field:NotNull(message = "card.errors.type-is-null")
     val type: Type?,
@@ -37,7 +36,6 @@ data class CardUpdateForm(
     @field:NotNull(message = "card.errors.last-four-digits-is-blank")
     @field:Size(message = "card.errors.last-four-digits-max-4-chars", max = 4)
     val lastFourDigits: String?,
-    @field:NotNull(message = "card.errors.invoice-payment-day-is-blank")
     val invoicePaymentDay: Int?,
     val wallet: UUID?,
     val flag: String?,
