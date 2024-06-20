@@ -14,7 +14,8 @@ class CreditCardInvoicePaymentDayValidator : CardValidator {
 
     override fun validate(value: Card) {
 
-        val validDateRange = 1..31
+        val validDateRange = FIRST_VALID_DAY..LAST_VALID_DAY
+
         val paymentDay = value.invoicePaymentDay
 
         if (value.type == Type.CREDIT && (paymentDay == null || !validDateRange.contains(paymentDay))) {
@@ -23,5 +24,10 @@ class CreditCardInvoicePaymentDayValidator : CardValidator {
                 "card.errors.credit-invalid-payment-day"
             )
         }
+    }
+
+    companion object {
+        private const val FIRST_VALID_DAY = 1
+        private const val LAST_VALID_DAY = 31
     }
 }

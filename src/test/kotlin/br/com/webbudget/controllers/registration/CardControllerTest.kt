@@ -13,6 +13,7 @@ import br.com.webbudget.infrastructure.repository.registration.WalletRepository
 import br.com.webbudget.utilities.Authorities
 import br.com.webbudget.utilities.ResourceAsString
 import br.com.webbudget.utilities.fixture.createCard
+import br.com.webbudget.utilities.fixture.createWallet
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.Runs
 import io.mockk.called
@@ -63,7 +64,7 @@ class CardControllerTest : BaseControllerIntegrationTest() {
     }
 
     @Test
-    fun `should call create and return created`(@ResourceAsString("card/create-credit.json") payload: String) {
+    fun `should create credit card and return created`(@ResourceAsString("card/create-credit.json") payload: String) {
 
         val externalId = UUID.randomUUID()
 
@@ -84,6 +85,32 @@ class CardControllerTest : BaseControllerIntegrationTest() {
         verify(exactly = 1) { cardService.create(ofType<Card>()) }
 
         confirmVerified(cardService)
+    }
+
+    @Test
+    fun `should create debit card and return created`(@ResourceAsString("card/create-debit.json") payload: String) {
+
+        val externalId = UUID.randomUUID()
+
+        every { cardService.create(any<Card>()) } returns externalId
+        every { walletRepository.findByExternalId(any<UUID>()) } returns createWallet()
+
+        mockMvc.post(ENDPOINT_URL) {
+            with(jwt().authorities(Authorities.REGISTRATION))
+            contentType = MediaType.APPLICATION_JSON
+            content = payload
+        }.andExpect {
+            status { isCreated() }
+        }.andExpect {
+            header {
+                stringValues("Location", "http://localhost${ENDPOINT_URL}/$externalId")
+            }
+        }
+
+        verify(exactly = 1) { cardService.create(ofType<Card>()) }
+        verify(exactly = 1) { walletRepository.findByExternalId(ofType<UUID>()) }
+
+        confirmVerified(cardService, walletRepository)
     }
 
     @Test
