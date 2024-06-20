@@ -33,7 +33,7 @@ class Wallet(
 ) : PersistentEntity<Long>() {
 
     fun hasValidBankInformation(): Boolean {
-        return Stream.of(bank, agency, number).anyMatch { it.isNullOrBlank().not() }
+        return Stream.of(bank, agency, number).allMatch { it.isNullOrBlank().not() }
     }
 
     enum class Type {

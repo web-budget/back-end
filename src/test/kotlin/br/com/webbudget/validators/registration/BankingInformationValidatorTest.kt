@@ -63,8 +63,14 @@ class BankingInformationValidatorTest {
     }
 
     @Test
-    @Disabled
     fun `should not validate if no valid bank information`() {
-        // TODO add this test when issue #39 is fixed
+
+        val externalId = UUID.randomUUID()
+        val toValidate = createWallet(id = 1L, externalId = externalId, agency = null)
+
+        assertThatNoException()
+            .isThrownBy { bankingInformationValidator.validate(toValidate) }
+
+        confirmVerified(walletRepository)
     }
 }
