@@ -7,10 +7,10 @@ import br.com.webbudget.infrastructure.repository.registration.CostCenterReposit
 import br.com.webbudget.utilities.fixture.createCostCenter
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
 import org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.test.context.jdbc.Sql
 import java.util.UUID
 
@@ -118,8 +118,18 @@ class CostCenterServiceTest : BaseIntegrationTest() {
     }
 
     @Test
-    @Disabled
+    @Sql(
+        "/sql/registration/clear-tables.sql",
+        "/sql/registration/create-cost-centers.sql",
+        "/sql/registration/create-movement-classes.sql"
+    )
     fun `should fail to delete when in use`() {
-        TODO("Not yet implemented")
+
+        val externalId = UUID.fromString("52e3456b-1b0d-42c5-8be0-07ddaecce441")
+
+        val toDelete = costCenterRepository.findByExternalId(externalId) ?: fail(OBJECT_NOT_FOUND_ERROR)
+
+        assertThatThrownBy { costCenterService.delete(toDelete) }
+            .isInstanceOf(DataIntegrityViolationException::class.java)
     }
 }
