@@ -19,7 +19,7 @@ import org.springframework.test.web.servlet.patch
 import java.util.UUID
 
 @WebMvcTest(UserAccountController::class)
-class UserAccountControllerTest : BaseControllerIntegrationTest() {
+class UserAccountControllerUTest : BaseControllerIntegrationTest() {
 
     @MockkBean
     private lateinit var recoverPasswordService: RecoverPasswordService

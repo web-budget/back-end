@@ -20,7 +20,7 @@ import org.springframework.test.web.servlet.post
 import java.util.UUID
 
 @WebMvcTest(TokenController::class)
-class TokenControllerTest : BaseControllerIntegrationTest() {
+class TokenControllerUTest : BaseControllerIntegrationTest() {
 
     @MockkBean
     private lateinit var userRepository: UserRepository

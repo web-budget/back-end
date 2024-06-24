@@ -41,7 +41,7 @@ import java.util.UUID
 
 @WebMvcTest(UserController::class)
 @Import(value = [UserMapperImpl::class])
-class UserControllerTest : BaseControllerIntegrationTest() {
+class UserControllerUTest : BaseControllerIntegrationTest() {
 
     @MockkBean
     private lateinit var userRepository: UserRepository

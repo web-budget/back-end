@@ -26,7 +26,7 @@ import java.util.UUID
 import java.util.stream.Stream
 
 @ExtendWith(MockKExtension::class)
-class CardMapperTest {
+class CardMapperUTest {
 
     @MockK
     private lateinit var walletRepository: WalletRepository

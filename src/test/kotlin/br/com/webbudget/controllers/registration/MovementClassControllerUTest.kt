@@ -41,7 +41,7 @@ import java.util.UUID
 
 @WebMvcTest(MovementClassController::class)
 @Import(value = [MovementClassMapperImpl::class, CostCenterMapperImpl::class])
-class MovementClassControllerTest : BaseControllerIntegrationTest() {
+class MovementClassControllerUTest : BaseControllerIntegrationTest() {
 
     @MockkBean
     private lateinit var movementClassService: MovementClassService

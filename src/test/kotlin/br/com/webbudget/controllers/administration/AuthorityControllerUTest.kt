@@ -17,7 +17,7 @@ import org.springframework.test.web.servlet.get
 
 
 @WebMvcTest(AuthorityController::class)
-class AuthorityControllerTest : BaseControllerIntegrationTest() {
+class AuthorityControllerUTest : BaseControllerIntegrationTest() {
 
     @MockkBean
     private lateinit var authorityRepository: AuthorityRepository

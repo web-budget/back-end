@@ -16,7 +16,7 @@ import org.junit.jupiter.params.provider.MethodSource
 import java.math.BigDecimal
 import java.util.UUID
 
-class WalletMapperTest {
+class WalletMapperUTest {
 
     private val walletMapper = WalletMapperImpl()
 

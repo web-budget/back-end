@@ -22,7 +22,7 @@ import java.util.UUID
 import java.util.stream.Stream
 
 @ExtendWith(MockKExtension::class)
-class CardTypeAndNumberValidatorTest {
+class CardTypeAndNumberValidatorUTest {
 
     @MockK
     private lateinit var cardRepository: CardRepository

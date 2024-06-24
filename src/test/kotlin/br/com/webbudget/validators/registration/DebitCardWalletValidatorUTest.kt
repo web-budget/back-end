@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(MockKExtension::class)
-class DebitCardWalletValidatorTest {
+class DebitCardWalletValidatorUTest {
 
     @InjectMockKs
     private lateinit var debitCardWalletValidator: DebitCardWalletValidator

@@ -34,7 +34,7 @@ import java.util.UUID
     ]
 )
 @RecordApplicationEvents
-class UserServiceTest : BaseIntegrationTest() {
+class UserServiceITest : BaseIntegrationTest() {
 
     @MockkBean
     private lateinit var accountActivationService: AccountActivationService

@@ -14,7 +14,7 @@ import java.time.Instant
 import java.util.UUID
 
 @ExtendWith(MockKExtension::class)
-class TokenServiceTest {
+class TokenServiceITest {
 
     @MockK
     private lateinit var jwtEncoder: JwtEncoder

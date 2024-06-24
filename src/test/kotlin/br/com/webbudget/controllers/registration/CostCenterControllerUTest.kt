@@ -39,7 +39,7 @@ import java.util.UUID
 
 @WebMvcTest(CostCenterController::class)
 @Import(value = [CostCenterMapperImpl::class])
-class CostCenterControllerTest : BaseControllerIntegrationTest() {
+class CostCenterControllerUTest : BaseControllerIntegrationTest() {
 
     @MockkBean
     private lateinit var costCenterService: CostCenterService

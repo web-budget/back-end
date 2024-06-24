@@ -17,7 +17,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import java.util.UUID
 
 @ExtendWith(MockKExtension::class)
-class UserAccountEmailValidatorTest {
+class UserAccountEmailValidatorUTest {
 
     @MockK
     lateinit var userRepository: UserRepository

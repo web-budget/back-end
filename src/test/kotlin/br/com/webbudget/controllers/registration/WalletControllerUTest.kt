@@ -39,7 +39,7 @@ import java.util.UUID
 
 @WebMvcTest(WalletController::class)
 @Import(value = [WalletMapperImpl::class])
-class WalletControllerTest : BaseControllerIntegrationTest() {
+class WalletControllerUTest : BaseControllerIntegrationTest() {
 
     @MockkBean
     private lateinit var walletService: WalletService

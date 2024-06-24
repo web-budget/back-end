@@ -21,7 +21,7 @@ import org.springframework.test.context.jdbc.Sql
 import java.math.BigDecimal
 import java.util.UUID
 
-class WalletServiceTest : BaseIntegrationTest() {
+class WalletServiceITest : BaseIntegrationTest() {
 
     @Autowired
     private lateinit var walletService: WalletService

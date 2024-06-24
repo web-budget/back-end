@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.jdbc.Sql
 import java.util.UUID
 
-class AccountActivationServiceTest : BaseIntegrationTest() {
+class AccountActivationServiceITest : BaseIntegrationTest() {
 
     @Autowired
     private lateinit var userRepository: UserRepository

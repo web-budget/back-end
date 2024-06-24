@@ -14,7 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 
 @ExtendWith(MockKExtension::class)
-class AuthenticationServiceTest {
+class AuthenticationServiceITest {
 
     @MockK
     private lateinit var userRepository: UserRepository

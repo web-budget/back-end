@@ -14,7 +14,7 @@ import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.test.context.jdbc.Sql
 import java.util.UUID
 
-class CostCenterServiceTest : BaseIntegrationTest() {
+class CostCenterServiceITest : BaseIntegrationTest() {
 
     @Autowired
     private lateinit var costCenterService: CostCenterService
