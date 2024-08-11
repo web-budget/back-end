@@ -10,9 +10,9 @@ import java.util.UUID
 @Repository
 interface CostCenterRepository : BaseRepository<CostCenter> {
 
-    fun findByNameIgnoreCase(description: String): CostCenter?
+    fun findByNameIgnoreCase(name: String): CostCenter?
 
-    fun findByNameIgnoreCaseAndExternalIdNot(description: String, externalId: UUID): CostCenter?
+    fun findByNameIgnoreCaseAndExternalIdNot(name: String, externalId: UUID): CostCenter?
 
     object Specifications : SpecificationHelpers {
 

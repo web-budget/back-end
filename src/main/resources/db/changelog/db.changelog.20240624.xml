@@ -24,15 +24,17 @@
             <column name="name" type="varchar(150)">
                 <constraints nullable="false"/>
             </column>
-            <column name="start_date" type="date">
+            <column name="starting_at" type="date">
                 <constraints nullable="false"/>
             </column>
-            <column name="end_date" type="date">
+            <column name="ending_at" type="date">
                 <constraints nullable="false"/>
             </column>
             <column name="status" type="varchar(20)">
                 <constraints nullable="false"/>
             </column>
+            <column name="expenses_goal" type="decimal(15,2)"/>
+            <column name="revenues_goal" type="decimal(15,2)"/>
         </createTable>
 
         <addUniqueConstraint columnNames="id,external_id"

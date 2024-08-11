@@ -9,17 +9,30 @@ import java.util.UUID
 @Service
 @Transactional(readOnly = true)
 class FinancialPeriodService(
-    private val financialPeriodRepository: FinancialPeriodRepository
+    private val financialPeriodRepository: FinancialPeriodRepository,
+    private val financialPeriodValidationService: FinancialPeriodValidationService
 ) {
 
     @Transactional
     fun create(financialPeriod: FinancialPeriod): UUID {
+
+        financialPeriodValidationService.validateOnCreate(financialPeriod)
+
         val created = financialPeriodRepository.merge(financialPeriod)
         return created.externalId!!
     }
 
     @Transactional
+    fun update(financialPeriod: FinancialPeriod): FinancialPeriod {
+        financialPeriodValidationService.validateOnUpdate(financialPeriod)
+        return financialPeriodRepository.merge(financialPeriod)
+    }
+
+    @Transactional
     fun delete(financialPeriod: FinancialPeriod) {
+
+        // TODO cannot delete any period with movements on it
+
         return financialPeriodRepository.delete(financialPeriod)
     }
 }

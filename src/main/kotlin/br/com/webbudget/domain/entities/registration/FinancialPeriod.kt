@@ -7,6 +7,7 @@ import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
 import jakarta.persistence.Table
+import java.math.BigDecimal
 import java.time.LocalDate
 
 @Entity
@@ -14,14 +15,20 @@ import java.time.LocalDate
 class FinancialPeriod(
     @field:Column(name = "name", length = 150, nullable = false)
     var name: String,
-    @field:Column(name = "start_date", nullable = false)
-    var startDate: LocalDate,
-    @field:Column(name = "end_date", nullable = false)
-    var endDate: LocalDate,
+    @field:Column(name = "starting_at", nullable = false)
+    var startingAt: LocalDate,
+    @field:Column(name = "ending_at", nullable = false)
+    var endingAt: LocalDate,
     @field:Enumerated(EnumType.STRING)
     @field:Column(name = "status", length = 20, nullable = false)
-    var status: Status = Status.ACTIVE
+    var status: Status = Status.ACTIVE,
+    @field:Column(name = "expenses_goal")
+    var expensesGoal: BigDecimal? = null,
+    @field:Column(name = "revenues_goal")
+    var revenuesGoal: BigDecimal? = null
 ) : PersistentEntity<Long>() {
+
+    fun isClosed(): Boolean = status == Status.ACCOUNTED
 
     enum class Status {
         ACTIVE, ENDED, ACCOUNTED
