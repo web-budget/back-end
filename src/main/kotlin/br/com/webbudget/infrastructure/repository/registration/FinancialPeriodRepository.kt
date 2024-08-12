@@ -30,6 +30,20 @@ interface FinancialPeriodRepository : BaseRepository<FinancialPeriod> {
     )
     fun findByStartAndEndDates(startingAt: LocalDate, endingAt: LocalDate): List<FinancialPeriod>
 
+    @Query(
+        """
+         from FinancialPeriod fp
+         where fp.status in ('ACTIVE', 'ENDED')
+         and (:startingAt between fp.startingAt and fp.endingAt or :endingAt between fp.startingAt and fp.endingAt)
+         and fp.externalId <> :externalId
+    """
+    )
+    fun findByStartAndEndDatesAndExternalIdNot(
+        startingAt: LocalDate,
+        endingAt: LocalDate,
+        externalId: UUID
+    ): List<FinancialPeriod>
+
     object Specifications : SpecificationHelpers {
 
         fun byName(value: String?) = Specification<FinancialPeriod> { root, _, builder ->

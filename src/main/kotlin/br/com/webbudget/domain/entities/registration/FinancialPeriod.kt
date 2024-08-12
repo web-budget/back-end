@@ -28,7 +28,7 @@ class FinancialPeriod(
     var revenuesGoal: BigDecimal? = null
 ) : PersistentEntity<Long>() {
 
-    fun isClosed(): Boolean = status == Status.ACCOUNTED
+    fun cantBeModified(): Boolean = status != Status.ACTIVE
 
     enum class Status {
         ACTIVE, ENDED, ACCOUNTED

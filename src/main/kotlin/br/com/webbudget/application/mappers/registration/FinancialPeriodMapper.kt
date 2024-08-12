@@ -17,6 +17,7 @@ interface FinancialPeriodMapper {
     @Mapping(source = "externalId", target = "id")
     fun map(financialPeriod: FinancialPeriod): FinancialPeriodView
 
+    @Mapping(target = "status", expression = "java(FinancialPeriod.Status.ACTIVE)")
     fun map(form: FinancialPeriodCreateForm): FinancialPeriod
 
     fun map(form: FinancialPeriodUpdateForm, @MappingTarget financialPeriod: FinancialPeriod)

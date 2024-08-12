@@ -10,17 +10,41 @@ import org.springframework.stereotype.Component
 @Component
 @OnUpdateValidation
 @OnCreateValidation
-class FinancialPeriodDurationValidator(
+class FinancialPeriodDatesOverlapValidator(
     private val financialPeriodRepository: FinancialPeriodRepository
 ) : FinancialPeriodValidator {
 
     override fun validate(value: FinancialPeriod) {
+        if (value.isSaved()) {
+            this.validateSaved(value)
+        } else {
+            this.validateNotSaved(value)
+        }
+    }
+
+    fun validateSaved(value: FinancialPeriod) {
+
+        val periods = financialPeriodRepository.findByStartAndEndDatesAndExternalIdNot(
+            value.startingAt,
+            value.endingAt,
+            value.externalId!!
+        )
+
+        if (periods.isNotEmpty()) {
+            throw BusinessException(
+                "Period start and end dates are overlap with other open periods",
+                "financial-period.errors.invalid-dates"
+            )
+        }
+    }
+
+    fun validateNotSaved(value: FinancialPeriod) {
 
         val periods = financialPeriodRepository.findByStartAndEndDates(value.startingAt, value.endingAt)
 
         if (periods.isNotEmpty()) {
             throw BusinessException(
-                "Period start and end dates are conflicting with other open periods",
+                "Period start and end dates are overlap with other open periods",
                 "financial-period.errors.invalid-dates"
             )
         }

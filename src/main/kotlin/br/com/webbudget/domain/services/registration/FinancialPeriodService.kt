@@ -30,9 +30,7 @@ class FinancialPeriodService(
 
     @Transactional
     fun delete(financialPeriod: FinancialPeriod) {
-
-        // TODO cannot delete any period with movements on it
-
+        financialPeriodValidationService.validateOnDelete(financialPeriod)
         return financialPeriodRepository.delete(financialPeriod)
     }
 }

@@ -2,9 +2,11 @@ package br.com.webbudget.utilities.fixture
 
 import br.com.webbudget.domain.entities.registration.Card
 import br.com.webbudget.domain.entities.registration.CostCenter
+import br.com.webbudget.domain.entities.registration.FinancialPeriod
 import br.com.webbudget.domain.entities.registration.MovementClass
 import br.com.webbudget.domain.entities.registration.Wallet
 import java.math.BigDecimal
+import java.time.LocalDate
 import java.util.UUID
 
 fun createWallet(
@@ -62,6 +64,21 @@ fun createCard(
     flag: String = "Flag",
     wallet: Wallet? = null
 ) = Card(name, lastFourDigits, type, active, invoicePaymentDay, flag, wallet)
+    .apply {
+        this.id = id
+        this.externalId = externalId
+    }
+
+fun createFinancialPeriod(
+    id: Long? = null,
+    externalId: UUID? = UUID.randomUUID(),
+    name: String = "Financial Period",
+    startingAt: LocalDate = LocalDate.now(),
+    endingAt: LocalDate = LocalDate.now().plusDays(15),
+    status: FinancialPeriod.Status = FinancialPeriod.Status.ACTIVE,
+    expensesGoal: BigDecimal = BigDecimal.ONE,
+    revenuesGoal: BigDecimal = BigDecimal.TEN,
+) = FinancialPeriod(name, startingAt, endingAt, status, expensesGoal, revenuesGoal)
     .apply {
         this.id = id
         this.externalId = externalId

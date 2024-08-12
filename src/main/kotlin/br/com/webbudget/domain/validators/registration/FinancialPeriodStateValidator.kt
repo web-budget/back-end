@@ -2,19 +2,26 @@ package br.com.webbudget.domain.validators.registration
 
 import br.com.webbudget.domain.entities.registration.FinancialPeriod
 import br.com.webbudget.domain.exceptions.BusinessException
+import br.com.webbudget.domain.validators.OnDeleteValidation
 import br.com.webbudget.domain.validators.OnUpdateValidation
+import br.com.webbudget.infrastructure.repository.registration.FinancialPeriodRepository
 import org.springframework.stereotype.Component
 
 @Component
 @OnUpdateValidation
-class FinancialPeriodStateValidator : FinancialPeriodValidator {
+@OnDeleteValidation
+class FinancialPeriodStateValidator(
+    private val financialPeriodRepository: FinancialPeriodRepository
+) : FinancialPeriodValidator {
 
     override fun validate(value: FinancialPeriod) {
-        if (value.isClosed()) {
-            throw BusinessException(
-                "You can only update open financial periods",
-                "financial-period.errors.update-closed-period"
-            )
-        }
+        financialPeriodRepository.findByExternalId(value.externalId!!)
+            ?.let {
+                if (it.status == value.status && it.cantBeModified()) {
+                    throw BusinessException(
+                        "You can't delete or update non active periods", "financial-period.errors.period-not-active"
+                    )
+                }
+            }
     }
 }

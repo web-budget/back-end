@@ -19,9 +19,5 @@ class FinancialPeriodDateConflictValidator : FinancialPeriodValidator {
         if (startDate.isAfter(endDate)) {
             throw BusinessException("Start date must be before end date", "financial-period.errors.invalid-dates")
         }
-
-        if (endDate.isBefore(startDate)) {
-            throw BusinessException("End date must be after start date", "financial-period.errors.invalid-dates")
-        }
     }
 }
