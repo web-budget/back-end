@@ -216,6 +216,6 @@ class CardServiceITest : BaseIntegrationTest() {
     @Test
     @Disabled
     fun `should fail to delete when in use`() {
-        TODO("Not yet implemented")
+        // TODO this should be done after the card invoice feature is created
     }
 }

@@ -26,6 +26,6 @@ class MovementClassValidationService(
     }
 
     override fun validateOnDelete(value: MovementClass) {
-        TODO("Not yet implemented")
+        throw NotImplementedError()
     }
 }

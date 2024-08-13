@@ -26,6 +26,6 @@ class CardValidationService(
     }
 
     override fun validateOnDelete(value: Card) {
-        TODO("Not yet implemented")
+        throw NotImplementedError()
     }
 }

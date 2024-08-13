@@ -26,6 +26,6 @@ class WalletValidationService(
     }
 
     override fun validateOnDelete(value: Wallet) {
-        TODO("Not yet implemented")
+        throw NotImplementedError()
     }
 }

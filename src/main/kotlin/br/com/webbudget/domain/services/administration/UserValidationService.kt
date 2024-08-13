@@ -26,6 +26,6 @@ class UserValidationService(
     }
 
     override fun validateOnDelete(value: User) {
-        TODO("Not yet implemented")
+        throw NotImplementedError()
     }
 }

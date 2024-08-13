@@ -26,6 +26,6 @@ class CostCenterValidationService(
     }
 
     override fun validateOnDelete(value: CostCenter) {
-        TODO("Not yet implemented")
+        throw NotImplementedError()
     }
 }
