@@ -17,7 +17,7 @@ class FinancialPeriodStateValidator(
     override fun validate(value: FinancialPeriod) {
         financialPeriodRepository.findByExternalId(value.externalId!!)
             ?.let {
-                if (it.status == value.status && it.cantBeModified()) {
+                if (it.cantBeModified()) {
                     throw BusinessException(
                         "You can't delete or update non active periods", "financial-period.errors.period-not-active"
                     )
