@@ -189,7 +189,9 @@ class FinancialPeriodControllerTest : BaseControllerIntegrationTest() {
     }
 
     @Test
-    fun `should return conflict if name is duplicated`(@ResourceAsString("financial-period/create.json") payload: String) {
+    fun `should return conflict if name is duplicated`(
+        @ResourceAsString("financial-period/create.json") payload: String)
+    {
 
         every { financialPeriodService.create(any()) } throws
                 DuplicatedPropertyException("financial-period.errors.duplicated-name", "financial-period.name")
@@ -214,6 +216,7 @@ class FinancialPeriodControllerTest : BaseControllerIntegrationTest() {
     fun `should return bad request if dates are invalid`(
         @ResourceAsString("financial-period/create.json") payload: String
     ) {
+        println(payload)
         // TODO implement
     }
 
@@ -221,6 +224,7 @@ class FinancialPeriodControllerTest : BaseControllerIntegrationTest() {
     fun `should return bad request if dates overlap`(
         @ResourceAsString("financial-period/create.json") payload: String
     ) {
+        println(payload)
         // TODO implement
     }
 
