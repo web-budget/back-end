@@ -1,14 +1,13 @@
 package br.com.webbudget.application.controllers.advice
 
 import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
-import jakarta.validation.ConstraintViolationException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ProblemDetail
 import org.springframework.web.bind.MethodArgumentNotValidException
-import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
+import org.springframework.web.bind.annotation.RestControllerAdvice
 
-@ControllerAdvice
+@RestControllerAdvice
 class ValidationHandlerAdvice {
 
     @ExceptionHandler(DuplicatedPropertyException::class)
@@ -28,22 +27,6 @@ class ValidationHandlerAdvice {
         val errors = mutableMapOf<String, String?>()
         for (error in ex.bindingResult.fieldErrors) {
             errors[error.field] = error.defaultMessage
-        }
-
-        val detail = ProblemDetail.forStatusAndDetail(HttpStatus.UNPROCESSABLE_ENTITY, INVALID_OR_MISSING_FIELDS)
-
-        detail.title = UNPROCESSABLE_PAYLOAD
-        detail.setProperty(ERRORS_PROPERTY, errors)
-
-        return detail
-    }
-
-    @ExceptionHandler(ConstraintViolationException::class)
-    fun handle(ex: ConstraintViolationException): ProblemDetail {
-
-        val errors = mutableMapOf<String, String?>()
-        for (violation in ex.constraintViolations) {
-            errors[violation.propertyPath.toString()] = violation.message
         }
 
         val detail = ProblemDetail.forStatusAndDetail(HttpStatus.UNPROCESSABLE_ENTITY, INVALID_OR_MISSING_FIELDS)

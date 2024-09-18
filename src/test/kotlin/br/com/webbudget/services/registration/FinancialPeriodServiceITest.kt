@@ -18,7 +18,7 @@ import java.math.BigDecimal
 import java.time.LocalDate
 import java.util.UUID
 
-class FinancialPeriodServiceTest : BaseIntegrationTest() {
+class FinancialPeriodServiceITest : BaseIntegrationTest() {
 
     @Autowired
     private lateinit var financialPeriodRepository: FinancialPeriodRepository
