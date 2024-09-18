@@ -74,7 +74,10 @@ class FinancialPeriodServiceITest : BaseIntegrationTest() {
     )
     fun `should fail to create if periods overlap`() {
 
-        val financialPeriod = createFinancialPeriod(name = "07/2024")
+        val start = LocalDate.of(2024, 8, 1)
+        val end = start.plusDays(15)
+
+        val financialPeriod = createFinancialPeriod(name = "Agosto", startingAt = start, endingAt = end)
 
         assertThatThrownBy { financialPeriodService.create(financialPeriod) }
             .isInstanceOf(BusinessException::class.java)
