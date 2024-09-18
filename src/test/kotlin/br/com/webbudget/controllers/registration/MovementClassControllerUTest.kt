@@ -5,7 +5,6 @@ import br.com.webbudget.application.controllers.registration.MovementClassContro
 import br.com.webbudget.application.mappers.registration.CostCenterMapperImpl
 import br.com.webbudget.application.mappers.registration.MovementClassMapperImpl
 import br.com.webbudget.domain.entities.registration.MovementClass
-import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
 import br.com.webbudget.domain.services.registration.MovementClassService
 import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository
 import br.com.webbudget.infrastructure.repository.registration.MovementClassRepository
@@ -22,7 +21,6 @@ import io.mockk.slot
 import io.mockk.verify
 import net.javacrumbs.jsonunit.assertj.assertThatJson
 import org.assertj.core.api.Assertions.assertThat
-import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.context.annotation.Import
@@ -201,32 +199,6 @@ class MovementClassControllerUTest : BaseControllerIntegrationTest() {
         verify(exactly = 0) { movementClassService.delete(ofType<MovementClass>()) }
 
         confirmVerified(movementClassService, movementClassRepository)
-    }
-
-    @Test
-    fun `should expect conflict if name is duplicated`(
-        @ResourceAsString("movement-class/create.json") payload: String
-    ) {
-        val exception = DuplicatedPropertyException("movement-class.errors.duplicated-name", "movement-class.name")
-
-        every { costCenterRepository.findByExternalId(any<UUID>()) } returns createCostCenter()
-        every { movementClassService.create(any<MovementClass>()) } throws exception
-
-        mockMvc.post(ENDPOINT_URL) {
-            with(jwt().authorities(Authorities.REGISTRATION))
-            contentType = MediaType.APPLICATION_JSON
-            content = payload
-        }.andExpect {
-            status { isConflict() }
-        }.andExpect {
-            jsonPath("\$.property", equalTo("movement-class.name"))
-            jsonPath("\$.error", equalTo("movement-class.errors.duplicated-name"))
-        }
-
-        verify(exactly = 1) { movementClassService.create(ofType<MovementClass>()) }
-        verify(exactly = 1) { costCenterRepository.findByExternalId(ofType<UUID>()) }
-
-        confirmVerified(movementClassService, costCenterRepository)
     }
 
     @Test

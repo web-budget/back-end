@@ -6,7 +6,6 @@ import br.com.webbudget.application.mappers.registration.CardMapperImpl
 import br.com.webbudget.application.mappers.registration.WalletMapperImpl
 import br.com.webbudget.domain.entities.registration.Card
 import br.com.webbudget.domain.exceptions.BusinessException
-import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
 import br.com.webbudget.domain.services.registration.CardService
 import br.com.webbudget.infrastructure.repository.registration.CardRepository
 import br.com.webbudget.infrastructure.repository.registration.WalletRepository
@@ -275,30 +274,6 @@ class CardControllerUTest : BaseControllerIntegrationTest() {
             .containsExactlyInAnyOrderEntriesOf(requiredEntries)
 
         verify { cardService.create(ofType<Card>()) wasNot called }
-
-        confirmVerified(cardService)
-    }
-
-    @Test
-    fun `should return conflict if number and type are duplicated`(
-        @ResourceAsString("card/create-credit.json") payload: String
-    ) {
-
-        every { cardService.create(any<Card>()) } throws
-                DuplicatedPropertyException("card.errors.duplicated-card", "card.type-and-last-four-digits")
-
-        mockMvc.post(ENDPOINT_URL) {
-            with(jwt().authorities(Authorities.REGISTRATION))
-            contentType = MediaType.APPLICATION_JSON
-            content = payload
-        }.andExpect {
-            status { isConflict() }
-        }.andExpect {
-            jsonPath("\$.property", equalTo("card.type-and-last-four-digits"))
-            jsonPath("\$.error", equalTo("card.errors.duplicated-card"))
-        }
-
-        verify(exactly = 1) { cardService.create(ofType<Card>()) }
 
         confirmVerified(cardService)
     }

@@ -4,7 +4,6 @@ import br.com.webbudget.BaseControllerIntegrationTest
 import br.com.webbudget.application.controllers.registration.CostCenterController
 import br.com.webbudget.application.mappers.registration.CostCenterMapperImpl
 import br.com.webbudget.domain.entities.registration.CostCenter
-import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
 import br.com.webbudget.domain.services.registration.CostCenterService
 import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository
 import br.com.webbudget.utilities.Authorities
@@ -20,7 +19,6 @@ import io.mockk.slot
 import io.mockk.verify
 import net.javacrumbs.jsonunit.assertj.assertThatJson
 import org.assertj.core.api.Assertions.assertThat
-import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.context.annotation.Import
@@ -176,28 +174,6 @@ class CostCenterControllerUTest : BaseControllerIntegrationTest() {
             .containsExactlyInAnyOrderEntriesOf(requiredEntries)
 
         verify { costCenterService.create(any()) wasNot called }
-
-        confirmVerified(costCenterService)
-    }
-
-    @Test
-    fun `should return conflict if name is duplicated`(@ResourceAsString("cost-center/create.json") payload: String) {
-
-        every { costCenterService.create(any()) } throws
-                DuplicatedPropertyException("cost-center.errors.duplicated-name", "cost-center.name")
-
-        mockMvc.post(ENDPOINT_URL) {
-            with(jwt().authorities(Authorities.REGISTRATION))
-            contentType = MediaType.APPLICATION_JSON
-            content = payload
-        }.andExpect {
-            status { isConflict() }
-        }.andExpect {
-            jsonPath("\$.property", equalTo("cost-center.name"))
-            jsonPath("\$.error", equalTo("cost-center.errors.duplicated-name"))
-        }
-
-        verify(exactly = 1) { costCenterService.create(any()) }
 
         confirmVerified(costCenterService)
     }

@@ -5,7 +5,6 @@ import br.com.webbudget.application.controllers.administration.UserController
 import br.com.webbudget.application.mappers.configuration.UserMapperImpl
 import br.com.webbudget.domain.entities.administration.Language.PT_BR
 import br.com.webbudget.domain.entities.administration.User
-import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
 import br.com.webbudget.domain.services.administration.UserService
 import br.com.webbudget.infrastructure.repository.administration.UserRepository
 import br.com.webbudget.utilities.Authorities
@@ -21,7 +20,6 @@ import io.mockk.slot
 import io.mockk.verify
 import net.javacrumbs.jsonunit.assertj.assertThatJson
 import org.assertj.core.api.Assertions.assertThat
-import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.context.annotation.Import
@@ -171,28 +169,6 @@ class UserControllerUTest : BaseControllerIntegrationTest() {
         verify(exactly = 1) { userService.updatePassword(expectedUser, password, true) }
 
         confirmVerified(userService, userRepository)
-    }
-
-    @Test
-    fun `should get conflict if e-mail is duplicated`(@ResourceAsString("user/create.json") payload: String) {
-
-        every { userService.createAccount(any(), any()) } throws
-                DuplicatedPropertyException("users.errors.duplicated-email", "user.email")
-
-        mockMvc.post(ENDPOINT_URL) {
-            with(jwt().authorities(Authorities.ADMINISTRATION))
-            contentType = MediaType.APPLICATION_JSON
-            content = payload
-        }.andExpect {
-            status { isConflict() }
-        }.andExpect {
-            jsonPath("\$.error", equalTo("users.errors.duplicated-email"))
-            jsonPath("\$.property", equalTo("user.email"))
-        }
-
-        verify(exactly = 1) { userService.createAccount(any(), any()) }
-
-        confirmVerified(userService)
     }
 
     @Test

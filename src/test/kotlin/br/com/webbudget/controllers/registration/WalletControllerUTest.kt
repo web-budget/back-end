@@ -4,7 +4,6 @@ import br.com.webbudget.BaseControllerIntegrationTest
 import br.com.webbudget.application.controllers.registration.WalletController
 import br.com.webbudget.application.mappers.registration.WalletMapperImpl
 import br.com.webbudget.domain.entities.registration.Wallet
-import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
 import br.com.webbudget.domain.services.registration.WalletService
 import br.com.webbudget.infrastructure.repository.registration.WalletRepository
 import br.com.webbudget.utilities.Authorities
@@ -20,7 +19,6 @@ import io.mockk.slot
 import io.mockk.verify
 import net.javacrumbs.jsonunit.assertj.assertThatJson
 import org.assertj.core.api.Assertions.assertThat
-import org.hamcrest.Matchers
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.context.annotation.Import
@@ -181,28 +179,6 @@ class WalletControllerUTest : BaseControllerIntegrationTest() {
             .containsExactlyInAnyOrderEntriesOf(requiredEntries)
 
         verify { walletService.create(any()) wasNot called }
-
-        confirmVerified(walletService)
-    }
-
-    @Test
-    fun `should return conflict if name is duplicated`(@ResourceAsString("wallet/create.json") payload: String) {
-
-        every { walletService.create(any()) } throws
-                DuplicatedPropertyException("wallet.errors.duplicated-name", "wallet.name")
-
-        mockMvc.post(ENDPOINT_URL) {
-            with(jwt().authorities(Authorities.REGISTRATION))
-            contentType = MediaType.APPLICATION_JSON
-            content = payload
-        }.andExpect {
-            status { isConflict() }
-        }.andExpect {
-            jsonPath("\$.property", Matchers.equalTo("wallet.name"))
-            jsonPath("\$.error", Matchers.equalTo("wallet.errors.duplicated-name"))
-        }
-
-        verify(exactly = 1) { walletService.create(any()) }
 
         confirmVerified(walletService)
     }

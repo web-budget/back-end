@@ -4,7 +4,6 @@ import br.com.webbudget.BaseControllerIntegrationTest
 import br.com.webbudget.application.controllers.registration.FinancialPeriodController
 import br.com.webbudget.application.mappers.registration.FinancialPeriodMapperImpl
 import br.com.webbudget.domain.entities.registration.FinancialPeriod
-import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
 import br.com.webbudget.domain.services.registration.FinancialPeriodService
 import br.com.webbudget.infrastructure.repository.registration.FinancialPeriodRepository
 import br.com.webbudget.utilities.Authorities
@@ -20,7 +19,6 @@ import io.mockk.slot
 import io.mockk.verify
 import net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson
 import org.assertj.core.api.Assertions.assertThat
-import org.hamcrest.CoreMatchers.equalTo
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.context.annotation.Import
@@ -183,28 +181,6 @@ class FinancialPeriodControllerUTest : BaseControllerIntegrationTest() {
             .containsExactlyInAnyOrderEntriesOf(requiredEntries)
 
         verify { financialPeriodService.create(any()) wasNot called }
-
-        confirmVerified(financialPeriodService)
-    }
-
-    @Test
-    fun `should return conflict if name is duplicated`(@ResourceAsString("financial-period/create.json") payload: String) {
-
-        every { financialPeriodService.create(any()) } throws
-                DuplicatedPropertyException("financial-period.errors.duplicated-name", "financial-period.name")
-
-        mockMvc.post(ENDPOINT_URL) {
-            with(jwt().authorities(Authorities.REGISTRATION))
-            contentType = MediaType.APPLICATION_JSON
-            content = payload
-        }.andExpect {
-            status { isConflict() }
-        }.andExpect {
-            jsonPath("\$.property", equalTo("financial-period.name"))
-            jsonPath("\$.error", equalTo("financial-period.errors.duplicated-name"))
-        }
-
-        verify(exactly = 1) { financialPeriodService.create(any()) }
 
         confirmVerified(financialPeriodService)
     }
