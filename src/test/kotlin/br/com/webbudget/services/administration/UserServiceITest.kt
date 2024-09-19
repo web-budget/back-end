@@ -4,7 +4,7 @@ import br.com.webbudget.BaseIntegrationTest
 import br.com.webbudget.domain.entities.administration.Language.EN_US
 import br.com.webbudget.domain.entities.administration.Language.PT_BR
 import br.com.webbudget.domain.entities.administration.User
-import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
+import br.com.webbudget.domain.exceptions.ConflictingPropertyException
 import br.com.webbudget.domain.services.administration.AccountActivationService
 import br.com.webbudget.domain.services.administration.UserService
 import br.com.webbudget.infrastructure.repository.administration.UserRepository
@@ -123,7 +123,7 @@ class UserServiceITest : BaseIntegrationTest() {
         val duplicated = createUser()
 
         assertThatThrownBy { userService.createAccount(duplicated, authorities) }
-            .isInstanceOf(DuplicatedPropertyException::class.java)
+            .isInstanceOf(ConflictingPropertyException::class.java)
     }
 
     @Test
@@ -180,7 +180,7 @@ class UserServiceITest : BaseIntegrationTest() {
         }
 
         assertThatThrownBy { userService.updateAccount(toUpdate, authorities) }
-            .isInstanceOf(DuplicatedPropertyException::class.java)
+            .isInstanceOf(ConflictingPropertyException::class.java)
     }
 
     @Test

@@ -59,9 +59,7 @@ class MovementClassMapperUTest {
                 assertThat(it.description).isEqualTo(form.description)
                 assertThat(it.active).isEqualTo(form.active)
                 assertThat(it.costCenter)
-                    .satisfies({ costCenter ->
-                        assertThat(costCenter.externalId).isEqualTo(form.costCenter)
-                    })
+                    .satisfies({ costCenter -> assertThat(costCenter.externalId).isEqualTo(form.costCenter) })
             })
 
         verify(exactly = 1) { costCenterRepository.findByExternalId(ofType<UUID>()) }

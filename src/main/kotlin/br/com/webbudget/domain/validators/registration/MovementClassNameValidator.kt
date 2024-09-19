@@ -1,7 +1,7 @@
 package br.com.webbudget.domain.validators.registration
 
 import br.com.webbudget.domain.entities.registration.MovementClass
-import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
+import br.com.webbudget.domain.exceptions.ConflictingPropertyException
 import br.com.webbudget.domain.validators.OnCreateValidation
 import br.com.webbudget.domain.validators.OnUpdateValidation
 import br.com.webbudget.infrastructure.repository.registration.MovementClassRepository
@@ -24,11 +24,11 @@ class MovementClassNameValidator(
 
     private fun validateSaved(value: MovementClass) {
         movementClassRepository.findByNameIgnoreCaseAndExternalIdNot(value.name, value.externalId!!)
-            ?.let { throw DuplicatedPropertyException("movement-class.errors.duplicated-name", "movement-class.name") }
+            ?.let { throw ConflictingPropertyException(mapOf("movement-class.name" to value.name)) }
     }
 
     private fun validateNotSaved(value: MovementClass) {
         movementClassRepository.findByNameIgnoreCase(value.name)
-            ?.let { throw DuplicatedPropertyException("movement-class.errors.duplicated-name", "movement-class.name") }
+            ?.let { throw ConflictingPropertyException(mapOf("movement-class.name" to value.name)) }
     }
 }

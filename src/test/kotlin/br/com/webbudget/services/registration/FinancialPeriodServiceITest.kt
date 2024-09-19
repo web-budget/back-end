@@ -3,7 +3,7 @@ package br.com.webbudget.services.registration
 import br.com.webbudget.BaseIntegrationTest
 import br.com.webbudget.domain.entities.registration.FinancialPeriod
 import br.com.webbudget.domain.exceptions.BusinessException
-import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
+import br.com.webbudget.domain.exceptions.ConflictingPropertyException
 import br.com.webbudget.domain.services.registration.FinancialPeriodService
 import br.com.webbudget.infrastructure.repository.registration.FinancialPeriodRepository
 import br.com.webbudget.utilities.fixture.createFinancialPeriod
@@ -63,8 +63,7 @@ class FinancialPeriodServiceITest : BaseIntegrationTest() {
         )
 
         assertThatThrownBy { financialPeriodService.create(financialPeriod) }
-            .isInstanceOf(DuplicatedPropertyException::class.java)
-            .hasMessage("financial-period.errors.duplicated-name")
+            .isInstanceOf(ConflictingPropertyException::class.java)
     }
 
     @Test
@@ -155,8 +154,7 @@ class FinancialPeriodServiceITest : BaseIntegrationTest() {
         }
 
         assertThatThrownBy { financialPeriodService.update(toUpdate) }
-            .isInstanceOf(DuplicatedPropertyException::class.java)
-            .hasMessage("financial-period.errors.duplicated-name")
+            .isInstanceOf(ConflictingPropertyException::class.java)
     }
 
     @Test

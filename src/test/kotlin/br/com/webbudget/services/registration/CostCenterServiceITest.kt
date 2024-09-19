@@ -1,7 +1,7 @@
 package br.com.webbudget.services.registration
 
 import br.com.webbudget.BaseIntegrationTest
-import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
+import br.com.webbudget.domain.exceptions.ConflictingPropertyException
 import br.com.webbudget.domain.services.registration.CostCenterService
 import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository
 import br.com.webbudget.utilities.fixture.createCostCenter
@@ -54,7 +54,7 @@ class CostCenterServiceITest : BaseIntegrationTest() {
         val duplicated = createCostCenter()
 
         assertThatThrownBy { costCenterService.create(duplicated) }
-            .isInstanceOf(DuplicatedPropertyException::class.java)
+            .isInstanceOf(ConflictingPropertyException::class.java)
     }
 
     @Test
@@ -99,7 +99,7 @@ class CostCenterServiceITest : BaseIntegrationTest() {
         }
 
         assertThatThrownBy { costCenterService.update(toUpdate) }
-            .isInstanceOf(DuplicatedPropertyException::class.java)
+            .isInstanceOf(ConflictingPropertyException::class.java)
     }
 
     @Test

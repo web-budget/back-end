@@ -1,7 +1,7 @@
 package br.com.webbudget.services.registration
 
 import br.com.webbudget.BaseIntegrationTest
-import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
+import br.com.webbudget.domain.exceptions.ConflictingPropertyException
 import br.com.webbudget.domain.services.registration.MovementClassService
 import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository
 import br.com.webbudget.infrastructure.repository.registration.MovementClassRepository
@@ -71,7 +71,7 @@ class MovementClassServiceITest : BaseIntegrationTest() {
         val toCreate = createMovementClass(name = "Mercado", costCenter = costCenter)
 
         assertThatThrownBy { movementClassService.create(toCreate) }
-            .isInstanceOf(DuplicatedPropertyException::class.java)
+            .isInstanceOf(ConflictingPropertyException::class.java)
     }
 
     @Test
@@ -123,7 +123,7 @@ class MovementClassServiceITest : BaseIntegrationTest() {
         }
 
         assertThatThrownBy { movementClassService.update(toUpdate) }
-            .isInstanceOf(DuplicatedPropertyException::class.java)
+            .isInstanceOf(ConflictingPropertyException::class.java)
     }
 
     @Test

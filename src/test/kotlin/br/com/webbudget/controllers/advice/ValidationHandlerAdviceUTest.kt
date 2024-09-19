@@ -26,11 +26,12 @@ class ValidationHandlerAdviceUTest : BaseControllerIntegrationTest() {
 
         assertThatJson(response)
             .isObject
-            .containsEntry("detail", "Other resource is using the same property value")
-            .containsEntry("error", "The message")
-            .containsEntry("property", "The property")
+            .containsEntry("detail", "The message")
             .containsEntry("title", "Conflict")
             .containsEntry("status", 409)
+            .node("conflicts")
+            .isObject
+            .containsEntry("property", "value")
     }
 
     @Test
@@ -48,7 +49,7 @@ class ValidationHandlerAdviceUTest : BaseControllerIntegrationTest() {
         assertThatJson(response)
             .isObject
             .containsEntry("detail", "Some fields are missing or invalid")
-            .containsEntry("title", "Unprocessable payload")
+            .containsEntry("title", "Unprocessable Entity")
             .containsEntry("status", 422)
     }
 

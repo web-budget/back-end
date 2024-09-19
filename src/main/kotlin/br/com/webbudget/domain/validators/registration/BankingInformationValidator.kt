@@ -1,7 +1,7 @@
 package br.com.webbudget.domain.validators.registration
 
 import br.com.webbudget.domain.entities.registration.Wallet
-import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
+import br.com.webbudget.domain.exceptions.ConflictingPropertyException
 import br.com.webbudget.domain.validators.OnCreateValidation
 import br.com.webbudget.domain.validators.OnUpdateValidation
 import br.com.webbudget.infrastructure.repository.registration.WalletRepository
@@ -26,11 +26,27 @@ class BankingInformationValidator(
 
     private fun validateSaved(value: Wallet) {
         walletRepository.findByBankInfo(value.bank, value.agency, value.number, value.externalId!!)
-            ?.let { throw DuplicatedPropertyException("wallet.errors.duplicated-bank-info", "wallet.bank-info") }
+            ?.let {
+                throw ConflictingPropertyException(
+                    mapOf(
+                        "wallet.bank" to value.bank,
+                        "wallet.agency" to value.agency,
+                        "wallet.number" to value.number
+                    )
+                )
+            }
     }
 
     private fun validateNotSaved(value: Wallet) {
         walletRepository.findByBankInfo(value.bank, value.agency, value.number)
-            ?.let { throw DuplicatedPropertyException("wallet.errors.duplicated-bank-info", "wallet.bank-info") }
+            ?.let {
+                throw ConflictingPropertyException(
+                    mapOf(
+                        "wallet.bank" to value.bank,
+                        "wallet.agency" to value.agency,
+                        "wallet.number" to value.number
+                    )
+                )
+            }
     }
 }

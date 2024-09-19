@@ -15,14 +15,14 @@ import org.springframework.data.jpa.domain.Specification
 import java.util.UUID
 
 data class CardCreateForm(
-    @field:NotBlank(message = "card.errors.name-is-blank")
-    @field:Size(message = "card.errors.name-max-150-chars", max = 150)
+    @field:NotBlank(message = "is-null-or-blank")
+    @field:Size(message = "max-150-chars", max = 150)
     val name: String?,
-    @field:NotBlank(message = "card.errors.last-four-digits-is-blank")
-    @field:Size(message = "card.errors.last-four-digits-max-4-chars", max = 4)
+    @field:NotBlank(message = "is-null-or-blank")
+    @field:Size(message = "max-4-chars", max = 4)
     val lastFourDigits: String?,
     val invoicePaymentDay: Int?,
-    @field:NotNull(message = "card.errors.type-is-null")
+    @field:NotNull(message = "is-null")
     val type: Type?,
     val wallet: UUID?,
     val flag: String?,
@@ -30,11 +30,11 @@ data class CardCreateForm(
 )
 
 data class CardUpdateForm(
-    @field:NotBlank(message = "card.errors.name-is-blank")
-    @field:Size(message = "card.errors.name-max-150-chars", max = 150)
+    @field:NotBlank(message = "is-null-or-blank")
+    @field:Size(message = "max-150-chars", max = 150)
     val name: String?,
-    @field:NotNull(message = "card.errors.last-four-digits-is-blank")
-    @field:Size(message = "card.errors.last-four-digits-max-4-chars", max = 4)
+    @field:NotBlank(message = "is-null-or-blank")
+    @field:Size(message = "max-4-chars", max = 4)
     val lastFourDigits: String?,
     val invoicePaymentDay: Int?,
     val wallet: UUID?,

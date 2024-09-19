@@ -1,6 +1,6 @@
 package br.com.webbudget.validators.administration
 
-import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
+import br.com.webbudget.domain.exceptions.ConflictingPropertyException
 import br.com.webbudget.domain.validators.administration.UserAccountEmailValidator
 import br.com.webbudget.infrastructure.repository.administration.UserRepository
 import br.com.webbudget.utilities.fixture.createUser
@@ -33,8 +33,7 @@ class UserAccountEmailValidatorUTest {
         val toValidate = createUser(id = null, externalId = null)
 
         assertThatThrownBy { userAccountEmailValidator.validate(toValidate) }
-            .isInstanceOf(DuplicatedPropertyException::class.java)
-            .hasMessage("users.errors.duplicated-email")
+            .isInstanceOf(ConflictingPropertyException::class.java)
 
         verify(exactly = 1) { userRepository.findByEmail("user@test.com") }
 

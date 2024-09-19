@@ -11,22 +11,22 @@ import java.time.LocalDate
 import java.util.UUID
 
 data class FinancialPeriodCreateForm(
-    @field:NotBlank(message = "financial-period.name.is-null-or-blank")
+    @field:NotBlank(message = "is-null-or-blank")
     val name: String?,
-    @field:NotNull(message = "financial-period.starting-at.is-null")
+    @field:NotNull(message = "is-null")
     val startingAt: LocalDate?,
-    @field:NotNull(message = "financial-period.ending-at.is-null")
+    @field:NotNull(message = "is-null")
     val endingAt: LocalDate?,
     val revenuesGoal: BigDecimal?,
     val expensesGoal: BigDecimal?
 )
 
 data class FinancialPeriodUpdateForm(
-    @field:NotBlank(message = "financial-period.name.is-null-or-blank")
+    @field:NotBlank(message = "is-null-or-blank")
     val name: String?,
-    @field:NotNull(message = "financial-period.starting-at.is-null")
+    @field:NotNull(message = "is-null")
     val startingAt: LocalDate?,
-    @field:NotNull(message = "financial-period.ending-at.is-null")
+    @field:NotNull(message = "is-null")
     val endingAt: LocalDate?,
     val revenuesGoal: BigDecimal?,
     val expensesGoal: BigDecimal?

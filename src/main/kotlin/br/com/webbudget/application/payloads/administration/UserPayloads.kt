@@ -15,34 +15,34 @@ import org.springframework.data.jpa.domain.Specification
 import java.util.UUID
 
 data class UserCreateForm(
-    @field:NotBlank(message = "users.errors.name-is-blank")
+    @field:NotBlank(message = "is-null-or-blank")
     val name: String?,
-    @field:Email(message = "users.errors.email-is-invalid")
-    @field:NotBlank(message = "users.errors.email-is-blank")
+    @field:Email(message = "is-not-valid")
+    @field:NotBlank(message = "is-null-or-blank")
     val email: String?,
-    @field:NotBlank(message = "users.errors.password-is-blank")
+    @field:NotBlank(message = "is-null-or-blank")
     val password: String?,
-    @field:NotNull(message = "users.errors.null-default-language")
+    @field:NotNull(message = "is-null")
     val defaultLanguage: Language?,
-    @field:NotEmpty(message = "users.errors.empty-authorities")
+    @field:NotEmpty(message = "is-empty")
     val authorities: List<String>,
     val sendActivationEmail: Boolean = false
 )
 
 data class UserUpdateForm(
     val active: Boolean,
-    @field:NotBlank(message = "users.errors.name-is-blank")
+    @field:NotBlank(message = "is-null-or-blank")
     val name: String,
-    @field:NotNull(message = "users.errors.null-default-language")
+    @field:NotNull(message = "is-null")
     val defaultLanguage: Language,
-    @field:NotEmpty(message = "users.errors.empty-authorities")
+    @field:NotEmpty(message = "is-empty")
     val authorities: List<String>,
 )
 
 data class PasswordChangeForm(
-    @field:NotNull(message = "users.errors.temporary-is-required")
+    @field:NotNull(message = "is-null")
     val temporary: Boolean,
-    @field:NotBlank(message = "users.errors.password-is-blank")
+    @field:NotBlank(message = "is-null-or-blank")
     val password: String
 )
 

@@ -159,9 +159,9 @@ class FinancialPeriodControllerUTest : BaseControllerIntegrationTest() {
         @ResourceAsString("financial-period/invalid.json") payload: String
     ) {
         val requiredEntries = mapOf(
-            "name" to "financial-period.name.is-null-or-blank",
-            "startingAt" to "financial-period.starting-at.is-null",
-            "endingAt" to "financial-period.ending-at.is-null"
+            "name" to "is-null-or-blank",
+            "startingAt" to "is-null",
+            "endingAt" to "is-null"
         )
 
         val jsonResponse = mockMvc.post(ENDPOINT_URL) {
@@ -175,7 +175,7 @@ class FinancialPeriodControllerUTest : BaseControllerIntegrationTest() {
             .contentAsString
 
         assertThatJson(jsonResponse)
-            .node("errors")
+            .node("violations")
             .isObject
             .hasSize(requiredEntries.size)
             .containsExactlyInAnyOrderEntriesOf(requiredEntries)

@@ -84,11 +84,11 @@ class UserControllerUTest : BaseControllerIntegrationTest() {
     fun `should fail if required fields are not present`(@ResourceAsString("user/invalid.json") payload: String) {
 
         val requiredEntries = mapOf(
-            "name" to "users.errors.name-is-blank",
-            "email" to "users.errors.email-is-blank",
-            "password" to "users.errors.password-is-blank",
-            "authorities" to "users.errors.empty-authorities",
-            "defaultLanguage" to "users.errors.null-default-language"
+            "name" to "is-null-or-blank",
+            "email" to "is-null-or-blank",
+            "password" to "is-null-or-blank",
+            "authorities" to "is-empty",
+            "defaultLanguage" to "is-null"
         )
 
         val jsonResponse = mockMvc.post(ENDPOINT_URL) {
@@ -102,7 +102,7 @@ class UserControllerUTest : BaseControllerIntegrationTest() {
             .contentAsString
 
         assertThatJson(jsonResponse)
-            .node("errors")
+            .node("violations")
             .isObject
             .hasSize(requiredEntries.size)
             .containsExactlyInAnyOrderEntriesOf(requiredEntries)

@@ -18,10 +18,10 @@ import java.math.BigDecimal
 import java.util.UUID
 
 data class WalletCreateForm(
-    @field:NotBlank(message = "wallet.errors.name-is-blank")
-    @field:Size(message = "wallet.errors.name-max-150-chars", max = 150)
+    @field:NotBlank(message = "is-null-or-blank")
+    @field:Size(message = "max-150-chars", max = 150)
     val name: String?,
-    @field:NotNull(message = "wallet.errors.type-is-null")
+    @field:NotNull(message = "is-null")
     val type: Type?,
     val description: String? = null,
     val bank: String? = null,
@@ -31,16 +31,16 @@ data class WalletCreateForm(
 )
 
 data class WalletUpdateForm(
-    @field:NotBlank(message = "wallet.errors.name-is-blank")
-    @field:Size(message = "wallet.errors.name-max-150-chars", max = 150)
+    @field:NotBlank(message = "is-null-or-blank")
+    @field:Size(message = "max-150-chars", max = 150)
     val name: String,
     val active: Boolean,
     val description: String? = null,
-    @field:Size(message = "wallet.errors.bank-max-150-chars", max = 150)
+    @field:Size(message = "max-150-chars", max = 150)
     val bank: String? = null,
-    @field:Size(message = "wallet.errors.agency-max-10-chars", max = 10)
+    @field:Size(message = "max-10-chars", max = 10)
     val agency: String? = null,
-    @field:Size(message = "wallet.errors.number-max-16-chars", max = 16)
+    @field:Size(message = "max-16-chars", max = 16)
     val number: String? = null,
 )
 

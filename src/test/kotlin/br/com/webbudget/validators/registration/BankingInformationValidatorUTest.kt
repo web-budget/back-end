@@ -1,6 +1,6 @@
 package br.com.webbudget.validators.registration
 
-import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
+import br.com.webbudget.domain.exceptions.ConflictingPropertyException
 import br.com.webbudget.domain.validators.registration.BankingInformationValidator
 import br.com.webbudget.infrastructure.repository.registration.WalletRepository
 import br.com.webbudget.utilities.fixture.createWallet
@@ -33,8 +33,7 @@ class BankingInformationValidatorUTest {
         val toValidate = createWallet(id = null, externalId = null)
 
         assertThatThrownBy { bankingInformationValidator.validate(toValidate) }
-            .isInstanceOf(DuplicatedPropertyException::class.java)
-            .hasMessage("wallet.errors.duplicated-bank-info")
+            .isInstanceOf(ConflictingPropertyException::class.java)
 
         verify(exactly = 1) { walletRepository.findByBankInfo("Bank", "123", "456789") }
 

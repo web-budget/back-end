@@ -19,38 +19,18 @@ class ExceptionHandlerAdvice {
     }
 
     @ExceptionHandler(IllegalArgumentException::class)
-    fun handle(ex: IllegalArgumentException): ProblemDetail {
-
-        val error = MappedErrors.errors.getOrDefault(ex::class, NO_ERROR_PROVIDED)
-        val detail = ex.message ?: NO_DETAIL_PROVIDED
-
-        return asProblemDetail(error, detail)
-    }
+    fun handle(ex: IllegalArgumentException): ProblemDetail =
+        ProblemDetail.forStatusAndDetail(BAD_REQUEST, ex.message ?: NO_DETAIL_PROVIDED)
 
     @ExceptionHandler(NonTransientDataAccessException::class)
-    fun handle(ex: NonTransientDataAccessException): ProblemDetail {
-
-        val error = MappedErrors.errors.getOrDefault(ex::class, NO_ERROR_PROVIDED)
-        val detail = ex.message ?: NO_DETAIL_PROVIDED
-
-        return asProblemDetail(error, detail)
-    }
+    fun handle(ex: NonTransientDataAccessException): ProblemDetail =
+        ProblemDetail.forStatusAndDetail(BAD_REQUEST, ex.message ?: NO_DETAIL_PROVIDED)
 
     @ExceptionHandler(BusinessException::class)
-    fun handle(ex: BusinessException): ProblemDetail {
-        return asProblemDetail(ex.message ?: NO_ERROR_PROVIDED, ex.detail, ex.httpStatus)
-    }
-
-    private fun asProblemDetail(error: String, detail: String, status: HttpStatus = BAD_REQUEST): ProblemDetail {
-
-        val problemDetail = ProblemDetail.forStatusAndDetail(status, detail)
-        problemDetail.setProperty("error", error)
-
-        return problemDetail
-    }
+    fun handle(ex: BusinessException): ProblemDetail =
+        ProblemDetail.forStatusAndDetail(ex.httpStatus, ex.message ?: NO_DETAIL_PROVIDED)
 
     companion object {
-        private const val NO_ERROR_PROVIDED = "No error message provided"
         private const val NO_DETAIL_PROVIDED = "No detail message provided"
     }
 }

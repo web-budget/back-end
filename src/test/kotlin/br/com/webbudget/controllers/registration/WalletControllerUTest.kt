@@ -158,8 +158,8 @@ class WalletControllerUTest : BaseControllerIntegrationTest() {
     ) {
 
         val requiredEntries = mapOf(
-            "name" to "wallet.errors.name-is-blank",
-            "type" to "wallet.errors.type-is-null"
+            "name" to "is-null-or-blank",
+            "type" to "is-null"
         )
 
         val jsonResponse = mockMvc.post(ENDPOINT_URL) {
@@ -173,7 +173,7 @@ class WalletControllerUTest : BaseControllerIntegrationTest() {
             .contentAsString
 
         assertThatJson(jsonResponse)
-            .node("errors")
+            .node("violations")
             .isObject
             .hasSize(requiredEntries.size)
             .containsExactlyInAnyOrderEntriesOf(requiredEntries)

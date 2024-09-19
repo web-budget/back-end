@@ -1,7 +1,7 @@
 package br.com.webbudget.domain.validators.registration
 
 import br.com.webbudget.domain.entities.registration.FinancialPeriod
-import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
+import br.com.webbudget.domain.exceptions.ConflictingPropertyException
 import br.com.webbudget.domain.validators.OnCreateValidation
 import br.com.webbudget.domain.validators.OnUpdateValidation
 import br.com.webbudget.infrastructure.repository.registration.FinancialPeriodRepository
@@ -24,21 +24,11 @@ class FinancialPeriodNameValidator(
 
     private fun validateSaved(value: FinancialPeriod) {
         financialPeriodRepository.findByNameIgnoreCaseAndExternalIdNot(value.name, value.externalId!!)
-            ?.let {
-                throw DuplicatedPropertyException(
-                    "financial-period.errors.duplicated-name",
-                    "financial-period.name"
-                )
-            }
+            ?.let { throw ConflictingPropertyException(mapOf("financial-period.name" to value.name)) }
     }
 
     private fun validateNotSaved(value: FinancialPeriod) {
         financialPeriodRepository.findByNameIgnoreCase(value.name)
-            ?.let {
-                throw DuplicatedPropertyException(
-                    "financial-period.errors.duplicated-name",
-                    "financial-period.name"
-                )
-            }
+            ?.let { throw ConflictingPropertyException(mapOf("financial-period.name" to value.name)) }
     }
 }

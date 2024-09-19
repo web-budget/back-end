@@ -1,7 +1,7 @@
 package br.com.webbudget.domain.validators.administration
 
 import br.com.webbudget.domain.entities.administration.User
-import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
+import br.com.webbudget.domain.exceptions.ConflictingPropertyException
 import br.com.webbudget.domain.validators.OnCreateValidation
 import br.com.webbudget.domain.validators.OnUpdateValidation
 import br.com.webbudget.infrastructure.repository.administration.UserRepository
@@ -24,11 +24,11 @@ class UserAccountEmailValidator(
 
     private fun validateSaved(value: User) {
         userRepository.findByEmailAndExternalIdNot(value.email, value.externalId!!)
-            ?.let { throw DuplicatedPropertyException("users.errors.duplicated-email", "user.email") }
+            ?.let { throw ConflictingPropertyException(mapOf("user.email" to value.email)) }
     }
 
     private fun validateNotSaved(value: User) {
         userRepository.findByEmail(value.email)
-            ?.let { throw DuplicatedPropertyException("users.errors.duplicated-email", "user.email") }
+            ?.let { throw ConflictingPropertyException(mapOf("user.email" to value.email)) }
     }
 }

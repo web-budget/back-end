@@ -155,7 +155,7 @@ class CostCenterControllerUTest : BaseControllerIntegrationTest() {
     fun `should expect unprocessable entity if required fields are not present`(
         @ResourceAsString("cost-center/invalid.json") payload: String
     ) {
-        val requiredEntries = mapOf("name" to "cost-center.errors.name-is-blank")
+        val requiredEntries = mapOf("name" to "is-null-or-blank")
 
         val jsonResponse = mockMvc.post(ENDPOINT_URL) {
             with(jwt().authorities(Authorities.REGISTRATION))
@@ -168,7 +168,7 @@ class CostCenterControllerUTest : BaseControllerIntegrationTest() {
             .contentAsString
 
         assertThatJson(jsonResponse)
-            .node("errors")
+            .node("violations")
             .isObject
             .hasSize(requiredEntries.size)
             .containsExactlyInAnyOrderEntriesOf(requiredEntries)

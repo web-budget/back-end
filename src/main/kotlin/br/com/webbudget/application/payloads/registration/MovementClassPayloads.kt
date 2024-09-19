@@ -14,12 +14,12 @@ import java.math.BigDecimal
 import java.util.UUID
 
 data class MovementClassCreateForm(
-    @field:NotBlank(message = "movement-class.errors.name-is-blank")
-    @field:Size(message = "movement-class.errors.name-max-150-chars", max = 150)
+    @field:NotBlank(message = "is-null-or-blank")
+    @field:Size(message = "max-150-chars", max = 150)
     val name: String?,
-    @field:NotNull(message = "movement-class.errors.type-is-null")
+    @field:NotNull(message = "is-null")
     val type: MovementClass.Type?,
-    @field:NotNull(message = "movement-class.errors.cost-center-is-null")
+    @field:NotNull(message = "is-null")
     val costCenter: UUID?,
     val budget: BigDecimal?,
     val description: String?,
@@ -27,10 +27,10 @@ data class MovementClassCreateForm(
 )
 
 data class MovementClassUpdateForm(
-    @field:NotBlank(message = "movement-class.errors.name-is-blank")
-    @field:Size(message = "movement-class.errors.name-max-150-chars", max = 150)
+    @field:NotBlank(message = "is-null-or-blank")
+    @field:Size(message = "max-150-chars", max = 150)
     val name: String?,
-    @field:NotNull(message = "movement-class.errors.cost-center-is-null")
+    @field:NotNull(message = "is-null")
     val costCenter: UUID?,
     val budget: BigDecimal?,
     val description: String?,

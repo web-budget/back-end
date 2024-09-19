@@ -76,8 +76,7 @@ class ExceptionHandlerAdviceUTest : BaseControllerIntegrationTest() {
 
         assertThatJson(response)
             .isObject
-            .containsEntry("detail", "The detail")
-            .containsEntry("error", "The message")
+            .containsEntry("detail", "The message")
             .containsEntry("title", "Bad Request")
             .containsEntry("status", 400)
     }

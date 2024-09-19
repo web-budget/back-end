@@ -3,7 +3,7 @@ package br.com.webbudget.services.registration
 import br.com.webbudget.BaseIntegrationTest
 import br.com.webbudget.domain.entities.registration.Card
 import br.com.webbudget.domain.exceptions.BusinessException
-import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
+import br.com.webbudget.domain.exceptions.ConflictingPropertyException
 import br.com.webbudget.domain.services.registration.CardService
 import br.com.webbudget.infrastructure.repository.registration.CardRepository
 import br.com.webbudget.infrastructure.repository.registration.WalletRepository
@@ -116,7 +116,7 @@ class CardServiceITest : BaseIntegrationTest() {
         val toCreate = createCard(type = Card.Type.CREDIT, lastFourDigits = "1234")
 
         assertThatThrownBy { cardService.create(toCreate) }
-            .isInstanceOf(DuplicatedPropertyException::class.java)
+            .isInstanceOf(ConflictingPropertyException::class.java)
     }
 
     @Test

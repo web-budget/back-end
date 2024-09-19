@@ -1,7 +1,8 @@
 package br.com.webbudget.application.controllers.advice
 
-import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
-import org.springframework.http.HttpStatus
+import br.com.webbudget.domain.exceptions.ConflictingPropertyException
+import org.springframework.http.HttpStatus.CONFLICT
+import org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY
 import org.springframework.http.ProblemDetail
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -10,13 +11,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 @RestControllerAdvice
 class ValidationHandlerAdvice {
 
-    @ExceptionHandler(DuplicatedPropertyException::class)
-    fun handle(ex: DuplicatedPropertyException): ProblemDetail {
+    @ExceptionHandler(ConflictingPropertyException::class)
+    fun handle(ex: ConflictingPropertyException): ProblemDetail {
 
-        val detail = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, CONFLICT_ERROR)
-
-        detail.setProperty("error", ex.message!!)
-        detail.setProperty("property", ex.property)
+        val detail = ProblemDetail.forStatusAndDetail(CONFLICT, ex.message)
+        detail.setProperty("conflicts", ex.conflicts)
 
         return detail
     }
@@ -24,23 +23,14 @@ class ValidationHandlerAdvice {
     @ExceptionHandler(MethodArgumentNotValidException::class)
     fun handle(ex: MethodArgumentNotValidException): ProblemDetail {
 
-        val errors = mutableMapOf<String, String?>()
-        for (error in ex.bindingResult.fieldErrors) {
-            errors[error.field] = error.defaultMessage
+        val violations = mutableMapOf<String, String?>()
+        for (fieldError in ex.bindingResult.fieldErrors) {
+            violations[fieldError.field] = fieldError.defaultMessage
         }
 
-        val detail = ProblemDetail.forStatusAndDetail(HttpStatus.UNPROCESSABLE_ENTITY, INVALID_OR_MISSING_FIELDS)
-
-        detail.title = UNPROCESSABLE_PAYLOAD
-        detail.setProperty(ERRORS_PROPERTY, errors)
+        val detail = ProblemDetail.forStatusAndDetail(UNPROCESSABLE_ENTITY, "Some fields are missing or invalid")
+        detail.setProperty("violations", violations)
 
         return detail
-    }
-
-    companion object {
-        private const val ERRORS_PROPERTY = "errors"
-        private const val UNPROCESSABLE_PAYLOAD = "Unprocessable payload"
-        private const val INVALID_OR_MISSING_FIELDS = "Some fields are missing or invalid"
-        private const val CONFLICT_ERROR = "Other resource is using the same property value"
     }
 }

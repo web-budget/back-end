@@ -90,9 +90,9 @@ class MovementClassControllerUTest : BaseControllerIntegrationTest() {
         @ResourceAsString("movement-class/invalid.json") payload: String
     ) {
         val requiredEntries = mapOf(
-            "name" to "movement-class.errors.name-is-blank",
-            "type" to "movement-class.errors.type-is-null",
-            "costCenter" to "movement-class.errors.cost-center-is-null"
+            "name" to "is-null-or-blank",
+            "type" to "is-null",
+            "costCenter" to "is-null"
         )
 
         val jsonResponse = mockMvc.post(ENDPOINT_URL) {
@@ -106,7 +106,7 @@ class MovementClassControllerUTest : BaseControllerIntegrationTest() {
             .contentAsString
 
         assertThatJson(jsonResponse)
-            .node("errors")
+            .node("violations")
             .isObject
             .hasSize(requiredEntries.size)
             .containsExactlyInAnyOrderEntriesOf(requiredEntries)

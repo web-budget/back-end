@@ -1,6 +1,6 @@
 package br.com.webbudget.validators.registration
 
-import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
+import br.com.webbudget.domain.exceptions.ConflictingPropertyException
 import br.com.webbudget.domain.validators.registration.MovementClassNameValidator
 import br.com.webbudget.infrastructure.repository.registration.MovementClassRepository
 import br.com.webbudget.utilities.fixture.createMovementClass
@@ -33,8 +33,7 @@ class MovementClassNameValidatorUTest {
         val toValidate = createMovementClass(id = null, externalId = null)
 
         assertThatThrownBy { movementClassNameValidator.validate(toValidate) }
-            .isInstanceOf(DuplicatedPropertyException::class.java)
-            .hasMessage("movement-class.errors.duplicated-name")
+            .isInstanceOf(ConflictingPropertyException::class.java)
 
         verify(exactly = 1) { movementClassRepository.findByNameIgnoreCase(eq("Movement Class")) }
 

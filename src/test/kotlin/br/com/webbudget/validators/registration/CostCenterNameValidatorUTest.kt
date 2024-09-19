@@ -1,6 +1,6 @@
 package br.com.webbudget.validators.registration
 
-import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
+import br.com.webbudget.domain.exceptions.ConflictingPropertyException
 import br.com.webbudget.domain.validators.registration.CostCenterNameValidator
 import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository
 import br.com.webbudget.utilities.fixture.createCostCenter
@@ -35,8 +35,7 @@ class CostCenterNameValidatorUTest {
         val toValidate = createCostCenter(id = null, externalId = null)
 
         assertThatThrownBy { costCenterNameValidator.validate(toValidate) }
-            .isInstanceOf(DuplicatedPropertyException::class.java)
-            .hasMessage("cost-center.errors.duplicated-name")
+            .isInstanceOf(ConflictingPropertyException::class.java)
 
         verify(exactly = 1) { costCenterRepository.findByNameIgnoreCase("Cost Center") }
 

@@ -220,9 +220,9 @@ class CardControllerUTest : BaseControllerIntegrationTest() {
     ) {
 
         val requiredEntries = mapOf(
-            "type" to "card.errors.type-is-null",
-            "name" to "card.errors.name-is-blank",
-            "lastFourDigits" to "card.errors.last-four-digits-is-blank"
+            "type" to "is-null",
+            "name" to "is-null-or-blank",
+            "lastFourDigits" to "is-null-or-blank"
         )
 
         val response = mockMvc.post(ENDPOINT_URL) {
@@ -236,7 +236,7 @@ class CardControllerUTest : BaseControllerIntegrationTest() {
             .contentAsString
 
         assertThatJson(response)
-            .node("errors")
+            .node("violations")
             .isObject
             .hasSize(requiredEntries.size)
             .containsExactlyInAnyOrderEntriesOf(requiredEntries)
@@ -252,9 +252,9 @@ class CardControllerUTest : BaseControllerIntegrationTest() {
     ) {
 
         val requiredEntries = mapOf(
-            "type" to "card.errors.type-is-null",
-            "name" to "card.errors.name-is-blank",
-            "lastFourDigits" to "card.errors.last-four-digits-is-blank"
+            "type" to "is-null",
+            "name" to "is-null-or-blank",
+            "lastFourDigits" to "is-null-or-blank"
         )
 
         val response = mockMvc.post(ENDPOINT_URL) {
@@ -268,7 +268,7 @@ class CardControllerUTest : BaseControllerIntegrationTest() {
             .contentAsString
 
         assertThatJson(response)
-            .node("errors")
+            .node("violations")
             .isObject
             .hasSize(requiredEntries.size)
             .containsExactlyInAnyOrderEntriesOf(requiredEntries)
@@ -295,8 +295,7 @@ class CardControllerUTest : BaseControllerIntegrationTest() {
         }.andExpect {
             status { isBadRequest() }
         }.andExpect {
-            jsonPath("\$.detail", equalTo("card.errors.debit-without-wallet"))
-            jsonPath("\$.error", equalTo("Debit card has no wallet"))
+            jsonPath("\$.detail", equalTo("Debit card has no wallet"))
         }
 
         verify(exactly = 1) { cardService.create(ofType<Card>()) }
@@ -320,8 +319,7 @@ class CardControllerUTest : BaseControllerIntegrationTest() {
         }.andExpect {
             status { isBadRequest() }
         }.andExpect {
-            jsonPath("\$.detail", equalTo("card.errors.credit-invalid-payment-day"))
-            jsonPath("\$.error", equalTo("Credit card has has invalid invoice payment day"))
+            jsonPath("\$.detail", equalTo("Credit card has has invalid invoice payment day"))
         }
 
         verify(exactly = 1) { cardService.create(ofType<Card>()) }

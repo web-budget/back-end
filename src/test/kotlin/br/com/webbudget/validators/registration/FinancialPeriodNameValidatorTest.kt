@@ -1,6 +1,6 @@
 package br.com.webbudget.validators.registration
 
-import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
+import br.com.webbudget.domain.exceptions.ConflictingPropertyException
 import br.com.webbudget.domain.validators.registration.FinancialPeriodNameValidator
 import br.com.webbudget.infrastructure.repository.registration.FinancialPeriodRepository
 import br.com.webbudget.utilities.fixture.createFinancialPeriod
@@ -68,8 +68,7 @@ class FinancialPeriodNameValidatorTest {
         every { financialPeriodRepository.findByNameIgnoreCase(any<String>()) } returns conflictingPeriod
 
         assertThatThrownBy { validator.validate(financialPeriod) }
-            .isInstanceOf(DuplicatedPropertyException::class.java)
-            .hasMessage("financial-period.errors.duplicated-name")
+            .isInstanceOf(ConflictingPropertyException::class.java)
 
         verify(exactly = 1) { financialPeriodRepository.findByNameIgnoreCase(ofType<String>()) }
 
@@ -87,8 +86,7 @@ class FinancialPeriodNameValidatorTest {
         } returns conflictingPeriod
 
         assertThatThrownBy { validator.validate(financialPeriod) }
-            .isInstanceOf(DuplicatedPropertyException::class.java)
-            .hasMessage("financial-period.errors.duplicated-name")
+            .isInstanceOf(ConflictingPropertyException::class.java)
 
         verify(exactly = 1) {
             financialPeriodRepository.findByNameIgnoreCaseAndExternalIdNot(ofType<String>(), ofType<UUID>())

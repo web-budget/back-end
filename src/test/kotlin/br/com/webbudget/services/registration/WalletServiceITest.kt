@@ -4,7 +4,7 @@ import br.com.webbudget.BaseIntegrationTest
 import br.com.webbudget.domain.entities.registration.Wallet
 import br.com.webbudget.domain.entities.registration.Wallet.Type.INVESTMENT
 import br.com.webbudget.domain.entities.registration.Wallet.Type.PERSONAL
-import br.com.webbudget.domain.exceptions.DuplicatedPropertyException
+import br.com.webbudget.domain.exceptions.ConflictingPropertyException
 import br.com.webbudget.domain.services.registration.WalletService
 import br.com.webbudget.infrastructure.repository.registration.WalletRepository
 import br.com.webbudget.utilities.fixture.createWallet
@@ -63,7 +63,7 @@ class WalletServiceITest : BaseIntegrationTest() {
         val toCreate = createWallet()
 
         assertThatThrownBy { walletService.create(toCreate) }
-            .isInstanceOf(DuplicatedPropertyException::class.java)
+            .isInstanceOf(ConflictingPropertyException::class.java)
     }
 
     @Test
@@ -73,7 +73,7 @@ class WalletServiceITest : BaseIntegrationTest() {
         val toCreate = createWallet(name = "Bank account")
 
         assertThatThrownBy { walletService.create(toCreate) }
-            .isInstanceOf(DuplicatedPropertyException::class.java)
+            .isInstanceOf(ConflictingPropertyException::class.java)
     }
 
     @ParameterizedTest
@@ -121,7 +121,7 @@ class WalletServiceITest : BaseIntegrationTest() {
         toUpdate.apply { this.name = "Investments" }
 
         assertThatThrownBy { walletService.update(toUpdate) }
-            .isInstanceOf(DuplicatedPropertyException::class.java)
+            .isInstanceOf(ConflictingPropertyException::class.java)
     }
 
     @Test
@@ -140,7 +140,7 @@ class WalletServiceITest : BaseIntegrationTest() {
         }
 
         assertThatThrownBy { walletService.update(toUpdate) }
-            .isInstanceOf(DuplicatedPropertyException::class.java)
+            .isInstanceOf(ConflictingPropertyException::class.java)
     }
 
     @Test
