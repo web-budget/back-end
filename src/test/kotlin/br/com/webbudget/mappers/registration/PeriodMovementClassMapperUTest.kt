@@ -27,7 +27,7 @@ import java.math.BigDecimal
 import java.util.UUID
 
 @ExtendWith(MockKExtension::class)
-class MovementClassMapperUTest {
+class PeriodMovementClassMapperUTest {
 
     @MockK
     private lateinit var costCenterRepository: CostCenterRepository

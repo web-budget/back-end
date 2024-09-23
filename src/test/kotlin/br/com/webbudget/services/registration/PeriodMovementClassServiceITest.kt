@@ -16,7 +16,7 @@ import org.springframework.test.context.jdbc.Sql
 import java.math.BigDecimal
 import java.util.UUID
 
-class MovementClassServiceITest : BaseIntegrationTest() {
+class PeriodMovementClassServiceITest : BaseIntegrationTest() {
 
     @Autowired
     private lateinit var costCenterRepository: CostCenterRepository
