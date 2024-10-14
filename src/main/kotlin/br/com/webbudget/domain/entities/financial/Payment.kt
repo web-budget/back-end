@@ -25,14 +25,14 @@ class Payment(
 
     @field:Column(name = "discount", nullable = false)
     val discount: BigDecimal = BigDecimal.ZERO,
-    @field:Column(name = "paid_on", nullable = false)
-    val paidOn: LocalDate? = LocalDate.now(),
+    @field:Column(name = "paid_at", nullable = false)
+    val paidAt: LocalDate? = LocalDate.now(),
 
     @field:ManyToOne
-    @field:JoinColumn(name = "card_id")
+    @field:JoinColumn(name = "id_card")
     val card: Card? = null,
     @field:ManyToOne
-    @field:JoinColumn(name = "wallet_id")
+    @field:JoinColumn(name = "id_wallet")
     val wallet: Wallet? = null
 ) : PersistentEntity<Long>() {
 

@@ -25,24 +25,26 @@ class PeriodMovement(
     var value: BigDecimal,
 
     @field:ManyToOne
-    @field:JoinColumn(name = "financial_period_id", nullable = false)
+    @field:JoinColumn(name = "id_financial_period", nullable = false)
     var financialPeriod: FinancialPeriod,
 
     @field:Enumerated(EnumType.STRING)
     @field:Column(name = "state", nullable = false, length = 9)
     var state: State = State.OPEN,
 
+    @field:Column(name = "quote_number", length = 3)
+    var quoteNumber: Int? = null,
     @field:Column(name = "description", columnDefinition = "TEXT")
     var description: String? = null,
 
     @field:OneToOne
-    @field:JoinColumn(name = "payment_id")
+    @field:JoinColumn(name = "id_payment")
     var payment: Payment? = null,
     @field:ManyToOne
-    @field:JoinColumn(name = "credit_card_invoice_id")
+    @field:JoinColumn(name = "id_credit_card_invoice")
     var creditCardInvoice: CreditCardInvoice? = null,
     @field:ManyToOne
-    @field:JoinColumn(name = "recurring_movement_id")
+    @field:JoinColumn(name = "id_recurring_movement")
     var recurringMovement: RecurringMovement? = null
 ) : PersistentEntity<Long>() {
 

@@ -18,16 +18,16 @@ class Apportionment(
     val value: BigDecimal,
 
     @field:ManyToOne
-    @field:JoinColumn(name = "movement_class_id", nullable = false)
+    @field:JoinColumn(name = "id_movement_class", nullable = false)
     val movementClass: MovementClass,
     @field:ManyToOne
-    @field:JoinColumn(name = "cost_center_id", nullable = false)
+    @field:JoinColumn(name = "id_cost_center", nullable = false)
     val costCenter: CostCenter,
 
     @field:ManyToOne
-    @field:JoinColumn(name = "period_movement_id")
+    @field:JoinColumn(name = "id_period_movement")
     val periodMovement: PeriodMovement? = null,
     @field:ManyToOne
-    @field:JoinColumn(name = "recurring_movement_id")
+    @field:JoinColumn(name = "id_recurring_movement")
     val recurringMovement: RecurringMovement? = null
 ) : PersistentEntity<Long>()

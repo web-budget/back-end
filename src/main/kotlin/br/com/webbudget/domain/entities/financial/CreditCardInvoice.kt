@@ -19,14 +19,14 @@ import java.time.LocalDate
 class CreditCardInvoice(
     @field:Column(name = "due_date", nullable = false)
     val dueDate: LocalDate,
-    @field:Column(name = "total_value", nullable = false)
-    val totalValue: BigDecimal,
+    @field:Column(name = "value", nullable = false)
+    val value: BigDecimal,
 
     @field:ManyToOne
-    @field:JoinColumn(name = "card_id", nullable = false)
+    @field:JoinColumn(name = "id_card", nullable = false)
     val card: Card,
     @field:ManyToOne
-    @field:JoinColumn(name = "financial_period_id", nullable = false)
+    @field:JoinColumn(name = "id_financial_period", nullable = false)
     val financialPeriod: FinancialPeriod,
 
     @field:Enumerated(EnumType.STRING)
