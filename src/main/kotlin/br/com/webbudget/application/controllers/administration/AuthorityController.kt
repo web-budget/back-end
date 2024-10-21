@@ -13,10 +13,8 @@ class AuthorityController(
 ) {
 
     @GetMapping
-    fun get(): ResponseEntity<List<String>> {
-        return authorityRepository.findAll()
-            .map { it.name }
-            .toList()
-            .let { ResponseEntity.ok(it) }
-    }
+    fun get(): ResponseEntity<List<String>> = authorityRepository.findAll()
+        .map { it.name }
+        .toList()
+        .let { ResponseEntity.ok(it) }
 }

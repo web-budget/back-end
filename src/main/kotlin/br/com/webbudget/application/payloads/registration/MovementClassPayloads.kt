@@ -2,10 +2,12 @@ package br.com.webbudget.application.payloads.registration
 
 import br.com.webbudget.application.payloads.SpecificationSupport
 import br.com.webbudget.application.payloads.StatusFilter
+import br.com.webbudget.application.payloads.Views
 import br.com.webbudget.domain.entities.registration.MovementClass
 import br.com.webbudget.infrastructure.repository.registration.MovementClassRepository.Specifications.byActive
 import br.com.webbudget.infrastructure.repository.registration.MovementClassRepository.Specifications.byDescription
 import br.com.webbudget.infrastructure.repository.registration.MovementClassRepository.Specifications.byName
+import com.fasterxml.jackson.annotation.JsonView
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Size
@@ -38,9 +40,13 @@ data class MovementClassUpdateForm(
 )
 
 data class MovementClassView(
+    @JsonView(Views.Minimal::class)
     val id: UUID,
+    @JsonView(Views.Minimal::class)
     val name: String,
+    @JsonView(Views.Minimal::class)
     val type: String,
+    @JsonView(Views.Minimal::class)
     val active: Boolean,
     val costCenter: CostCenterView,
     val budget: BigDecimal?,

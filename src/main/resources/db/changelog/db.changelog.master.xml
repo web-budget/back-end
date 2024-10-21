@@ -21,6 +21,7 @@
         <sql>
             CREATE SCHEMA IF NOT EXISTS "registration";
             CREATE SCHEMA IF NOT EXISTS "administration";
+            CREATE SCHEMA IF NOT EXISTS "financial";
         </sql>
     </changeSet>
 

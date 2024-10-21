@@ -17,8 +17,8 @@ import org.springframework.stereotype.Component
 interface UserMapper {
 
     @Mappings(
-        Mapping(source = "externalId", target = "id"),
-        Mapping(source = "grants", target = "authorities")
+        Mapping(target = "id", source = "externalId"),
+        Mapping(target = "authorities", source = "grants")
     )
     fun map(user: User): UserView
 

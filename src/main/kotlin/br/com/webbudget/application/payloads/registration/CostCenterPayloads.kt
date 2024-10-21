@@ -2,10 +2,12 @@ package br.com.webbudget.application.payloads.registration
 
 import br.com.webbudget.application.payloads.SpecificationSupport
 import br.com.webbudget.application.payloads.StatusFilter
+import br.com.webbudget.application.payloads.Views
 import br.com.webbudget.domain.entities.registration.CostCenter
 import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository.Specifications.byActive
 import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository.Specifications.byDescription
 import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository.Specifications.byName
+import com.fasterxml.jackson.annotation.JsonView
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
 import org.springframework.data.jpa.domain.Specification
@@ -28,8 +30,11 @@ data class CostCenterUpdateForm(
 )
 
 data class CostCenterView(
+    @JsonView(Views.Minimal::class)
     val id: UUID,
+    @JsonView(Views.Minimal::class)
     val name: String,
+    @JsonView(Views.Minimal::class)
     val active: Boolean,
     val description: String?,
 )

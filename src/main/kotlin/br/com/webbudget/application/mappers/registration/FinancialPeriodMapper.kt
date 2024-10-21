@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component
 @Mapper(config = MappingConfiguration::class)
 interface FinancialPeriodMapper {
 
-    @Mapping(source = "externalId", target = "id")
+    @Mapping(target = "id", source = "externalId")
     fun map(financialPeriod: FinancialPeriod): FinancialPeriodView
 
     @Mapping(target = "status", expression = "java(FinancialPeriod.Status.ACTIVE)")

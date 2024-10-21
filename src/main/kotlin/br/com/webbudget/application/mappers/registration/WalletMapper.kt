@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component
 @Mapper(config = MappingConfiguration::class)
 interface WalletMapper {
 
-    @Mapping(source = "externalId", target = "id")
+    @Mapping(target = "id", source = "externalId")
     fun map(wallet: Wallet): WalletView
 
     @Mapping(target = "currentBalance", expression = "java(java.math.BigDecimal.ZERO)")

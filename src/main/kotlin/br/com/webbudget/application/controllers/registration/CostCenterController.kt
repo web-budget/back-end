@@ -32,19 +32,16 @@ class CostCenterController(
 ) {
 
     @GetMapping
-    fun get(filter: CostCenterFilter, pageable: Pageable): ResponseEntity<Page<CostCenterView>> {
-        return costCenterRepository.findAll(filter.toSpecification(), pageable)
+    fun get(filter: CostCenterFilter, pageable: Pageable): ResponseEntity<Page<CostCenterView>> =
+        costCenterRepository.findAll(filter.toSpecification(), pageable)
             .map { costCenterMapper.map(it) }
             .let { ResponseEntity.ok(it) }
-    }
 
     @GetMapping("/{id}")
-    fun getById(@PathVariable id: UUID): ResponseEntity<CostCenterView> {
-        return costCenterRepository.findByExternalId(id)
-            ?.let { costCenterMapper.map(it) }
-            ?.let { ResponseEntity.ok(it) }
-            ?: throw ResourceNotFoundException(mapOf("costCenterId" to id))
-    }
+    fun getById(@PathVariable id: UUID): ResponseEntity<CostCenterView> = costCenterRepository.findByExternalId(id)
+        ?.let { costCenterMapper.map(it) }
+        ?.let { ResponseEntity.ok(it) }
+        ?: throw ResourceNotFoundException(mapOf("costCenterId" to id))
 
     @PostMapping
     fun create(@RequestBody @Valid form: CostCenterCreateForm): ResponseEntity<Any> {
@@ -73,10 +70,8 @@ class CostCenterController(
     }
 
     @DeleteMapping("/{id}")
-    fun delete(@PathVariable id: UUID): ResponseEntity<Any> {
-        costCenterRepository.findByExternalId(id)
-            ?.let { costCenterService.delete(it) }
-            ?: throw ResourceNotFoundException(mapOf("costCenterId" to id))
-        return ResponseEntity.ok().build()
-    }
+    fun delete(@PathVariable id: UUID): ResponseEntity<Any> = costCenterRepository.findByExternalId(id)
+        ?.let { costCenterService.delete(it) }
+        ?.let { ResponseEntity.ok().build() }
+        ?: throw ResourceNotFoundException(mapOf("costCenterId" to id))
 }

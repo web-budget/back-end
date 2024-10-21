@@ -33,26 +33,23 @@ class FinancialPeriodController(
 ) {
 
     @GetMapping
-    fun get(filter: FinancialPeriodFilter, pageable: Pageable): ResponseEntity<Page<FinancialPeriodView>> {
-        return financialPeriodRepository.findAll(filter.toSpecification(), pageable)
+    fun get(filter: FinancialPeriodFilter, pageable: Pageable): ResponseEntity<Page<FinancialPeriodView>> =
+        financialPeriodRepository.findAll(filter.toSpecification(), pageable)
             .map { financialPeriodMapper.map(it) }
             .let { ResponseEntity.ok(it) }
-    }
 
     @GetMapping("/{id}")
-    fun getById(@PathVariable id: UUID): ResponseEntity<FinancialPeriodView> {
-        return financialPeriodRepository.findByExternalId(id)
+    fun getById(@PathVariable id: UUID): ResponseEntity<FinancialPeriodView> =
+        financialPeriodRepository.findByExternalId(id)
             ?.let { financialPeriodMapper.map(it) }
             ?.let { ResponseEntity.ok(it) }
             ?: throw ResourceNotFoundException(mapOf("financialPeriodId" to id))
-    }
 
     @GetMapping("/active")
-    fun getActive(pageable: Pageable): ResponseEntity<Page<FinancialPeriodView>> {
-        return financialPeriodRepository.findByStatus(FinancialPeriod.Status.ACTIVE, pageable)
+    fun getActive(pageable: Pageable): ResponseEntity<Page<FinancialPeriodView>> =
+        financialPeriodRepository.findByStatus(FinancialPeriod.Status.ACTIVE, pageable)
             .map { financialPeriodMapper.map(it) }
             .let { ResponseEntity.ok(it) }
-    }
 
     @PostMapping
     fun create(@RequestBody @Valid form: FinancialPeriodCreateForm): ResponseEntity<Any> {
@@ -84,10 +81,8 @@ class FinancialPeriodController(
     }
 
     @DeleteMapping("/{id}")
-    fun delete(@PathVariable id: UUID): ResponseEntity<Any> {
-        financialPeriodRepository.findByExternalId(id)
-            ?.let { financialPeriodService.delete(it) }
-            ?: throw ResourceNotFoundException(mapOf("financialPeriodId" to id))
-        return ResponseEntity.ok().build()
-    }
+    fun delete(@PathVariable id: UUID): ResponseEntity<Any> = financialPeriodRepository.findByExternalId(id)
+        ?.let { financialPeriodService.delete(it) }
+        ?.let { ResponseEntity.ok().build() }
+        ?: throw ResourceNotFoundException(mapOf("financialPeriodId" to id))
 }

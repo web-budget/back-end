@@ -34,19 +34,16 @@ class UserController(
 ) {
 
     @GetMapping
-    fun get(filter: UserFilter, pageable: Pageable): ResponseEntity<Page<UserView>> {
-        return userRepository.findAll(filter.toSpecification(), pageable)
+    fun get(filter: UserFilter, pageable: Pageable): ResponseEntity<Page<UserView>> =
+        userRepository.findAll(filter.toSpecification(), pageable)
             .map { userMapper.map(it) }
             .let { ResponseEntity.ok(it) }
-    }
 
     @GetMapping("/{id}")
-    fun getById(@PathVariable id: UUID): ResponseEntity<UserView> {
-        return userRepository.findByExternalId(id)
-            ?.let { userMapper.map(it) }
-            ?.let { ResponseEntity.ok(it) }
-            ?: throw ResourceNotFoundException(mapOf("userId" to id))
-    }
+    fun getById(@PathVariable id: UUID): ResponseEntity<UserView> = userRepository.findByExternalId(id)
+        ?.let { userMapper.map(it) }
+        ?.let { ResponseEntity.ok(it) }
+        ?: throw ResourceNotFoundException(mapOf("userId" to id))
 
     @PostMapping
     fun create(@RequestBody @Valid form: UserCreateForm): ResponseEntity<Any> {
@@ -87,10 +84,8 @@ class UserController(
     }
 
     @DeleteMapping("/{id}")
-    fun delete(@PathVariable id: UUID): ResponseEntity<Any> {
-        userRepository.findByExternalId(id)
-            ?.let { userService.deleteAccount(it) }
-            ?: throw ResourceNotFoundException(mapOf("userId" to id))
-        return ResponseEntity.ok().build()
-    }
+    fun delete(@PathVariable id: UUID): ResponseEntity<Any> = userRepository.findByExternalId(id)
+        ?.let { userService.deleteAccount(it) }
+        ?.let { ResponseEntity.ok().build() }
+        ?: throw ResourceNotFoundException(mapOf("userId" to id))
 }

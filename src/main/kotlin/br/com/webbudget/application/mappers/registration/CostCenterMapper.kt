@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component
 @Mapper(config = MappingConfiguration::class)
 interface CostCenterMapper {
 
-    @Mapping(source = "externalId", target = "id")
+    @Mapping(target = "id", source = "externalId")
     fun map(costCenter: CostCenter): CostCenterView
 
     fun map(form: CostCenterCreateForm): CostCenter

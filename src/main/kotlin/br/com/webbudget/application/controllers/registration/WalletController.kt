@@ -32,19 +32,16 @@ class WalletController(
 ) {
 
     @GetMapping
-    fun get(filter: WalletFilter, pageable: Pageable): ResponseEntity<Page<WalletView>> {
-        return walletRepository.findAll(filter.toSpecification(), pageable)
+    fun get(filter: WalletFilter, pageable: Pageable): ResponseEntity<Page<WalletView>> =
+        walletRepository.findAll(filter.toSpecification(), pageable)
             .map { walletMapper.map(it) }
             .let { ResponseEntity.ok(it) }
-    }
 
     @GetMapping("/{id}")
-    fun getById(@PathVariable id: UUID): ResponseEntity<WalletView> {
-        return walletRepository.findByExternalId(id)
-            ?.let { walletMapper.map(it) }
-            ?.let { ResponseEntity.ok(it) }
-            ?: throw ResourceNotFoundException(mapOf("walletId" to id))
-    }
+    fun getById(@PathVariable id: UUID): ResponseEntity<WalletView> = walletRepository.findByExternalId(id)
+        ?.let { walletMapper.map(it) }
+        ?.let { ResponseEntity.ok(it) }
+        ?: throw ResourceNotFoundException(mapOf("walletId" to id))
 
     @PostMapping
     fun create(@RequestBody @Valid form: WalletCreateForm): ResponseEntity<Any> {
@@ -73,10 +70,8 @@ class WalletController(
     }
 
     @DeleteMapping("/{id}")
-    fun delete(@PathVariable id: UUID): ResponseEntity<Any> {
-        walletRepository.findByExternalId(id)
-            ?.let { walletService.delete(it) }
-            ?: throw ResourceNotFoundException(mapOf("walletId" to id))
-        return ResponseEntity.ok().build()
-    }
+    fun delete(@PathVariable id: UUID): ResponseEntity<Any> = walletRepository.findByExternalId(id)
+        ?.let { walletService.delete(it) }
+        ?.let { ResponseEntity.ok().build() }
+        ?: throw ResourceNotFoundException(mapOf("walletId" to id))
 }

@@ -23,7 +23,7 @@ abstract class MovementClassMapper {
     @Autowired
     private lateinit var costCenterRepository: CostCenterRepository
 
-    @Mapping(source = "externalId", target = "id")
+    @Mapping(target = "id", source = "externalId")
     abstract fun map(movementClass: MovementClass): MovementClassView
 
     @Mapping(target = "costCenter", expression = "java(mapCostCenter(form.getCostCenter()))")

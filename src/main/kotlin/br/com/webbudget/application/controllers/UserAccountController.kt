@@ -31,10 +31,9 @@ class UserAccountController(
     }
 
     @PatchMapping("/forgot-password")
-    fun forgotPassword(@RequestBody @Valid form: ForgotPasswordForm): ResponseEntity<Any> {
+    fun forgotPassword(@RequestBody @Valid form: ForgotPasswordForm): ResponseEntity<Any> =
         recoverPasswordService.registerRecoveryAttempt(form.email!!)
-        return ResponseEntity.accepted().build()
-    }
+            .let { ResponseEntity.accepted().build() }
 
     @PatchMapping("/recover-password")
     fun recoverPassword(@RequestBody @Valid form: RecoverPasswordForm): ResponseEntity<Any> {

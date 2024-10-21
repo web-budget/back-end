@@ -32,19 +32,16 @@ class CardController(
 ) {
 
     @GetMapping
-    fun get(filter: CardFilter, pageable: Pageable): ResponseEntity<Page<CardView>> {
-        return cardRepository.findAll(filter.toSpecification(), pageable)
+    fun get(filter: CardFilter, pageable: Pageable): ResponseEntity<Page<CardView>> =
+        cardRepository.findAll(filter.toSpecification(), pageable)
             .map { cardMapper.map(it) }
             .let { ResponseEntity.ok(it) }
-    }
 
     @GetMapping("/{id}")
-    fun getById(@PathVariable id: UUID): ResponseEntity<CardView> {
-        return cardRepository.findByExternalId(id)
-            ?.let { cardMapper.map(it) }
-            ?.let { ResponseEntity.ok(it) }
-            ?: throw ResourceNotFoundException(mapOf("cardId" to id))
-    }
+    fun getById(@PathVariable id: UUID): ResponseEntity<CardView> = cardRepository.findByExternalId(id)
+        ?.let { cardMapper.map(it) }
+        ?.let { ResponseEntity.ok(it) }
+        ?: throw ResourceNotFoundException(mapOf("cardId" to id))
 
     @PostMapping
     fun create(@RequestBody @Valid form: CardCreateForm): ResponseEntity<Any> {
@@ -73,10 +70,8 @@ class CardController(
     }
 
     @DeleteMapping("/{id}")
-    fun delete(@PathVariable id: UUID): ResponseEntity<Any> {
-        cardRepository.findByExternalId(id)
-            ?.let { cardService.delete(it) }
-            ?: throw ResourceNotFoundException(mapOf("cardId" to id))
-        return ResponseEntity.ok().build()
-    }
+    fun delete(@PathVariable id: UUID): ResponseEntity<Any> = cardRepository.findByExternalId(id)
+        ?.let { cardService.delete(it) }
+        ?.let { ResponseEntity.ok().build() }
+        ?: throw ResourceNotFoundException(mapOf("cardId" to id))
 }
