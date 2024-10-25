@@ -4,14 +4,13 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.event.ApplicationEventMulticaster
 import org.springframework.context.event.SimpleApplicationEventMulticaster
-import org.springframework.core.task.SimpleAsyncTaskExecutor
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing
-import org.springframework.scheduling.annotation.EnableAsync
+import org.springframework.core.task.support.TaskExecutorAdapter
 import org.springframework.scheduling.annotation.EnableScheduling
 import org.thymeleaf.spring6.SpringTemplateEngine
 import org.thymeleaf.spring6.templateresolver.SpringResourceTemplateResolver
 import org.thymeleaf.templatemode.TemplateMode.HTML
 import java.nio.charset.StandardCharsets
+import java.util.concurrent.Executors
 
 @Configuration
 @EnableScheduling
@@ -49,8 +48,12 @@ class CommonsConfiguration {
 
     @Bean
     fun configureEventMulticaster(): ApplicationEventMulticaster {
+
+        val virtualThreadsTaskExecutor = TaskExecutorAdapter(Executors.newVirtualThreadPerTaskExecutor())
+
         val eventMulticaster = SimpleApplicationEventMulticaster()
-        eventMulticaster.setTaskExecutor(SimpleAsyncTaskExecutor())
+        eventMulticaster.setTaskExecutor(virtualThreadsTaskExecutor)
+
         return eventMulticaster
     }
 }

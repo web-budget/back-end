@@ -3,12 +3,16 @@ package br.com.webbudget.domain.entities.financial
 import br.com.webbudget.domain.entities.PersistentEntity
 import br.com.webbudget.domain.entities.registration.FinancialPeriod
 import br.com.webbudget.infrastructure.config.ApplicationSchemas.FINANCIAL
+import jakarta.persistence.CascadeType.MERGE
+import jakarta.persistence.CascadeType.PERSIST
+import jakarta.persistence.CascadeType.REMOVE
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
+import jakarta.persistence.OneToMany
 import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
 import java.math.BigDecimal
@@ -45,7 +49,10 @@ class PeriodMovement(
     var creditCardInvoice: CreditCardInvoice? = null,
     @field:ManyToOne
     @field:JoinColumn(name = "id_recurring_movement")
-    var recurringMovement: RecurringMovement? = null
+    var recurringMovement: RecurringMovement? = null,
+
+    @field:OneToMany(mappedBy = "periodMovement", cascade = [REMOVE, PERSIST, MERGE])
+    val apportionments: List<Apportionment> = emptyList()
 ) : PersistentEntity<Long>() {
 
     enum class State {

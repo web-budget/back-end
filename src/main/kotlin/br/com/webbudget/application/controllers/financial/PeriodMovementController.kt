@@ -3,6 +3,7 @@ package br.com.webbudget.application.controllers.financial
 import br.com.webbudget.application.mappers.financial.PeriodMovementMapper
 import br.com.webbudget.application.payloads.financial.PeriodMovementCreateForm
 import br.com.webbudget.application.payloads.financial.PeriodMovementFilter
+import br.com.webbudget.application.payloads.financial.PeriodMovementListView
 import br.com.webbudget.application.payloads.financial.PeriodMovementUpdateForm
 import br.com.webbudget.application.payloads.financial.PeriodMovementView
 import br.com.webbudget.domain.exceptions.ResourceNotFoundException
@@ -32,22 +33,22 @@ class PeriodMovementController(
 ) {
 
     @GetMapping
-    fun get(filter: PeriodMovementFilter, pageable: Pageable): ResponseEntity<Page<PeriodMovementView>> =
+    fun get(filter: PeriodMovementFilter, pageable: Pageable): ResponseEntity<Page<PeriodMovementListView>> =
         periodMovementRepository.findByFilter(filter, pageable)
-            .map { periodMovementMapper.map(it) }
+            .map { periodMovementMapper.mapToListView(it) }
             .let { ResponseEntity.ok(it) }
 
     @GetMapping("/{id}")
     fun getById(@PathVariable id: UUID): ResponseEntity<PeriodMovementView> =
         periodMovementRepository.findByExternalId(id)
-            ?.let { periodMovementMapper.map(it) }
+            ?.let { periodMovementMapper.mapToView(it) }
             ?.let { ResponseEntity.ok(it) }
             ?: throw ResourceNotFoundException(mapOf("periodMovementId" to id))
 
     @PostMapping
     fun create(@RequestBody @Valid form: PeriodMovementCreateForm): ResponseEntity<Any> {
 
-        val toCreate = periodMovementMapper.map(form)
+        val toCreate = periodMovementMapper.mapToDomain(form)
         val created = periodMovementService.create(toCreate)
 
         val location = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -62,15 +63,15 @@ class PeriodMovementController(
     fun update(
         @PathVariable id: UUID,
         @RequestBody @Valid form: PeriodMovementUpdateForm
-    ): ResponseEntity<PeriodMovementView> {
+    ): ResponseEntity<PeriodMovementListView> {
 
         val periodMovement = periodMovementRepository.findByExternalId(id)
             ?: throw ResourceNotFoundException(mapOf("periodMovementId" to id))
 
-        periodMovementMapper.map(form, periodMovement)
+        periodMovementMapper.mapFromFormToDomain(form, periodMovement)
         periodMovementService.update(periodMovement)
 
-        return ResponseEntity.ok(periodMovementMapper.map(periodMovement))
+        return ResponseEntity.ok(periodMovementMapper.mapToListView(periodMovement))
     }
 
     @DeleteMapping("/{id}")

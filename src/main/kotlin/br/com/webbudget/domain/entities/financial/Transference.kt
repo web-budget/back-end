@@ -12,7 +12,7 @@ import java.math.BigDecimal
 import java.time.LocalDate
 
 @Entity
-@Table(name = "recurring_movements", schema = FINANCIAL)
+@Table(name = "transferences", schema = FINANCIAL)
 class Transference(
     @field:Column(name = "value", nullable = false)
     val value: BigDecimal,

@@ -1,10 +1,8 @@
 package br.com.webbudget.application.payloads.registration
 
 import br.com.webbudget.application.payloads.SpecificationSupport
-import br.com.webbudget.application.payloads.Views
 import br.com.webbudget.domain.entities.registration.FinancialPeriod
 import br.com.webbudget.infrastructure.repository.registration.FinancialPeriodRepository.Specifications.byName
-import com.fasterxml.jackson.annotation.JsonView
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import org.springframework.data.jpa.domain.Specification
@@ -35,15 +33,21 @@ data class FinancialPeriodUpdateForm(
 )
 
 data class FinancialPeriodView(
-    @JsonView(Views.Minimal::class)
     val id: UUID,
-    @JsonView(Views.Minimal::class)
     val name: String,
     val startingAt: LocalDate,
     val endingAt: LocalDate,
     val status: String,
     val revenuesGoal: BigDecimal?,
     val expensesGoal: BigDecimal?
+)
+
+data class FinancialPeriodListView(
+    val id: UUID,
+    val name: String,
+    val startingAt: LocalDate,
+    val endingAt: LocalDate,
+    val status: String
 )
 
 data class FinancialPeriodFilter(

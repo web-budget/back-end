@@ -56,6 +56,13 @@ data class WalletView(
     val agency: String? = null,
 )
 
+data class WalletListView(
+    val id: UUID,
+    val name: String,
+    val type: Type,
+    val active: Boolean = true
+)
+
 data class WalletFilter(
     val filter: String?,
     val status: StatusFilter?

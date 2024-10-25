@@ -4,9 +4,7 @@ import br.com.webbudget.application.payloads.ErrorCodes.IS_EMPTY
 import br.com.webbudget.application.payloads.ErrorCodes.IS_NULL
 import br.com.webbudget.application.payloads.ErrorCodes.IS_NULL_OR_BLANK
 import br.com.webbudget.application.payloads.ErrorCodes.MAX_CHARS
-import br.com.webbudget.application.payloads.Views
 import br.com.webbudget.application.payloads.registration.FinancialPeriodView
-import com.fasterxml.jackson.annotation.JsonView
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotEmpty
 import jakarta.validation.constraints.NotNull
@@ -51,9 +49,7 @@ data class PeriodMovementFilter(
 )
 
 data class PeriodMovementView(
-    @JsonView(Views.Minimal::class)
     val id: UUID,
-    @JsonView(Views.Minimal::class)
     val name: String,
     val dueDate: LocalDate,
     val value: BigDecimal,
@@ -62,4 +58,13 @@ data class PeriodMovementView(
     val apportionments: List<ApportionmentView>,
     val quoteNumber: Int? = null,
     val description: String? = null
+)
+
+data class PeriodMovementListView(
+    val id: UUID,
+    val name: String,
+    val dueDate: LocalDate,
+    val value: BigDecimal,
+    val state: String,
+    val financialPeriod: FinancialPeriodView,
 )

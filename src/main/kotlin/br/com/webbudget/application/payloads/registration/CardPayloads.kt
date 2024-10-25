@@ -53,6 +53,13 @@ data class CardView(
     val wallet: WalletView? = null
 )
 
+data class CardListView(
+    val id: UUID,
+    val name: String,
+    val type: Type,
+    val active: Boolean
+)
+
 data class CardFilter(
     val filter: String?,
     val status: StatusFilter?

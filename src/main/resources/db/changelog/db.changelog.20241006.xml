@@ -7,6 +7,45 @@
 
     <changeSet id="back-end#67" author="${author}">
 
+        <createTable tableName="apportionments" schemaName="financial">
+            <column name="id" autoIncrement="true" type="bigint">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="external_id" type="${uuid_type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="smallint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_on" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_update" type="timestamp"/>
+
+            <column name="value" type="decimal(15,2)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="id_movement_class" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="id_period_movement" type="bigint"/>
+            <column name="id_recurring_movement" type="bigint"/>
+        </createTable>
+
+        <addUniqueConstraint columnNames="id"
+                             tableName="apportionments"
+                             schemaName="financial"/>
+
+        <addUniqueConstraint columnNames="external_id"
+                             tableName="apportionments"
+                             schemaName="financial"/>
+
+        <addUniqueConstraint columnNames="id,external_id"
+                             tableName="apportionments"
+                             schemaName="financial"/>
+
         <createTable tableName="period_movements" schemaName="financial">
             <column name="id" autoIncrement="true" type="bigint">
                 <constraints nullable="false" primaryKey="true"/>
@@ -46,38 +85,6 @@
             <column name="id_credit_card_invoice" type="bigint"/>
             <column name="id_recurring_movement" type="bigint"/>
         </createTable>
-
-        <addForeignKeyConstraint constraintName="fk_financial_periods_on_period_movements"
-                                 baseColumnNames="id_financial_period"
-                                 baseTableName="period_movements"
-                                 baseTableSchemaName="financial"
-                                 referencedTableName="financial_periods"
-                                 referencedTableSchemaName="registration"
-                                 referencedColumnNames="id"/>
-
-        <addForeignKeyConstraint constraintName="fk_payments_on_period_movements"
-                                 baseColumnNames="id_payment"
-                                 baseTableName="period_movements"
-                                 baseTableSchemaName="financial"
-                                 referencedTableName="payments"
-                                 referencedTableSchemaName="financial"
-                                 referencedColumnNames="id"/>
-
-        <addForeignKeyConstraint constraintName="fk_credit_card_invoices_on_period_movements"
-                                 baseColumnNames="id_credit_card_invoice"
-                                 baseTableName="period_movements"
-                                 baseTableSchemaName="financial"
-                                 referencedTableName="credit_card_invoices"
-                                 referencedTableSchemaName="financial"
-                                 referencedColumnNames="id"/>
-
-        <addForeignKeyConstraint constraintName="fk_recurring_movements_on_period_movements"
-                                 baseColumnNames="id_recurring_movement"
-                                 baseTableName="period_movements"
-                                 baseTableSchemaName="financial"
-                                 referencedTableName="recurring_movements"
-                                 referencedTableSchemaName="financial"
-                                 referencedColumnNames="id"/>
 
         <addUniqueConstraint columnNames="id"
                              tableName="period_movements"
@@ -143,80 +150,6 @@
                              tableName="recurring_movements"
                              schemaName="financial"/>
 
-        <createTable tableName="apportionments" schemaName="financial">
-            <column name="id" autoIncrement="true" type="bigint">
-                <constraints nullable="false" primaryKey="true"/>
-            </column>
-            <column name="external_id" type="${uuid_type}">
-                <constraints nullable="false"/>
-            </column>
-            <column name="version" type="smallint">
-                <constraints nullable="false"/>
-            </column>
-            <column name="created_on" type="timestamp">
-                <constraints nullable="false"/>
-            </column>
-            <column name="last_update" type="timestamp"/>
-
-            <column name="value" type="decimal(15,2)">
-                <constraints nullable="false"/>
-            </column>
-
-            <column name="id_movement_class" type="bigint">
-                <constraints nullable="false"/>
-            </column>
-            <column name="id_cost_center" type="bigint">
-                <constraints nullable="false"/>
-            </column>
-
-            <column name="id_period_movement" type="bigint"/>
-            <column name="id_recurring_movement" type="bigint"/>
-        </createTable>
-
-        <addForeignKeyConstraint constraintName="fk_movement_classes_on_apportionments"
-                                 baseColumnNames="id_movement_class"
-                                 baseTableName="apportionments"
-                                 baseTableSchemaName="financial"
-                                 referencedTableName="movement_classes"
-                                 referencedTableSchemaName="registration"
-                                 referencedColumnNames="id"/>
-
-        <addForeignKeyConstraint constraintName="fk_cost_centers_on_apportionments"
-                                 baseColumnNames="id_cost_center"
-                                 baseTableName="apportionments"
-                                 baseTableSchemaName="financial"
-                                 referencedTableName="cost_centers"
-                                 referencedTableSchemaName="registration"
-                                 referencedColumnNames="id"/>
-
-        <addForeignKeyConstraint constraintName="fk_period_movements_on_apportionments"
-                                 baseColumnNames="id_period_movement"
-                                 baseTableName="apportionments"
-                                 baseTableSchemaName="financial"
-                                 referencedTableName="period_movements"
-                                 referencedTableSchemaName="financial"
-                                 referencedColumnNames="id"/>
-
-        <addForeignKeyConstraint constraintName="fk_recurring_movements_on_apportionments"
-                                 baseColumnNames="id_recurring_movement"
-                                 baseTableName="apportionments"
-                                 baseTableSchemaName="financial"
-                                 referencedTableName="recurring_movements"
-                                 referencedTableSchemaName="financial"
-                                 referencedColumnNames="id"/>
-
-        <addUniqueConstraint columnNames="id"
-                             tableName="apportionments"
-                             schemaName="financial"/>
-
-        <addUniqueConstraint columnNames="external_id"
-                             tableName="apportionments"
-                             schemaName="financial"/>
-
-        <addUniqueConstraint columnNames="id,external_id"
-                             tableName="apportionments"
-                             schemaName="financial"/>
-
         <createTable tableName="credit_card_invoices" schemaName="financial">
             <column name="id" autoIncrement="true" type="bigint">
                 <constraints nullable="false" primaryKey="true"/>
@@ -249,22 +182,6 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-
-        <addForeignKeyConstraint constraintName="fk_cards_on_credit_card_invoices"
-                                 baseColumnNames="id_card"
-                                 baseTableName="credit_card_invoices"
-                                 baseTableSchemaName="financial"
-                                 referencedTableName="cards"
-                                 referencedTableSchemaName="registration"
-                                 referencedColumnNames="id"/>
-
-        <addForeignKeyConstraint constraintName="fk_financial_periods_on_credit_card_invoices"
-                                 baseColumnNames="id_financial_period"
-                                 baseTableName="credit_card_invoices"
-                                 baseTableSchemaName="financial"
-                                 referencedTableName="financial_periods"
-                                 referencedTableSchemaName="registration"
-                                 referencedColumnNames="id"/>
 
         <addUniqueConstraint columnNames="id"
                              tableName="credit_card_invoices"
@@ -314,22 +231,6 @@
             </column>
         </createTable>
 
-        <addForeignKeyConstraint constraintName="fk_cards_on_payments"
-                                 baseColumnNames="id_card"
-                                 baseTableName="payments"
-                                 baseTableSchemaName="financial"
-                                 referencedTableName="cards"
-                                 referencedTableSchemaName="registration"
-                                 referencedColumnNames="id"/>
-
-        <addForeignKeyConstraint constraintName="fk_wallets_on_payments"
-                                 baseColumnNames="id_wallet"
-                                 baseTableName="payments"
-                                 baseTableSchemaName="financial"
-                                 referencedTableName="wallets"
-                                 referencedTableSchemaName="registration"
-                                 referencedColumnNames="id"/>
-
         <addUniqueConstraint columnNames="id"
                              tableName="payments"
                              schemaName="financial"/>
@@ -360,7 +261,7 @@
             <column name="value" type="decimal(15,2)">
                 <constraints nullable="false"/>
             </column>
-            <column name="paid_at" type="date">
+            <column name="transferred_at" type="date">
                 <constraints nullable="false"/>
             </column>
 
@@ -373,22 +274,6 @@
 
             <column name="description" type="clob"/>
         </createTable>
-
-        <addForeignKeyConstraint constraintName="fk_from_wallets_on_payments"
-                                 baseColumnNames="id_from_wallet"
-                                 baseTableName="transferences"
-                                 baseTableSchemaName="financial"
-                                 referencedTableName="wallets"
-                                 referencedTableSchemaName="registration"
-                                 referencedColumnNames="id"/>
-
-        <addForeignKeyConstraint constraintName="fk_to_wallets_on_payments"
-                                 baseColumnNames="id_to_wallet"
-                                 baseTableName="transferences"
-                                 baseTableSchemaName="financial"
-                                 referencedTableName="wallets"
-                                 referencedTableSchemaName="registration"
-                                 referencedColumnNames="id"/>
 
         <addUniqueConstraint columnNames="id"
                              tableName="transferences"
@@ -442,6 +327,122 @@
             <column name="id_period_movement" type="bigint"/>
         </createTable>
 
+        <addUniqueConstraint columnNames="id"
+                             tableName="wallet_balances"
+                             schemaName="financial"/>
+
+        <addUniqueConstraint columnNames="external_id"
+                             tableName="wallet_balances"
+                             schemaName="financial"/>
+
+        <addUniqueConstraint columnNames="id,external_id"
+                             tableName="wallet_balances"
+                             schemaName="financial"/>
+
+        <addForeignKeyConstraint constraintName="fk_cards_on_credit_card_invoices"
+                                 baseColumnNames="id_card"
+                                 baseTableName="credit_card_invoices"
+                                 baseTableSchemaName="financial"
+                                 referencedTableName="cards"
+                                 referencedTableSchemaName="registration"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint constraintName="fk_financial_periods_on_credit_card_invoices"
+                                 baseColumnNames="id_financial_period"
+                                 baseTableName="credit_card_invoices"
+                                 baseTableSchemaName="financial"
+                                 referencedTableName="financial_periods"
+                                 referencedTableSchemaName="registration"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint constraintName="fk_cards_on_payments"
+                                 baseColumnNames="id_card"
+                                 baseTableName="payments"
+                                 baseTableSchemaName="financial"
+                                 referencedTableName="cards"
+                                 referencedTableSchemaName="registration"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint constraintName="fk_wallets_on_payments"
+                                 baseColumnNames="id_wallet"
+                                 baseTableName="payments"
+                                 baseTableSchemaName="financial"
+                                 referencedTableName="wallets"
+                                 referencedTableSchemaName="registration"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint constraintName="fk_financial_periods_on_period_movements"
+                                 baseColumnNames="id_financial_period"
+                                 baseTableName="period_movements"
+                                 baseTableSchemaName="financial"
+                                 referencedTableName="financial_periods"
+                                 referencedTableSchemaName="registration"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint constraintName="fk_payments_on_period_movements"
+                                 baseColumnNames="id_payment"
+                                 baseTableName="period_movements"
+                                 baseTableSchemaName="financial"
+                                 referencedTableName="payments"
+                                 referencedTableSchemaName="financial"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint constraintName="fk_credit_card_invoices_on_period_movements"
+                                 baseColumnNames="id_credit_card_invoice"
+                                 baseTableName="period_movements"
+                                 baseTableSchemaName="financial"
+                                 referencedTableName="credit_card_invoices"
+                                 referencedTableSchemaName="financial"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint constraintName="fk_recurring_movements_on_period_movements"
+                                 baseColumnNames="id_recurring_movement"
+                                 baseTableName="period_movements"
+                                 baseTableSchemaName="financial"
+                                 referencedTableName="recurring_movements"
+                                 referencedTableSchemaName="financial"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint constraintName="fk_movement_classes_on_apportionments"
+                                 baseColumnNames="id_movement_class"
+                                 baseTableName="apportionments"
+                                 baseTableSchemaName="financial"
+                                 referencedTableName="movement_classes"
+                                 referencedTableSchemaName="registration"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint constraintName="fk_period_movements_on_apportionments"
+                                 baseColumnNames="id_period_movement"
+                                 baseTableName="apportionments"
+                                 baseTableSchemaName="financial"
+                                 referencedTableName="period_movements"
+                                 referencedTableSchemaName="financial"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint constraintName="fk_recurring_movements_on_apportionments"
+                                 baseColumnNames="id_recurring_movement"
+                                 baseTableName="apportionments"
+                                 baseTableSchemaName="financial"
+                                 referencedTableName="recurring_movements"
+                                 referencedTableSchemaName="financial"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint constraintName="fk_from_wallets_on_payments"
+                                 baseColumnNames="id_from_wallet"
+                                 baseTableName="transferences"
+                                 baseTableSchemaName="financial"
+                                 referencedTableName="wallets"
+                                 referencedTableSchemaName="registration"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint constraintName="fk_to_wallets_on_payments"
+                                 baseColumnNames="id_to_wallet"
+                                 baseTableName="transferences"
+                                 baseTableSchemaName="financial"
+                                 referencedTableName="wallets"
+                                 referencedTableSchemaName="registration"
+                                 referencedColumnNames="id"/>
+
         <addForeignKeyConstraint constraintName="fk_wallets_on_payments"
                                  baseColumnNames="id_wallet"
                                  baseTableName="wallet_balances"
@@ -457,17 +458,5 @@
                                  referencedTableName="period_movements"
                                  referencedTableSchemaName="financial"
                                  referencedColumnNames="id"/>
-
-        <addUniqueConstraint columnNames="id"
-                             tableName="wallet_balances"
-                             schemaName="financial"/>
-
-        <addUniqueConstraint columnNames="external_id"
-                             tableName="wallet_balances"
-                             schemaName="financial"/>
-
-        <addUniqueConstraint columnNames="id,external_id"
-                             tableName="wallet_balances"
-                             schemaName="financial"/>
     </changeSet>
 </databaseChangeLog>
