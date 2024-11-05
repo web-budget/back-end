@@ -40,7 +40,7 @@ abstract class PeriodMovementMapper {
     abstract fun mapToDomain(form: PeriodMovementCreateForm): PeriodMovement
 
     @Mapping(target = "financialPeriod", source = "financialPeriod", qualifiedByName = ["mapFinancialPeriod"])
-    abstract fun mapFromFormToDomain(form: PeriodMovementUpdateForm, @MappingTarget periodMovement: PeriodMovement)
+    abstract fun mapToDomain(form: PeriodMovementUpdateForm, @MappingTarget periodMovement: PeriodMovement)
 
     @AfterMapping
     fun afterMapFormToDomain(form: PeriodMovementCreateForm, @MappingTarget periodMovement: PeriodMovement) {

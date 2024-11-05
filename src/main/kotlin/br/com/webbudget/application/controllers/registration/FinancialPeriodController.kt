@@ -3,6 +3,7 @@ package br.com.webbudget.application.controllers.registration
 import br.com.webbudget.application.mappers.registration.FinancialPeriodMapper
 import br.com.webbudget.application.payloads.registration.FinancialPeriodCreateForm
 import br.com.webbudget.application.payloads.registration.FinancialPeriodFilter
+import br.com.webbudget.application.payloads.registration.FinancialPeriodListView
 import br.com.webbudget.application.payloads.registration.FinancialPeriodUpdateForm
 import br.com.webbudget.application.payloads.registration.FinancialPeriodView
 import br.com.webbudget.domain.entities.registration.FinancialPeriod
@@ -33,28 +34,28 @@ class FinancialPeriodController(
 ) {
 
     @GetMapping
-    fun get(filter: FinancialPeriodFilter, pageable: Pageable): ResponseEntity<Page<FinancialPeriodView>> =
+    fun get(filter: FinancialPeriodFilter, pageable: Pageable): ResponseEntity<Page<FinancialPeriodListView>> =
         financialPeriodRepository.findAll(filter.toSpecification(), pageable)
-            .map { financialPeriodMapper.map(it) }
+            .map { financialPeriodMapper.mapToListView(it) }
             .let { ResponseEntity.ok(it) }
 
     @GetMapping("/{id}")
     fun getById(@PathVariable id: UUID): ResponseEntity<FinancialPeriodView> =
         financialPeriodRepository.findByExternalId(id)
-            ?.let { financialPeriodMapper.map(it) }
+            ?.let { financialPeriodMapper.mapToView(it) }
             ?.let { ResponseEntity.ok(it) }
             ?: throw ResourceNotFoundException(mapOf("financialPeriodId" to id))
 
     @GetMapping("/active")
     fun getActive(pageable: Pageable): ResponseEntity<Page<FinancialPeriodView>> =
         financialPeriodRepository.findByStatus(FinancialPeriod.Status.ACTIVE, pageable)
-            .map { financialPeriodMapper.map(it) }
+            .map { financialPeriodMapper.mapToView(it) }
             .let { ResponseEntity.ok(it) }
 
     @PostMapping
     fun create(@RequestBody @Valid form: FinancialPeriodCreateForm): ResponseEntity<Any> {
 
-        val toCreate = financialPeriodMapper.map(form)
+        val toCreate = financialPeriodMapper.mapToDomain(form)
         val created = financialPeriodService.create(toCreate)
 
         val location = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -74,10 +75,10 @@ class FinancialPeriodController(
         val financialPeriod = financialPeriodRepository.findByExternalId(id)
             ?: throw ResourceNotFoundException(mapOf("financialPeriodId" to id))
 
-        financialPeriodMapper.map(form, financialPeriod)
+        financialPeriodMapper.mapToDomain(form, financialPeriod)
         financialPeriodService.update(financialPeriod)
 
-        return ResponseEntity.ok(financialPeriodMapper.map(financialPeriod))
+        return ResponseEntity.ok(financialPeriodMapper.mapToView(financialPeriod))
     }
 
     @DeleteMapping("/{id}")

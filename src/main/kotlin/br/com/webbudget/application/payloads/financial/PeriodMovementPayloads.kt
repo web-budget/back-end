@@ -4,7 +4,7 @@ import br.com.webbudget.application.payloads.ErrorCodes.IS_EMPTY
 import br.com.webbudget.application.payloads.ErrorCodes.IS_NULL
 import br.com.webbudget.application.payloads.ErrorCodes.IS_NULL_OR_BLANK
 import br.com.webbudget.application.payloads.ErrorCodes.MAX_CHARS
-import br.com.webbudget.application.payloads.registration.FinancialPeriodView
+import br.com.webbudget.application.payloads.registration.FinancialPeriodListView
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotEmpty
 import jakarta.validation.constraints.NotNull
@@ -44,17 +44,13 @@ data class PeriodMovementUpdateForm(
     val apportionments: List<ApportionmentForm>? = emptyList()
 )
 
-data class PeriodMovementFilter(
-    val filter: String? = null,
-)
-
 data class PeriodMovementView(
     val id: UUID,
     val name: String,
     val dueDate: LocalDate,
     val value: BigDecimal,
     val state: String,
-    val financialPeriod: FinancialPeriodView,
+    val financialPeriod: FinancialPeriodListView,
     val apportionments: List<ApportionmentView>,
     val quoteNumber: Int? = null,
     val description: String? = null
@@ -66,5 +62,17 @@ data class PeriodMovementListView(
     val dueDate: LocalDate,
     val value: BigDecimal,
     val state: String,
-    val financialPeriod: FinancialPeriodView,
+    val financialPeriod: FinancialPeriodListView,
 )
+
+data class PeriodMovementFilter(
+    val filter: String? = null,
+    val states: List<String>? = null,
+    val costCenter: UUID? = null,
+    val movementClass: UUID? = null,
+    val financialPeriods: List<UUID>? = null
+) {
+    fun decimalValue(): String? = this.filter?.let {
+        it.replace(",", ".").toDoubleOrNull()?.toString()
+    }
+}

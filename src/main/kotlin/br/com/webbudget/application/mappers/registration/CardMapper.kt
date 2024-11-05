@@ -2,6 +2,7 @@ package br.com.webbudget.application.mappers.registration
 
 import br.com.webbudget.application.mappers.MappingConfiguration
 import br.com.webbudget.application.payloads.registration.CardCreateForm
+import br.com.webbudget.application.payloads.registration.CardListView
 import br.com.webbudget.application.payloads.registration.CardUpdateForm
 import br.com.webbudget.application.payloads.registration.CardView
 import br.com.webbudget.domain.entities.registration.Card
@@ -23,13 +24,16 @@ abstract class CardMapper {
     private lateinit var walletRepository: WalletRepository
 
     @Mapping(target = "id", source = "externalId")
-    abstract fun map(card: Card): CardView
+    abstract fun mapToView(card: Card): CardView
+
+    @Mapping(target = "id", source = "externalId")
+    abstract fun mapToListView(card: Card): CardListView
 
     @Mapping(target = "wallet", expression = "java(mapWallet(form.getWallet()))")
-    abstract fun map(form: CardCreateForm): Card
+    abstract fun mapToDomain(form: CardCreateForm): Card
 
     @Mapping(target = "wallet", expression = "java(mapWallet(form.getWallet()))")
-    abstract fun map(form: CardUpdateForm, @MappingTarget card: Card)
+    abstract fun mapToDomain(form: CardUpdateForm, @MappingTarget card: Card)
 
     fun mapWallet(id: UUID): Wallet = walletRepository.findByExternalId(id)
         ?: throw ResourceNotFoundException(mapOf("walletId" to id.toString()))

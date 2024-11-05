@@ -2,6 +2,7 @@ package br.com.webbudget.application.mappers.registration
 
 import br.com.webbudget.application.mappers.MappingConfiguration
 import br.com.webbudget.application.payloads.registration.WalletCreateForm
+import br.com.webbudget.application.payloads.registration.WalletListView
 import br.com.webbudget.application.payloads.registration.WalletUpdateForm
 import br.com.webbudget.application.payloads.registration.WalletView
 import br.com.webbudget.domain.entities.registration.Wallet
@@ -15,10 +16,13 @@ import org.springframework.stereotype.Component
 interface WalletMapper {
 
     @Mapping(target = "id", source = "externalId")
-    fun map(wallet: Wallet): WalletView
+    fun mapToView(wallet: Wallet): WalletView
+
+    @Mapping(target = "id", source = "externalId")
+    fun mapToListView(wallet: Wallet): WalletListView
 
     @Mapping(target = "currentBalance", expression = "java(java.math.BigDecimal.ZERO)")
-    fun map(form: WalletCreateForm): Wallet
+    fun mapToDomain(form: WalletCreateForm): Wallet
 
-    fun map(form: WalletUpdateForm, @MappingTarget wallet: Wallet)
+    fun mapToDomain(form: WalletUpdateForm, @MappingTarget wallet: Wallet)
 }

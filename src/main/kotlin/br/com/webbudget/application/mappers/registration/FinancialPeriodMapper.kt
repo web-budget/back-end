@@ -2,6 +2,7 @@ package br.com.webbudget.application.mappers.registration
 
 import br.com.webbudget.application.mappers.MappingConfiguration
 import br.com.webbudget.application.payloads.registration.FinancialPeriodCreateForm
+import br.com.webbudget.application.payloads.registration.FinancialPeriodListView
 import br.com.webbudget.application.payloads.registration.FinancialPeriodUpdateForm
 import br.com.webbudget.application.payloads.registration.FinancialPeriodView
 import br.com.webbudget.domain.entities.registration.FinancialPeriod
@@ -15,10 +16,13 @@ import org.springframework.stereotype.Component
 interface FinancialPeriodMapper {
 
     @Mapping(target = "id", source = "externalId")
-    fun map(financialPeriod: FinancialPeriod): FinancialPeriodView
+    fun mapToView(financialPeriod: FinancialPeriod): FinancialPeriodView
+
+    @Mapping(target = "id", source = "externalId")
+    fun mapToListView(financialPeriod: FinancialPeriod): FinancialPeriodListView
 
     @Mapping(target = "status", expression = "java(FinancialPeriod.Status.ACTIVE)")
-    fun map(form: FinancialPeriodCreateForm): FinancialPeriod
+    fun mapToDomain(form: FinancialPeriodCreateForm): FinancialPeriod
 
-    fun map(form: FinancialPeriodUpdateForm, @MappingTarget financialPeriod: FinancialPeriod)
+    fun mapToDomain(form: FinancialPeriodUpdateForm, @MappingTarget financialPeriod: FinancialPeriod)
 }

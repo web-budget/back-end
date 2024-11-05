@@ -2,7 +2,6 @@ package br.com.webbudget.application.controllers.advice
 
 import br.com.webbudget.domain.exceptions.BusinessException
 import jakarta.servlet.http.HttpServletResponse
-import org.springframework.dao.NonTransientDataAccessException
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.ProblemDetail
@@ -20,10 +19,6 @@ class ExceptionHandlerAdvice {
 
     @ExceptionHandler(IllegalArgumentException::class)
     fun handle(ex: IllegalArgumentException): ProblemDetail =
-        ProblemDetail.forStatusAndDetail(BAD_REQUEST, ex.message ?: NO_DETAIL_PROVIDED)
-
-    @ExceptionHandler(NonTransientDataAccessException::class)
-    fun handle(ex: NonTransientDataAccessException): ProblemDetail =
         ProblemDetail.forStatusAndDetail(BAD_REQUEST, ex.message ?: NO_DETAIL_PROVIDED)
 
     @ExceptionHandler(BusinessException::class)

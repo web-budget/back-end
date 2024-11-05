@@ -20,12 +20,12 @@ interface UserMapper {
         Mapping(target = "id", source = "externalId"),
         Mapping(target = "authorities", source = "grants")
     )
-    fun map(user: User): UserView
+    fun mapToView(user: User): UserView
 
     @Mapping(target = "grants", expression = "java(java.util.List.of())")
-    fun map(form: UserCreateForm): User
+    fun mapToDomain(form: UserCreateForm): User
 
-    fun map(form: UserUpdateForm, @MappingTarget user: User)
+    fun mapToDomain(form: UserUpdateForm, @MappingTarget user: User)
 
     companion object {
         @JvmStatic

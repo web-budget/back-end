@@ -3,6 +3,7 @@ package br.com.webbudget.application.controllers.registration
 import br.com.webbudget.application.mappers.registration.CardMapper
 import br.com.webbudget.application.payloads.registration.CardCreateForm
 import br.com.webbudget.application.payloads.registration.CardFilter
+import br.com.webbudget.application.payloads.registration.CardListView
 import br.com.webbudget.application.payloads.registration.CardUpdateForm
 import br.com.webbudget.application.payloads.registration.CardView
 import br.com.webbudget.domain.exceptions.ResourceNotFoundException
@@ -32,21 +33,21 @@ class CardController(
 ) {
 
     @GetMapping
-    fun get(filter: CardFilter, pageable: Pageable): ResponseEntity<Page<CardView>> =
+    fun get(filter: CardFilter, pageable: Pageable): ResponseEntity<Page<CardListView>> =
         cardRepository.findAll(filter.toSpecification(), pageable)
-            .map { cardMapper.map(it) }
+            .map { cardMapper.mapToListView(it) }
             .let { ResponseEntity.ok(it) }
 
     @GetMapping("/{id}")
     fun getById(@PathVariable id: UUID): ResponseEntity<CardView> = cardRepository.findByExternalId(id)
-        ?.let { cardMapper.map(it) }
+        ?.let { cardMapper.mapToView(it) }
         ?.let { ResponseEntity.ok(it) }
         ?: throw ResourceNotFoundException(mapOf("cardId" to id))
 
     @PostMapping
     fun create(@RequestBody @Valid form: CardCreateForm): ResponseEntity<Any> {
 
-        val toCreate = cardMapper.map(form)
+        val toCreate = cardMapper.mapToDomain(form)
         val created = cardService.create(toCreate)
 
         val location = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -63,10 +64,10 @@ class CardController(
         val card = cardRepository.findByExternalId(id)
             ?: throw ResourceNotFoundException(mapOf("cardId" to id))
 
-        cardMapper.map(form, card)
+        cardMapper.mapToDomain(form, card)
         cardService.update(card)
 
-        return ResponseEntity.ok(cardMapper.map(card))
+        return ResponseEntity.ok(cardMapper.mapToView(card))
     }
 
     @DeleteMapping("/{id}")

@@ -3,6 +3,7 @@ package br.com.webbudget.application.controllers.registration
 import br.com.webbudget.application.mappers.registration.MovementClassMapper
 import br.com.webbudget.application.payloads.registration.MovementClassCreateForm
 import br.com.webbudget.application.payloads.registration.MovementClassFilter
+import br.com.webbudget.application.payloads.registration.MovementClassListView
 import br.com.webbudget.application.payloads.registration.MovementClassUpdateForm
 import br.com.webbudget.application.payloads.registration.MovementClassView
 import br.com.webbudget.domain.exceptions.ResourceNotFoundException
@@ -32,22 +33,22 @@ class MovementClassController(
 ) {
 
     @GetMapping
-    fun get(filter: MovementClassFilter, pageable: Pageable): ResponseEntity<Page<MovementClassView>> =
+    fun get(filter: MovementClassFilter, pageable: Pageable): ResponseEntity<Page<MovementClassListView>> =
         movementClassRepository.findAll(filter.toSpecification(), pageable)
-            .map { movementClassMapper.map(it) }
+            .map { movementClassMapper.mapToListView(it) }
             .let { ResponseEntity.ok(it) }
 
     @GetMapping("/{id}")
     fun getById(@PathVariable id: UUID): ResponseEntity<MovementClassView> =
         movementClassRepository.findByExternalId(id)
-            ?.let { movementClassMapper.map(it) }
+            ?.let { movementClassMapper.mapToView(it) }
             ?.let { ResponseEntity.ok(it) }
             ?: throw ResourceNotFoundException(mapOf("movementClassId" to id))
 
     @PostMapping
     fun create(@RequestBody @Valid form: MovementClassCreateForm): ResponseEntity<Any> {
 
-        val movementClass = movementClassMapper.map(form)
+        val movementClass = movementClassMapper.mapToDomain(form)
         val created = movementClassService.create(movementClass)
 
         val location = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -67,10 +68,10 @@ class MovementClassController(
         val movementClass = movementClassRepository.findByExternalId(id)
             ?: throw ResourceNotFoundException(mapOf("movementClassId" to id))
 
-        movementClassMapper.map(form, movementClass)
+        movementClassMapper.mapToDomain(form, movementClass)
         movementClassService.update(movementClass)
 
-        return ResponseEntity.ok(movementClassMapper.map(movementClass))
+        return ResponseEntity.ok(movementClassMapper.mapToView(movementClass))
     }
 
     @DeleteMapping("/{id}")

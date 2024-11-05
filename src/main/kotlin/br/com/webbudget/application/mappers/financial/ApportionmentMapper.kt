@@ -23,10 +23,10 @@ abstract class ApportionmentMapper {
     private lateinit var movementClassRepository: MovementClassRepository
 
     @Mapping(target = "id", source = "externalId")
-    abstract fun map(apportionment: Apportionment): ApportionmentView
+    abstract fun mapToView(apportionment: Apportionment): ApportionmentView
 
     @Mapping(target = "movementClass", source = "movementClass", qualifiedByName = ["mapMovementClass"])
-    abstract fun map(form: ApportionmentForm): Apportionment
+    abstract fun mapToDomain(form: ApportionmentForm): Apportionment
 
     @Named("mapMovementClass")
     fun mapMovementClass(id: UUID): MovementClass = movementClassRepository.findByExternalId(id)

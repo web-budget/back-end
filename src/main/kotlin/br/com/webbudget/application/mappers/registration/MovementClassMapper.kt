@@ -3,6 +3,7 @@ package br.com.webbudget.application.mappers.registration
 import br.com.webbudget.application.mappers.MappingConfiguration
 import br.com.webbudget.application.payloads.registration.MovementClassView
 import br.com.webbudget.application.payloads.registration.MovementClassCreateForm
+import br.com.webbudget.application.payloads.registration.MovementClassListView
 import br.com.webbudget.application.payloads.registration.MovementClassUpdateForm
 import br.com.webbudget.domain.entities.registration.CostCenter
 import br.com.webbudget.domain.entities.registration.MovementClass
@@ -24,16 +25,19 @@ abstract class MovementClassMapper {
     private lateinit var costCenterRepository: CostCenterRepository
 
     @Mapping(target = "id", source = "externalId")
-    abstract fun map(movementClass: MovementClass): MovementClassView
+    abstract fun mapToView(movementClass: MovementClass): MovementClassView
+
+    @Mapping(target = "id", source = "externalId")
+    abstract fun mapToListView(movementClass: MovementClass): MovementClassListView
 
     @Mapping(target = "costCenter", expression = "java(mapCostCenter(form.getCostCenter()))")
-    abstract fun map(form: MovementClassCreateForm): MovementClass
+    abstract fun mapToDomain(form: MovementClassCreateForm): MovementClass
 
     @Mappings(
         Mapping(target = "type", ignore = true),
         Mapping(target = "costCenter", expression = "java(mapCostCenter(form.getCostCenter()))")
     )
-    abstract fun map(form: MovementClassUpdateForm, @MappingTarget movementClass: MovementClass)
+    abstract fun mapToDomain(form: MovementClassUpdateForm, @MappingTarget movementClass: MovementClass)
 
     fun mapCostCenter(externalId: UUID): CostCenter = costCenterRepository.findByExternalId(externalId)
         ?: throw ResourceNotFoundException(mapOf("costCenterId" to externalId))

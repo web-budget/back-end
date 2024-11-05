@@ -3,6 +3,7 @@ package br.com.webbudget.application.controllers.registration
 import br.com.webbudget.application.mappers.registration.CostCenterMapper
 import br.com.webbudget.application.payloads.registration.CostCenterCreateForm
 import br.com.webbudget.application.payloads.registration.CostCenterFilter
+import br.com.webbudget.application.payloads.registration.CostCenterListView
 import br.com.webbudget.application.payloads.registration.CostCenterUpdateForm
 import br.com.webbudget.application.payloads.registration.CostCenterView
 import br.com.webbudget.domain.exceptions.ResourceNotFoundException
@@ -32,21 +33,21 @@ class CostCenterController(
 ) {
 
     @GetMapping
-    fun get(filter: CostCenterFilter, pageable: Pageable): ResponseEntity<Page<CostCenterView>> =
+    fun get(filter: CostCenterFilter, pageable: Pageable): ResponseEntity<Page<CostCenterListView>> =
         costCenterRepository.findAll(filter.toSpecification(), pageable)
-            .map { costCenterMapper.map(it) }
+            .map { costCenterMapper.mapToListView(it) }
             .let { ResponseEntity.ok(it) }
 
     @GetMapping("/{id}")
     fun getById(@PathVariable id: UUID): ResponseEntity<CostCenterView> = costCenterRepository.findByExternalId(id)
-        ?.let { costCenterMapper.map(it) }
+        ?.let { costCenterMapper.mapToView(it) }
         ?.let { ResponseEntity.ok(it) }
         ?: throw ResourceNotFoundException(mapOf("costCenterId" to id))
 
     @PostMapping
     fun create(@RequestBody @Valid form: CostCenterCreateForm): ResponseEntity<Any> {
 
-        val toCreate = costCenterMapper.map(form)
+        val toCreate = costCenterMapper.mapToDomain(form)
         val created = costCenterService.create(toCreate)
 
         val location = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -63,10 +64,10 @@ class CostCenterController(
         val costCenter = costCenterRepository.findByExternalId(id)
             ?: throw ResourceNotFoundException(mapOf("costCenterId" to id))
 
-        costCenterMapper.map(form, costCenter)
+        costCenterMapper.mapToDomain(form, costCenter)
         costCenterService.update(costCenter)
 
-        return ResponseEntity.ok(costCenterMapper.map(costCenter))
+        return ResponseEntity.ok(costCenterMapper.mapToView(costCenter))
     }
 
     @DeleteMapping("/{id}")

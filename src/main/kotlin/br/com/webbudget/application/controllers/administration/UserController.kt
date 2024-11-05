@@ -36,19 +36,19 @@ class UserController(
     @GetMapping
     fun get(filter: UserFilter, pageable: Pageable): ResponseEntity<Page<UserView>> =
         userRepository.findAll(filter.toSpecification(), pageable)
-            .map { userMapper.map(it) }
+            .map { userMapper.mapToView(it) }
             .let { ResponseEntity.ok(it) }
 
     @GetMapping("/{id}")
     fun getById(@PathVariable id: UUID): ResponseEntity<UserView> = userRepository.findByExternalId(id)
-        ?.let { userMapper.map(it) }
+        ?.let { userMapper.mapToView(it) }
         ?.let { ResponseEntity.ok(it) }
         ?: throw ResourceNotFoundException(mapOf("userId" to id))
 
     @PostMapping
     fun create(@RequestBody @Valid form: UserCreateForm): ResponseEntity<Any> {
 
-        val toCreate = userMapper.map(form)
+        val toCreate = userMapper.mapToDomain(form)
         val created = userService.createAccount(toCreate, form.authorities, form.sendActivationEmail)
 
         val location = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -65,10 +65,10 @@ class UserController(
         val user = userRepository.findByExternalId(id)
             ?: throw ResourceNotFoundException(mapOf("userId" to id))
 
-        userMapper.map(form, user)
+        userMapper.mapToDomain(form, user)
         userService.updateAccount(user, form.authorities)
 
-        return ResponseEntity.ok(userMapper.map(user))
+        return ResponseEntity.ok(userMapper.mapToView(user))
     }
 
     @PatchMapping("/{id}/update-password")

@@ -68,7 +68,7 @@ class PeriodMovementController(
         val periodMovement = periodMovementRepository.findByExternalId(id)
             ?: throw ResourceNotFoundException(mapOf("periodMovementId" to id))
 
-        periodMovementMapper.mapFromFormToDomain(form, periodMovement)
+        periodMovementMapper.mapToDomain(form, periodMovement)
         periodMovementService.update(periodMovement)
 
         return ResponseEntity.ok(periodMovementMapper.mapToListView(periodMovement))

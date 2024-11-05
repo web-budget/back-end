@@ -2,6 +2,7 @@ package br.com.webbudget.application.mappers.registration
 
 import br.com.webbudget.application.mappers.MappingConfiguration
 import br.com.webbudget.application.payloads.registration.CostCenterCreateForm
+import br.com.webbudget.application.payloads.registration.CostCenterListView
 import br.com.webbudget.application.payloads.registration.CostCenterUpdateForm
 import br.com.webbudget.application.payloads.registration.CostCenterView
 import br.com.webbudget.domain.entities.registration.CostCenter
@@ -15,9 +16,12 @@ import org.springframework.stereotype.Component
 interface CostCenterMapper {
 
     @Mapping(target = "id", source = "externalId")
-    fun map(costCenter: CostCenter): CostCenterView
+    fun mapToView(costCenter: CostCenter): CostCenterView
 
-    fun map(form: CostCenterCreateForm): CostCenter
+    @Mapping(target = "id", source = "externalId")
+    fun mapToListView(costCenter: CostCenter): CostCenterListView
 
-    fun map(form: CostCenterUpdateForm, @MappingTarget costCenter: CostCenter)
+    fun mapToDomain(form: CostCenterCreateForm): CostCenter
+
+    fun mapToDomain(form: CostCenterUpdateForm, @MappingTarget costCenter: CostCenter)
 }

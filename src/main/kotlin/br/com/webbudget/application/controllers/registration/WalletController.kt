@@ -3,6 +3,7 @@ package br.com.webbudget.application.controllers.registration
 import br.com.webbudget.application.mappers.registration.WalletMapper
 import br.com.webbudget.application.payloads.registration.WalletCreateForm
 import br.com.webbudget.application.payloads.registration.WalletFilter
+import br.com.webbudget.application.payloads.registration.WalletListView
 import br.com.webbudget.application.payloads.registration.WalletUpdateForm
 import br.com.webbudget.application.payloads.registration.WalletView
 import br.com.webbudget.domain.exceptions.ResourceNotFoundException
@@ -32,21 +33,21 @@ class WalletController(
 ) {
 
     @GetMapping
-    fun get(filter: WalletFilter, pageable: Pageable): ResponseEntity<Page<WalletView>> =
+    fun get(filter: WalletFilter, pageable: Pageable): ResponseEntity<Page<WalletListView>> =
         walletRepository.findAll(filter.toSpecification(), pageable)
-            .map { walletMapper.map(it) }
+            .map { walletMapper.mapToListView(it) }
             .let { ResponseEntity.ok(it) }
 
     @GetMapping("/{id}")
     fun getById(@PathVariable id: UUID): ResponseEntity<WalletView> = walletRepository.findByExternalId(id)
-        ?.let { walletMapper.map(it) }
+        ?.let { walletMapper.mapToView(it) }
         ?.let { ResponseEntity.ok(it) }
         ?: throw ResourceNotFoundException(mapOf("walletId" to id))
 
     @PostMapping
     fun create(@RequestBody @Valid form: WalletCreateForm): ResponseEntity<Any> {
 
-        val toCreate = walletMapper.map(form)
+        val toCreate = walletMapper.mapToDomain(form)
         val created = walletService.create(toCreate)
 
         val location = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -63,10 +64,10 @@ class WalletController(
         val wallet = walletRepository.findByExternalId(id)
             ?: throw ResourceNotFoundException(mapOf("walletId" to id))
 
-        walletMapper.map(form, wallet)
+        walletMapper.mapToDomain(form, wallet)
         walletService.update(wallet)
 
-        return ResponseEntity.ok(walletMapper.map(wallet))
+        return ResponseEntity.ok(walletMapper.mapToView(wallet))
     }
 
     @DeleteMapping("/{id}")
