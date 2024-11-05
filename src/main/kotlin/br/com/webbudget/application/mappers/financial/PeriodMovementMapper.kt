@@ -43,6 +43,7 @@ abstract class PeriodMovementMapper {
     abstract fun mapToDomain(form: PeriodMovementUpdateForm, @MappingTarget periodMovement: PeriodMovement)
 
     @AfterMapping
+    @Suppress("unused")
     fun afterMapFormToDomain(form: PeriodMovementCreateForm, @MappingTarget periodMovement: PeriodMovement) {
         periodMovement.apportionments.forEach { it.periodMovement = periodMovement }
     }
