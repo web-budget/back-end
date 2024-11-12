@@ -48,7 +48,7 @@ class PeriodMovementClassMapperUTest {
             createCostCenter(externalId = form.costCenter)
         }
 
-        val domainObject = movementClassMapper.map(form)
+        val domainObject = movementClassMapper.mapToDomain(form)
 
         assertThat(domainObject)
             .isNotNull
@@ -77,7 +77,7 @@ class PeriodMovementClassMapperUTest {
             createCostCenter(externalId = form.costCenter)
         }
 
-        movementClassMapper.map(form, domainObject)
+        movementClassMapper.mapToDomain(form, domainObject)
 
         assertThat(domainObject)
             .isNotNull
@@ -108,7 +108,7 @@ class PeriodMovementClassMapperUTest {
             this.externalId = externalId
         }
 
-        val view = movementClassMapper.map(domainObject)
+        val view = movementClassMapper.mapToView(domainObject)
 
         assertThat(view)
             .isNotNull
@@ -118,6 +118,29 @@ class PeriodMovementClassMapperUTest {
                 assertThat(it.type).isEqualTo(view.type)
                 assertThat(it.budget).isEqualTo(view.budget)
                 assertThat(it.description).isEqualTo(view.description)
+                assertThat(it.active).isTrue()
+            })
+    }
+
+    @ParameterizedTest
+    @MethodSource("domainObjects")
+    fun `should map domain object to list view`(domainObject: MovementClass) {
+
+        val externalId = UUID.randomUUID()
+
+        domainObject.apply {
+            this.id = 1L
+            this.externalId = externalId
+        }
+
+        val view = movementClassMapper.mapToListView(domainObject)
+
+        assertThat(view)
+            .isNotNull
+            .satisfies({
+                assertThat(it.id).isEqualTo(domainObject.externalId!!)
+                assertThat(it.name).isEqualTo(view.name)
+                assertThat(it.type).isEqualTo(view.type)
                 assertThat(it.active).isTrue()
             })
     }

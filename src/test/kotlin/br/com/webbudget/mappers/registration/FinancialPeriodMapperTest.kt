@@ -22,9 +22,10 @@ class FinancialPeriodMapperTest {
 
         val form = FinancialPeriodCreateForm("01/2024", start, end, BigDecimal.TEN, BigDecimal.ONE)
 
-        val financialPeriod = financialPeriodMapper.map(form)
+        val financialPeriod = financialPeriodMapper.mapToDomain(form)
 
         assertThat(financialPeriod)
+            .isNotNull
             .satisfies({
                 assertThat(it.name).isEqualTo(form.name)
                 assertThat(it.startingAt).isEqualTo(start)
@@ -45,9 +46,10 @@ class FinancialPeriodMapperTest {
 
         val financialPeriod = createFinancialPeriod(id = 1L, status = FinancialPeriod.Status.ENDED)
 
-        financialPeriodMapper.map(form, financialPeriod)
+        financialPeriodMapper.mapToDomain(form, financialPeriod)
 
         assertThat(financialPeriod)
+            .isNotNull
             .satisfies({
                 assertThat(it.name).isEqualTo(form.name)
                 assertThat(it.startingAt).isEqualTo(start)
@@ -63,9 +65,10 @@ class FinancialPeriodMapperTest {
 
         val financialPeriod = createFinancialPeriod(id = 1L, status = FinancialPeriod.Status.ACCOUNTED)
 
-        val view = financialPeriodMapper.map(financialPeriod)
+        val view = financialPeriodMapper.mapToView(financialPeriod)
 
         assertThat(view)
+            .isNotNull
             .satisfies({
                 assertThat(it.id).isEqualTo(financialPeriod.externalId)
                 assertThat(it.name).isEqualTo(financialPeriod.name)
@@ -73,6 +76,24 @@ class FinancialPeriodMapperTest {
                 assertThat(it.endingAt).isEqualTo(financialPeriod.endingAt)
                 assertThat(it.revenuesGoal).isEqualTo(financialPeriod.revenuesGoal)
                 assertThat(it.expensesGoal).isEqualTo(financialPeriod.expensesGoal)
+                assertThat(it.status).isEqualTo(financialPeriod.status.name)
+            })
+    }
+
+    @Test
+    fun `should map domain object to list view`() {
+
+        val financialPeriod = createFinancialPeriod(id = 1L, status = FinancialPeriod.Status.ACCOUNTED)
+
+        val view = financialPeriodMapper.mapToListView(financialPeriod)
+
+        assertThat(view)
+            .isNotNull
+            .satisfies({
+                assertThat(it.id).isEqualTo(financialPeriod.externalId)
+                assertThat(it.name).isEqualTo(financialPeriod.name)
+                assertThat(it.startingAt).isEqualTo(financialPeriod.startingAt)
+                assertThat(it.endingAt).isEqualTo(financialPeriod.endingAt)
                 assertThat(it.status).isEqualTo(financialPeriod.status.name)
             })
     }

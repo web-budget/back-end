@@ -17,13 +17,15 @@ class CostCenterMapperUTest {
 
         val form = CostCenterCreateForm("Cost Center", "Some cost center", true)
 
-        val domainObject = costCenterMapper.map(form)
+        val domainObject = costCenterMapper.mapToDomain(form)
 
         assertThat(domainObject)
             .isNotNull
-            .hasFieldOrPropertyWithValue("active", form.active)
-            .hasFieldOrPropertyWithValue("name", form.name)
-            .hasFieldOrPropertyWithValue("description", form.description)
+            .satisfies({
+                assertThat(it.active).isEqualTo(form.active)
+                assertThat(it.name).isEqualTo(form.name)
+                assertThat(it.description).isEqualTo(form.description)
+            })
     }
 
     @Test
@@ -32,7 +34,7 @@ class CostCenterMapperUTest {
         val domainObject = createCostCenter()
         val form = CostCenterUpdateForm("Other", "Other", false)
 
-        costCenterMapper.map(form, domainObject)
+        costCenterMapper.mapToDomain(form, domainObject)
 
         assertThat(domainObject)
             .isNotNull
@@ -49,13 +51,32 @@ class CostCenterMapperUTest {
         val externalId = UUID.randomUUID()
         val domainObject = createCostCenter(externalId = externalId)
 
-        val view = costCenterMapper.map(domainObject)
+        val view = costCenterMapper.mapToView(domainObject)
 
         assertThat(view)
             .isNotNull
-            .hasFieldOrPropertyWithValue("id", externalId)
-            .hasFieldOrPropertyWithValue("active", domainObject.active)
-            .hasFieldOrPropertyWithValue("name", domainObject.name)
-            .hasFieldOrPropertyWithValue("description", domainObject.description)
+            .satisfies({
+                assertThat(it.id).isEqualTo(externalId)
+                assertThat(it.active).isEqualTo(domainObject.active)
+                assertThat(it.name).isEqualTo(domainObject.name)
+                assertThat(it.description).isEqualTo(domainObject.description)
+            })
+    }
+
+    @Test
+    fun `should map domain object to list view`() {
+
+        val externalId = UUID.randomUUID()
+        val domainObject = createCostCenter(externalId = externalId)
+
+        val view = costCenterMapper.mapToListView(domainObject)
+
+        assertThat(view)
+            .isNotNull
+            .satisfies({
+                assertThat(it.id).isEqualTo(externalId)
+                assertThat(it.active).isEqualTo(domainObject.active)
+                assertThat(it.name).isEqualTo(domainObject.name)
+            })
     }
 }

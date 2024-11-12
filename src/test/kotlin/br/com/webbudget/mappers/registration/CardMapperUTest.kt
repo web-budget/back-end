@@ -45,7 +45,7 @@ class CardMapperUTest {
 
         every { walletRepository.findByExternalId(any<UUID>()) } returns createWallet(externalId = form.wallet)
 
-        val domainObject = cardMapper.map(form)
+        val domainObject = cardMapper.mapToDomain(form)
 
         assertThat(domainObject)
             .isNotNull
@@ -69,7 +69,7 @@ class CardMapperUTest {
 
         every { walletRepository.findByExternalId(any<UUID>()) } returns createWallet(externalId = form.wallet)
 
-        cardMapper.map(form, domainObject)
+        cardMapper.mapToDomain(form, domainObject)
 
         assertThat(domainObject)
             .isNotNull
@@ -87,7 +87,7 @@ class CardMapperUTest {
     }
 
     @ParameterizedTest
-    @MethodSource("viewObjects")
+    @MethodSource("domainObjects")
     fun `should map domain object to view`(domainObject: Card) {
 
         val externalId = UUID.randomUUID()
@@ -97,7 +97,7 @@ class CardMapperUTest {
             this.externalId = externalId
         }
 
-        val view = cardMapper.map(domainObject)
+        val view = cardMapper.mapToView(domainObject)
 
         assertThat(view)
             .isNotNull
@@ -108,6 +108,28 @@ class CardMapperUTest {
                 assertThat(it.lastFourDigits).isEqualTo(domainObject.lastFourDigits)
                 assertThat(it.flag).isEqualTo(domainObject.flag)
                 assertThat(it.invoicePaymentDay).isEqualTo(domainObject.invoicePaymentDay)
+            })
+    }
+
+    @ParameterizedTest
+    @MethodSource("domainObjects")
+    fun `should map domain object to list view`(domainObject: Card) {
+
+        val externalId = UUID.randomUUID()
+
+        domainObject.apply {
+            this.id = 1L
+            this.externalId = externalId
+        }
+
+        val view = cardMapper.mapToListView(domainObject)
+
+        assertThat(view)
+            .isNotNull
+            .satisfies({
+                assertThat(it.name).isEqualTo(domainObject.name)
+                assertThat(it.id).isEqualTo(domainObject.externalId)
+                assertThat(it.active).isEqualTo(domainObject.active)
             })
     }
 
@@ -140,7 +162,7 @@ class CardMapperUTest {
         }
 
         @JvmStatic
-        fun viewObjects(): Stream<Arguments> {
+        fun domainObjects(): Stream<Arguments> {
             val wallet = createWallet(id = 1L, externalId = UUID.randomUUID())
             return Stream.of(Arguments.of(createCard()), Arguments.of(createCard(type = DEBIT, wallet = wallet)))
         }

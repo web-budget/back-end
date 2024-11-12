@@ -21,10 +21,10 @@ class WalletMapperUTest {
     private val walletMapper = WalletMapperImpl()
 
     @ParameterizedTest
-    @MethodSource("buildCreateFormParams")
+    @MethodSource("createFormObjects")
     fun `should map create form to domain object`(form: WalletCreateForm) {
 
-        val domainObject = walletMapper.map(form)
+        val domainObject = walletMapper.mapToDomain(form)
 
         assertThat(domainObject)
             .isNotNull
@@ -46,7 +46,7 @@ class WalletMapperUTest {
         val domainObject = createWallet()
         val form = WalletUpdateForm("Wallet X", false, "Some wallet", "1", "2", "3")
 
-        walletMapper.map(form, domainObject)
+        walletMapper.mapToDomain(form, domainObject)
 
         assertThat(domainObject)
             .isNotNull
@@ -61,7 +61,7 @@ class WalletMapperUTest {
     }
 
     @ParameterizedTest
-    @MethodSource("buildWalletParams")
+    @MethodSource("domainObjects")
     fun `should map domain object to view`(domainObject: Wallet) {
 
         val externalId = UUID.randomUUID()
@@ -71,7 +71,7 @@ class WalletMapperUTest {
             this.externalId = externalId
         }
 
-        val view = walletMapper.map(domainObject)
+        val view = walletMapper.mapToView(domainObject)
 
         assertThat(view)
             .isNotNull
@@ -88,17 +88,40 @@ class WalletMapperUTest {
             })
     }
 
+    @ParameterizedTest
+    @MethodSource("domainObjects")
+    fun `should map domain object to list view`(domainObject: Wallet) {
+
+        val externalId = UUID.randomUUID()
+
+        domainObject.apply {
+            this.id = 1L
+            this.externalId = externalId
+        }
+
+        val view = walletMapper.mapToListView(domainObject)
+
+        assertThat(view)
+            .isNotNull
+            .satisfies({
+                assertThat(it.id).isEqualTo(domainObject.externalId!!)
+                assertThat(it.active).isEqualTo(domainObject.active)
+                assertThat(it.name).isEqualTo(domainObject.name)
+                assertThat(it.type).isEqualTo(domainObject.type)
+            })
+    }
+
     companion object {
 
         @JvmStatic
-        fun buildCreateFormParams() = listOf(
+        fun createFormObjects() = listOf(
             Arguments.of(WalletCreateForm("Personal", PERSONAL, "Personal")),
             Arguments.of(WalletCreateForm("Investments", INVESTMENT, "Investments", "1", "1", "1")),
             Arguments.of(WalletCreateForm("Bank", BANK_ACCOUNT, "Bank account", "1", "1", "1"))
         )
 
         @JvmStatic
-        fun buildWalletParams() = listOf(
+        fun domainObjects() = listOf(
             Arguments.of(createWallet(name = "Personal", type = PERSONAL, description = "Personal")),
             Arguments.of(createWallet(name = "Bank", balance = BigDecimal.TEN)),
             Arguments.of(

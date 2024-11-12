@@ -23,7 +23,7 @@ class UserMapperUTest {
         val authorities = listOf("SOMETHING")
         val form = UserCreateForm("Someone", "someone@test.com", "s3cr3t", PT_BR, authorities)
 
-        val domainObject = userMapper.map(form)
+        val domainObject = userMapper.mapToDomain(form)
 
         assertThat(domainObject)
             .isNotNull
@@ -42,7 +42,7 @@ class UserMapperUTest {
         val domainObject = createUser()
         val form = UserUpdateForm(false, "The Name", EN_US, listOf("SOMETHING"))
 
-        userMapper.map(form, domainObject)
+        userMapper.mapToDomain(form, domainObject)
 
         assertThat(domainObject)
             .isNotNull
@@ -65,7 +65,7 @@ class UserMapperUTest {
             this.grants = grants
         }
 
-        val view = userMapper.map(domainObject)
+        val view = userMapper.mapToView(domainObject)
 
         assertThat(view)
             .isNotNull
