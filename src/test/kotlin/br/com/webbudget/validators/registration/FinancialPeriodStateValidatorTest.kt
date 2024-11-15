@@ -1,6 +1,6 @@
 package br.com.webbudget.validators.registration
 
-import br.com.webbudget.domain.entities.registration.FinancialPeriod
+import br.com.webbudget.domain.entities.registration.FinancialPeriod.Status
 import br.com.webbudget.domain.exceptions.BusinessException
 import br.com.webbudget.domain.validators.registration.FinancialPeriodStateValidator
 import br.com.webbudget.infrastructure.repository.registration.FinancialPeriodRepository
@@ -32,12 +32,16 @@ class FinancialPeriodStateValidatorTest {
         val savedPeriod = createFinancialPeriod(id = 1L)
         val periodToValidate = createFinancialPeriod(id = 1L)
 
-        every { financialPeriodRepository.findByExternalId(any<UUID>()) } returns savedPeriod
+        every {
+            financialPeriodRepository.findByExternalIdAndStatusIn(any<UUID>(), any<List<Status>>())
+        } returns savedPeriod
 
         assertThatNoException()
             .isThrownBy { validator.validate(periodToValidate) }
 
-        verify(exactly = 1) { financialPeriodRepository.findByExternalId(ofType<UUID>()) }
+        verify(exactly = 1) {
+            financialPeriodRepository.findByExternalIdAndStatusIn(ofType<UUID>(), ofType<List<Status>>())
+        }
 
         confirmVerified(financialPeriodRepository)
     }
@@ -45,16 +49,19 @@ class FinancialPeriodStateValidatorTest {
     @Test
     fun `should fail if state doesn't permit changes`() {
 
-        val savedPeriod = createFinancialPeriod(id = 1L, status = FinancialPeriod.Status.ENDED)
-        val periodToValidate = createFinancialPeriod(id = 1L, status = FinancialPeriod.Status.ACTIVE)
+        val periodToValidate = createFinancialPeriod(id = 1L, status = Status.ACTIVE)
 
-        every { financialPeriodRepository.findByExternalId(any<UUID>()) } returns savedPeriod
+        every {
+            financialPeriodRepository.findByExternalIdAndStatusIn(any<UUID>(), any<List<Status>>())
+        } returns null
 
         assertThatThrownBy { validator.validate(periodToValidate) }
             .isInstanceOf(BusinessException::class.java)
-            .hasMessage("You can't delete or update non active periods")
+            .hasMessage("You can't delete or update non open periods")
 
-        verify(exactly = 1) { financialPeriodRepository.findByExternalId(ofType<UUID>()) }
+        verify(exactly = 1) {
+            financialPeriodRepository.findByExternalIdAndStatusIn(ofType<UUID>(), ofType<List<Status>>())
+        }
 
         confirmVerified(financialPeriodRepository)
     }

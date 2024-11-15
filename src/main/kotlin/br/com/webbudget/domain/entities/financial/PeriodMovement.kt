@@ -55,6 +55,10 @@ class PeriodMovement(
     val apportionments: List<Apportionment> = emptyList()
 ) : PersistentEntity<Long>() {
 
+    fun isOpen(): Boolean = state == State.OPEN
+
+    fun isAccounted(): Boolean = state == State.ACCOUNTED
+
     enum class State {
         OPEN, PAID, ACCOUNTED
     }

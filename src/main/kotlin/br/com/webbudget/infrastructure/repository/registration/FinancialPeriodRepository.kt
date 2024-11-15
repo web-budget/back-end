@@ -44,6 +44,8 @@ interface FinancialPeriodRepository : BaseRepository<FinancialPeriod> {
         externalId: UUID
     ): List<FinancialPeriod>
 
+    fun findByExternalIdAndStatusIn(externalId: UUID, statuses: List<Status>): FinancialPeriod?
+
     object Specifications : SpecificationHelpers {
 
         fun byName(value: String?) = Specification<FinancialPeriod> { root, _, builder ->

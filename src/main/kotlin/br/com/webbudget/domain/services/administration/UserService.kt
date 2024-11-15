@@ -2,6 +2,9 @@ package br.com.webbudget.domain.services.administration
 
 import br.com.webbudget.domain.entities.administration.Grant
 import br.com.webbudget.domain.entities.administration.User
+import br.com.webbudget.domain.validators.OnCreateValidation
+import br.com.webbudget.domain.validators.OnUpdateValidation
+import br.com.webbudget.domain.validators.administration.UserValidator
 import br.com.webbudget.infrastructure.repository.administration.AccountActivationAttemptRepository
 import br.com.webbudget.infrastructure.repository.administration.AuthorityRepository
 import br.com.webbudget.infrastructure.repository.administration.GrantRepository
@@ -19,16 +22,19 @@ class UserService(
     private val grantRepository: GrantRepository,
     private val passwordEncoder: PasswordEncoder,
     private val authorityRepository: AuthorityRepository,
-    private val userValidationService: UserValidationService,
     private val accountActivationService: AccountActivationService,
     private val passwordRecoverAttemptRepository: PasswordRecoverAttemptRepository,
-    private val accountActivationAttemptRepository: AccountActivationAttemptRepository
+    private val accountActivationAttemptRepository: AccountActivationAttemptRepository,
+    @OnCreateValidation
+    private val creationValidators: List<UserValidator>,
+    @OnUpdateValidation
+    private val updateValidators: List<UserValidator>
 ) {
 
     @Transactional
     fun createAccount(user: User, authorities: List<String>, notifyAccountCreated: Boolean = false): UUID {
 
-        userValidationService.validateOnCreate(user)
+        creationValidators.forEach { it.validate(user) }
 
         val password = passwordEncoder.encode(user.password)
         user.password = password
@@ -49,7 +55,7 @@ class UserService(
     @Transactional
     fun updateAccount(user: User, authorities: List<String>): User {
 
-        userValidationService.validateOnUpdate(user)
+        updateValidators.forEach { it.validate(user) }
 
         val userExternalId = user.externalId!!
 

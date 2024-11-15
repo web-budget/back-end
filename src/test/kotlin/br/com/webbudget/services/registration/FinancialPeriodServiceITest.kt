@@ -184,6 +184,7 @@ class FinancialPeriodServiceITest : BaseIntegrationTest() {
     }
 
     @Test
+    @Sql("/sql/registration/clear-tables.sql")
     fun `should fail to update if start date is after end date`() {
 
         val financialPeriod = createFinancialPeriod(
@@ -206,7 +207,7 @@ class FinancialPeriodServiceITest : BaseIntegrationTest() {
     }
 
     @Test
-    fun `should fail to update if period is not active`() {
+    fun `should fail to update if period is not open`() {
 
         val financialPeriod = createFinancialPeriod(
             name = "10/2024",
@@ -220,7 +221,7 @@ class FinancialPeriodServiceITest : BaseIntegrationTest() {
 
         assertThatThrownBy { financialPeriodService.update(toUpdate) }
             .isInstanceOf(BusinessException::class.java)
-            .hasMessage("You can't delete or update non active periods")
+            .hasMessage("You can't delete or update non open periods")
     }
 
     @Test
@@ -244,7 +245,7 @@ class FinancialPeriodServiceITest : BaseIntegrationTest() {
         "/sql/registration/clear-tables.sql",
         "/sql/registration/create-financial-period.sql"
     )
-    fun `should fail to delete if period is not active`() {
+    fun `should fail to delete if period is not open`() {
 
         val externalId = UUID.fromString("27881a12-5e61-43cd-a6d0-fdb32eaa75c0")
         val toUpdate = financialPeriodRepository.findByExternalId(externalId) ?: fail { OBJECT_NOT_FOUND_ERROR }
@@ -259,7 +260,7 @@ class FinancialPeriodServiceITest : BaseIntegrationTest() {
 
         assertThatThrownBy { financialPeriodService.delete(toDelete) }
             .isInstanceOf(BusinessException::class.java)
-            .hasMessage("You can't delete or update non active periods")
+            .hasMessage("You can't delete or update non open periods")
     }
 
     @Test
