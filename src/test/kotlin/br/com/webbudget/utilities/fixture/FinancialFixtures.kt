@@ -9,8 +9,11 @@ import br.com.webbudget.domain.entities.registration.FinancialPeriod
 import br.com.webbudget.domain.entities.registration.MovementClass
 import java.math.BigDecimal
 import java.time.LocalDate
+import java.util.UUID
 
 fun createPeriodMovement(
+    id: Long? = null,
+    externalId: UUID? = UUID.randomUUID(),
     name: String = "The movement",
     dueDate: LocalDate = LocalDate.now(),
     value: BigDecimal = BigDecimal.ONE,
@@ -21,7 +24,7 @@ fun createPeriodMovement(
     payment: Payment? = null,
     creditCardInvoice: CreditCardInvoice? = null,
     recurringMovement: RecurringMovement? = null,
-    apportionments: List<Apportionment> = listOf(createApportionment()),
+    apportionments: MutableList<Apportionment> = mutableListOf(createApportionment()),
 ): PeriodMovement = PeriodMovement(
     name,
     dueDate,
@@ -34,11 +37,20 @@ fun createPeriodMovement(
     creditCardInvoice,
     recurringMovement,
     apportionments
-)
+).apply {
+    this.id = id
+    this.externalId = externalId
+}
 
 fun createApportionment(
+    id: Long? = null,
+    externalId: UUID? = UUID.randomUUID(),
     value: BigDecimal = BigDecimal.ONE,
     movementClass: MovementClass = createMovementClass(),
     periodMovement: PeriodMovement? = null,
     recurringMovement: RecurringMovement? = null
 ): Apportionment = Apportionment(value, movementClass, periodMovement, recurringMovement)
+    .apply {
+        this.id = id
+        this.externalId = externalId
+    }

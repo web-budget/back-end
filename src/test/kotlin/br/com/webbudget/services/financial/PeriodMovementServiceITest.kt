@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Disabled
 import org.springframework.beans.factory.annotation.Autowired
 
 @Disabled
+@Suppress("unused")
 class PeriodMovementServiceITest : BaseIntegrationTest() {
 
     @Autowired

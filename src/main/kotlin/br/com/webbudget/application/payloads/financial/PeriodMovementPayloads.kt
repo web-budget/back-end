@@ -31,17 +31,17 @@ data class PeriodMovementCreateForm(
 
 data class PeriodMovementUpdateForm(
     @field:NotBlank(message = IS_NULL_OR_BLANK)
-    val name: String?,
+    val name: String? = null,
     @field:NotNull(message = IS_NULL)
-    val dueDate: LocalDate?,
+    val dueDate: LocalDate? = null,
     @field:NotNull(message = IS_NULL)
-    val value: BigDecimal?,
+    val value: BigDecimal? = null,
     @field:NotNull(message = IS_NULL)
-    val financialPeriod: UUID?,
-    val description: String?,
+    val financialPeriod: UUID? = null,
+    val description: String? = null,
     @field:NotNull(message = IS_NULL)
     @field:NotEmpty(message = IS_EMPTY)
-    val apportionments: List<ApportionmentForm>? = emptyList()
+    val apportionments: List<ApportionmentForm>? = null
 )
 
 data class PeriodMovementView(

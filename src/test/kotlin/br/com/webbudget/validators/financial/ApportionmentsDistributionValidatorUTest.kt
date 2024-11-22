@@ -29,7 +29,7 @@ class ApportionmentsDistributionValidatorUTest {
     @Test
     fun `should thrown exception if apportionments distribution is invalid`() {
 
-        val movement = createPeriodMovement(apportionments = listOf(createApportionment(value = BigDecimal.TEN)))
+        val movement = createPeriodMovement(apportionments = mutableListOf(createApportionment(value = BigDecimal.TEN)))
 
         assertThatThrownBy { apportionmentsDistributionValidator.validate(movement) }
             .isInstanceOf(BusinessException::class.java)
