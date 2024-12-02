@@ -52,12 +52,25 @@ class PeriodMovement(
     var recurringMovement: RecurringMovement? = null,
 
     @field:OneToMany(mappedBy = "periodMovement", cascade = [REMOVE, PERSIST, MERGE])
-    val apportionments: List<Apportionment> = emptyList()
+    val apportionments: MutableList<Apportionment> = mutableListOf()
 ) : PersistentEntity<Long>() {
 
     fun isOpen(): Boolean = state == State.OPEN
 
     fun isAccounted(): Boolean = state == State.ACCOUNTED
+
+    /**
+     * this is a workaround caused by the way mapstruct works
+     *
+     * since it is set to target immutable for mapping collections, MS try to find a setter to map the collection
+     * items to the target collection
+     */
+    fun setApportionments(apportionments: List<Apportionment>?) {
+        apportionments?.let {
+            this.apportionments.clear()
+            this.apportionments.addAll(it)
+        }
+    }
 
     enum class State {
         OPEN, PAID, ACCOUNTED
