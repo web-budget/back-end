@@ -112,8 +112,9 @@ class FinancialPeriodServiceITest : BaseIntegrationTest() {
             this.name = "09/2024"
             this.startingAt = LocalDate.of(2024, 9, 1)
             this.endingAt = LocalDate.of(2024, 9, 30)
-            this.revenuesGoal = BigDecimal.TWO
-            this.expensesGoal = BigDecimal.TEN
+            this.revenuesGoal = BigDecimal("190.83")
+            this.expensesGoal = BigDecimal("250.29")
+            this.status = FinancialPeriod.Status.ENDED
         }
 
         financialPeriodService.update(toUpdate)
@@ -130,6 +131,8 @@ class FinancialPeriodServiceITest : BaseIntegrationTest() {
             assertThat(it.name).isEqualTo(toUpdate.name)
             assertThat(it.startingAt).isEqualTo(toUpdate.startingAt)
             assertThat(it.endingAt).isEqualTo(toUpdate.endingAt)
+            assertThat(it.revenuesGoal).isEqualTo(toUpdate.revenuesGoal)
+            assertThat(it.expensesGoal).isEqualTo(toUpdate.expensesGoal)
         })
     }
 
