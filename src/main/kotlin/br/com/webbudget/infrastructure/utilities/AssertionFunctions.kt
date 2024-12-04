@@ -1,4 +1,4 @@
-package br.com.webbudget.infrastructure
+package br.com.webbudget.infrastructure.utilities
 
 import br.com.webbudget.domain.exceptions.BusinessException
 

@@ -1,0 +1,13 @@
+{
+  "name": "Updated",
+  "dueDate": "2024-11-30",
+  "value": 1,
+  "financialPeriod": "bc67ba91-7c0a-466d-877c-0b1fe2fb56bd",
+  "description": "Updated",
+  "apportionments": [
+    {
+      "value": 1,
+      "movementClass": "ff8ac873-2cbd-43dd-a3e8-2bc451f4e3fa"
+    }
+  ]
+}

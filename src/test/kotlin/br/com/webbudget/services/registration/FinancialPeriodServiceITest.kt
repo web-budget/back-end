@@ -58,8 +58,8 @@ class FinancialPeriodServiceITest : BaseIntegrationTest() {
 
         val financialPeriod = createFinancialPeriod(
             name = "08/2024",
-            startingAt = LocalDate.of(2024, 7, 1),
-            endingAt = LocalDate.of(2024, 7, 31)
+            startingAt = LocalDate.of(2024, 9, 1),
+            endingAt = LocalDate.of(2024, 9, 30)
         )
 
         assertThatThrownBy { financialPeriodService.create(financialPeriod) }

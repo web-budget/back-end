@@ -24,7 +24,6 @@ data class PeriodMovementCreateForm(
     @field:NotNull(message = IS_NULL)
     val financialPeriod: UUID?,
     val description: String?,
-    @field:NotNull(message = IS_NULL)
     @field:NotEmpty(message = IS_EMPTY)
     val apportionments: List<ApportionmentForm>? = emptyList()
 )
@@ -39,7 +38,6 @@ data class PeriodMovementUpdateForm(
     @field:NotNull(message = IS_NULL)
     val financialPeriod: UUID? = null,
     val description: String? = null,
-    @field:NotNull(message = IS_NULL)
     @field:NotEmpty(message = IS_EMPTY)
     val apportionments: List<ApportionmentForm>? = null
 )
