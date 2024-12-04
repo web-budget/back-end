@@ -7,7 +7,7 @@ import br.com.webbudget.domain.entities.registration.Wallet
 import br.com.webbudget.domain.services.registration.WalletService
 import br.com.webbudget.infrastructure.repository.registration.WalletRepository
 import br.com.webbudget.utilities.Authorities
-import br.com.webbudget.utilities.ResourceAsString
+import br.com.webbudget.utilities.JsonPayload
 import br.com.webbudget.utilities.fixture.createWallet
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.Runs
@@ -55,7 +55,7 @@ class WalletControllerUTest : BaseControllerIntegrationTest() {
     }
 
     @Test
-    fun `should call create and return created`(@ResourceAsString("wallet/create.json") payload: String) {
+    fun `should call create and return created`() {
 
         val externalId = UUID.randomUUID()
 
@@ -64,7 +64,7 @@ class WalletControllerUTest : BaseControllerIntegrationTest() {
         mockMvc.post(ENDPOINT_URL) {
             with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
-            content = payload
+            content = JsonPayload("wallet/create")
         }.andExpect {
             status { isCreated() }
         }.andExpect {
@@ -79,7 +79,7 @@ class WalletControllerUTest : BaseControllerIntegrationTest() {
     }
 
     @Test
-    fun `should call update and return ok`(@ResourceAsString("wallet/update.json") payload: String) {
+    fun `should call update and return ok`() {
 
         val externalId = UUID.randomUUID()
         val expectedWallet = createWallet()
@@ -90,7 +90,7 @@ class WalletControllerUTest : BaseControllerIntegrationTest() {
         val jsonResponse = mockMvc.put("${ENDPOINT_URL}/$externalId") {
             with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
-            content = payload
+            content = JsonPayload("wallet/update")
         }.andExpect {
             status { isOk() }
         }.andReturn()
@@ -153,9 +153,7 @@ class WalletControllerUTest : BaseControllerIntegrationTest() {
     }
 
     @Test
-    fun `should expect unprocessable entity if required fields are not present`(
-        @ResourceAsString("wallet/invalid.json") payload: String
-    ) {
+    fun `should expect unprocessable entity if required fields are not present`() {
 
         val requiredEntries = mapOf(
             "name" to "is-null-or-blank",
@@ -165,7 +163,7 @@ class WalletControllerUTest : BaseControllerIntegrationTest() {
         val jsonResponse = mockMvc.post(ENDPOINT_URL) {
             with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
-            content = payload
+            content = JsonPayload("wallet/invalid")
         }.andExpect {
             status { isUnprocessableEntity() }
         }.andReturn()

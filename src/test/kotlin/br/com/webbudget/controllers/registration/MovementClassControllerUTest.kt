@@ -9,7 +9,7 @@ import br.com.webbudget.domain.services.registration.MovementClassService
 import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository
 import br.com.webbudget.infrastructure.repository.registration.MovementClassRepository
 import br.com.webbudget.utilities.Authorities
-import br.com.webbudget.utilities.ResourceAsString
+import br.com.webbudget.utilities.JsonPayload
 import br.com.webbudget.utilities.fixture.createCostCenter
 import br.com.webbudget.utilities.fixture.createMovementClass
 import com.ninjasquad.springmockk.MockkBean
@@ -60,7 +60,7 @@ class MovementClassControllerUTest : BaseControllerIntegrationTest() {
     }
 
     @Test
-    fun `should call create and expect created`(@ResourceAsString("movement-class/create.json") payload: String) {
+    fun `should call create and expect created`() {
 
         val externalId = UUID.randomUUID()
 
@@ -70,7 +70,7 @@ class MovementClassControllerUTest : BaseControllerIntegrationTest() {
         mockMvc.post(ENDPOINT_URL) {
             with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
-            content = payload
+            content = JsonPayload("movement-class/create")
         }.andExpect {
             status { isCreated() }
         }.andExpect {
@@ -86,9 +86,7 @@ class MovementClassControllerUTest : BaseControllerIntegrationTest() {
     }
 
     @Test
-    fun `should expect unprocessable entity if required fields are not present`(
-        @ResourceAsString("movement-class/invalid.json") payload: String
-    ) {
+    fun `should expect unprocessable entity if required fields are not present`() {
         val requiredEntries = mapOf(
             "name" to "is-null-or-blank",
             "type" to "is-null",
@@ -98,7 +96,7 @@ class MovementClassControllerUTest : BaseControllerIntegrationTest() {
         val jsonResponse = mockMvc.post(ENDPOINT_URL) {
             with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
-            content = payload
+            content = JsonPayload("movement-class/invalid")
         }.andExpect {
             status { isUnprocessableEntity() }
         }.andReturn()
@@ -118,7 +116,7 @@ class MovementClassControllerUTest : BaseControllerIntegrationTest() {
     }
 
     @Test
-    fun `should call update and expect ok`(@ResourceAsString("movement-class/update.json") payload: String) {
+    fun `should call update and expect ok`() {
 
         val externalId = UUID.randomUUID()
         val expectedMovementClass = createMovementClass(externalId = externalId)
@@ -131,7 +129,7 @@ class MovementClassControllerUTest : BaseControllerIntegrationTest() {
         val jsonResponse = mockMvc.put("$ENDPOINT_URL/$externalId") {
             with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
-            content = payload
+            content = JsonPayload("movement-class/update")
         }.andExpect {
             status { isOk() }
         }.andReturn()

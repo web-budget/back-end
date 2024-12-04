@@ -7,7 +7,7 @@ import br.com.webbudget.domain.entities.registration.FinancialPeriod
 import br.com.webbudget.domain.services.registration.FinancialPeriodService
 import br.com.webbudget.infrastructure.repository.registration.FinancialPeriodRepository
 import br.com.webbudget.utilities.Authorities
-import br.com.webbudget.utilities.ResourceAsString
+import br.com.webbudget.utilities.JsonPayload
 import br.com.webbudget.utilities.fixture.createFinancialPeriod
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.Runs
@@ -17,7 +17,7 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.slot
 import io.mockk.verify
-import net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson
+import net.javacrumbs.jsonunit.assertj.assertThatJson
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -55,7 +55,7 @@ class FinancialPeriodControllerUTest : BaseControllerIntegrationTest() {
     }
 
     @Test
-    fun `should call create and return created`(@ResourceAsString("financial-period/create.json") payload: String) {
+    fun `should call create and return created`() {
 
         val externalId = UUID.randomUUID()
 
@@ -64,7 +64,7 @@ class FinancialPeriodControllerUTest : BaseControllerIntegrationTest() {
         mockMvc.post(ENDPOINT_URL) {
             with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
-            content = payload
+            content = JsonPayload("financial-period/create")
         }.andExpect {
             status { isCreated() }
         }.andExpect {
@@ -79,7 +79,7 @@ class FinancialPeriodControllerUTest : BaseControllerIntegrationTest() {
     }
 
     @Test
-    fun `should call update and return ok`(@ResourceAsString("financial-period/update.json") payload: String) {
+    fun `should call update and return ok`() {
 
         val externalId = UUID.randomUUID()
         val expectedFinancialPeriod = createFinancialPeriod(externalId = externalId)
@@ -90,7 +90,7 @@ class FinancialPeriodControllerUTest : BaseControllerIntegrationTest() {
         val jsonResponse = mockMvc.put("$ENDPOINT_URL/$externalId") {
             with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
-            content = payload
+            content = JsonPayload("financial-period/update")
         }.andExpect {
             status { isOk() }
         }.andReturn()
@@ -155,9 +155,7 @@ class FinancialPeriodControllerUTest : BaseControllerIntegrationTest() {
     }
 
     @Test
-    fun `should expect unprocessable entity if required fields are not present`(
-        @ResourceAsString("financial-period/invalid.json") payload: String
-    ) {
+    fun `should expect unprocessable entity if required fields are not present`() {
         val requiredEntries = mapOf(
             "name" to "is-null-or-blank",
             "startingAt" to "is-null",
@@ -167,7 +165,7 @@ class FinancialPeriodControllerUTest : BaseControllerIntegrationTest() {
         val jsonResponse = mockMvc.post(ENDPOINT_URL) {
             with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
-            content = payload
+            content = JsonPayload("financial-period/invalid")
         }.andExpect {
             status { isUnprocessableEntity() }
         }.andReturn()

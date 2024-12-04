@@ -7,7 +7,7 @@ import br.com.webbudget.domain.entities.registration.CostCenter
 import br.com.webbudget.domain.services.registration.CostCenterService
 import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository
 import br.com.webbudget.utilities.Authorities
-import br.com.webbudget.utilities.ResourceAsString
+import br.com.webbudget.utilities.JsonPayload
 import br.com.webbudget.utilities.fixture.createCostCenter
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.Runs
@@ -55,7 +55,7 @@ class CostCenterControllerUTest : BaseControllerIntegrationTest() {
     }
 
     @Test
-    fun `should call create and return created`(@ResourceAsString("cost-center/create.json") payload: String) {
+    fun `should call create and return created`() {
 
         val externalId = UUID.randomUUID()
 
@@ -64,7 +64,7 @@ class CostCenterControllerUTest : BaseControllerIntegrationTest() {
         mockMvc.post(ENDPOINT_URL) {
             with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
-            content = payload
+            content = JsonPayload("cost-center/create")
         }.andExpect {
             status { isCreated() }
         }.andExpect {
@@ -79,7 +79,7 @@ class CostCenterControllerUTest : BaseControllerIntegrationTest() {
     }
 
     @Test
-    fun `should call update and return ok`(@ResourceAsString("cost-center/update.json") payload: String) {
+    fun `should call update and return ok`() {
 
         val externalId = UUID.randomUUID()
         val expectedCostCenter = createCostCenter(externalId = externalId)
@@ -90,7 +90,7 @@ class CostCenterControllerUTest : BaseControllerIntegrationTest() {
         val jsonResponse = mockMvc.put("$ENDPOINT_URL/$externalId") {
             with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
-            content = payload
+            content = JsonPayload("cost-center/update")
         }.andExpect {
             status { isOk() }
         }.andReturn()
@@ -152,15 +152,13 @@ class CostCenterControllerUTest : BaseControllerIntegrationTest() {
     }
 
     @Test
-    fun `should expect unprocessable entity if required fields are not present`(
-        @ResourceAsString("cost-center/invalid.json") payload: String
-    ) {
+    fun `should expect unprocessable entity if required fields are not present`() {
         val requiredEntries = mapOf("name" to "is-null-or-blank")
 
         val jsonResponse = mockMvc.post(ENDPOINT_URL) {
             with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
-            content = payload
+            content = JsonPayload("cost-center/invalid")
         }.andExpect {
             status { isUnprocessableEntity() }
         }.andReturn()

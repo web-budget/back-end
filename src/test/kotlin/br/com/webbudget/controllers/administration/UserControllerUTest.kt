@@ -8,7 +8,7 @@ import br.com.webbudget.domain.entities.administration.User
 import br.com.webbudget.domain.services.administration.UserService
 import br.com.webbudget.infrastructure.repository.administration.UserRepository
 import br.com.webbudget.utilities.Authorities
-import br.com.webbudget.utilities.ResourceAsString
+import br.com.webbudget.utilities.JsonPayload
 import br.com.webbudget.utilities.fixture.createUser
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.called
@@ -57,7 +57,7 @@ class UserControllerUTest : BaseControllerIntegrationTest() {
     }
 
     @Test
-    fun `should call account creation and return created`(@ResourceAsString("user/create.json") payload: String) {
+    fun `should call account creation and return created`() {
 
         val externalId = UUID.randomUUID()
 
@@ -66,7 +66,7 @@ class UserControllerUTest : BaseControllerIntegrationTest() {
         mockMvc.post(ENDPOINT_URL) {
             with(jwt().authorities(Authorities.ADMINISTRATION))
             contentType = MediaType.APPLICATION_JSON
-            content = payload
+            content = JsonPayload("user/create")
         }.andExpect {
             status { isCreated() }
         }.andExpect {
@@ -81,7 +81,7 @@ class UserControllerUTest : BaseControllerIntegrationTest() {
     }
 
     @Test
-    fun `should fail if required fields are not present`(@ResourceAsString("user/invalid.json") payload: String) {
+    fun `should fail if required fields are not present`() {
 
         val requiredEntries = mapOf(
             "name" to "is-null-or-blank",
@@ -94,7 +94,7 @@ class UserControllerUTest : BaseControllerIntegrationTest() {
         val jsonResponse = mockMvc.post(ENDPOINT_URL) {
             with(jwt().authorities(Authorities.ADMINISTRATION))
             contentType = MediaType.APPLICATION_JSON
-            content = payload
+            content = JsonPayload("user/invalid")
         }.andExpect {
             status { isUnprocessableEntity() }
         }.andReturn()
@@ -113,7 +113,7 @@ class UserControllerUTest : BaseControllerIntegrationTest() {
     }
 
     @Test
-    fun `should call account update and return ok`(@ResourceAsString("user/update.json") payload: String) {
+    fun `should call account update and return ok`() {
 
         val authorities = listOf("FINANCIAL")
         val externalId = UUID.randomUUID()
@@ -125,7 +125,7 @@ class UserControllerUTest : BaseControllerIntegrationTest() {
         val jsonResponse = mockMvc.put("$ENDPOINT_URL/$externalId") {
             with(jwt().authorities(Authorities.ADMINISTRATION))
             contentType = MediaType.APPLICATION_JSON
-            content = payload
+            content = JsonPayload("user/update")
         }.andExpect {
             status { isOk() }
         }.andReturn()
@@ -148,11 +148,15 @@ class UserControllerUTest : BaseControllerIntegrationTest() {
     }
 
     @Test
-    fun `should call update for the password only`(@ResourceAsString("user/password-change.json") payload: String) {
+    fun `should call update for the password only`() {
 
         val password = "P4ssw0rd1"
         val externalId = UUID.randomUUID()
         val expectedUser = createUser(1L, externalId)
+
+        val payload = JsonPayload("user/password-change")
+            .toString()
+            .replace("{new-password}", password)
 
         every { userRepository.findByExternalId(externalId) } returns expectedUser
         every { userService.updatePassword(expectedUser, password, true) } just runs
@@ -160,7 +164,7 @@ class UserControllerUTest : BaseControllerIntegrationTest() {
         mockMvc.patch("$ENDPOINT_URL/$externalId/update-password") {
             with(jwt().authorities(Authorities.ADMINISTRATION))
             contentType = MediaType.APPLICATION_JSON
-            content = payload.replace("{new-password}", password)
+            content = payload
         }.andExpect {
             status { isOk() }
         }
