@@ -5,8 +5,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     // spring
-    id("org.springframework.boot") version "3.2.3"
-    id("io.spring.dependency-management") version "1.1.4"
+    id("org.springframework.boot") version "3.4.0"
+    id("io.spring.dependency-management") version "1.1.6"
 
     // detekt
     id("io.gitlab.arturbosch.detekt") version "1.23.5"
@@ -35,17 +35,16 @@ repositories {
     mavenCentral()
 }
 
-val testcontainersVersion = "1.19.7"
-val guavaVersion = "33.0.0-jre"
-val mapstructVersion = "1.5.5.Final"
-val assertJVersion = "3.25.3"
+val testcontainersVersion = "1.20.4"
+val guavaVersion = "33.3.1-jre"
+val mapstructVersion = "1.6.3"
+val assertJVersion = "3.26.3"
 val mockkVersion = "4.0.2"
-val jsonUnitVersion = "3.2.7"
+val jsonUnitVersion = "3.5.0"
 val awaitilityVersion = "4.2.0"
-val hypersistentceUtilsVersion = "3.7.3"
-val kotlinLoggingJvmVersion = "6.0.3"
-val greenMailVersion = "2.0.1"
-val arrowVersion = "1.2.3"
+val hypersistenceUtilsVersion = "3.9.0"
+val kotlinLoggingJvmVersion = "7.0.3"
+val greenMailVersion = "2.1.2"
 
 dependencies {
     // spring
@@ -59,14 +58,13 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
 
     // utilities
-    implementation("io.arrow-kt:arrow-core:$arrowVersion")
     implementation("com.google.guava:guava:$guavaVersion")
-    implementation("io.hypersistence:hypersistence-utils-hibernate-63:$hypersistentceUtilsVersion")
+    implementation("io.hypersistence:hypersistence-utils-hibernate-63:$hypersistenceUtilsVersion")
+    implementation("io.github.oshai:kotlin-logging-jvm:$kotlinLoggingJvmVersion")
 
     // mapstruct
     kapt("org.mapstruct:mapstruct-processor:$mapstructVersion")
     implementation("org.mapstruct:mapstruct:$mapstructVersion")
-    implementation("io.github.oshai:kotlin-logging-jvm:$kotlinLoggingJvmVersion")
 
     // dev tools
     developmentOnly("org.springframework.boot:spring-boot-devtools")
@@ -136,28 +134,6 @@ tasks {
     test {
         useJUnitPlatform()
     }
-    bootJar {
-        layered {
-            enabled.set(true)
-            application {
-                intoLayer("spring-boot-loader") {
-                    include("org/springframework/boot/loader/**")
-                }
-                intoLayer("application")
-            }
-            dependencies {
-                intoLayer("application") {
-                    includeProjectDependencies()
-                }
-                intoLayer("snapshot-dependencies") {
-                    include("*:*:*SNAPSHOT")
-                }
-                intoLayer("dependencies")
-            }
-            layerOrder.set(listOf("dependencies", "spring-boot-loader", "snapshot-dependencies", "application"))
-        }
-        archiveFileName.set("${project.name}.${archiveExtension.get()}")
-    }
 }
 
 springBoot {
@@ -165,7 +141,7 @@ springBoot {
         properties {
             group.set(project.group as String)
             version.set(project.version as String)
-            artifact.set("back-end")
+            artifact.set(project.name)
 
             description = "webBudget backend application"
 
