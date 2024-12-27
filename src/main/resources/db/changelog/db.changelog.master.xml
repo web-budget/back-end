@@ -5,7 +5,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <property name="author" value="arthurshakal@gmail.com" />
+    <property name="arthur" value="arthurshakal@gmail.com" />
 
     <property name="uuid_function" value="uuid_generate_v4()" dbms="postgresql"/>
     <property name="text_type" value="text" dbms="postgresql"/>
@@ -17,17 +17,10 @@
         </sql>
     </changeSet>
 
-    <changeSet id="create-schemas" author="arthurshakal@gmail.com" dbms="postgresql">
-        <sql>
-            CREATE SCHEMA IF NOT EXISTS "registration";
-            CREATE SCHEMA IF NOT EXISTS "administration";
-            CREATE SCHEMA IF NOT EXISTS "financial";
-        </sql>
-    </changeSet>
-
     <!--
         down here, you should put your versioned changelogs for production
     -->
+    <include relativeToChangelogFile="true" file="db.changelog.20210403.xml"/>
     <include relativeToChangelogFile="true" file="db.changelog.20210404.xml"/>
     <include relativeToChangelogFile="true" file="db.changelog.20220620.xml"/>
     <include relativeToChangelogFile="true" file="db.changelog.20230416.xml"/>

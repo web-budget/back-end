@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="create-schemas" author="${arthur}" dbms="postgresql">
+        <sql>
+            CREATE SCHEMA IF NOT EXISTS "registration";
+            CREATE SCHEMA IF NOT EXISTS "administration";
+            CREATE SCHEMA IF NOT EXISTS "financial";
+            CREATE SCHEMA IF NOT EXISTS "investments";
+        </sql>
+    </changeSet>
+</databaseChangeLog>
