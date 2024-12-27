@@ -29,7 +29,7 @@ class ValidationExceptionController {
         throw MethodArgumentNotValidException(methodParameter, bindingResult)
     }
 
-    @Suppress("unused")
+    @Suppress("UnusedPrivateMember")
     fun theMethod(theParameter: String) {
         println("Dummy method")
     }

@@ -42,9 +42,6 @@ import java.util.UUID
 class UserControllerUTest : BaseControllerIntegrationTest() {
 
     @MockkBean
-    private lateinit var userRepository: UserRepository
-
-    @MockkBean
     private lateinit var userService: UserService
 
     @Test

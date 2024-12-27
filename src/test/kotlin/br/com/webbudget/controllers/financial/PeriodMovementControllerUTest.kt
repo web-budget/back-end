@@ -57,7 +57,7 @@ import java.util.UUID
 class PeriodMovementControllerUTest : BaseControllerIntegrationTest() {
 
     @MockkBean
-    @Suppress("unused")
+    @Suppress("UnusedPrivateMember")
     private lateinit var costCenterRepository: CostCenterRepository
 
     @MockkBean
