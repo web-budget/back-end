@@ -14,13 +14,7 @@ spring:
     properties:
       mail.debug: true
 
-server:
-  servlet:
-    encoding:
-      charset: utf-8
-      force: true
-
 logging:
   level:
     br.com.webbudget: debug
-    org.springframework.web: debug
+    org.springframework.web: trace

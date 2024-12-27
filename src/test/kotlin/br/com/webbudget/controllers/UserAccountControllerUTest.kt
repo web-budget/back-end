@@ -14,7 +14,9 @@ import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType
+import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic
 import org.springframework.test.web.servlet.patch
 import java.util.UUID
 
@@ -37,9 +39,9 @@ class UserAccountControllerUTest : BaseControllerIntegrationTest() {
         every { recoverPasswordService.registerRecoveryAttempt(userEmail) } just runs
 
         mockMvc.patch("$ENDPOINT_URL/forgot-password") {
-            with(csrf())
-            content = body
             contentType = MediaType.APPLICATION_JSON
+            content = body
+            with(csrf())
         }.andExpect {
             status { isAccepted() }
         }
@@ -55,9 +57,9 @@ class UserAccountControllerUTest : BaseControllerIntegrationTest() {
         val body = "{\"email\": \"\"}"
 
         mockMvc.patch("$ENDPOINT_URL/forgot-password") {
-            with(csrf())
-            content = body
             contentType = MediaType.APPLICATION_JSON
+            content = body
+            with(csrf())
         }.andExpect {
             status { isUnprocessableEntity() }
         }
@@ -79,9 +81,9 @@ class UserAccountControllerUTest : BaseControllerIntegrationTest() {
         every { recoverPasswordService.recover(newPassword, token, userEmail) } just runs
 
         mockMvc.patch("$ENDPOINT_URL/recover-password") {
-            with(csrf())
-            content = body
             contentType = MediaType.APPLICATION_JSON
+            content = body
+            with(csrf())
         }.andExpect {
             status { isOk() }
         }
@@ -108,9 +110,9 @@ class UserAccountControllerUTest : BaseControllerIntegrationTest() {
                 InvalidPasswordRecoverTokenException(userEmail)
 
         mockMvc.patch("$ENDPOINT_URL/recover-password") {
-            with(csrf())
-            content = body
             contentType = MediaType.APPLICATION_JSON
+            content = body
+            with(csrf())
         }.andExpect {
             status { isBadRequest() }
         }
@@ -130,9 +132,9 @@ class UserAccountControllerUTest : BaseControllerIntegrationTest() {
                 "}"
 
         mockMvc.patch("$ENDPOINT_URL/recover-password") {
-            with(csrf())
-            content = body
             contentType = MediaType.APPLICATION_JSON
+            content = body
+            with(csrf())
         }.andExpect {
             status { isUnprocessableEntity() }
         }
@@ -152,9 +154,9 @@ class UserAccountControllerUTest : BaseControllerIntegrationTest() {
         every { accountActivationService.activate(token, userEmail) } just runs
 
         mockMvc.patch("$ENDPOINT_URL/activate") {
-            with(csrf())
-            content = body
             contentType = MediaType.APPLICATION_JSON
+            content = body
+            with(csrf())
         }.andExpect {
             status { isOk() }
         }
@@ -173,15 +175,15 @@ class UserAccountControllerUTest : BaseControllerIntegrationTest() {
                 "}"
 
         mockMvc.patch("$ENDPOINT_URL/activate") {
-            with(csrf())
-            content = body
             contentType = MediaType.APPLICATION_JSON
+            content = body
+            with(csrf())
         }.andExpect {
             status { isUnprocessableEntity() }
         }
     }
 
     companion object {
-        private const val ENDPOINT_URL = "/user-account"
+        private const val ENDPOINT_URL = "/accounts"
     }
 }

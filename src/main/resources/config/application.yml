@@ -6,8 +6,9 @@ spring:
     url: jdbc:postgresql://${DATABASE_URL:localhost:5433/webbudget}
     username: ${DATABASE_USER:sa_webbudget}
     password: ${DATABASE_PASSWORD:sa_webbudget}
-    hikari.pool-name: ${spring.application.name}_pool
-    hikari.maximum-pool-size: 10
+    hikari:
+      pool-name: ${spring.application.name}_pool
+      maximum-pool-size: 10
 
   jpa:
     hibernate:
@@ -33,29 +34,30 @@ spring:
 
 server:
   port: ${APPLICATION_PORT:8085}
+  servlet:
+    encoding:
+      charset: utf-8
+      force: true
 
 management:
   endpoints:
-    enabled-by-default: false
+    access:
+      default: none
     web:
       exposure:
         include: [ 'health', 'info' ]
   endpoint:
     health:
-      enabled: true
+      access: read_only
     info:
-      enabled: true
-
-logging:
-  pattern:
-    console: >-
-      %clr(%d{${LOG_DATEFORMAT_PATTERN:yyyy-MM-dd'T'HH:mm:ss.SSSXXX}}){faint} %clr(${LOG_LEVEL_PATTERN:%5p}) 
-      %clr(---){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}
+      access: read_only
 
 web-budget:
   frontend-url: ${APPLICATION_FRONTEND_URL:http://localhost:8080}
   jwt:
-    access-token-expiration: ${APPLICATION_JWT_TIMEOUT:2400} # seconds
+    private-key: classpath:keys/rsa.key
+    public-key: classpath:keys/rsa.pub
+    expiration-seconds: ${APPLICATION_JWT_TIMEOUT:2400} # seconds
   mail:
     reply-to-address: ${MAIL_REPLY_TO_ADDRESS:noreply@webbudget.com.br}
     default-from-address: ${MAIL_DEFAULT_FROM_ADDRESS:noreply@webbudget.com.br}

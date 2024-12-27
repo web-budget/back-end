@@ -11,7 +11,7 @@ import org.springframework.test.web.servlet.MockMvc
 
 @ActiveProfiles("test")
 @ExtendWith(MockKExtension::class)
-@Import(value = [SecurityConfiguration::class, JacksonConfiguration::class])
+@Import(value = [JacksonConfiguration::class])
 abstract class BaseControllerIntegrationTest {
 
     @Autowired

@@ -10,4 +10,4 @@ spring:
 
 logging:
   level:
-    br.com.webbudget: DEBUG
+    br.com.webbudget: debug

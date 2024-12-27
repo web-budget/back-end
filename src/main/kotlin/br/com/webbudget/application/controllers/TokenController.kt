@@ -17,21 +17,23 @@ class TokenController(
 ) {
 
     @PostMapping
-    fun create(authentication: Authentication): ResponseEntity<TokenResponse> {
+    fun create(authentication: Authentication): ResponseEntity<TokenView> {
 
         val username = authentication.name
-        val authenticatedUser = userRepository.findByEmail(username) ?: throw UsernameNotFoundException(username)
+
+        val authenticatedUser = userRepository.findByEmail(username)
+            ?: throw UsernameNotFoundException("User [$username] not found")
 
         val grantedAuthorities = authentication.authorities
             .map { it.authority }
             .toList()
 
-        val token = tokenService.generateFor(username, grantedAuthorities)
+        val token = tokenService.generate(username, grantedAuthorities)
 
-        return ResponseEntity.ok(TokenResponse(authenticatedUser.name, authenticatedUser.email, token))
+        return ResponseEntity.ok(TokenView(authenticatedUser.name, authenticatedUser.email, token))
     }
 
-    data class TokenResponse(
+    data class TokenView(
         val name: String,
         val email: String,
         val token: String,

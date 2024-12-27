@@ -11,22 +11,19 @@ import java.util.UUID
 @Service
 class TokenService(
     private val jwtEncoder: JwtEncoder,
-    @Value("\${web-budget.jwt.access-token-expiration:2400}")
-    private val accessTokenExpiration: Long
+    @Value("\${web-budget.jwt.expiration-seconds}")
+    private val expirationSeconds: Long
 ) {
 
-    fun generateFor(subject: String, scope: List<String>): String {
-
-        val now = Instant.now()
-        val tokenId = UUID.randomUUID()
+    fun generate(subject: String, scope: List<String>): String {
 
         val claims = JwtClaimsSet.builder()
-            .issuer(TOKEN_ISSUER)
-            .issuedAt(now)
-            .expiresAt(now.plusSeconds(accessTokenExpiration))
+            .id(UUID.randomUUID().toString())
+            .issuer(ISSUER)
             .subject(subject)
             .claim(SCOPE_CLAIM, scope)
-            .id(tokenId.toString())
+            .issuedAt(Instant.now())
+            .expiresAt(Instant.now().plusSeconds(expirationSeconds))
             .build()
 
         val jwt = jwtEncoder.encode(JwtEncoderParameters.from(claims))
@@ -36,6 +33,6 @@ class TokenService(
 
     companion object {
         private const val SCOPE_CLAIM = "scope"
-        private const val TOKEN_ISSUER = "br.com.webbudget"
+        private const val ISSUER = "br.com.webbudget"
     }
 }

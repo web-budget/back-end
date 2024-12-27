@@ -39,7 +39,7 @@ class TokenControllerUTest : BaseControllerIntegrationTest() {
             .apply { this.active = true }
 
         every { userRepository.findByEmail(userEmail) } returns expectedUser
-        every { tokenService.generateFor(userEmail, authorities.asList()) } returns UUID.randomUUID().toString()
+        every { tokenService.generate(userEmail, authorities.asList()) } returns UUID.randomUUID().toString()
 
         val jsonResponse = mockMvc.post(ENDPOINT_URL) {
             contentType = MediaType.APPLICATION_JSON
@@ -59,7 +59,7 @@ class TokenControllerUTest : BaseControllerIntegrationTest() {
         }
 
         verify(exactly = 1) { userRepository.findByEmail(userEmail) }
-        verify(exactly = 1) { tokenService.generateFor(userEmail, authorities.toList()) }
+        verify(exactly = 1) { tokenService.generate(userEmail, authorities.toList()) }
 
         confirmVerified(userRepository, tokenService)
     }

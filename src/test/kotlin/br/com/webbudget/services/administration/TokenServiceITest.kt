@@ -38,7 +38,7 @@ class TokenServiceITest {
 
         every { jwtEncoder.encode(any()) } returns jwt
 
-        val token = tokenService.generateFor("someone", listOf("ADMINISTRATION"))
+        val token = tokenService.generate("someone", listOf("ADMINISTRATION"))
         assertThat(token).isNotBlank
     }
 }
