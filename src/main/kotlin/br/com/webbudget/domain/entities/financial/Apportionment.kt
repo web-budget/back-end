@@ -27,3 +27,5 @@ class Apportionment(
     @field:JoinColumn(name = "id_recurring_movement")
     var recurringMovement: RecurringMovement? = null
 ) : PersistentEntity<Long>()
+
+fun List<Apportionment>.sumEqualTo(value: BigDecimal): Boolean = sumOf { it.value } == value

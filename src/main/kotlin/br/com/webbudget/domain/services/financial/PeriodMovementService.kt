@@ -1,14 +1,12 @@
 package br.com.webbudget.domain.services.financial
 
 import br.com.webbudget.domain.entities.financial.PeriodMovement
+import br.com.webbudget.domain.entities.financial.sumEqualTo
 import br.com.webbudget.domain.exceptions.BusinessException
-import br.com.webbudget.domain.validators.OnCreateValidation
-import br.com.webbudget.domain.validators.OnUpdateValidation
-import br.com.webbudget.domain.validators.financial.PeriodMovementValidator
-import br.com.webbudget.infrastructure.utilities.ensure
 import br.com.webbudget.infrastructure.repository.financial.ApportionmentRepository
 import br.com.webbudget.infrastructure.repository.financial.PeriodMovementRepository
 import br.com.webbudget.infrastructure.utilities.CommonErrorMessages.EXTERNAL_ID_IS_NULL
+import br.com.webbudget.infrastructure.utilities.ensure
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
@@ -18,22 +16,20 @@ import java.util.UUID
 class PeriodMovementService(
     private val apportionmentRepository: ApportionmentRepository,
     private val periodMovementRepository: PeriodMovementRepository,
-    @OnCreateValidation
-    private val onCreateValidators: List<PeriodMovementValidator>,
-    @OnUpdateValidation
-    private val onUpdateValidation: List<PeriodMovementValidator>
 ) {
 
     @Transactional
     fun create(periodMovement: PeriodMovement): UUID {
-        onCreateValidators.forEach { it.validate(periodMovement) }
+
+        validateBeforeCreteOrUpdate(periodMovement)
+
         return periodMovementRepository.persist(periodMovement).externalId!!
     }
 
     @Transactional
     fun update(periodMovement: PeriodMovement): PeriodMovement {
 
-        onUpdateValidation.forEach { it.validate(periodMovement) }
+        validateBeforeCreteOrUpdate(periodMovement)
 
         val externalId = requireNotNull(periodMovement.externalId) { EXTERNAL_ID_IS_NULL }
 
@@ -55,5 +51,23 @@ class PeriodMovementService(
         }
 
         periodMovementRepository.delete(periodMovement)
+    }
+
+    private fun validateBeforeCreteOrUpdate(periodMovement: PeriodMovement) {
+
+        ensure(periodMovement.apportionments.sumEqualTo(periodMovement.value)) {
+            throw BusinessException(
+                "Apportionments total must be equal to movement value",
+                "period-movement.errors.invalid-apportionments"
+            )
+        }
+
+        ensure(periodMovement.financialPeriod.isOpen()) {
+            BusinessException("Financial period is not open", "period-movement.errors.period-not-open")
+        }
+
+        ensure(periodMovement.isAccounted().not()) {
+            BusinessException("Period movement is not open", "period-movement.errors.not-open")
+        }
     }
 }
