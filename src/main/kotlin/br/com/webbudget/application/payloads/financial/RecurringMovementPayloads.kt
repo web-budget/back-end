@@ -37,9 +37,9 @@ data class RecurringMovementUpdateForm(
     @field:NotBlank(message = IS_NULL_OR_BLANK)
     val name: String?,
     @field:NotNull(message = IS_NULL)
-    val startingAt: LocalDate?,
+    val startingAt: LocalDate? = null,
     @field:NotNull(message = IS_NULL)
-    val autoLaunch: Boolean?,
+    val autoLaunch: Boolean? = null,
     val description: String? = null,
     @field:NotEmpty(message = IS_EMPTY)
     val apportionments: List<ApportionmentForm>? = null
@@ -50,6 +50,7 @@ data class RecurringMovementView(
     val name: String,
     val value: BigDecimal,
     val startingAt: LocalDate,
+    val state: String,
     val autoLaunch: Boolean,
     val indeterminate: Boolean,
     val totalQuotes: Int?,
@@ -63,6 +64,7 @@ data class RecurringMovementListView(
     val id: UUID,
     val name: String,
     val value: BigDecimal,
+    val state: String,
     val autoLaunch: Boolean,
     val indeterminate: Boolean,
     val totalQuotes: Int?,

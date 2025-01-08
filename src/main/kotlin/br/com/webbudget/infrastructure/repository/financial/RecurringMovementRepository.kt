@@ -16,7 +16,7 @@ interface RecurringMovementRepository : BaseRepository<RecurringMovement> {
     @Query(
         """
         from RecurringMovement rm 
-            left join Apportionment ap on ap.periodMovement.id = rm.id
+            left join Apportionment ap on ap.recurringMovement.id = rm.id
         where (:#{#filter.filter} is null 
                 or rm.value = :#{#filter.decimalValue()}
                 or lower(rm.name) like lower(concat('%', :#{#filter.filter}, '%') )

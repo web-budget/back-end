@@ -42,6 +42,37 @@ fun createPeriodMovement(
     this.externalId = externalId
 }
 
+fun createRecurringMovement(
+    id: Long? = null,
+    externalId: UUID? = UUID.randomUUID(),
+    name: String = "The movement",
+    value: BigDecimal = BigDecimal.ONE,
+    startingAt: LocalDate = LocalDate.now(),
+    state: RecurringMovement.State = RecurringMovement.State.ACTIVE,
+    autoLaunch: Boolean = true,
+    indeterminate: Boolean = true,
+    totalQuotes: Int? = null,
+    startingQuote: Int? = null,
+    currentQuote: Int? = null,
+    description: String? = null,
+    apportionments: MutableList<Apportionment> = mutableListOf(createApportionment()),
+): RecurringMovement = RecurringMovement(
+    name,
+    value,
+    startingAt,
+    state,
+    autoLaunch,
+    indeterminate,
+    totalQuotes,
+    startingQuote,
+    currentQuote,
+    description,
+    apportionments
+).apply {
+    this.id = id
+    this.externalId = externalId
+}
+
 fun createApportionment(
     id: Long? = null,
     externalId: UUID? = UUID.randomUUID(),
