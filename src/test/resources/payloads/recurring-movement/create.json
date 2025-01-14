@@ -1,0 +1,14 @@
+{
+  "name": "Academia",
+  "value": 320,
+  "startingAt": "2024-01-02",
+  "description": "Despesas com academia",
+  "autoLaunch": true,
+  "indeterminate": true,
+  "apportionments": [
+    {
+      "value": 320,
+      "movementClass": "0100a0f9-ccbb-4f61-a6fa-fb4644361ffd"
+    }
+  ]
+}

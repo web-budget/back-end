@@ -22,7 +22,7 @@ class RecurringMovement(
     @field:Column(name = "value", nullable = false)
     var value: BigDecimal,
     @field:Column(name = "starting_at", nullable = false)
-    val startingAt: LocalDate,
+    var startingAt: LocalDate,
 
     @field:Enumerated(EnumType.STRING)
     @field:Column(name = "state", nullable = false, length = 6)

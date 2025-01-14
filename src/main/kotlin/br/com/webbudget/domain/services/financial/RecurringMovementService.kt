@@ -20,27 +20,30 @@ class RecurringMovementService(
 
     @Transactional
     fun create(recurringMovement: RecurringMovement): UUID {
-
-        validateBeforeCreteOrUpdate(recurringMovement)
-
+        validateApportionments(recurringMovement)
         return recurringMovementRepository.persist(recurringMovement).externalId!!
     }
 
     @Transactional
     fun update(recurringMovement: RecurringMovement): RecurringMovement {
 
-        validateBeforeCreteOrUpdate(recurringMovement)
+        validateApportionments(recurringMovement)
 
         val externalId = requireNotNull(recurringMovement.externalId) { EXTERNAL_ID_IS_NULL }
 
-        apportionmentRepository.deleteByPeriodMovementExternalId(externalId)
+        recurringMovementRepository.findByExternalIdAndState(externalId, RecurringMovement.State.ENDED)
+            ?.let {
+                throw BusinessException("Recurring movement is not active", "recurring-movement.errors.invalid-state")
+            }
+
+        apportionmentRepository.deleteByRecurringMovementExternalId(externalId)
 
         recurringMovement.apportionments.forEach {
             it.recurringMovement = recurringMovement
             apportionmentRepository.persist(it)
         }
 
-        return recurringMovement
+        return recurringMovementRepository.merge(recurringMovement)
     }
 
     @Transactional
@@ -48,11 +51,11 @@ class RecurringMovementService(
         recurringMovementRepository.delete(recurringMovement)
     }
 
-    private fun validateBeforeCreteOrUpdate(recurringMovement: RecurringMovement) {
+    private fun validateApportionments(recurringMovement: RecurringMovement) {
         ensure(recurringMovement.apportionments.sumEqualTo(recurringMovement.value)) {
             throw BusinessException(
                 "Apportionments total must be equal to movement value",
-                "period-movement.errors.invalid-apportionments"
+                "recurring-movement.errors.invalid-apportionments"
             )
         }
     }

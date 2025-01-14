@@ -8,5 +8,9 @@ interface ApportionmentRepository : BaseRepository<Apportionment> {
 
     fun findByPeriodMovementExternalId(periodMovementExternalId: UUID): List<Apportionment>
 
+    fun findByRecurringMovementExternalId(recurringMovementExternalId: UUID): List<Apportionment>
+
     fun deleteByPeriodMovementExternalId(periodMovementExternalId: UUID)
+
+    fun deleteByRecurringMovementExternalId(recurringMovementExternalId: UUID)
 }

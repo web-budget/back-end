@@ -10,7 +10,6 @@ import br.com.webbudget.application.payloads.financial.RecurringMovementUpdateFo
 import br.com.webbudget.domain.entities.financial.RecurringMovement
 import br.com.webbudget.infrastructure.repository.registration.MovementClassRepository
 import br.com.webbudget.utilities.fixture.createApportionment
-import br.com.webbudget.utilities.fixture.createFinancialPeriod
 import br.com.webbudget.utilities.fixture.createMovementClass
 import br.com.webbudget.utilities.fixture.createRecurringMovement
 import io.mockk.confirmVerified
@@ -114,11 +113,9 @@ class RecurringMovementMapperUTest {
     @Test
     fun `should map create form to domain object`() {
 
-        val financialPeriodId = UUID.randomUUID()
         val movementClassId = UUID.randomUUID()
 
         val movementClass = createMovementClass(externalId = movementClassId)
-        val financialPeriod = createFinancialPeriod(externalId = financialPeriodId)
 
         val form = RecurringMovementCreateForm(
             name = "Name",

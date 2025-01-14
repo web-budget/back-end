@@ -30,4 +30,6 @@ interface RecurringMovementRepository : BaseRepository<RecurringMovement> {
 
     @EntityGraph(attributePaths = ["apportionments"])
     override fun findByExternalId(uuid: UUID): RecurringMovement?
+
+    fun findByExternalIdAndState(externalId: UUID, state: RecurringMovement.State): RecurringMovement?
 }
