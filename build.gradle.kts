@@ -1,6 +1,7 @@
 import io.gitlab.arturbosch.detekt.Detekt
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_0
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -9,15 +10,15 @@ plugins {
     id("io.spring.dependency-management") version "1.1.6"
 
     // detekt
-    id("io.gitlab.arturbosch.detekt") version "1.23.5"
+    id("io.gitlab.arturbosch.detekt") version "1.23.7"
 
     // kotlin things
-    kotlin("jvm") version "1.9.22"
-    kotlin("plugin.spring") version "1.9.22"
-    kotlin("plugin.jpa") version "1.9.22"
+    kotlin("jvm") version "2.0.10"
+    kotlin("plugin.spring") version "2.0.10"
+    kotlin("plugin.jpa") version "2.0.10"
 
     // mapstruct
-    kotlin("kapt") version "1.9.22"
+    kotlin("kapt") version "2.0.10"
 }
 
 group = "br.com.webbudget"
@@ -116,7 +117,7 @@ dependencyManagement {
 tasks.withType<KotlinCompile> {
     compilerOptions {
         jvmTarget.set(JVM_21)
-        languageVersion.set(KOTLIN_1_9)
+        languageVersion.set(KOTLIN_2_0)
         freeCompilerArgs.set(
             listOf(
                 "-Xjsr305=strict",
