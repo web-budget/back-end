@@ -162,7 +162,6 @@ class RecurringMovementMapperUTest {
     @Test
     fun `should map update form to domain object`() {
 
-        val financialPeriodId = UUID.randomUUID()
         val movementClassId = UUID.randomUUID()
 
         val movementClass = createMovementClass(externalId = movementClassId)
