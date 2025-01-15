@@ -1,0 +1,20 @@
+name: Ci
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  detekt:
+    uses: ./.github/workflows/gradle-build.yml
+    with:
+      gradle-task: clean detekt -x test
+
+  test:
+    uses: ./.github/workflows/gradle-build.yml
+    with:
+      gradle-task: clean test -x detekt

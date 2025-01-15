@@ -1,0 +1,33 @@
+name: Gradle Build
+
+on:
+  workflow_call:
+    inputs:
+      gradle-task:
+        required: true
+        type: string
+
+jobs:
+  gradle:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'liberica'
+
+      - name: Cache files
+        uses: actions/cache@v3
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Run task
+        run: ./gradlew ${{ inputs.gradle-task }}
