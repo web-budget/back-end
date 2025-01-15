@@ -1,4 +1,4 @@
-[![build](https://github.com/web-budget/back-end/actions/workflows/build.yml/badge.svg)](https://github.com/web-budget/back-end/actions/workflows/build.yml)
+[![ci](https://github.com/web-budget/back-end/actions/workflows/ci.yml/badge.svg)](https://github.com/web-budget/back-end/actions/workflows/ci.yml)
 
 # webBudget back-end
 
