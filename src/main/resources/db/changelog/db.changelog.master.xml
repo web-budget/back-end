@@ -33,8 +33,6 @@
     <include relativeToChangelogFile="true" file="2024/10/05-changelog.xml"/>
     <include relativeToChangelogFile="true" file="2024/10/06-changelog.xml"/>
 
-    <include relativeToChangelogFile="true" file="2025/03/30-changelog.xml"/>
-
     <!--
         use this changelog to initialize testing database.
         ATTENTION: this line must stay after database versions!

@@ -24,7 +24,6 @@
             <column name="active" type="boolean">
                 <constraints nullable="false"/>
             </column>
-
             <column name="name" type="varchar(150)">
                 <constraints nullable="false"/>
             </column>

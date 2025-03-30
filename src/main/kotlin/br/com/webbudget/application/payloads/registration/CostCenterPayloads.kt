@@ -42,7 +42,9 @@ data class CostCenterView(
 data class CostCenterListView(
     val id: UUID,
     val name: String,
-    val active: Boolean
+    val active: Boolean,
+    val incomeBudget: BigDecimal? = null,
+    val expenseBudget: BigDecimal? = null
 )
 
 data class CostCenterFilter(

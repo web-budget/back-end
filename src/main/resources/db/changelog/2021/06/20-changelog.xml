@@ -19,15 +19,20 @@
             <column name="created_on" type="timestamp">
                 <constraints nullable="false"/>
             </column>
-            <column name="last_update" type="timestamp"/>
-
-            <column name="name" type="varchar(150)">
+            <column name="last_update" type="timestamp">
                 <constraints nullable="false"/>
             </column>
-            <column name="description" type="clob"/>
+
             <column name="active" type="boolean">
                 <constraints nullable="false"/>
             </column>
+            <column name="name" type="varchar(150)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="expense_budget" type="decimal(15,2)"/>
+            <column name="income_budget" type="decimal(15,2)"/>
+            <column name="description" type="clob"/>
         </createTable>
 
         <addUniqueConstraint columnNames="id,external_id" tableName="cost_centers" schemaName="registration"/>
