@@ -6,6 +6,7 @@ import br.com.webbudget.application.payloads.registration.CostCenterUpdateForm
 import br.com.webbudget.utilities.fixture.createCostCenter
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import java.math.BigDecimal
 import java.util.UUID
 
 class CostCenterMapperUTest {
@@ -15,7 +16,7 @@ class CostCenterMapperUTest {
     @Test
     fun `should map create form to domain object`() {
 
-        val form = CostCenterCreateForm("Cost Center", "Some cost center", true)
+        val form = CostCenterCreateForm("Cost Center", true, "Some cost center", BigDecimal.ONE, BigDecimal.ONE)
 
         val domainObject = costCenterMapper.mapToDomain(form)
 
@@ -32,7 +33,7 @@ class CostCenterMapperUTest {
     fun `should map update form to domain object`() {
 
         val domainObject = createCostCenter()
-        val form = CostCenterUpdateForm("Other", "Other", false)
+        val form = CostCenterUpdateForm("Other", false, "Other", BigDecimal.ONE, BigDecimal.ONE)
 
         costCenterMapper.mapToDomain(form, domainObject)
 
@@ -41,6 +42,8 @@ class CostCenterMapperUTest {
             .satisfies({
                 assertThat(it.name).isEqualTo(form.name)
                 assertThat(it.description).isEqualTo(form.description)
+                assertThat(it.incomeBudget).isEqualTo(form.incomeBudget)
+                assertThat(it.expenseBudget).isEqualTo(form.expenseBudget)
                 assertThat(it.active).isEqualTo(form.active)
             })
     }
@@ -59,6 +62,8 @@ class CostCenterMapperUTest {
                 assertThat(it.id).isEqualTo(externalId)
                 assertThat(it.active).isEqualTo(domainObject.active)
                 assertThat(it.name).isEqualTo(domainObject.name)
+                assertThat(it.incomeBudget).isEqualTo(domainObject.incomeBudget)
+                assertThat(it.expenseBudget).isEqualTo(domainObject.expenseBudget)
                 assertThat(it.description).isEqualTo(domainObject.description)
             })
     }

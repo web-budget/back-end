@@ -9,27 +9,34 @@ import br.com.webbudget.infrastructure.repository.registration.CostCenterReposit
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
 import org.springframework.data.jpa.domain.Specification
+import java.math.BigDecimal
 import java.util.UUID
 
 data class CostCenterCreateForm(
     @field:NotBlank(message = "is-null-or-blank")
     @field:Size(message = "max-150-chars", max = 150)
     val name: String?,
-    val description: String?,
     val active: Boolean = true,
+    val description: String? = null,
+    val incomeBudget: BigDecimal? = null,
+    val expenseBudget: BigDecimal? = null
 )
 
 data class CostCenterUpdateForm(
     val name: String?,
-    val description: String?,
     val active: Boolean? = true,
+    val description: String?,
+    val incomeBudget: BigDecimal? = null,
+    val expenseBudget: BigDecimal? = null
 )
 
 data class CostCenterView(
     val id: UUID,
     val name: String,
     val active: Boolean,
-    val description: String?,
+    val description: String? = null,
+    val incomeBudget: BigDecimal? = null,
+    val expenseBudget: BigDecimal? = null
 )
 
 data class CostCenterListView(

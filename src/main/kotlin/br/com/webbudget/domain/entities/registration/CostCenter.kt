@@ -5,6 +5,7 @@ import br.com.webbudget.infrastructure.config.ApplicationSchemas
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.Table
+import java.math.BigDecimal
 
 @Entity
 @Table(name = "cost_centers", schema = ApplicationSchemas.REGISTRATION)
@@ -16,7 +17,7 @@ class CostCenter(
     @field:Column(name = "description", columnDefinition = "TEXT")
     var description: String? = null,
     @field:Column(name = "income_budget")
-    var incomeBudget: String? = null,
+    var incomeBudget: BigDecimal? = null,
     @field:Column(name = "expense_budget")
-    var expenseBudget: String? = null
+    var expenseBudget: BigDecimal? = null
 ) : PersistentEntity<Long>()

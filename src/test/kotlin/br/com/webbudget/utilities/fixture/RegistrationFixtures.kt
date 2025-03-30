@@ -31,8 +31,10 @@ fun createCostCenter(
     externalId: UUID? = UUID.randomUUID(),
     name: String = "Cost Center",
     active: Boolean = true,
-    description: String = "Some description"
-) = CostCenter(name, active, description)
+    description: String = "Some description",
+    incomeBudget: BigDecimal = BigDecimal.ONE,
+    expenseBudget: BigDecimal = BigDecimal.ONE,
+) = CostCenter(name, active, description, incomeBudget, expenseBudget)
     .apply {
         this.id = id
         this.externalId = externalId
