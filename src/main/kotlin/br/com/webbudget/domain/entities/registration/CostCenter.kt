@@ -15,4 +15,8 @@ class CostCenter(
     var active: Boolean = true,
     @field:Column(name = "description", columnDefinition = "TEXT")
     var description: String? = null,
+    @field:Column(name = "income_budget")
+    var incomeBudget: String? = null,
+    @field:Column(name = "expense_budget")
+    var expenseBudget: String? = null
 ) : PersistentEntity<Long>()

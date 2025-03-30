@@ -22,15 +22,19 @@ spring:
     change-log: db/changelog/db.changelog.master.xml
 
   mail:
-    host: ${MAIL_HOST}
-    port: ${MAIL_PORT:587}
-    username: ${MAIL_USER}
-    password: ${MAIL_PASSWORD}
+    host: ${MAIL_HOST:localhost}
+    port: ${MAIL_PORT:1025}
+    username: ${MAIL_USER:maildev}
+    password: ${MAIL_PASSWORD:maildev}
     properties:
       mail.transport.protocol: smtp
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true
       mail.debug: false
+
+  threads:
+    virtual:
+      enabled: true
 
 server:
   port: ${APPLICATION_PORT:8085}

@@ -20,11 +20,9 @@ data class CostCenterCreateForm(
 )
 
 data class CostCenterUpdateForm(
-    @field:NotBlank(message = "is-null-or-blank")
-    @field:Size(message = "max-150-chars", max = 150)
     val name: String?,
     val description: String?,
-    val active: Boolean = true,
+    val active: Boolean? = true,
 )
 
 data class CostCenterView(

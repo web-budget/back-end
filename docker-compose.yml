@@ -1,3 +1,5 @@
+name: webbudget
+
 services:
   postgres:
     container_name: wb-database
@@ -11,6 +13,18 @@ services:
     command: [ "postgres", "-c", "log_statement=all", "-c", "log_destination=stderr" ]
     volumes:
       - data-postgres:/var/lib/postgresql/data
+    networks:
+      - default
+
+  maildev:
+    container_name: wb-maildev
+    image: soulteary/maildev:latest
+    ports:
+      - "1080:1080"
+      - "1025:1025"
+    environment:
+      - MAILDEV_INCOMING_USER=maildev
+      - MAILDEV_INCOMING_PASS=maildev
     networks:
       - default
 

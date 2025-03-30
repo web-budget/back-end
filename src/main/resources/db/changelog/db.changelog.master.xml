@@ -20,16 +20,20 @@
     <!--
         down here, you should put your versioned changelogs for production
     -->
-    <include relativeToChangelogFile="true" file="db.changelog.20210403.xml"/>
-    <include relativeToChangelogFile="true" file="db.changelog.20210404.xml"/>
-    <include relativeToChangelogFile="true" file="db.changelog.20220620.xml"/>
-    <include relativeToChangelogFile="true" file="db.changelog.20230416.xml"/>
-    <include relativeToChangelogFile="true" file="db.changelog.20230502.xml"/>
-    <include relativeToChangelogFile="true" file="db.changelog.20230613.xml"/>
-    <include relativeToChangelogFile="true" file="db.changelog.20240323.xml"/>
-    <include relativeToChangelogFile="true" file="db.changelog.20240501.xml"/>
-    <include relativeToChangelogFile="true" file="db.changelog.20240624.xml"/>
-    <include relativeToChangelogFile="true" file="db.changelog.20241006.xml"/>
+    <include relativeToChangelogFile="true" file="2021/04/03-changelog.xml"/>
+    <include relativeToChangelogFile="true" file="2021/04/04-changelog.xml"/>
+    <include relativeToChangelogFile="true" file="2021/06/20-changelog.xml"/>
+
+    <include relativeToChangelogFile="true" file="2023/06/05-changelog.xml"/>
+    <include relativeToChangelogFile="true" file="2023/06/06-changelog.xml"/>
+    <include relativeToChangelogFile="true" file="2023/06/07-changelog.xml"/>
+
+    <include relativeToChangelogFile="true" file="2024/10/03-changelog.xml"/>
+    <include relativeToChangelogFile="true" file="2024/10/04-changelog.xml"/>
+    <include relativeToChangelogFile="true" file="2024/10/05-changelog.xml"/>
+    <include relativeToChangelogFile="true" file="2024/10/06-changelog.xml"/>
+
+    <include relativeToChangelogFile="true" file="2025/03/30-changelog.xml"/>
 
     <!--
         use this changelog to initialize testing database.

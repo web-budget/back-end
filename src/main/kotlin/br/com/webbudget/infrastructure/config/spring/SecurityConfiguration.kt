@@ -29,6 +29,9 @@ import org.springframework.security.oauth2.jwt.NimbusJwtEncoder
 import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint
 import org.springframework.security.oauth2.server.resource.web.access.BearerTokenAccessDeniedHandler
 import org.springframework.security.web.SecurityFilterChain
+import org.springframework.web.cors.CorsConfiguration
+import org.springframework.web.cors.CorsConfigurationSource
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
 
@@ -45,6 +48,7 @@ class SecurityConfiguration(
     @Bean
     fun configureSecurity(http: HttpSecurity): SecurityFilterChain {
         http {
+            cors {  }
             csrf { disable() }
             authorizeHttpRequests {
                 authorize("/actuator/health/**", permitAll)
@@ -67,6 +71,20 @@ class SecurityConfiguration(
         }
 
         return http.build()
+    }
+
+    @Bean
+    fun corsConfigurationSource(@Value("\${web-budget.frontend-url}") frontendUrl: String): CorsConfigurationSource {
+
+        val configuration = CorsConfiguration()
+        configuration.allowedOrigins = listOf(frontendUrl)
+        configuration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "HEAD")
+        configuration.allowedHeaders = listOf("*")
+
+        val source = UrlBasedCorsConfigurationSource()
+        source.registerCorsConfiguration("/**", configuration)
+
+        return source
     }
 
     @Bean
