@@ -57,7 +57,8 @@ data class CardListView(
     val id: UUID,
     val name: String,
     val type: Type,
-    val active: Boolean
+    val active: Boolean,
+    val flag: String? = null,
 )
 
 data class CardFilter(

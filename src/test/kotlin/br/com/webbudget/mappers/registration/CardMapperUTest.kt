@@ -127,8 +127,9 @@ class CardMapperUTest {
         assertThat(view)
             .isNotNull
             .satisfies({
-                assertThat(it.name).isEqualTo(domainObject.name)
                 assertThat(it.id).isEqualTo(domainObject.externalId)
+                assertThat(it.name).isEqualTo(domainObject.name)
+                assertThat(it.flag).isEqualTo(domainObject.flag)
                 assertThat(it.active).isEqualTo(domainObject.active)
             })
     }
