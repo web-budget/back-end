@@ -31,6 +31,6 @@ class FinancialPeriod(
     fun isOpen(): Boolean = status == Status.ACTIVE || status == Status.ENDED
 
     enum class Status {
-        ACTIVE, ENDED, ACCOUNTED
+        ACTIVE, ENDED, ACCOUNTED;
     }
 }

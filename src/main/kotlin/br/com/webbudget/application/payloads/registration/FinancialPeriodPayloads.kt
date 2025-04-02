@@ -2,7 +2,11 @@ package br.com.webbudget.application.payloads.registration
 
 import br.com.webbudget.application.payloads.SpecificationSupport
 import br.com.webbudget.domain.entities.registration.FinancialPeriod
+import br.com.webbudget.domain.entities.registration.FinancialPeriod.Status.ACCOUNTED
+import br.com.webbudget.domain.entities.registration.FinancialPeriod.Status.ACTIVE
+import br.com.webbudget.domain.entities.registration.FinancialPeriod.Status.ENDED
 import br.com.webbudget.infrastructure.repository.registration.FinancialPeriodRepository.Specifications.byName
+import br.com.webbudget.infrastructure.repository.registration.FinancialPeriodRepository.Specifications.byStatus
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import org.springframework.data.jpa.domain.Specification
@@ -52,9 +56,17 @@ data class FinancialPeriodListView(
 
 data class FinancialPeriodFilter(
     val filter: String?,
+    val status: String?
 ) : SpecificationSupport<FinancialPeriod> {
 
     override fun toSpecification(): Specification<FinancialPeriod> {
-        return byName(filter)
+
+        val status = when (this.status) {
+            "OPEN" -> listOf(ACTIVE, ENDED)
+            "ALL" -> listOf(ACTIVE, ENDED, ACCOUNTED)
+            else -> listOf(ACCOUNTED)
+        }
+
+        return byName(filter).and(byStatus(status))
     }
 }

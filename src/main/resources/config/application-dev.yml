@@ -1,15 +1,3 @@
 spring:
   liquibase:
     contexts: dev
-
-  mail:
-    host: sandbox.smtp.mailtrap.io
-    port: 2525
-    properties:
-      mail.debug: true
-
-logging:
-  level:
-    br.com.webbudget: debug
-    org.hibernate.SQL: debug
-    org.hibernate.type.descriptor.sql.BasicBinder: trace

@@ -51,5 +51,13 @@ interface FinancialPeriodRepository : BaseRepository<FinancialPeriod> {
         fun byName(value: String?) = Specification<FinancialPeriod> { root, _, builder ->
             value?.let { builder.like(builder.lower(root["name"]), likeIgnoreCase(value)) }
         }
+
+        fun byStatus(statuses: List<Status>?) = Specification<FinancialPeriod> { root, _, builder ->
+            statuses?.let {
+                val inExpression = builder.`in`(root.get<Status>("status"))
+                statuses.forEach { inExpression.value(it) }
+                inExpression
+            }
+        }
     }
 }
