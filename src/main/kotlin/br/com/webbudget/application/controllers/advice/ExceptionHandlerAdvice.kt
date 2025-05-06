@@ -36,7 +36,11 @@ class ExceptionHandlerAdvice {
     @ExceptionHandler(BusinessException::class)
     fun handle(ex: BusinessException): ProblemDetail {
         logger.error(ex) { "Business exception" }
-        return ProblemDetail.forStatusAndDetail(ex.httpStatus, ex.message ?: NO_DETAIL_PROVIDED)
+
+        val detail = ProblemDetail.forStatusAndDetail(ex.httpStatus, ex.message)
+        detail.setProperty("code", ex.detail)
+
+        return detail
     }
 
     companion object {

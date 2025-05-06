@@ -33,7 +33,7 @@ class FinancialPeriodDatesOverlapValidator(
         if (periods.isNotEmpty()) {
             throw BusinessException(
                 "Period start and end dates are overlap with other open periods",
-                "financial-period.errors.invalid-dates"
+                "financial-period.errors.overlapping-dates"
             )
         }
     }
@@ -45,7 +45,7 @@ class FinancialPeriodDatesOverlapValidator(
         if (periods.isNotEmpty()) {
             throw BusinessException(
                 "Period start and end dates are overlap with other open periods",
-                "financial-period.errors.invalid-dates"
+                "financial-period.errors.overlapping-dates"
             )
         }
     }

@@ -10,7 +10,6 @@ import org.mapstruct.ReportingPolicy
     componentModel = ComponentModel.SPRING,
     unmappedSourcePolicy = ReportingPolicy.IGNORE,
     unmappedTargetPolicy = ReportingPolicy.IGNORE,
-    collectionMappingStrategy = CollectionMappingStrategy.TARGET_IMMUTABLE,
-    nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
+    collectionMappingStrategy = CollectionMappingStrategy.TARGET_IMMUTABLE
 )
 interface MappingConfiguration
