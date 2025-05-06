@@ -39,10 +39,10 @@ class FinancialPeriodMapperTest {
     @Test
     fun `should map update form to domain object`() {
 
-        val start = LocalDate.of(2024, 1, 1)
-        val end = start.plusDays(30)
+        val start = LocalDate.now()
+        val end = start.plusDays(15)
 
-        val form = FinancialPeriodUpdateForm("01/2024", start, end, BigDecimal.ZERO, BigDecimal.ZERO)
+        val form = FinancialPeriodUpdateForm("01/2024", BigDecimal.ZERO, BigDecimal.ZERO)
 
         val financialPeriod = createFinancialPeriod(id = 1L, status = FinancialPeriod.Status.ENDED)
 

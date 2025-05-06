@@ -28,10 +28,6 @@ data class FinancialPeriodCreateForm(
 data class FinancialPeriodUpdateForm(
     @field:NotBlank(message = "is-null-or-blank")
     val name: String?,
-    @field:NotNull(message = "is-null")
-    val startingAt: LocalDate?,
-    @field:NotNull(message = "is-null")
-    val endingAt: LocalDate?,
     val revenuesGoal: BigDecimal?,
     val expensesGoal: BigDecimal?
 )
