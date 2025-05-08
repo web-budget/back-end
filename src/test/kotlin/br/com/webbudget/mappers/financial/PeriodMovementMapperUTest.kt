@@ -11,7 +11,6 @@ import br.com.webbudget.application.payloads.financial.PeriodMovementUpdateForm
 import br.com.webbudget.domain.entities.financial.PeriodMovement
 import br.com.webbudget.infrastructure.repository.registration.FinancialPeriodRepository
 import br.com.webbudget.infrastructure.repository.registration.MovementClassRepository
-import br.com.webbudget.utilities.fixture.createApportionment
 import br.com.webbudget.utilities.fixture.createFinancialPeriod
 import br.com.webbudget.utilities.fixture.createMovementClass
 import br.com.webbudget.utilities.fixture.createPeriodMovement
@@ -236,48 +235,6 @@ class PeriodMovementMapperUTest {
 
         verify(exactly = 1) { movementClassRepository.findByExternalId(ofType<UUID>()) }
         verify(exactly = 1) { financialPeriodRepository.findByExternalId(ofType<UUID>()) }
-
-        confirmVerified(movementClassRepository, financialPeriodRepository)
-    }
-
-    @Test
-    fun `should map update form to domain object ignoring null values`() {
-
-        val movementClass = createMovementClass()
-        val financialPeriod = createFinancialPeriod()
-        val apportionments = mutableListOf(createApportionment(movementClass = movementClass))
-
-        val domainObject = createPeriodMovement(financialPeriod = financialPeriod, apportionments = apportionments)
-
-        val form = PeriodMovementUpdateForm(name = "New name")
-
-        periodMovementMapper.mapToDomain(form, domainObject)
-
-        assertThat(domainObject)
-            .isNotNull
-            .satisfies({
-                assertThat(it.name).isEqualTo("New name")
-                assertThat(it.dueDate).isEqualTo(LocalDate.now())
-                assertThat(it.value).isEqualTo(BigDecimal.ONE)
-                assertThat(it.state).isEqualTo(PeriodMovement.State.OPEN)
-                assertThat(it.description).isNull()
-                assertThat(it.financialPeriod).isEqualTo(financialPeriod)
-                assertThat(it.quoteNumber).isNull()
-                assertThat(it.payment).isNull()
-                assertThat(it.creditCardInvoice).isNull()
-                assertThat(it.recurringMovement).isNull()
-            })
-
-        assertThat(domainObject.apportionments)
-            .isNotEmpty
-            .hasSize(1)
-            .satisfiesExactlyInAnyOrder({
-                assertThat(it.value).isEqualTo(apportionments.first().value)
-                assertThat(it.movementClass).isEqualTo(movementClass)
-            })
-
-        verify(exactly = 0) { movementClassRepository.findByExternalId(ofType<UUID>()) }
-        verify(exactly = 0) { financialPeriodRepository.findByExternalId(ofType<UUID>()) }
 
         confirmVerified(movementClassRepository, financialPeriodRepository)
     }

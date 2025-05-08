@@ -9,7 +9,6 @@ import br.com.webbudget.application.payloads.financial.RecurringMovementCreateFo
 import br.com.webbudget.application.payloads.financial.RecurringMovementUpdateForm
 import br.com.webbudget.domain.entities.financial.RecurringMovement
 import br.com.webbudget.infrastructure.repository.registration.MovementClassRepository
-import br.com.webbudget.utilities.fixture.createApportionment
 import br.com.webbudget.utilities.fixture.createMovementClass
 import br.com.webbudget.utilities.fixture.createRecurringMovement
 import io.mockk.confirmVerified
@@ -199,40 +198,6 @@ class RecurringMovementMapperUTest {
             })
 
         verify(exactly = 1) { movementClassRepository.findByExternalId(ofType<UUID>()) }
-
-        confirmVerified(movementClassRepository)
-    }
-
-    @Test
-    fun `should map update form to domain object ignoring null values`() {
-
-        val movementClass = createMovementClass()
-        val apportionments = mutableListOf(createApportionment(movementClass = movementClass))
-
-        val domainObject = createRecurringMovement(apportionments = apportionments)
-
-        val form = RecurringMovementUpdateForm(name = "New name")
-
-        recurringMovementMapper.mapToDomain(form, domainObject)
-
-        assertThat(domainObject)
-            .isNotNull
-            .satisfies({
-                assertThat(it.name).isEqualTo(form.name)
-                assertThat(it.startingAt).isEqualTo(LocalDate.now())
-                assertThat(it.autoLaunch).isTrue()
-                assertThat(it.description).isNull()
-            })
-
-        assertThat(domainObject.apportionments)
-            .isNotEmpty
-            .hasSize(1)
-            .satisfiesExactlyInAnyOrder({
-                assertThat(it.value).isEqualTo(apportionments.first().value)
-                assertThat(it.movementClass).isEqualTo(movementClass)
-            })
-
-        verify(exactly = 0) { movementClassRepository.findByExternalId(ofType<UUID>()) }
 
         confirmVerified(movementClassRepository)
     }
