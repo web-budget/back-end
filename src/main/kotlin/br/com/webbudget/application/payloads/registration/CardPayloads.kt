@@ -46,11 +46,11 @@ data class CardView(
     val id: UUID,
     val name: String,
     val lastFourDigits: String,
-    val invoicePaymentDay: Int,
     val type: Type,
     val active: Boolean,
     val flag: String? = null,
-    val wallet: WalletView? = null
+    val wallet: WalletListView? = null,
+    val invoicePaymentDay: Int? = null,
 )
 
 data class CardListView(
