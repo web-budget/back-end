@@ -1,24 +1,23 @@
 import io.gitlab.arturbosch.detekt.Detekt
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_0
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     // spring
-    id("org.springframework.boot") version "3.4.0"
-    id("io.spring.dependency-management") version "1.1.6"
+    id("org.springframework.boot") version "3.5.0"
+    id("io.spring.dependency-management") version "1.1.7"
 
     // detekt
-    id("io.gitlab.arturbosch.detekt") version "1.23.7"
+    id("io.gitlab.arturbosch.detekt") version "1.23.8"
 
     // kotlin things
-    kotlin("jvm") version "2.0.10"
-    kotlin("plugin.spring") version "2.0.10"
-    kotlin("plugin.jpa") version "2.0.10"
+    kotlin("jvm") version "2.0.21"
+    kotlin("plugin.spring") version "2.0.21"
+    kotlin("plugin.jpa") version "2.0.21"
 
     // mapstruct
-    kotlin("kapt") version "2.0.10"
+    kotlin("kapt") version "2.0.21"
 }
 
 group = "br.com.webbudget"
@@ -36,16 +35,16 @@ repositories {
     mavenCentral()
 }
 
-val testcontainersVersion = "1.20.4"
-val guavaVersion = "33.3.1-jre"
+val testcontainersVersion = "1.21.0"
+val guavaVersion = "33.4.8-jre"
 val mapstructVersion = "1.6.3"
-val assertJVersion = "3.26.3"
+val assertJVersion = "3.27.3"
 val mockkVersion = "4.0.2"
-val jsonUnitVersion = "3.5.0"
-val awaitilityVersion = "4.2.0"
-val hypersistenceUtilsVersion = "3.9.0"
-val kotlinLoggingJvmVersion = "7.0.3"
-val greenMailVersion = "2.1.2"
+val jsonUnitVersion = "4.1.1"
+val awaitilityVersion = "4.3.0"
+val hypersistenceUtilsVersion = "3.9.10"
+val kotlinLoggingJvmVersion = "7.0.7"
+val greenMailVersion = "2.1.3"
 
 dependencies {
     // spring

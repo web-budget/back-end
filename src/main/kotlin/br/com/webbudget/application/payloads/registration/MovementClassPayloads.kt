@@ -42,7 +42,7 @@ data class MovementClassView(
     val name: String,
     val type: String,
     val active: Boolean,
-    val costCenter: CostCenterView,
+    val costCenter: CostCenterListView,
     val budget: BigDecimal?,
     val description: String?
 )
