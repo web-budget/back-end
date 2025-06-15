@@ -25,13 +25,9 @@ class BudgetLimitValidator(
 
         val costCenter = value.costCenter
 
-        // expenses have no budget limit, so the movement class is valid
-        if (value.isForExpense() && costCenter.expenseBudget == null) {
-            return
-        }
-
-        // incomes have no budget limit, so the movement class is valid
-        if (value.isForIncome() && costCenter.incomeBudget == null) {
+        // for income or expense, if cost center doesn't have budget limit, movement class is valid
+        if ((value.isForExpense() && costCenter.expenseBudget == null)
+            || (value.isForIncome() && costCenter.incomeBudget == null))  {
             return
         }
 
