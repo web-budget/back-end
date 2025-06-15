@@ -30,6 +30,10 @@ class MovementClass(
     var description: String? = null,
 ) : PersistentEntity<Long>() {
 
+    fun isForExpense() = type == Type.EXPENSE
+
+    fun isForIncome() = type == Type.INCOME
+
     enum class Type {
         INCOME, EXPENSE
     }

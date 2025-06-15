@@ -1,6 +1,8 @@
 package br.com.webbudget.services.registration
 
 import br.com.webbudget.BaseIntegrationTest
+import br.com.webbudget.domain.entities.registration.MovementClass
+import br.com.webbudget.domain.exceptions.BusinessException
 import br.com.webbudget.domain.exceptions.ConflictingPropertyException
 import br.com.webbudget.domain.services.registration.MovementClassService
 import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository
@@ -11,10 +13,14 @@ import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.jdbc.Sql
 import java.math.BigDecimal
 import java.util.UUID
+import java.util.stream.Stream
 
 class MovementClassServiceITest : BaseIntegrationTest() {
 
@@ -147,5 +153,69 @@ class MovementClassServiceITest : BaseIntegrationTest() {
     @Disabled
     fun `should fail to delete when in use`() {
         // TODO this should be done after the movement feature is created
+    }
+
+    @Sql(
+        "/sql/registration/clear-tables.sql",
+        "/sql/registration/create-cost-centers.sql"
+    )
+    @ParameterizedTest
+    @MethodSource("movementClassesToCreate")
+    fun `should validate cost center budget limit on create`(toCreate: MovementClass) {
+
+        val costCenter = costCenterRepository.findByExternalId(UUID.fromString("3cb5732d-2551-4eb9-8b41-f5d312ba7aac"))
+            ?: fail { OBJECT_NOT_FOUND_ERROR }
+
+        toCreate.costCenter = costCenter
+
+        assertThatThrownBy { movementClassService.create(toCreate) }
+            .isInstanceOf(BusinessException::class.java)
+    }
+
+    @Sql(
+        "/sql/registration/clear-tables.sql",
+        "/sql/registration/create-cost-centers.sql",
+        "/sql/registration/create-movement-classes.sql"
+    )
+    @ParameterizedTest
+    @MethodSource("movementClassesToUpdate")
+    fun `should validate cost center budget limit on update`(externalId: UUID) {
+
+        val toUpdate = movementClassRepository.findByExternalId(externalId)
+            ?: fail { OBJECT_NOT_FOUND_ERROR }
+
+        toUpdate.apply {
+            this.budget = BigDecimal.valueOf(1001)
+        }
+
+        assertThatThrownBy { movementClassService.update(toUpdate) }
+            .isInstanceOf(BusinessException::class.java)
+    }
+
+    companion object {
+
+        @JvmStatic
+        fun movementClassesToCreate(): Stream<Arguments> = Stream.of(
+            Arguments.of(
+                createMovementClass(
+                    name = "Impostos",
+                    type = MovementClass.Type.EXPENSE,
+                    budget = BigDecimal.valueOf(1001),
+                )
+            ),
+            Arguments.of(
+                createMovementClass(
+                    name = "Trabalho como uber",
+                    type = MovementClass.Type.INCOME,
+                    budget = BigDecimal.valueOf(1001),
+                )
+            )
+        )
+
+        @JvmStatic
+        fun movementClassesToUpdate(): Stream<Arguments> = Stream.of(
+            Arguments.of(UUID.fromString("86158792-f34e-4cdf-bce6-44394d645d0d")),
+            Arguments.of(UUID.fromString("067e62d5-725f-44c6-bfdf-79f9cf19fff8"))
+        )
     }
 }
