@@ -221,7 +221,7 @@ class CardControllerUTest : BaseControllerIntegrationTest() {
             "lastFourDigits" to "is-null-or-blank"
         )
 
-        val response = mockMvc.post(ENDPOINT_URL) {
+        val jsonResponse = mockMvc.post(ENDPOINT_URL) {
             with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
             content = JsonPayload("card/invalid-credit")
@@ -231,8 +231,11 @@ class CardControllerUTest : BaseControllerIntegrationTest() {
             .response
             .contentAsString
 
-        assertThatJson(response)
-            .node("violations")
+        assertThatJson(jsonResponse)
+            .node("message")
+            .isObject
+            .containsKey("key")
+            .node("parameters")
             .isObject
             .hasSize(requiredEntries.size)
             .containsExactlyInAnyOrderEntriesOf(requiredEntries)
@@ -251,7 +254,7 @@ class CardControllerUTest : BaseControllerIntegrationTest() {
             "lastFourDigits" to "is-null-or-blank"
         )
 
-        val response = mockMvc.post(ENDPOINT_URL) {
+        val jsonResponse = mockMvc.post(ENDPOINT_URL) {
             with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
             content = JsonPayload("card/invalid-debit")
@@ -261,8 +264,11 @@ class CardControllerUTest : BaseControllerIntegrationTest() {
             .response
             .contentAsString
 
-        assertThatJson(response)
-            .node("violations")
+        assertThatJson(jsonResponse)
+            .node("message")
+            .isObject
+            .containsKey("key")
+            .node("parameters")
             .isObject
             .hasSize(requiredEntries.size)
             .containsExactlyInAnyOrderEntriesOf(requiredEntries)

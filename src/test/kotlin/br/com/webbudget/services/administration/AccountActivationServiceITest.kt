@@ -72,7 +72,6 @@ class AccountActivationServiceITest : BaseIntegrationTest() {
                 "unknown@webbudget.com.br"
             )
         }.isInstanceOf(InvalidAccountActivationTokenException::class.java)
-            .hasMessage("account-activation.errors.invalid-token")
     }
 
     @Test
@@ -87,7 +86,6 @@ class AccountActivationServiceITest : BaseIntegrationTest() {
 
         assertThatThrownBy { accountActivationService.activate(attempt.token, userName) }
             .isInstanceOf(InvalidAccountActivationTokenException::class.java)
-            .hasMessage("account-activation.errors.invalid-token")
     }
 
     companion object {

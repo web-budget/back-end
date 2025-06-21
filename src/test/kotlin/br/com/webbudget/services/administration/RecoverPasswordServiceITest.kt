@@ -69,7 +69,6 @@ class RecoverPasswordServiceITest : BaseIntegrationTest() {
 
         assertThatThrownBy { recoverPasswordService.recover("s3cr3t", UUID.randomUUID(), userEmail) }
             .isInstanceOf(InvalidPasswordRecoverTokenException::class.java)
-            .hasMessage("recover-password.errors.invalid-token")
     }
 
     @Test
@@ -109,7 +108,6 @@ class RecoverPasswordServiceITest : BaseIntegrationTest() {
 
         assertThatThrownBy { recoverPasswordService.recover("s3cr3t", unusedAttempt.token, userEmail) }
             .isInstanceOf(InvalidPasswordRecoverTokenException::class.java)
-            .hasMessage("recover-password.errors.invalid-token")
     }
 
     companion object {

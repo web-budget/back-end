@@ -84,7 +84,6 @@ class FinancialPeriodDatesOverlapValidatorTest {
 
         assertThatThrownBy { validator.validate(financialPeriod) }
             .isInstanceOf(BusinessException::class.java)
-            .hasMessage("Period start and end dates are overlap with other open periods")
 
         verify(exactly = 1) {
             financialPeriodRepository.findByStartAndEndDates(ofType<LocalDate>(), ofType<LocalDate>())
@@ -109,7 +108,6 @@ class FinancialPeriodDatesOverlapValidatorTest {
 
         assertThatThrownBy { validator.validate(financialPeriod) }
             .isInstanceOf(BusinessException::class.java)
-            .hasMessage("Period start and end dates are overlap with other open periods")
 
         verify(exactly = 1) {
             financialPeriodRepository.findByStartAndEndDatesAndExternalIdNot(

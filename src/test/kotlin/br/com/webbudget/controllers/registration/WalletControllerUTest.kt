@@ -171,7 +171,10 @@ class WalletControllerUTest : BaseControllerIntegrationTest() {
             .contentAsString
 
         assertThatJson(jsonResponse)
-            .node("violations")
+            .node("message")
+            .isObject
+            .containsKey("key")
+            .node("parameters")
             .isObject
             .hasSize(requiredEntries.size)
             .containsExactlyInAnyOrderEntriesOf(requiredEntries)

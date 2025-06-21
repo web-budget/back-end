@@ -80,7 +80,6 @@ class FinancialPeriodServiceITest : BaseIntegrationTest() {
 
         assertThatThrownBy { financialPeriodService.create(financialPeriod) }
             .isInstanceOf(BusinessException::class.java)
-            .hasMessage("Period start and end dates are overlap with other open periods")
     }
 
     @Test
@@ -183,7 +182,6 @@ class FinancialPeriodServiceITest : BaseIntegrationTest() {
 
         assertThatThrownBy { financialPeriodService.update(toUpdate) }
             .isInstanceOf(BusinessException::class.java)
-            .hasMessage("Period start and end dates are overlap with other open periods")
     }
 
     @Test

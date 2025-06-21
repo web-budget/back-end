@@ -29,7 +29,10 @@ class ValidationHandlerAdviceUTest : BaseControllerIntegrationTest() {
             .containsEntry("detail", "The message")
             .containsEntry("title", "Conflict")
             .containsEntry("status", 409)
-            .node("conflicts")
+            .node("message")
+            .isObject
+            .containsEntry("key", "some.key")
+            .node("parameters")
             .isObject
             .containsEntry("property", "value")
     }
