@@ -24,11 +24,11 @@ class CostCenterNameValidator(
 
     private fun validateSaved(value: CostCenter) {
         costCenterRepository.findByNameIgnoreCaseAndExternalIdNot(value.name, value.externalId!!)
-            ?.let { throw ConflictingPropertyException(mapOf("cost-center.name" to value.name)) }
+            ?.let { throw ConflictingPropertyException(parameters = mapOf("cost-center.name" to value.name)) }
     }
 
     private fun validateNotSaved(value: CostCenter) {
         costCenterRepository.findByNameIgnoreCase(value.name)
-            ?.let { throw ConflictingPropertyException(mapOf("cost-center.name" to value.name)) }
+            ?.let { throw ConflictingPropertyException(parameters = mapOf("cost-center.name" to value.name)) }
     }
 }

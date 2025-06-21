@@ -24,11 +24,11 @@ class FinancialPeriodNameValidator(
 
     private fun validateSaved(value: FinancialPeriod) {
         financialPeriodRepository.findByNameIgnoreCaseAndExternalIdNot(value.name, value.externalId!!)
-            ?.let { throw ConflictingPropertyException(mapOf("financial-period.name" to value.name)) }
+            ?.let { throw ConflictingPropertyException(parameters = mapOf("financial-period.name" to value.name)) }
     }
 
     private fun validateNotSaved(value: FinancialPeriod) {
         financialPeriodRepository.findByNameIgnoreCase(value.name)
-            ?.let { throw ConflictingPropertyException(mapOf("financial-period.name" to value.name)) }
+            ?.let { throw ConflictingPropertyException(parameters = mapOf("financial-period.name" to value.name)) }
     }
 }

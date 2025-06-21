@@ -15,7 +15,7 @@ class ValidationExceptionController {
 
     @GetMapping("/duplicated-property-exception")
     fun getBadCredentialsException(): ResponseEntity<Any> {
-        throw ConflictingPropertyException(mapOf("property" to "value"), "The message")
+        throw ConflictingPropertyException("The message", "some.key", mapOf("property" to "value"))
     }
 
     @GetMapping("/method-argument-no-valid-exception")

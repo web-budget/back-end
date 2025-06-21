@@ -26,7 +26,7 @@ class CardTypeAndNumberValidator(
         cardRepository.findByTypeAndLastFourDigitsAndExternalIdNot(value.type, value.lastFourDigits, value.externalId!!)
             ?.let {
                 throw ConflictingPropertyException(
-                    mapOf(
+                    parameters = mapOf(
                         "card.type" to value.type,
                         "card.last-four-digits" to value.lastFourDigits
                     )
@@ -38,7 +38,7 @@ class CardTypeAndNumberValidator(
         cardRepository.findByTypeAndLastFourDigits(value.type, value.lastFourDigits)
             ?.let {
                 throw ConflictingPropertyException(
-                    mapOf(
+                    parameters = mapOf(
                         "card.type" to value.type,
                         "card.last-four-digits" to value.lastFourDigits
                     )

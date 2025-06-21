@@ -3,6 +3,9 @@ package br.com.webbudget.domain.services.financial
 import br.com.webbudget.domain.entities.financial.PeriodMovement
 import br.com.webbudget.domain.entities.financial.sumEqualTo
 import br.com.webbudget.domain.exceptions.BusinessException
+import br.com.webbudget.domain.exceptions.ErrorCodes.ACCOUNTED_PERIOD_MOVEMENT
+import br.com.webbudget.domain.exceptions.ErrorCodes.FINANCIAL_PERIOD_NOT_OPEN
+import br.com.webbudget.domain.exceptions.ErrorCodes.INVALID_APPORTIONMENTS
 import br.com.webbudget.infrastructure.repository.financial.ApportionmentRepository
 import br.com.webbudget.infrastructure.repository.financial.PeriodMovementRepository
 import br.com.webbudget.infrastructure.utilities.CommonErrorMessages.EXTERNAL_ID_IS_NULL
@@ -47,7 +50,7 @@ class PeriodMovementService(
     fun delete(periodMovement: PeriodMovement) {
 
         ensure(periodMovement.isAccounted().not()) {
-            throw BusinessException("Period movement is accounted", "period-movement.errors.accounted-movement")
+            throw BusinessException("Period movement is accounted", ACCOUNTED_PERIOD_MOVEMENT)
         }
 
         periodMovementRepository.delete(periodMovement)
@@ -56,18 +59,15 @@ class PeriodMovementService(
     private fun validateBeforeCreteOrUpdate(periodMovement: PeriodMovement) {
 
         ensure(periodMovement.apportionments.sumEqualTo(periodMovement.value)) {
-            throw BusinessException(
-                "Apportionments total must be equal to movement value",
-                "period-movement.errors.invalid-apportionments"
-            )
+            throw BusinessException("Apportionments total must be equal to movement value", INVALID_APPORTIONMENTS)
         }
 
         ensure(periodMovement.financialPeriod.isOpen()) {
-            BusinessException("Financial period is not open", "period-movement.errors.period-not-open")
+            BusinessException("Financial period is not open", FINANCIAL_PERIOD_NOT_OPEN)
         }
 
         ensure(periodMovement.isAccounted().not()) {
-            BusinessException("Period movement is not open", "period-movement.errors.not-open")
+            BusinessException("Period movement is accounted", ACCOUNTED_PERIOD_MOVEMENT)
         }
     }
 }

@@ -1,11 +1,13 @@
 package br.com.webbudget.domain.exceptions
 
 open class ConflictingPropertyException(
-    val conflicts: Map<String, Any?>,
-    override val message: String = DEFAULT_MESSAGE
-) : RuntimeException(message) {
+    message: String = DEFAULT_MESSAGE,
+    key: String = DEFAULT_KEY,
+    parameters: Map<String, Any?>? = null
+) : BusinessException(message, key, parameters) {
 
     companion object {
-        const val DEFAULT_MESSAGE = "Some properties are using the same value than other resources"
+        private const val DEFAULT_KEY = "conflicting-properties"
+        private const val DEFAULT_MESSAGE = "Some properties are conflicting with existent data"
     }
 }

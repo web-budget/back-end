@@ -24,11 +24,11 @@ class WalletNameValidator(
 
     private fun validateSaved(value: Wallet) {
         walletRepository.findByNameIgnoreCaseAndExternalIdNot(value.name, value.externalId!!)
-            ?.let { throw ConflictingPropertyException(mapOf("wallet.name" to value.name)) }
+            ?.let { throw ConflictingPropertyException(parameters = mapOf("wallet.name" to value.name)) }
     }
 
     private fun validateNotSaved(value: Wallet) {
         walletRepository.findByNameIgnoreCase(value.name)
-            ?.let { throw ConflictingPropertyException(mapOf("wallet.name" to value.name)) }
+            ?.let { throw ConflictingPropertyException(parameters = mapOf("wallet.name" to value.name)) }
     }
 }

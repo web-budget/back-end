@@ -43,7 +43,7 @@ class MovementClassController(
         movementClassRepository.findByExternalId(id)
             ?.let { movementClassMapper.mapToView(it) }
             ?.let { ResponseEntity.ok(it) }
-            ?: throw ResourceNotFoundException(mapOf("movementClassId" to id))
+            ?: throw ResourceNotFoundException()
 
     @PostMapping
     fun create(@RequestBody @Valid form: MovementClassCreateForm): ResponseEntity<Any> {
@@ -66,7 +66,7 @@ class MovementClassController(
     ): ResponseEntity<MovementClassView> {
 
         val movementClass = movementClassRepository.findByExternalId(id)
-            ?: throw ResourceNotFoundException(mapOf("movementClassId" to id))
+            ?: throw ResourceNotFoundException()
 
         movementClassMapper.mapToDomain(form, movementClass)
         movementClassService.update(movementClass)
@@ -78,5 +78,5 @@ class MovementClassController(
     fun delete(@PathVariable id: UUID): ResponseEntity<Any> = movementClassRepository.findByExternalId(id)
         ?.let { movementClassService.delete(it) }
         ?.let { ResponseEntity.ok().build() }
-        ?: throw ResourceNotFoundException(mapOf("movementClassId" to id))
+        ?: throw ResourceNotFoundException()
 }

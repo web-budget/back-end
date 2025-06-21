@@ -30,5 +30,5 @@ abstract class ApportionmentMapper {
 
     @Named("mapMovementClass")
     fun mapMovementClass(id: UUID): MovementClass = movementClassRepository.findByExternalId(id)
-        ?: throw ResourceNotFoundException(mapOf("movementClassId" to id))
+        ?: throw ResourceNotFoundException()
 }

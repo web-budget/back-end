@@ -36,6 +36,7 @@ abstract class CardMapper {
     abstract fun mapToDomain(form: CardUpdateForm, @MappingTarget card: Card)
 
     fun mapWallet(id: UUID?): Wallet? = id?.let {
-        walletRepository.findByExternalId(id) ?: throw ResourceNotFoundException(mapOf("walletId" to id.toString()))
+        walletRepository.findByExternalId(id)
+            ?: throw ResourceNotFoundException()
     }
 }

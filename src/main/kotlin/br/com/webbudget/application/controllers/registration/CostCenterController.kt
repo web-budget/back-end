@@ -42,7 +42,7 @@ class CostCenterController(
     fun getById(@PathVariable id: UUID): ResponseEntity<CostCenterView> = costCenterRepository.findByExternalId(id)
         ?.let { costCenterMapper.mapToView(it) }
         ?.let { ResponseEntity.ok(it) }
-        ?: throw ResourceNotFoundException(mapOf("costCenterId" to id))
+        ?: throw ResourceNotFoundException()
 
     @PostMapping
     fun create(@RequestBody @Valid form: CostCenterCreateForm): ResponseEntity<Any> {
@@ -62,7 +62,7 @@ class CostCenterController(
     fun update(@PathVariable id: UUID, @RequestBody @Valid form: CostCenterUpdateForm): ResponseEntity<CostCenterView> {
 
         val costCenter = costCenterRepository.findByExternalId(id)
-            ?: throw ResourceNotFoundException(mapOf("costCenterId" to id))
+            ?: throw ResourceNotFoundException()
 
         costCenterMapper.mapToDomain(form, costCenter)
         costCenterService.update(costCenter)
@@ -74,5 +74,5 @@ class CostCenterController(
     fun delete(@PathVariable id: UUID): ResponseEntity<Any> = costCenterRepository.findByExternalId(id)
         ?.let { costCenterService.delete(it) }
         ?.let { ResponseEntity.ok().build() }
-        ?: throw ResourceNotFoundException(mapOf("costCenterId" to id))
+        ?: throw ResourceNotFoundException()
 }

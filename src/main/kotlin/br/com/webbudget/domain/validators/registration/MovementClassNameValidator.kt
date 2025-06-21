@@ -24,11 +24,11 @@ class MovementClassNameValidator(
 
     private fun validateSaved(value: MovementClass) {
         movementClassRepository.findByNameIgnoreCaseAndExternalIdNot(value.name, value.externalId!!)
-            ?.let { throw ConflictingPropertyException(mapOf("movement-class.name" to value.name)) }
+            ?.let { throw ConflictingPropertyException(parameters = mapOf("movement-class.name" to value.name)) }
     }
 
     private fun validateNotSaved(value: MovementClass) {
         movementClassRepository.findByNameIgnoreCase(value.name)
-            ?.let { throw ConflictingPropertyException(mapOf("movement-class.name" to value.name)) }
+            ?.let { throw ConflictingPropertyException(parameters = mapOf("movement-class.name" to value.name)) }
     }
 }

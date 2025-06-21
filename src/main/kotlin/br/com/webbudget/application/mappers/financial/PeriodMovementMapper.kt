@@ -50,5 +50,5 @@ abstract class PeriodMovementMapper {
 
     @Named("mapFinancialPeriod")
     fun mapFinancialPeriod(id: UUID): FinancialPeriod = financialPeriodRepository.findByExternalId(id)
-        ?: throw ResourceNotFoundException(mapOf("financialPeriodId" to id))
+        ?: throw ResourceNotFoundException()
 }

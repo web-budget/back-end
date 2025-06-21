@@ -28,7 +28,7 @@ class BankingInformationValidator(
         walletRepository.findByBankInfo(value.bank, value.agency, value.number, value.externalId!!)
             ?.let {
                 throw ConflictingPropertyException(
-                    mapOf(
+                    parameters = mapOf(
                         "wallet.bank" to value.bank,
                         "wallet.agency" to value.agency,
                         "wallet.number" to value.number
@@ -41,7 +41,7 @@ class BankingInformationValidator(
         walletRepository.findByBankInfo(value.bank, value.agency, value.number)
             ?.let {
                 throw ConflictingPropertyException(
-                    mapOf(
+                    parameters = mapOf(
                         "wallet.bank" to value.bank,
                         "wallet.agency" to value.agency,
                         "wallet.number" to value.number

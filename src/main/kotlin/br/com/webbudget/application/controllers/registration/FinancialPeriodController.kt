@@ -44,7 +44,7 @@ class FinancialPeriodController(
         financialPeriodRepository.findByExternalId(id)
             ?.let { financialPeriodMapper.mapToView(it) }
             ?.let { ResponseEntity.ok(it) }
-            ?: throw ResourceNotFoundException(mapOf("financialPeriodId" to id))
+            ?: throw ResourceNotFoundException()
 
     @GetMapping("/active")
     fun getActive(pageable: Pageable): ResponseEntity<Page<FinancialPeriodView>> =
@@ -73,7 +73,7 @@ class FinancialPeriodController(
     ): ResponseEntity<FinancialPeriodView> {
 
         val financialPeriod = financialPeriodRepository.findByExternalId(id)
-            ?: throw ResourceNotFoundException(mapOf("financialPeriodId" to id))
+            ?: throw ResourceNotFoundException()
 
         financialPeriodMapper.mapToDomain(form, financialPeriod)
         financialPeriodService.update(financialPeriod)
@@ -85,5 +85,5 @@ class FinancialPeriodController(
     fun delete(@PathVariable id: UUID): ResponseEntity<Any> = financialPeriodRepository.findByExternalId(id)
         ?.let { financialPeriodService.delete(it) }
         ?.let { ResponseEntity.ok().build() }
-        ?: throw ResourceNotFoundException(mapOf("financialPeriodId" to id))
+        ?: throw ResourceNotFoundException()
 }

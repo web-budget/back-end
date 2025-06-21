@@ -43,7 +43,7 @@ class UserController(
     fun getById(@PathVariable id: UUID): ResponseEntity<UserView> = userRepository.findByExternalId(id)
         ?.let { userMapper.mapToView(it) }
         ?.let { ResponseEntity.ok(it) }
-        ?: throw ResourceNotFoundException(mapOf("userId" to id))
+        ?: throw ResourceNotFoundException()
 
     @PostMapping
     fun create(@RequestBody @Valid form: UserCreateForm): ResponseEntity<Any> {
@@ -63,7 +63,7 @@ class UserController(
     fun update(@PathVariable id: UUID, @RequestBody @Valid form: UserUpdateForm): ResponseEntity<UserView> {
 
         val user = userRepository.findByExternalId(id)
-            ?: throw ResourceNotFoundException(mapOf("userId" to id))
+            ?: throw ResourceNotFoundException()
 
         userMapper.mapToDomain(form, user)
         userService.updateAccount(user, form.authorities)
@@ -78,7 +78,7 @@ class UserController(
 
         userRepository.findByExternalId(id)
             ?.let { userService.updatePassword(it, password, temporary) }
-            ?: throw ResourceNotFoundException(mapOf("userId" to id))
+            ?: throw ResourceNotFoundException()
 
         return ResponseEntity.ok().build()
     }
@@ -87,5 +87,5 @@ class UserController(
     fun delete(@PathVariable id: UUID): ResponseEntity<Any> = userRepository.findByExternalId(id)
         ?.let { userService.deleteAccount(it) }
         ?.let { ResponseEntity.ok().build() }
-        ?: throw ResourceNotFoundException(mapOf("userId" to id))
+        ?: throw ResourceNotFoundException()
 }

@@ -3,6 +3,7 @@ package br.com.webbudget.domain.validators.registration
 import br.com.webbudget.domain.entities.registration.Card
 import br.com.webbudget.domain.entities.registration.Card.Type
 import br.com.webbudget.domain.exceptions.BusinessException
+import br.com.webbudget.domain.exceptions.ErrorCodes.INVALID_INVOICE_PAYMENT_DAY
 import br.com.webbudget.domain.validators.OnCreateValidation
 import br.com.webbudget.domain.validators.OnUpdateValidation
 import org.springframework.stereotype.Component
@@ -20,14 +21,15 @@ class CreditCardInvoicePaymentDayValidator : CardValidator {
 
         if (value.type == Type.CREDIT && (paymentDay == null || !validDateRange.contains(paymentDay))) {
             throw BusinessException(
-                "Credit card has has invalid invoice payment day",
-                "card.errors.credit-invalid-payment-day"
+                "Credit card has invalid invoice payment day",
+                INVALID_INVOICE_PAYMENT_DAY,
+                mapOf("payment-day" to paymentDay.toString())
             )
         }
     }
 
     companion object {
         private const val FIRST_VALID_DAY = 1
-        private const val LAST_VALID_DAY = 31
+        private const val LAST_VALID_DAY = 30
     }
 }

@@ -42,7 +42,7 @@ class CardController(
     fun getById(@PathVariable id: UUID): ResponseEntity<CardView> = cardRepository.findByExternalId(id)
         ?.let { cardMapper.mapToView(it) }
         ?.let { ResponseEntity.ok(it) }
-        ?: throw ResourceNotFoundException(mapOf("cardId" to id))
+        ?: throw ResourceNotFoundException()
 
     @PostMapping
     fun create(@RequestBody @Valid form: CardCreateForm): ResponseEntity<Any> {
@@ -62,7 +62,7 @@ class CardController(
     fun update(@PathVariable id: UUID, @RequestBody @Valid form: CardUpdateForm): ResponseEntity<CardView> {
 
         val card = cardRepository.findByExternalId(id)
-            ?: throw ResourceNotFoundException(mapOf("cardId" to id))
+            ?: throw ResourceNotFoundException()
 
         cardMapper.mapToDomain(form, card)
         cardService.update(card)
@@ -74,5 +74,5 @@ class CardController(
     fun delete(@PathVariable id: UUID): ResponseEntity<Any> = cardRepository.findByExternalId(id)
         ?.let { cardService.delete(it) }
         ?.let { ResponseEntity.ok().build() }
-        ?: throw ResourceNotFoundException(mapOf("cardId" to id))
+        ?: throw ResourceNotFoundException()
 }

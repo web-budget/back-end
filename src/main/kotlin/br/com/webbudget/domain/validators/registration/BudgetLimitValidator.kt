@@ -3,6 +3,7 @@ package br.com.webbudget.domain.validators.registration
 import br.com.webbudget.domain.entities.registration.MovementClass
 import br.com.webbudget.domain.entities.registration.MovementClass.Type
 import br.com.webbudget.domain.exceptions.BusinessException
+import br.com.webbudget.domain.exceptions.ErrorCodes.BUDGET_LIMIT_EXCEEDED
 import br.com.webbudget.domain.validators.OnCreateValidation
 import br.com.webbudget.domain.validators.OnUpdateValidation
 import br.com.webbudget.infrastructure.repository.registration.MovementClassRepository
@@ -27,7 +28,8 @@ class BudgetLimitValidator(
 
         // for income or expense, if cost center doesn't have budget limit, movement class is valid
         if ((value.isForExpense() && costCenter.expenseBudget == null)
-            || (value.isForIncome() && costCenter.incomeBudget == null))  {
+            || (value.isForIncome() && costCenter.incomeBudget == null)
+        ) {
             return
         }
 
@@ -68,9 +70,11 @@ class BudgetLimitValidator(
 
     private fun check(budget: BigDecimal, remainingBudget: BigDecimal, type: Type) {
         if (budget > remainingBudget) {
+            val parameters = mapOf<String, Any>("available-budget" to remainingBudget, "type" to type)
             throw BusinessException(
-                "movement-class.errors.budget-limit-exceeded",
-                "Only [$remainingBudget] of income budget is available for [$type]"
+                "Only [$remainingBudget] of [$type] budget is available",
+                BUDGET_LIMIT_EXCEEDED,
+                parameters
             )
         }
     }

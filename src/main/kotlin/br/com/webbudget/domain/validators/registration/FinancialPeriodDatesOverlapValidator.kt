@@ -2,6 +2,7 @@ package br.com.webbudget.domain.validators.registration
 
 import br.com.webbudget.domain.entities.registration.FinancialPeriod
 import br.com.webbudget.domain.exceptions.BusinessException
+import br.com.webbudget.domain.exceptions.ErrorCodes.OVERLAPPING_START_END_DATES
 import br.com.webbudget.domain.validators.OnCreateValidation
 import br.com.webbudget.domain.validators.OnUpdateValidation
 import br.com.webbudget.infrastructure.repository.registration.FinancialPeriodRepository
@@ -32,8 +33,8 @@ class FinancialPeriodDatesOverlapValidator(
 
         if (periods.isNotEmpty()) {
             throw BusinessException(
-                "Period start and end dates are overlap with other open periods",
-                "financial-period.errors.overlapping-dates"
+                "Period start and end dates are overlapping with other open periods",
+                OVERLAPPING_START_END_DATES
             )
         }
     }
@@ -44,8 +45,8 @@ class FinancialPeriodDatesOverlapValidator(
 
         if (periods.isNotEmpty()) {
             throw BusinessException(
-                "Period start and end dates are overlap with other open periods",
-                "financial-period.errors.overlapping-dates"
+                "Period start and end dates are overlapping with other open periods",
+                OVERLAPPING_START_END_DATES
             )
         }
     }

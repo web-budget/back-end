@@ -43,7 +43,7 @@ class RecurringMovementController(
         recurringMovementRepository.findByExternalId(id)
             ?.let { recurringMovementMapper.mapToView(it) }
             ?.let { ResponseEntity.ok(it) }
-            ?: throw ResourceNotFoundException(mapOf("recurringMovementId" to id))
+            ?: throw ResourceNotFoundException()
 
     @PostMapping
     fun create(@RequestBody @Valid form: RecurringMovementCreateForm): ResponseEntity<Any> {
@@ -66,7 +66,7 @@ class RecurringMovementController(
     ): ResponseEntity<RecurringMovementListView> {
 
         val periodMovement = recurringMovementRepository.findByExternalId(id)
-            ?: throw ResourceNotFoundException(mapOf("recurringMovementId" to id))
+            ?: throw ResourceNotFoundException()
 
         recurringMovementMapper.mapToDomain(form, periodMovement)
         recurringMovementService.update(periodMovement)
@@ -79,5 +79,5 @@ class RecurringMovementController(
         recurringMovementRepository.findByExternalId(id)
             ?.let { recurringMovementService.delete(it) }
             ?.let { ResponseEntity.ok().build() }
-            ?: throw ResourceNotFoundException(mapOf("recurringMovementId" to id))
+            ?: throw ResourceNotFoundException()
 }

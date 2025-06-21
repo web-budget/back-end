@@ -43,7 +43,7 @@ class PeriodMovementController(
         periodMovementRepository.findByExternalId(id)
             ?.let { periodMovementMapper.mapToView(it) }
             ?.let { ResponseEntity.ok(it) }
-            ?: throw ResourceNotFoundException(mapOf("periodMovementId" to id))
+            ?: throw ResourceNotFoundException()
 
     @PostMapping
     fun create(@RequestBody @Valid form: PeriodMovementCreateForm): ResponseEntity<Any> {
@@ -66,7 +66,7 @@ class PeriodMovementController(
     ): ResponseEntity<PeriodMovementListView> {
 
         val periodMovement = periodMovementRepository.findByExternalId(id)
-            ?: throw ResourceNotFoundException(mapOf("periodMovementId" to id))
+            ?: throw ResourceNotFoundException()
 
         periodMovementMapper.mapToDomain(form, periodMovement)
         periodMovementService.update(periodMovement)
@@ -79,5 +79,5 @@ class PeriodMovementController(
         periodMovementRepository.findByExternalId(id)
             ?.let { periodMovementService.delete(it) }
             ?.let { ResponseEntity.ok().build() }
-            ?: throw ResourceNotFoundException(mapOf("periodMovementId" to id))
+            ?: throw ResourceNotFoundException()
 }

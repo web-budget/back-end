@@ -40,5 +40,5 @@ abstract class MovementClassMapper {
     abstract fun mapToDomain(form: MovementClassUpdateForm, @MappingTarget movementClass: MovementClass)
 
     fun mapCostCenter(externalId: UUID): CostCenter = costCenterRepository.findByExternalId(externalId)
-        ?: throw ResourceNotFoundException(mapOf("costCenterId" to externalId))
+        ?: throw ResourceNotFoundException()
 }

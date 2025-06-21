@@ -42,7 +42,7 @@ class WalletController(
     fun getById(@PathVariable id: UUID): ResponseEntity<WalletView> = walletRepository.findByExternalId(id)
         ?.let { walletMapper.mapToView(it) }
         ?.let { ResponseEntity.ok(it) }
-        ?: throw ResourceNotFoundException(mapOf("walletId" to id))
+        ?: throw ResourceNotFoundException()
 
     @PostMapping
     fun create(@RequestBody @Valid form: WalletCreateForm): ResponseEntity<Any> {
@@ -62,7 +62,7 @@ class WalletController(
     fun update(@PathVariable id: UUID, @RequestBody @Valid form: WalletUpdateForm): ResponseEntity<WalletView> {
 
         val wallet = walletRepository.findByExternalId(id)
-            ?: throw ResourceNotFoundException(mapOf("walletId" to id))
+            ?: throw ResourceNotFoundException()
 
         walletMapper.mapToDomain(form, wallet)
         walletService.update(wallet)
@@ -74,5 +74,5 @@ class WalletController(
     fun delete(@PathVariable id: UUID): ResponseEntity<Any> = walletRepository.findByExternalId(id)
         ?.let { walletService.delete(it) }
         ?.let { ResponseEntity.ok().build() }
-        ?: throw ResourceNotFoundException(mapOf("walletId" to id))
+        ?: throw ResourceNotFoundException()
 }
