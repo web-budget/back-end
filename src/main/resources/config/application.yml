@@ -65,4 +65,4 @@ web-budget:
   mail:
     reply-to-address: ${MAIL_REPLY_TO_ADDRESS:noreply@webbudget.com.br}
     default-from-address: ${MAIL_DEFAULT_FROM_ADDRESS:noreply@webbudget.com.br}
-    logo-url: ${web-budget.frontend-url}/webbudget-logo.png
+    logo-url: ${web-budget.frontend-url}/logo.png

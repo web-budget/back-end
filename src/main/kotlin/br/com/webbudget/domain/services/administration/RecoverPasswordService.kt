@@ -41,7 +41,7 @@ class RecoverPasswordService(
         passwordRecoverAttemptRepository.persist(recoverAttempt)
 
         val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
-        val recoverPasswordUrl = "${frontendUrl}/login/recover-password" +
+        val recoverPasswordUrl = "${frontendUrl}/auth/recover-password" +
                 "?token=${recoverAttempt.token}&email=${user.email}"
 
         val mailMessage = RecoverPasswordEmail(user)

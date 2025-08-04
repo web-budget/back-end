@@ -18,7 +18,7 @@ services:
 
   maildev:
     container_name: wb-maildev
-    image: soulteary/maildev:latest
+    image: maildev/maildev
     ports:
       - "1080:1080"
       - "1025:1025"

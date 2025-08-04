@@ -29,8 +29,8 @@ import java.util.UUID
 @RequestMapping("/api/administration/users")
 class UserController(
     private val userMapper: UserMapper,
-    private val userRepository: UserRepository,
-    private val userService: UserService
+    private val userService: UserService,
+    private val userRepository: UserRepository
 ) {
 
     @GetMapping

@@ -40,7 +40,7 @@ class AccountActivationService(
         accountActivationAttemptRepository.merge(activationAttempt)
 
         val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
-        val recoverPasswordUrl = "${frontendUrl}/login/account-activation" +
+        val recoverPasswordUrl = "${frontendUrl}/auth/account-activation" +
                 "?token=${activationAttempt.token}&email=${user.email}"
 
         val mailMessage = AccountActivationEmail(user)
