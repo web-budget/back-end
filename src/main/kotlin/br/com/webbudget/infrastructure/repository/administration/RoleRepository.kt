@@ -1,15 +1,15 @@
 package br.com.webbudget.infrastructure.repository.administration
 
-import br.com.webbudget.domain.entities.administration.Authority
+import br.com.webbudget.domain.entities.administration.Role
 import br.com.webbudget.infrastructure.repository.BaseRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.stereotype.Repository
 
 @Repository
-interface AuthorityRepository : BaseRepository<Authority> {
+interface RoleRepository : BaseRepository<Role> {
 
-    fun findByName(name: String): Authority?
+    fun findByName(name: String): Role?
 
-    @Query("from Authority")
-    fun findAll(): List<Authority>
+    @Query("from Role as r order by r.name")
+    fun findAll(): List<Role>
 }

@@ -26,12 +26,14 @@ class User(
     @field:Column(name = "default_language", nullable = false)
     var defaultLanguage: Language,
     @field:OneToMany(mappedBy = "user", fetch = EAGER, cascade = [REMOVE])
-    var grants: List<Grant> = mutableListOf(),
+    var grants: MutableList<Grant> = mutableListOf(),
 ) : PersistentEntity<Long>() {
 
-    fun isAdmin(): Boolean {
+    fun isMainAdmin(): Boolean {
         return this.email == ADMIN_USERNAME
     }
+
+    fun grantedRoles(): List<String>  = this.grants.map { it.role.name }
 
     companion object {
         private const val ADMIN_USERNAME = "admin@webbudget.com.br"

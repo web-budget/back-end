@@ -7,7 +7,7 @@ import br.com.webbudget.domain.exceptions.ConflictingPropertyException
 import br.com.webbudget.domain.services.registration.MovementClassService
 import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository
 import br.com.webbudget.infrastructure.repository.registration.MovementClassRepository
-import br.com.webbudget.utilities.fixture.createMovementClass
+import br.com.webbudget.utilities.fixtures.createMovementClass
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Disabled

@@ -5,7 +5,7 @@ import br.com.webbudget.domain.entities.registration.Card.Type.CREDIT
 import br.com.webbudget.domain.exceptions.ConflictingPropertyException
 import br.com.webbudget.domain.validators.registration.CardTypeAndNumberValidator
 import br.com.webbudget.infrastructure.repository.registration.CardRepository
-import br.com.webbudget.utilities.fixture.createCard
+import br.com.webbudget.utilities.fixtures.createCard
 import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs

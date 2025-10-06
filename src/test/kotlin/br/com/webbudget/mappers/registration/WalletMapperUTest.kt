@@ -7,7 +7,7 @@ import br.com.webbudget.domain.entities.registration.Wallet
 import br.com.webbudget.domain.entities.registration.Wallet.Type.BANK_ACCOUNT
 import br.com.webbudget.domain.entities.registration.Wallet.Type.INVESTMENT
 import br.com.webbudget.domain.entities.registration.Wallet.Type.PERSONAL
-import br.com.webbudget.utilities.fixture.createWallet
+import br.com.webbudget.utilities.fixtures.createWallet
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest

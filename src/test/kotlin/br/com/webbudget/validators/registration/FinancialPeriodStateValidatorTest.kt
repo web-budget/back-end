@@ -4,7 +4,7 @@ import br.com.webbudget.domain.entities.registration.FinancialPeriod.Status
 import br.com.webbudget.domain.exceptions.BusinessException
 import br.com.webbudget.domain.validators.registration.FinancialPeriodStateValidator
 import br.com.webbudget.infrastructure.repository.registration.FinancialPeriodRepository
-import br.com.webbudget.utilities.fixture.createFinancialPeriod
+import br.com.webbudget.utilities.fixtures.createFinancialPeriod
 import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs

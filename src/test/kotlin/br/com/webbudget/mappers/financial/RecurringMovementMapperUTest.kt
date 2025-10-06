@@ -9,8 +9,8 @@ import br.com.webbudget.application.payloads.financial.RecurringMovementCreateFo
 import br.com.webbudget.application.payloads.financial.RecurringMovementUpdateForm
 import br.com.webbudget.domain.entities.financial.RecurringMovement
 import br.com.webbudget.infrastructure.repository.registration.MovementClassRepository
-import br.com.webbudget.utilities.fixture.createMovementClass
-import br.com.webbudget.utilities.fixture.createRecurringMovement
+import br.com.webbudget.utilities.fixtures.createMovementClass
+import br.com.webbudget.utilities.fixtures.createRecurringMovement
 import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.impl.annotations.MockK

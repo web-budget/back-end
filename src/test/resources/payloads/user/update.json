@@ -3,5 +3,5 @@
   "email": "update@webbudget.com.br",
   "active": true,
   "defaultLanguage": "EN_US",
-  "authorities": ["FINANCIAL"]
+  "roles": ["FINANCIAL"]
 }

@@ -61,7 +61,7 @@ web-budget:
   jwt:
     private-key: classpath:keys/rsa.key
     public-key: classpath:keys/rsa.pub
-    expiration-seconds: ${APPLICATION_JWT_TIMEOUT:2400} # seconds
+    expiration-seconds: ${APPLICATION_JWT_TIMEOUT:3600} # seconds
   mail:
     reply-to-address: ${MAIL_REPLY_TO_ADDRESS:noreply@webbudget.com.br}
     default-from-address: ${MAIL_DEFAULT_FROM_ADDRESS:noreply@webbudget.com.br}

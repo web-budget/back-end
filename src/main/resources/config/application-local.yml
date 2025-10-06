@@ -2,4 +2,5 @@ logging:
   level:
     br.com.webbudget: debug
     org.hibernate.SQL: debug
+    org.springframework.security: debug
     org.hibernate.type.descriptor.sql.BasicBinder: trace

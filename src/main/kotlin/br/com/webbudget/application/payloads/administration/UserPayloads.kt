@@ -25,7 +25,7 @@ data class UserCreateForm(
     @field:NotNull(message = "is-null")
     val defaultLanguage: Language?,
     @field:NotEmpty(message = "is-empty")
-    val authorities: List<String>,
+    val roles: List<String>,
     val sendActivationEmail: Boolean = false
 )
 
@@ -36,7 +36,7 @@ data class UserUpdateForm(
     @field:NotNull(message = "is-null")
     val defaultLanguage: Language,
     @field:NotEmpty(message = "is-empty")
-    val authorities: List<String>,
+    val roles: List<String>,
 )
 
 data class PasswordChangeForm(

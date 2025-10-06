@@ -38,7 +38,7 @@
             </column>
         </createTable>
 
-        <createTable tableName="authorities" schemaName="administration">
+        <createTable tableName="roles" schemaName="administration">
             <column name="id" autoIncrement="true" type="bigint">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
@@ -76,7 +76,7 @@
             <column name="id_user" type="bigint">
                 <constraints nullable="false"/>
             </column>
-            <column name="id_authority" type="bigint">
+            <column name="id_role" type="bigint">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -85,15 +85,15 @@
                                  baseColumnNames="id_user" baseTableName="grants" baseTableSchemaName="administration"
                                  referencedTableName="users" referencedTableSchemaName="administration"
                                  referencedColumnNames="id"/>
-        <addForeignKeyConstraint constraintName="fk_authorities_on_grants"
-                                 baseColumnNames="id_authority" baseTableName="grants"
+        <addForeignKeyConstraint constraintName="fk_roles_on_grants"
+                                 baseColumnNames="id_role" baseTableName="grants"
                                  baseTableSchemaName="administration"
-                                 referencedTableName="authorities" referencedTableSchemaName="administration"
+                                 referencedTableName="roles" referencedTableSchemaName="administration"
                                  referencedColumnNames="id"/>
 
         <addUniqueConstraint columnNames="id,external_id" tableName="users" schemaName="administration"/>
         <addUniqueConstraint columnNames="id,external_id" tableName="grants" schemaName="administration"/>
-        <addUniqueConstraint columnNames="id,external_id" tableName="authorities" schemaName="administration"/>
+        <addUniqueConstraint columnNames="id,external_id" tableName="roles" schemaName="administration"/>
 
         <!--password means 'admin'-->
         <sql>
@@ -107,24 +107,24 @@
 
     <changeSet id="back-end#5" author="arthurshakal@gmail.com">
         <sql>
-            INSERT INTO administration.authorities(external_id, version, created_on, name)
+            INSERT INTO administration.roles(external_id, version, created_on, name)
             VALUES ('0d5f0878-0926-4735-a4f6-83d3d270db74', 0, current_timestamp, 'DASHBOARDS');
-            INSERT INTO administration.authorities(external_id, version, created_on, name)
+            INSERT INTO administration.roles(external_id, version, created_on, name)
             VALUES ('44a45aa7-5b83-41ee-9f62-578592cb3fe2', 0, current_timestamp, 'REGISTRATION');
-            INSERT INTO administration.authorities(external_id, version, created_on, name)
+            INSERT INTO administration.roles(external_id, version, created_on, name)
             VALUES ('d73e33fe-b54a-4516-b33b-60ad62ea5542', 0, current_timestamp, 'FINANCIAL');
-            INSERT INTO administration.authorities(external_id, version, created_on, name)
+            INSERT INTO administration.roles(external_id, version, created_on, name)
             VALUES ('8f7d81d6-0ccd-49af-b1dd-a588dbdebd62', 0, current_timestamp, 'ADMINISTRATION');
-            INSERT INTO administration.authorities(external_id, version, created_on, name)
+            INSERT INTO administration.roles(external_id, version, created_on, name)
             VALUES ('7d44bb5b-4f87-4eea-a1b5-1dd8418430d9', 0, current_timestamp, 'INVESTMENTS');
 
-            INSERT INTO administration.grants (external_id, version, created_on, id_user, id_authority)
+            INSERT INTO administration.grants (external_id, version, created_on, id_user, id_role)
             VALUES ('05e9d984-8bff-4842-9feb-fd2c513a08e8', 0, current_timestamp, 1, 1);
-            INSERT INTO administration.grants (external_id, version, created_on, id_user, id_authority)
+            INSERT INTO administration.grants (external_id, version, created_on, id_user, id_role)
             VALUES ('d9f90b72-304e-47ea-857f-07dc84b267d7', 0, current_timestamp, 1, 2);
-            INSERT INTO administration.grants (external_id, version, created_on, id_user, id_authority)
+            INSERT INTO administration.grants (external_id, version, created_on, id_user, id_role)
             VALUES ('bef1ccb8-e5f4-481d-ba7e-d3ea0c6416d0', 0, current_timestamp, 1, 3);
-            INSERT INTO administration.grants (external_id, version, created_on, id_user, id_authority)
+            INSERT INTO administration.grants (external_id, version, created_on, id_user, id_role)
             VALUES ('a872753e-3dcf-4856-b524-99a0ee36b97c', 0, current_timestamp, 1, 4);
         </sql>
     </changeSet>

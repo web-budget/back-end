@@ -3,7 +3,7 @@ package br.com.webbudget.validators.administration
 import br.com.webbudget.domain.exceptions.ConflictingPropertyException
 import br.com.webbudget.domain.validators.administration.UserAccountEmailValidator
 import br.com.webbudget.infrastructure.repository.administration.UserRepository
-import br.com.webbudget.utilities.fixture.createUser
+import br.com.webbudget.utilities.fixtures.createUser
 import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs

@@ -7,7 +7,7 @@ import br.com.webbudget.domain.exceptions.ConflictingPropertyException
 import br.com.webbudget.domain.services.registration.CardService
 import br.com.webbudget.infrastructure.repository.registration.CardRepository
 import br.com.webbudget.infrastructure.repository.registration.WalletRepository
-import br.com.webbudget.utilities.fixture.createCard
+import br.com.webbudget.utilities.fixtures.createCard
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
 import org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy
 import org.junit.jupiter.api.Disabled

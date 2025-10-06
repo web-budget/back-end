@@ -3,7 +3,7 @@ package br.com.webbudget.validators.registration
 import br.com.webbudget.domain.exceptions.ConflictingPropertyException
 import br.com.webbudget.domain.validators.registration.BankingInformationValidator
 import br.com.webbudget.infrastructure.repository.registration.WalletRepository
-import br.com.webbudget.utilities.fixture.createWallet
+import br.com.webbudget.utilities.fixtures.createWallet
 import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs

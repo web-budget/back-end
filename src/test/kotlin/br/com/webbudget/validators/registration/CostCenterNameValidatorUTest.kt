@@ -3,7 +3,7 @@ package br.com.webbudget.validators.registration
 import br.com.webbudget.domain.exceptions.ConflictingPropertyException
 import br.com.webbudget.domain.validators.registration.CostCenterNameValidator
 import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository
-import br.com.webbudget.utilities.fixture.createCostCenter
+import br.com.webbudget.utilities.fixtures.createCostCenter
 import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs

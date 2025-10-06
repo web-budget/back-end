@@ -7,17 +7,17 @@ import jakarta.persistence.Entity
 import jakarta.persistence.Table
 
 @Entity
-@Table(name = "authorities", schema = ADMINISTRATION)
-class Authority(
+@Table(name = "roles", schema = ADMINISTRATION)
+class Role(
     @field:Column(name = "name", nullable = false, length = 45)
     val name: String
 ) : PersistentEntity<Long>() {
 
     companion object {
-        const val ADMINISTRATION = "SCOPE_ADMINISTRATION"
-        const val DASHBOARDS = "SCOPE_DASHBOARDS"
-        const val FINANCIAL = "SCOPE_FINANCIAL"
-        const val REGISTRATION = "SCOPE_REGISTRATION"
-        const val INVESTMENTS = "SCOPE_INVESTMENTS"
+        const val ADMINISTRATION = "ADMINISTRATION"
+        const val DASHBOARDS = "DASHBOARDS"
+        const val FINANCIAL = "FINANCIAL"
+        const val REGISTRATION = "REGISTRATION"
+        const val INVESTMENTS = "INVESTMENTS"
     }
 }

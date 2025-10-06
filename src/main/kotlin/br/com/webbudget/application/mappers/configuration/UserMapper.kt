@@ -31,7 +31,7 @@ interface UserMapper {
         @JvmStatic
         fun grantsToAuthorities(grants: List<Grant>): List<String> {
             return grants
-                .map { it.authority }
+                .map { it.role }
                 .map { it.name }
                 .toCollection(arrayListOf())
         }

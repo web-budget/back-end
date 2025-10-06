@@ -4,7 +4,7 @@ import br.com.webbudget.BaseIntegrationTest
 import br.com.webbudget.domain.exceptions.ConflictingPropertyException
 import br.com.webbudget.domain.services.registration.CostCenterService
 import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository
-import br.com.webbudget.utilities.fixture.createCostCenter
+import br.com.webbudget.utilities.fixtures.createCostCenter
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
 import org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy
 import org.junit.jupiter.api.Test

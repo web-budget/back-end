@@ -1,14 +1,15 @@
 package br.com.webbudget.controllers.advice
 
 import br.com.webbudget.BaseControllerIntegrationTest
-import br.com.webbudget.utilities.Authorities
+import br.com.webbudget.utilities.Roles
 import net.javacrumbs.jsonunit.assertj.assertThatJson
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt
+import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.web.servlet.get
 
+@WithMockUser(roles = [Roles.ADMINISTRATION])
 @WebMvcTest(ValidationExceptionController::class)
 class ValidationHandlerAdviceUTest : BaseControllerIntegrationTest() {
 
@@ -17,7 +18,6 @@ class ValidationHandlerAdviceUTest : BaseControllerIntegrationTest() {
 
         val response = mockMvc.get("$ENDPOINT_URL/duplicated-property-exception") {
             content = MediaType.APPLICATION_JSON_VALUE
-            with(jwt().authorities(Authorities.ADMINISTRATION))
         }.andExpect {
             status { isConflict() }
         }.andReturn()
@@ -42,7 +42,6 @@ class ValidationHandlerAdviceUTest : BaseControllerIntegrationTest() {
 
         val response = mockMvc.get("$ENDPOINT_URL/method-argument-no-valid-exception") {
             content = MediaType.APPLICATION_JSON_VALUE
-            with(jwt().authorities(Authorities.ADMINISTRATION))
         }.andExpect {
             status { isUnprocessableEntity() }
         }.andReturn()

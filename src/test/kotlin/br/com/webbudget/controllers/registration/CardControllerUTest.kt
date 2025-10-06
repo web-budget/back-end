@@ -9,10 +9,10 @@ import br.com.webbudget.domain.exceptions.BusinessException
 import br.com.webbudget.domain.services.registration.CardService
 import br.com.webbudget.infrastructure.repository.registration.CardRepository
 import br.com.webbudget.infrastructure.repository.registration.WalletRepository
-import br.com.webbudget.utilities.Authorities
 import br.com.webbudget.utilities.JsonPayload
-import br.com.webbudget.utilities.fixture.createCard
-import br.com.webbudget.utilities.fixture.createWallet
+import br.com.webbudget.utilities.Roles
+import br.com.webbudget.utilities.fixtures.createCard
+import br.com.webbudget.utilities.fixtures.createWallet
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.Runs
 import io.mockk.called
@@ -32,7 +32,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.http.MediaType
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt
+import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
@@ -41,6 +41,7 @@ import org.springframework.util.LinkedMultiValueMap
 import java.util.UUID
 
 @WebMvcTest(CardController::class)
+@WithMockUser(roles = [Roles.REGISTRATION])
 @Import(value = [CardMapperImpl::class, WalletMapperImpl::class])
 class CardControllerUTest : BaseControllerIntegrationTest() {
 
@@ -54,11 +55,12 @@ class CardControllerUTest : BaseControllerIntegrationTest() {
     private lateinit var cardRepository: CardRepository
 
     @Test
+    @WithMockUser(roles = [])
     fun `should require authorization`() {
         mockMvc.get(ENDPOINT_URL) {
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
-            status { isUnauthorized() }
+            status { isForbidden() }
         }
     }
 
@@ -70,7 +72,6 @@ class CardControllerUTest : BaseControllerIntegrationTest() {
         every { cardService.create(any<Card>()) } returns externalId
 
         mockMvc.post(ENDPOINT_URL) {
-            with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
             content = JsonPayload("card/create-credit")
         }.andExpect {
@@ -95,7 +96,6 @@ class CardControllerUTest : BaseControllerIntegrationTest() {
         every { walletRepository.findByExternalId(any<UUID>()) } returns createWallet()
 
         mockMvc.post(ENDPOINT_URL) {
-            with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
             content = JsonPayload("card/create-debit")
         }.andExpect {
@@ -120,7 +120,6 @@ class CardControllerUTest : BaseControllerIntegrationTest() {
         every { cardService.create(any<Card>()) } returns externalId
 
         mockMvc.post(ENDPOINT_URL) {
-            with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
             content = JsonPayload("card/create-credit")
         }.andExpect {
@@ -146,7 +145,6 @@ class CardControllerUTest : BaseControllerIntegrationTest() {
         every { cardService.update(any<Card>()) } returns expectedCard
 
         val jsonResponse = mockMvc.put("${ENDPOINT_URL}/$externalId") {
-            with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
             content = JsonPayload("card/update")
         }.andExpect {
@@ -180,7 +178,6 @@ class CardControllerUTest : BaseControllerIntegrationTest() {
         every { cardService.delete(eq(expectedCard)) } just Runs
 
         mockMvc.delete("${ENDPOINT_URL}/$externalId") {
-            with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isOk() }
@@ -200,7 +197,6 @@ class CardControllerUTest : BaseControllerIntegrationTest() {
         every { cardRepository.findByExternalId(eq(externalId)) } returns null
 
         mockMvc.delete("${ENDPOINT_URL}/$externalId") {
-            with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isNotFound() }
@@ -222,7 +218,6 @@ class CardControllerUTest : BaseControllerIntegrationTest() {
         )
 
         val jsonResponse = mockMvc.post(ENDPOINT_URL) {
-            with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
             content = JsonPayload("card/invalid-credit")
         }.andExpect {
@@ -255,7 +250,6 @@ class CardControllerUTest : BaseControllerIntegrationTest() {
         )
 
         val jsonResponse = mockMvc.post(ENDPOINT_URL) {
-            with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
             content = JsonPayload("card/invalid-debit")
         }.andExpect {
@@ -287,7 +281,6 @@ class CardControllerUTest : BaseControllerIntegrationTest() {
         )
 
         mockMvc.post(ENDPOINT_URL) {
-            with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
             content = JsonPayload("card/create-debit-invalid")
         }.andExpect {
@@ -309,7 +302,6 @@ class CardControllerUTest : BaseControllerIntegrationTest() {
         )
 
         mockMvc.post(ENDPOINT_URL) {
-            with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
             content = JsonPayload("card/create-credit-invalid")
         }.andExpect {
@@ -332,7 +324,6 @@ class CardControllerUTest : BaseControllerIntegrationTest() {
         every { cardRepository.findByExternalId(externalId) } returns expectedCard
 
         val jsonResponse = mockMvc.get("${ENDPOINT_URL}/$externalId") {
-            with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isOk() }
@@ -363,7 +354,6 @@ class CardControllerUTest : BaseControllerIntegrationTest() {
         every { cardRepository.findByExternalId(externalId) } returns null
 
         mockMvc.get("${ENDPOINT_URL}/$externalId") {
-            with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isNotFound() }
@@ -396,7 +386,6 @@ class CardControllerUTest : BaseControllerIntegrationTest() {
         every { cardRepository.findAll(capture(specificationSlot), capture(pageableSlot)) } returns thePage
 
         val jsonResponse = mockMvc.get(ENDPOINT_URL) {
-            with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
             params = parameters
         }.andExpect {

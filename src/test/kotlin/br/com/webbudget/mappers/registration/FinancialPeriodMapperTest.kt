@@ -4,7 +4,7 @@ import br.com.webbudget.application.mappers.registration.FinancialPeriodMapperIm
 import br.com.webbudget.application.payloads.registration.FinancialPeriodCreateForm
 import br.com.webbudget.application.payloads.registration.FinancialPeriodUpdateForm
 import br.com.webbudget.domain.entities.registration.FinancialPeriod
-import br.com.webbudget.utilities.fixture.createFinancialPeriod
+import br.com.webbudget.utilities.fixtures.createFinancialPeriod
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.math.BigDecimal

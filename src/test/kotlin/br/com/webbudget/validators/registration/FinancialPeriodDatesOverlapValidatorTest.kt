@@ -3,7 +3,7 @@ package br.com.webbudget.validators.registration
 import br.com.webbudget.domain.exceptions.BusinessException
 import br.com.webbudget.domain.validators.registration.FinancialPeriodDatesOverlapValidator
 import br.com.webbudget.infrastructure.repository.registration.FinancialPeriodRepository
-import br.com.webbudget.utilities.fixture.createFinancialPeriod
+import br.com.webbudget.utilities.fixtures.createFinancialPeriod
 import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs

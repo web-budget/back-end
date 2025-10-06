@@ -3,8 +3,7 @@ package br.com.webbudget.controllers
 import br.com.webbudget.BaseControllerIntegrationTest
 import br.com.webbudget.application.controllers.TokenController
 import br.com.webbudget.domain.services.administration.TokenService
-import br.com.webbudget.infrastructure.repository.administration.UserRepository
-import br.com.webbudget.utilities.fixture.createUser
+import br.com.webbudget.utilities.fixtures.createUser
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.confirmVerified
 import io.mockk.every

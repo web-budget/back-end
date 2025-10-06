@@ -8,8 +8,8 @@ import br.com.webbudget.domain.entities.registration.Card
 import br.com.webbudget.domain.entities.registration.Card.Type.CREDIT
 import br.com.webbudget.domain.entities.registration.Card.Type.DEBIT
 import br.com.webbudget.infrastructure.repository.registration.WalletRepository
-import br.com.webbudget.utilities.fixture.createCard
-import br.com.webbudget.utilities.fixture.createWallet
+import br.com.webbudget.utilities.fixtures.createCard
+import br.com.webbudget.utilities.fixtures.createWallet
 import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.impl.annotations.MockK

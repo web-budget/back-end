@@ -6,9 +6,9 @@ import br.com.webbudget.application.mappers.registration.FinancialPeriodMapperIm
 import br.com.webbudget.domain.entities.registration.FinancialPeriod
 import br.com.webbudget.domain.services.registration.FinancialPeriodService
 import br.com.webbudget.infrastructure.repository.registration.FinancialPeriodRepository
-import br.com.webbudget.utilities.Authorities
 import br.com.webbudget.utilities.JsonPayload
-import br.com.webbudget.utilities.fixture.createFinancialPeriod
+import br.com.webbudget.utilities.Roles
+import br.com.webbudget.utilities.fixtures.createFinancialPeriod
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.Runs
 import io.mockk.called
@@ -27,7 +27,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.http.MediaType
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt
+import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
@@ -35,8 +35,9 @@ import org.springframework.test.web.servlet.put
 import org.springframework.util.LinkedMultiValueMap
 import java.util.UUID
 
-@WebMvcTest(FinancialPeriodController::class)
+@WithMockUser(roles = [Roles.REGISTRATION])
 @Import(value = [FinancialPeriodMapperImpl::class])
+@WebMvcTest(FinancialPeriodController::class)
 class FinancialPeriodControllerUTest : BaseControllerIntegrationTest() {
 
     @MockkBean
@@ -46,11 +47,12 @@ class FinancialPeriodControllerUTest : BaseControllerIntegrationTest() {
     private lateinit var financialPeriodRepository: FinancialPeriodRepository
 
     @Test
+    @WithMockUser(roles = [])
     fun `should require authorization`() {
         mockMvc.get(ENDPOINT_URL) {
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
-            status { isUnauthorized() }
+            status { isForbidden() }
         }
     }
 
@@ -62,7 +64,6 @@ class FinancialPeriodControllerUTest : BaseControllerIntegrationTest() {
         every { financialPeriodService.create(any<FinancialPeriod>()) } returns externalId
 
         mockMvc.post(ENDPOINT_URL) {
-            with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
             content = JsonPayload("financial-period/create")
         }.andExpect {
@@ -88,7 +89,6 @@ class FinancialPeriodControllerUTest : BaseControllerIntegrationTest() {
         every { financialPeriodService.update(any<FinancialPeriod>()) } returns expectedFinancialPeriod
 
         val jsonResponse = mockMvc.put("$ENDPOINT_URL/$externalId") {
-            with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
             content = JsonPayload("financial-period/update")
         }.andExpect {
@@ -123,7 +123,6 @@ class FinancialPeriodControllerUTest : BaseControllerIntegrationTest() {
         every { financialPeriodService.delete(expectedFinancialPeriod) } just Runs
 
         mockMvc.delete("$ENDPOINT_URL/$externalId") {
-            with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isOk() }
@@ -143,7 +142,6 @@ class FinancialPeriodControllerUTest : BaseControllerIntegrationTest() {
         every { financialPeriodRepository.findByExternalId(externalId) } returns null
 
         mockMvc.delete("$ENDPOINT_URL/$externalId") {
-            with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isNotFound() }
@@ -163,7 +161,6 @@ class FinancialPeriodControllerUTest : BaseControllerIntegrationTest() {
         )
 
         val jsonResponse = mockMvc.post(ENDPOINT_URL) {
-            with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
             content = JsonPayload("financial-period/invalid")
         }.andExpect {
@@ -195,7 +192,6 @@ class FinancialPeriodControllerUTest : BaseControllerIntegrationTest() {
         every { financialPeriodRepository.findByExternalId(eq(externalId)) } returns expectedFinancialPeriod
 
         val jsonResponse = mockMvc.get("$ENDPOINT_URL/$externalId") {
-            with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isOk() }
@@ -229,7 +225,6 @@ class FinancialPeriodControllerUTest : BaseControllerIntegrationTest() {
         every { financialPeriodRepository.findByStatus(FinancialPeriod.Status.ACTIVE, any<Pageable>()) } returns thePage
 
         val jsonResponse = mockMvc.get("$ENDPOINT_URL/active") {
-            with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isOk() }
@@ -265,7 +260,6 @@ class FinancialPeriodControllerUTest : BaseControllerIntegrationTest() {
         every { financialPeriodRepository.findByExternalId(externalId) } returns null
 
         mockMvc.get("$ENDPOINT_URL/$externalId") {
-            with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isNotFound() }
@@ -298,7 +292,6 @@ class FinancialPeriodControllerUTest : BaseControllerIntegrationTest() {
         every { financialPeriodRepository.findAll(capture(specificationSlot), capture(pageableSlot)) } returns thePage
 
         val jsonResponse = mockMvc.get(ENDPOINT_URL) {
-            with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
             params = parameters
         }.andExpect {

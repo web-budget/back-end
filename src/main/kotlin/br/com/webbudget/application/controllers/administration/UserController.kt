@@ -49,7 +49,7 @@ class UserController(
     fun create(@RequestBody @Valid form: UserCreateForm): ResponseEntity<Any> {
 
         val toCreate = userMapper.mapToDomain(form)
-        val created = userService.createAccount(toCreate, form.authorities, form.sendActivationEmail)
+        val created = userService.createAccount(toCreate, form.roles, form.sendActivationEmail)
 
         val location = ServletUriComponentsBuilder.fromCurrentRequest()
             .path("/{id}")
@@ -66,7 +66,7 @@ class UserController(
             ?: throw ResourceNotFoundException()
 
         userMapper.mapToDomain(form, user)
-        userService.updateAccount(user, form.authorities)
+        userService.updateAccount(user, form.roles)
 
         return ResponseEntity.ok(userMapper.mapToView(user))
     }

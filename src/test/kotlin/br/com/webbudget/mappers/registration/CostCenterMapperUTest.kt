@@ -3,7 +3,7 @@ package br.com.webbudget.mappers.registration
 import br.com.webbudget.application.mappers.registration.CostCenterMapperImpl
 import br.com.webbudget.application.payloads.registration.CostCenterCreateForm
 import br.com.webbudget.application.payloads.registration.CostCenterUpdateForm
-import br.com.webbudget.utilities.fixture.createCostCenter
+import br.com.webbudget.utilities.fixtures.createCostCenter
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.math.BigDecimal

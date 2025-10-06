@@ -8,7 +8,7 @@ import br.com.webbudget.domain.exceptions.ConflictingPropertyException
 import br.com.webbudget.domain.services.administration.AccountActivationService
 import br.com.webbudget.domain.services.administration.UserService
 import br.com.webbudget.infrastructure.repository.administration.UserRepository
-import br.com.webbudget.utilities.fixture.createUser
+import br.com.webbudget.utilities.fixtures.createUser
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.confirmVerified
 import io.mockk.every
@@ -54,7 +54,7 @@ class UserServiceITest : BaseIntegrationTest() {
         val userEmail = "user@webbudget.com.br"
         val toCreate = User(false, "User", userEmail, "s3cr3t", PT_BR)
 
-        val externalId = userService.createAccount(toCreate, listOf("ANY_AUTHORITY"))
+        val externalId = userService.createAccount(toCreate, listOf("ANY_ROLE"))
         val created = userRepository.findByExternalId(externalId)
 
         assertThat(created)
@@ -70,8 +70,8 @@ class UserServiceITest : BaseIntegrationTest() {
             .extracting {
                 assertThat(it!!.grants)
                     .hasSize(1)
-                    .extracting("authority.name")
-                    .containsExactlyInAnyOrder("ANY_AUTHORITY")
+                    .extracting("role.name")
+                    .containsExactlyInAnyOrder("ANY_ROLE")
             }
 
         verify(exactly = 0) { accountActivationService.requestActivation(userEmail) }
@@ -87,7 +87,7 @@ class UserServiceITest : BaseIntegrationTest() {
 
         every { accountActivationService.requestActivation(any<String>()) } just runs
 
-        val externalId = userService.createAccount(toCreate, listOf("ANY_AUTHORITY"), true)
+        val externalId = userService.createAccount(toCreate, listOf("ANY_ROLE"), true)
         val created = userRepository.findByExternalId(externalId)
 
         assertThat(created)
@@ -103,8 +103,8 @@ class UserServiceITest : BaseIntegrationTest() {
             .extracting {
                 assertThat(it!!.grants)
                     .hasSize(1)
-                    .extracting("authority.name")
-                    .containsExactlyInAnyOrder("ANY_AUTHORITY")
+                    .extracting("role.name")
+                    .containsExactlyInAnyOrder("ANY_ROLE")
             }
 
         verify(exactly = 1) { accountActivationService.requestActivation(ofType<String>()) }
@@ -157,14 +157,14 @@ class UserServiceITest : BaseIntegrationTest() {
         assertThat(updated.grants)
             .isNotNull
             .hasSize(1)
-            .extracting("authority.name")
+            .extracting("role.name")
             .containsExactlyInAnyOrder("OTHER")
     }
 
     @Test
     fun `should not update when validation fail`() {
 
-        val authorities = listOf("ANY_AUTHORITY")
+        val authorities = listOf("ANY_ROLE")
 
         val toCreate = createUser()
         userService.createAccount(toCreate, authorities)
@@ -220,14 +220,14 @@ class UserServiceITest : BaseIntegrationTest() {
     fun `should grant for all authorities`() {
 
         val toCreate = createUser()
-        val authorities = listOf("SOME_AUTHORITY", "ANY_AUTHORITY", "ANY_OTHER_AUTHORITY")
+        val authorities = listOf("SOME_ROLE", "ANY_ROLE", "ANY_OTHER_ROLE")
 
         val externalId = userService.createAccount(toCreate, authorities)
         val saved = userRepository.findByExternalId(externalId)!!
 
         assertThat(saved).extracting {
             assertThat(it.grants)
-                .extracting("authority.name")
+                .extracting("role.name")
                 .containsExactlyInAnyOrderElementsOf(authorities)
         }
     }

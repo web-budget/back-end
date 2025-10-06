@@ -5,8 +5,8 @@ import br.com.webbudget.application.mappers.registration.CostCenterMapperImpl
 import br.com.webbudget.application.mappers.registration.MovementClassMapperImpl
 import br.com.webbudget.application.payloads.financial.ApportionmentForm
 import br.com.webbudget.infrastructure.repository.registration.MovementClassRepository
-import br.com.webbudget.utilities.fixture.createApportionment
-import br.com.webbudget.utilities.fixture.createMovementClass
+import br.com.webbudget.utilities.fixtures.createApportionment
+import br.com.webbudget.utilities.fixtures.createMovementClass
 import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.impl.annotations.MockK

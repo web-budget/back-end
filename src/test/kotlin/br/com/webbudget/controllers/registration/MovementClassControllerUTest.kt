@@ -8,10 +8,10 @@ import br.com.webbudget.domain.entities.registration.MovementClass
 import br.com.webbudget.domain.services.registration.MovementClassService
 import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository
 import br.com.webbudget.infrastructure.repository.registration.MovementClassRepository
-import br.com.webbudget.utilities.Authorities
 import br.com.webbudget.utilities.JsonPayload
-import br.com.webbudget.utilities.fixture.createCostCenter
-import br.com.webbudget.utilities.fixture.createMovementClass
+import br.com.webbudget.utilities.Roles
+import br.com.webbudget.utilities.fixtures.createCostCenter
+import br.com.webbudget.utilities.fixtures.createMovementClass
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.Runs
 import io.mockk.confirmVerified
@@ -29,7 +29,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.http.MediaType
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt
+import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
@@ -37,6 +37,7 @@ import org.springframework.test.web.servlet.put
 import org.springframework.util.LinkedMultiValueMap
 import java.util.UUID
 
+@WithMockUser(roles = [Roles.REGISTRATION])
 @WebMvcTest(MovementClassController::class)
 @Import(value = [MovementClassMapperImpl::class, CostCenterMapperImpl::class])
 class MovementClassControllerUTest : BaseControllerIntegrationTest() {
@@ -51,11 +52,12 @@ class MovementClassControllerUTest : BaseControllerIntegrationTest() {
     private lateinit var costCenterRepository: CostCenterRepository
 
     @Test
+    @WithMockUser(roles = [])
     fun `should require authorization`() {
         mockMvc.get(ENDPOINT_URL) {
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
-            status { isUnauthorized() }
+            status { isForbidden() }
         }
     }
 
@@ -68,7 +70,6 @@ class MovementClassControllerUTest : BaseControllerIntegrationTest() {
         every { costCenterRepository.findByExternalId(any<UUID>()) } returns createCostCenter()
 
         mockMvc.post(ENDPOINT_URL) {
-            with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
             content = JsonPayload("movement-class/create")
         }.andExpect {
@@ -94,7 +95,6 @@ class MovementClassControllerUTest : BaseControllerIntegrationTest() {
         )
 
         val jsonResponse = mockMvc.post(ENDPOINT_URL) {
-            with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
             content = JsonPayload("movement-class/invalid")
         }.andExpect {
@@ -130,7 +130,6 @@ class MovementClassControllerUTest : BaseControllerIntegrationTest() {
         every { costCenterRepository.findByExternalId(any<UUID>()) } returns expectedCostCenter
 
         val jsonResponse = mockMvc.put("$ENDPOINT_URL/$externalId") {
-            with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
             content = JsonPayload("movement-class/update")
         }.andExpect {
@@ -170,7 +169,6 @@ class MovementClassControllerUTest : BaseControllerIntegrationTest() {
         every { movementClassService.delete(eq(expectedMovementClass)) } just Runs
 
         mockMvc.delete("${ENDPOINT_URL}/$externalId") {
-            with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isOk() }
@@ -190,7 +188,6 @@ class MovementClassControllerUTest : BaseControllerIntegrationTest() {
         every { movementClassRepository.findByExternalId(eq(externalId)) } returns null
 
         mockMvc.delete("${ENDPOINT_URL}/$externalId") {
-            with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isNotFound() }
@@ -211,7 +208,6 @@ class MovementClassControllerUTest : BaseControllerIntegrationTest() {
         every { movementClassRepository.findByExternalId(externalId) } returns expectedMovementClass
 
         val jsonResponse = mockMvc.get("${ENDPOINT_URL}/$externalId") {
-            with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isOk() }
@@ -245,7 +241,6 @@ class MovementClassControllerUTest : BaseControllerIntegrationTest() {
         every { movementClassRepository.findByExternalId(externalId) } returns null
 
         mockMvc.get("${ENDPOINT_URL}/$externalId") {
-            with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isNotFound() }
@@ -281,7 +276,6 @@ class MovementClassControllerUTest : BaseControllerIntegrationTest() {
         } returns thePage
 
         val jsonResponse = mockMvc.get(ENDPOINT_URL) {
-            with(jwt().authorities(Authorities.REGISTRATION))
             params = parameters
         }.andExpect {
             status { isOk() }

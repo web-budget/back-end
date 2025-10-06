@@ -1,4 +1,4 @@
-package br.com.webbudget.infrastructure.config.spring
+package br.com.webbudget.infrastructure.config.core
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

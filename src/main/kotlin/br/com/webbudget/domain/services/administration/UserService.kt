@@ -6,7 +6,7 @@ import br.com.webbudget.domain.validators.OnCreateValidation
 import br.com.webbudget.domain.validators.OnUpdateValidation
 import br.com.webbudget.domain.validators.administration.UserValidator
 import br.com.webbudget.infrastructure.repository.administration.AccountActivationAttemptRepository
-import br.com.webbudget.infrastructure.repository.administration.AuthorityRepository
+import br.com.webbudget.infrastructure.repository.administration.RoleRepository
 import br.com.webbudget.infrastructure.repository.administration.GrantRepository
 import br.com.webbudget.infrastructure.repository.administration.PasswordRecoverAttemptRepository
 import br.com.webbudget.infrastructure.repository.administration.UserRepository
@@ -21,7 +21,7 @@ class UserService(
     private val userRepository: UserRepository,
     private val grantRepository: GrantRepository,
     private val passwordEncoder: PasswordEncoder,
-    private val authorityRepository: AuthorityRepository,
+    private val roleRepository: RoleRepository,
     private val accountActivationService: AccountActivationService,
     private val passwordRecoverAttemptRepository: PasswordRecoverAttemptRepository,
     private val accountActivationAttemptRepository: AccountActivationAttemptRepository,
@@ -32,7 +32,7 @@ class UserService(
 ) {
 
     @Transactional
-    fun createAccount(user: User, authorities: List<String>, notifyAccountCreated: Boolean = false): UUID {
+    fun createAccount(user: User, roles: List<String>, notifyAccountCreated: Boolean = false): UUID {
 
         creationValidators.forEach { it.validate(user) }
 
@@ -41,8 +41,8 @@ class UserService(
 
         val saved = userRepository.persist(user)
 
-        authorities.forEach {
-            authorityRepository.findByName(it)?.let { authority -> grantRepository.persist(Grant(saved, authority)) }
+        roles.forEach {
+            roleRepository.findByName(it)?.let { authority -> grantRepository.persist(Grant(saved, authority)) }
         }
 
         if (notifyAccountCreated) {
@@ -53,7 +53,7 @@ class UserService(
     }
 
     @Transactional
-    fun updateAccount(user: User, authorities: List<String>): User {
+    fun updateAccount(user: User, roles: List<String>): User {
 
         updateValidators.forEach { it.validate(user) }
 
@@ -63,13 +63,14 @@ class UserService(
 
         val saved = userRepository.merge(user)
 
-        authorities.forEach {
-            authorityRepository.findByName(it)?.let { authority -> grantRepository.persist(Grant(saved, authority)) }
+        roles.forEach {
+            roleRepository.findByName(it)
+                ?.let { role -> grantRepository.persist(Grant(saved, role)) }
         }
 
         val userGrants = grantRepository.findByUserExternalId(userExternalId)
 
-        return saved.apply { this.grants = userGrants }
+        return saved.apply { this.grants = userGrants.toMutableList() }
     }
 
     @Transactional
@@ -87,7 +88,7 @@ class UserService(
     @Transactional
     fun deleteAccount(user: User) {
 
-        require(!user.isAdmin()) { "user.errors.cannot-delete-admin" }
+        require(!user.isMainAdmin()) { "user.errors.cannot-delete-admin" }
 
         val userExternalId = requireNotNull(user.externalId) { "user.errors.null-external-id" }
 

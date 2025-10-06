@@ -14,6 +14,6 @@ class Grant(
     @field:JoinColumn(name = "id_user", nullable = false)
     val user: User,
     @field:ManyToOne(optional = false)
-    @field:JoinColumn(name = "id_authority", nullable = false)
-    val authority: Authority
+    @field:JoinColumn(name = "id_role", nullable = false)
+    val role: Role
 ) : PersistentEntity<Long>()

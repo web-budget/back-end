@@ -7,7 +7,7 @@ import br.com.webbudget.domain.entities.registration.Wallet.Type.PERSONAL
 import br.com.webbudget.domain.exceptions.ConflictingPropertyException
 import br.com.webbudget.domain.services.registration.WalletService
 import br.com.webbudget.infrastructure.repository.registration.WalletRepository
-import br.com.webbudget.utilities.fixture.createWallet
+import br.com.webbudget.utilities.fixtures.createWallet
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
 import org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy
 import org.junit.jupiter.api.Test

@@ -16,10 +16,10 @@ import br.com.webbudget.domain.services.financial.RecurringMovementService
 import br.com.webbudget.infrastructure.repository.financial.RecurringMovementRepository
 import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository
 import br.com.webbudget.infrastructure.repository.registration.MovementClassRepository
-import br.com.webbudget.utilities.Authorities
 import br.com.webbudget.utilities.JsonPayload
-import br.com.webbudget.utilities.fixture.createMovementClass
-import br.com.webbudget.utilities.fixture.createRecurringMovement
+import br.com.webbudget.utilities.Roles
+import br.com.webbudget.utilities.fixtures.createMovementClass
+import br.com.webbudget.utilities.fixtures.createRecurringMovement
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.confirmVerified
 import io.mockk.every
@@ -34,13 +34,14 @@ import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.http.MediaType
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt
+import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.put
 import java.util.UUID
 
+@WithMockUser(roles = [Roles.FINANCIAL])
 @WebMvcTest(RecurringMovementController::class)
 @Import(
     value = [
@@ -66,11 +67,12 @@ class RecurringMovementControllerUTest : BaseControllerIntegrationTest() {
     private lateinit var recurringMovementService: RecurringMovementService
 
     @Test
+    @WithMockUser(roles = [])
     fun `should require authorization`() {
         mockMvc.get(ENDPOINT_URL) {
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
-            status { isUnauthorized() }
+            status { isForbidden() }
         }
     }
 
@@ -86,7 +88,6 @@ class RecurringMovementControllerUTest : BaseControllerIntegrationTest() {
         every { movementClassRepository.findByExternalId(eq(movementClassId)) } returns movementClass
 
         mockMvc.post(ENDPOINT_URL) {
-            with(jwt().authorities(Authorities.FINANCIAL))
             contentType = MediaType.APPLICATION_JSON
             content = JsonPayload("recurring-movement/create")
         }.andExpect {
@@ -118,7 +119,6 @@ class RecurringMovementControllerUTest : BaseControllerIntegrationTest() {
         every { movementClassRepository.findByExternalId(eq(movementClassId)) } returns movementClass
 
         mockMvc.put("$ENDPOINT_URL/{id}", externalId) {
-            with(jwt().authorities(Authorities.FINANCIAL))
             contentType = MediaType.APPLICATION_JSON
             content = JsonPayload("recurring-movement/update")
         }.andExpect {
@@ -147,7 +147,6 @@ class RecurringMovementControllerUTest : BaseControllerIntegrationTest() {
         every { recurringMovementRepository.findByExternalId(eq(externalId)) } returns recurringMovement
 
         mockMvc.delete("$ENDPOINT_URL/{id}", externalId) {
-            with(jwt().authorities(Authorities.FINANCIAL))
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isOk() }
@@ -167,7 +166,6 @@ class RecurringMovementControllerUTest : BaseControllerIntegrationTest() {
         every { recurringMovementRepository.findByExternalId(eq(externalId)) } returns null
 
         mockMvc.delete("$ENDPOINT_URL/{id}", externalId) {
-            with(jwt().authorities(Authorities.FINANCIAL))
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isNotFound() }
@@ -191,7 +189,6 @@ class RecurringMovementControllerUTest : BaseControllerIntegrationTest() {
         )
 
         val jsonResponse = mockMvc.post(ENDPOINT_URL) {
-            with(jwt().authorities(Authorities.FINANCIAL))
             contentType = MediaType.APPLICATION_JSON
             content = JsonPayload("recurring-movement/unprocessable")
         }.andExpect {
@@ -221,7 +218,6 @@ class RecurringMovementControllerUTest : BaseControllerIntegrationTest() {
         )
 
         val jsonResponse = mockMvc.put("$ENDPOINT_URL/{id}", UUID.randomUUID()) {
-            with(jwt().authorities(Authorities.FINANCIAL))
             contentType = MediaType.APPLICATION_JSON
             content = JsonPayload("recurring-movement/unprocessable")
         }.andExpect {
@@ -255,7 +251,6 @@ class RecurringMovementControllerUTest : BaseControllerIntegrationTest() {
         every { movementClassRepository.findByExternalId(eq(movementClassId)) } returns movementClass
 
         mockMvc.post(ENDPOINT_URL) {
-            with(jwt().authorities(Authorities.FINANCIAL))
             contentType = MediaType.APPLICATION_JSON
             content = JsonPayload("recurring-movement/create")
         }.andExpect {
@@ -278,7 +273,6 @@ class RecurringMovementControllerUTest : BaseControllerIntegrationTest() {
         every { recurringMovementRepository.findByExternalId(eq(externalId)) } returns recurringMovement
 
         val jsonResponse = mockMvc.get("$ENDPOINT_URL/{id}", externalId) {
-            with(jwt().authorities(Authorities.FINANCIAL))
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isOk() }
@@ -305,7 +299,6 @@ class RecurringMovementControllerUTest : BaseControllerIntegrationTest() {
         every { recurringMovementRepository.findByExternalId(eq(externalId)) } returns null
 
         mockMvc.get("$ENDPOINT_URL/{id}", externalId) {
-            with(jwt().authorities(Authorities.FINANCIAL))
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isNotFound() }
@@ -325,7 +318,6 @@ class RecurringMovementControllerUTest : BaseControllerIntegrationTest() {
         every { recurringMovementRepository.findByFilter(any<RecurringMovementFilter>(), any<Pageable>()) } returns page
 
         val jsonResponse = mockMvc.get(ENDPOINT_URL) {
-            with(jwt().authorities(Authorities.FINANCIAL))
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isOk() }

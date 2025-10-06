@@ -2,6 +2,6 @@
   "name": "",
   "email": "",
   "password": "",
-  "authorities": [],
+  "roles": [],
   "defaultLanguage": null
 }

@@ -1,7 +1,7 @@
 package br.com.webbudget
 
-import br.com.webbudget.infrastructure.config.spring.JacksonConfiguration
-import br.com.webbudget.infrastructure.config.spring.SecurityConfiguration
+import br.com.webbudget.infrastructure.config.core.JacksonConfiguration
+import br.com.webbudget.infrastructure.config.security.SecurityConfiguration
 import br.com.webbudget.infrastructure.repository.administration.UserRepository
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.junit5.MockKExtension

@@ -11,7 +11,7 @@ import java.util.UUID
 @Service
 class TokenService(
     private val jwtEncoder: JwtEncoder,
-    @Value("\${web-budget.jwt.expiration-seconds}")
+    @param:Value("\${web-budget.jwt.expiration-seconds}")
     private val expirationSeconds: Long
 ) {
 

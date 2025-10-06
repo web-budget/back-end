@@ -1,6 +1,6 @@
-package br.com.webbudget.utilities.fixture
+package br.com.webbudget.utilities.fixtures
 
-import br.com.webbudget.domain.entities.administration.Authority
+import br.com.webbudget.domain.entities.administration.Role
 import br.com.webbudget.domain.entities.administration.Grant
 import br.com.webbudget.domain.entities.administration.Language
 import br.com.webbudget.domain.entities.administration.Language.PT_BR
@@ -16,12 +16,12 @@ fun createUser(
     password: String = "s3cr3t",
     language: Language = PT_BR,
     vararg authorities: String
-) = User(active, name, email, password, language, listOf())
+) = User(active, name, email, password, language, mutableListOf())
     .apply {
         this.id = id
         this.externalId = externalId
         this.grants = authorities
-            .map { authority -> Grant(this, Authority(authority)) }
+            .map { authority -> Grant(this, Role(authority)) }
             .toCollection(mutableListOf())
     }
 

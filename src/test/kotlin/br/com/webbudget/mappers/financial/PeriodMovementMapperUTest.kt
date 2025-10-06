@@ -11,9 +11,9 @@ import br.com.webbudget.application.payloads.financial.PeriodMovementUpdateForm
 import br.com.webbudget.domain.entities.financial.PeriodMovement
 import br.com.webbudget.infrastructure.repository.registration.FinancialPeriodRepository
 import br.com.webbudget.infrastructure.repository.registration.MovementClassRepository
-import br.com.webbudget.utilities.fixture.createFinancialPeriod
-import br.com.webbudget.utilities.fixture.createMovementClass
-import br.com.webbudget.utilities.fixture.createPeriodMovement
+import br.com.webbudget.utilities.fixtures.createFinancialPeriod
+import br.com.webbudget.utilities.fixtures.createMovementClass
+import br.com.webbudget.utilities.fixtures.createPeriodMovement
 import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.impl.annotations.MockK

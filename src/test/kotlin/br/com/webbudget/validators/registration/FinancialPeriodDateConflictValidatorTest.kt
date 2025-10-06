@@ -2,7 +2,7 @@ package br.com.webbudget.validators.registration
 
 import br.com.webbudget.domain.exceptions.BusinessException
 import br.com.webbudget.domain.validators.registration.FinancialPeriodDateConflictValidator
-import br.com.webbudget.utilities.fixture.createFinancialPeriod
+import br.com.webbudget.utilities.fixtures.createFinancialPeriod
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.junit5.MockKExtension
 import org.assertj.core.api.Assertions.assertThatNoException

@@ -1,4 +1,4 @@
-package br.com.webbudget.utilities.fixture
+package br.com.webbudget.utilities.fixtures
 
 import br.com.webbudget.domain.entities.registration.Card
 import br.com.webbudget.domain.entities.registration.CostCenter

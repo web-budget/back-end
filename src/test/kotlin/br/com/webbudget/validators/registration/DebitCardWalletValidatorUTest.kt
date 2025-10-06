@@ -3,8 +3,8 @@ package br.com.webbudget.validators.registration
 import br.com.webbudget.domain.entities.registration.Card
 import br.com.webbudget.domain.exceptions.BusinessException
 import br.com.webbudget.domain.validators.registration.DebitCardWalletValidator
-import br.com.webbudget.utilities.fixture.createCard
-import br.com.webbudget.utilities.fixture.createWallet
+import br.com.webbudget.utilities.fixtures.createCard
+import br.com.webbudget.utilities.fixtures.createWallet
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.junit5.MockKExtension
 import org.assertj.core.api.Assertions.assertThatThrownBy

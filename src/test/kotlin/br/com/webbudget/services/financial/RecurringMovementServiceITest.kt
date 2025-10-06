@@ -7,8 +7,8 @@ import br.com.webbudget.domain.services.financial.RecurringMovementService
 import br.com.webbudget.infrastructure.repository.financial.ApportionmentRepository
 import br.com.webbudget.infrastructure.repository.financial.RecurringMovementRepository
 import br.com.webbudget.infrastructure.repository.registration.MovementClassRepository
-import br.com.webbudget.utilities.fixture.createApportionment
-import br.com.webbudget.utilities.fixture.createRecurringMovement
+import br.com.webbudget.utilities.fixtures.createApportionment
+import br.com.webbudget.utilities.fixtures.createRecurringMovement
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Disabled

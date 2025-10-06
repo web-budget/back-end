@@ -4,11 +4,11 @@ import br.com.webbudget.application.mappers.configuration.UserMapper
 import br.com.webbudget.application.mappers.configuration.UserMapperImpl
 import br.com.webbudget.application.payloads.administration.UserCreateForm
 import br.com.webbudget.application.payloads.administration.UserUpdateForm
-import br.com.webbudget.domain.entities.administration.Authority
 import br.com.webbudget.domain.entities.administration.Grant
 import br.com.webbudget.domain.entities.administration.Language.EN_US
 import br.com.webbudget.domain.entities.administration.Language.PT_BR
-import br.com.webbudget.utilities.fixture.createUser
+import br.com.webbudget.domain.entities.administration.Role
+import br.com.webbudget.utilities.fixtures.createUser
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.util.UUID
@@ -59,11 +59,9 @@ class UserMapperUTest {
         val externalId = UUID.randomUUID()
         val domainObject = createUser(externalId = externalId)
 
-        val grants = listOf(Grant(domainObject, Authority("SOMETHING")))
+        val grants = listOf(Grant(domainObject, Role("SOMETHING")))
 
-        domainObject.apply {
-            this.grants = grants
-        }
+        domainObject.apply { this.grants = grants.toMutableList() }
 
         val view = userMapper.mapToView(domainObject)
 

@@ -1,4 +1,4 @@
-package br.com.webbudget.infrastructure.config.spring
+package br.com.webbudget.infrastructure.config.core
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -10,8 +10,8 @@ import org.springframework.scheduling.annotation.EnableAsync
 import java.util.concurrent.Executors
 
 @EnableAsync
+@Configuration
 @Profile("!test")
-@Configuration(proxyBeanMethods = false)
 class AsyncConfiguration {
 
     @Bean

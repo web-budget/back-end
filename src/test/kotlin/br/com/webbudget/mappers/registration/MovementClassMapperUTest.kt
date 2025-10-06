@@ -8,8 +8,8 @@ import br.com.webbudget.domain.entities.registration.MovementClass
 import br.com.webbudget.domain.entities.registration.MovementClass.Type.EXPENSE
 import br.com.webbudget.domain.entities.registration.MovementClass.Type.INCOME
 import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository
-import br.com.webbudget.utilities.fixture.createCostCenter
-import br.com.webbudget.utilities.fixture.createMovementClass
+import br.com.webbudget.utilities.fixtures.createCostCenter
+import br.com.webbudget.utilities.fixtures.createMovementClass
 import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.impl.annotations.MockK

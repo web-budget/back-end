@@ -18,11 +18,11 @@ import br.com.webbudget.infrastructure.repository.financial.PeriodMovementReposi
 import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository
 import br.com.webbudget.infrastructure.repository.registration.FinancialPeriodRepository
 import br.com.webbudget.infrastructure.repository.registration.MovementClassRepository
-import br.com.webbudget.utilities.Authorities
 import br.com.webbudget.utilities.JsonPayload
-import br.com.webbudget.utilities.fixture.createFinancialPeriod
-import br.com.webbudget.utilities.fixture.createMovementClass
-import br.com.webbudget.utilities.fixture.createPeriodMovement
+import br.com.webbudget.utilities.Roles
+import br.com.webbudget.utilities.fixtures.createFinancialPeriod
+import br.com.webbudget.utilities.fixtures.createMovementClass
+import br.com.webbudget.utilities.fixtures.createPeriodMovement
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.confirmVerified
 import io.mockk.every
@@ -37,13 +37,14 @@ import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.http.MediaType
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt
+import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.put
 import java.util.UUID
 
+@WithMockUser(roles = [Roles.FINANCIAL])
 @WebMvcTest(PeriodMovementController::class)
 @Import(
     value = [
@@ -73,11 +74,12 @@ class PeriodMovementControllerUTest : BaseControllerIntegrationTest() {
     private lateinit var periodMovementService: PeriodMovementService
 
     @Test
+    @WithMockUser(roles = [])
     fun `should require authorization`() {
         mockMvc.get(ENDPOINT_URL) {
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
-            status { isUnauthorized() }
+            status { isForbidden() }
         }
     }
 
@@ -96,7 +98,6 @@ class PeriodMovementControllerUTest : BaseControllerIntegrationTest() {
         every { financialPeriodRepository.findByExternalId(eq(financialPeriodId)) } returns financialPeriod
 
         mockMvc.post(ENDPOINT_URL) {
-            with(jwt().authorities(Authorities.FINANCIAL))
             contentType = MediaType.APPLICATION_JSON
             content = JsonPayload("period-movement/create")
         }.andExpect {
@@ -132,7 +133,6 @@ class PeriodMovementControllerUTest : BaseControllerIntegrationTest() {
         every { financialPeriodRepository.findByExternalId(eq(financialPeriodId)) } returns financialPeriod
 
         mockMvc.put("$ENDPOINT_URL/{id}", externalId) {
-            with(jwt().authorities(Authorities.FINANCIAL))
             contentType = MediaType.APPLICATION_JSON
             content = JsonPayload("period-movement/update")
         }.andExpect {
@@ -163,7 +163,6 @@ class PeriodMovementControllerUTest : BaseControllerIntegrationTest() {
         every { periodMovementRepository.findByExternalId(eq(externalId)) } returns periodMovement
 
         mockMvc.delete("$ENDPOINT_URL/{id}", externalId) {
-            with(jwt().authorities(Authorities.FINANCIAL))
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isOk() }
@@ -183,7 +182,6 @@ class PeriodMovementControllerUTest : BaseControllerIntegrationTest() {
         every { periodMovementRepository.findByExternalId(eq(externalId)) } returns null
 
         mockMvc.delete("$ENDPOINT_URL/{id}", externalId) {
-            with(jwt().authorities(Authorities.FINANCIAL))
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isNotFound() }
@@ -207,7 +205,6 @@ class PeriodMovementControllerUTest : BaseControllerIntegrationTest() {
         )
 
         val jsonResponse = mockMvc.post(ENDPOINT_URL) {
-            with(jwt().authorities(Authorities.FINANCIAL))
             contentType = MediaType.APPLICATION_JSON
             content = JsonPayload("period-movement/unprocessable")
         }.andExpect {
@@ -238,7 +235,6 @@ class PeriodMovementControllerUTest : BaseControllerIntegrationTest() {
         )
 
         val jsonResponse = mockMvc.put("$ENDPOINT_URL/{id}", UUID.randomUUID()) {
-            with(jwt().authorities(Authorities.FINANCIAL))
             contentType = MediaType.APPLICATION_JSON
             content = JsonPayload("period-movement/unprocessable")
         }.andExpect {
@@ -272,7 +268,6 @@ class PeriodMovementControllerUTest : BaseControllerIntegrationTest() {
         every { financialPeriodRepository.findByExternalId(eq(financialPeriodId)) } returns financialPeriod
 
         mockMvc.post(ENDPOINT_URL) {
-            with(jwt().authorities(Authorities.FINANCIAL))
             contentType = MediaType.APPLICATION_JSON
             content = JsonPayload("period-movement/create")
         }.andExpect {
@@ -296,7 +291,6 @@ class PeriodMovementControllerUTest : BaseControllerIntegrationTest() {
         every { periodMovementRepository.findByExternalId(eq(externalId)) } returns periodMovement
 
         val jsonResponse = mockMvc.get("$ENDPOINT_URL/{id}", externalId) {
-            with(jwt().authorities(Authorities.FINANCIAL))
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isOk() }
@@ -323,7 +317,6 @@ class PeriodMovementControllerUTest : BaseControllerIntegrationTest() {
         every { periodMovementRepository.findByExternalId(eq(externalId)) } returns null
 
         mockMvc.get("$ENDPOINT_URL/{id}", externalId) {
-            with(jwt().authorities(Authorities.FINANCIAL))
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isNotFound() }
@@ -343,7 +336,6 @@ class PeriodMovementControllerUTest : BaseControllerIntegrationTest() {
         every { periodMovementRepository.findByFilter(any<PeriodMovementFilter>(), any<Pageable>()) } returns page
 
         val jsonResponse = mockMvc.get(ENDPOINT_URL) {
-            with(jwt().authorities(Authorities.FINANCIAL))
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isOk() }

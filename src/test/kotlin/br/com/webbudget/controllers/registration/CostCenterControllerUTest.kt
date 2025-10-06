@@ -6,9 +6,9 @@ import br.com.webbudget.application.mappers.registration.CostCenterMapperImpl
 import br.com.webbudget.domain.entities.registration.CostCenter
 import br.com.webbudget.domain.services.registration.CostCenterService
 import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository
-import br.com.webbudget.utilities.Authorities
 import br.com.webbudget.utilities.JsonPayload
-import br.com.webbudget.utilities.fixture.createCostCenter
+import br.com.webbudget.utilities.Roles
+import br.com.webbudget.utilities.fixtures.createCostCenter
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.Runs
 import io.mockk.called
@@ -27,7 +27,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.http.MediaType
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt
+import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
@@ -35,8 +35,9 @@ import org.springframework.test.web.servlet.put
 import org.springframework.util.LinkedMultiValueMap
 import java.util.UUID
 
-@WebMvcTest(CostCenterController::class)
+@WithMockUser(roles = [Roles.REGISTRATION])
 @Import(value = [CostCenterMapperImpl::class])
+@WebMvcTest(CostCenterController::class)
 class CostCenterControllerUTest : BaseControllerIntegrationTest() {
 
     @MockkBean
@@ -46,11 +47,12 @@ class CostCenterControllerUTest : BaseControllerIntegrationTest() {
     private lateinit var costCenterRepository: CostCenterRepository
 
     @Test
+    @WithMockUser(roles = [])
     fun `should require authorization`() {
         mockMvc.get(ENDPOINT_URL) {
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
-            status { isUnauthorized() }
+            status { isForbidden() }
         }
     }
 
@@ -62,7 +64,6 @@ class CostCenterControllerUTest : BaseControllerIntegrationTest() {
         every { costCenterService.create(any()) } returns externalId
 
         mockMvc.post(ENDPOINT_URL) {
-            with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
             content = JsonPayload("cost-center/create")
         }.andExpect {
@@ -88,7 +89,6 @@ class CostCenterControllerUTest : BaseControllerIntegrationTest() {
         every { costCenterService.update(any<CostCenter>()) } returns expectedCostCenter
 
         val jsonResponse = mockMvc.put("$ENDPOINT_URL/$externalId") {
-            with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
             content = JsonPayload("cost-center/update")
         }.andExpect {
@@ -120,7 +120,6 @@ class CostCenterControllerUTest : BaseControllerIntegrationTest() {
         every { costCenterService.delete(expectedCostCenter) } just Runs
 
         mockMvc.delete("$ENDPOINT_URL/$externalId") {
-            with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isOk() }
@@ -140,7 +139,6 @@ class CostCenterControllerUTest : BaseControllerIntegrationTest() {
         every { costCenterRepository.findByExternalId(externalId) } returns null
 
         mockMvc.delete("$ENDPOINT_URL/$externalId") {
-            with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isNotFound() }
@@ -156,7 +154,6 @@ class CostCenterControllerUTest : BaseControllerIntegrationTest() {
         val requiredEntries = mapOf("name" to "is-null-or-blank")
 
         val jsonResponse = mockMvc.post(ENDPOINT_URL) {
-            with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
             content = JsonPayload("cost-center/invalid")
         }.andExpect {
@@ -188,7 +185,6 @@ class CostCenterControllerUTest : BaseControllerIntegrationTest() {
         every { costCenterRepository.findByExternalId(externalId) } returns expectedCostCenter
 
         val jsonResponse = mockMvc.get("$ENDPOINT_URL/$externalId") {
-            with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isOk() }
@@ -216,7 +212,6 @@ class CostCenterControllerUTest : BaseControllerIntegrationTest() {
         every { costCenterRepository.findByExternalId(externalId) } returns null
 
         mockMvc.get("$ENDPOINT_URL/$externalId") {
-            with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isNotFound() }
@@ -249,7 +244,6 @@ class CostCenterControllerUTest : BaseControllerIntegrationTest() {
         every { costCenterRepository.findAll(capture(specificationSlot), capture(pageableSlot)) } returns thePage
 
         val jsonResponse = mockMvc.get(ENDPOINT_URL) {
-            with(jwt().authorities(Authorities.REGISTRATION))
             contentType = MediaType.APPLICATION_JSON
             params = parameters
         }.andExpect {

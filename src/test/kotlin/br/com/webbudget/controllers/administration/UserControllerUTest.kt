@@ -6,10 +6,9 @@ import br.com.webbudget.application.mappers.configuration.UserMapperImpl
 import br.com.webbudget.domain.entities.administration.Language.PT_BR
 import br.com.webbudget.domain.entities.administration.User
 import br.com.webbudget.domain.services.administration.UserService
-import br.com.webbudget.infrastructure.repository.administration.UserRepository
-import br.com.webbudget.utilities.Authorities
 import br.com.webbudget.utilities.JsonPayload
-import br.com.webbudget.utilities.fixture.createUser
+import br.com.webbudget.utilities.Roles
+import br.com.webbudget.utilities.fixtures.createUser
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.called
 import io.mockk.confirmVerified
@@ -28,7 +27,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.http.MediaType
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt
+import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.patch
@@ -37,19 +36,21 @@ import org.springframework.test.web.servlet.put
 import org.springframework.util.LinkedMultiValueMap
 import java.util.UUID
 
-@WebMvcTest(UserController::class)
 @Import(value = [UserMapperImpl::class])
+@WebMvcTest(UserController::class)
+@WithMockUser(roles = [Roles.ADMINISTRATION])
 class UserControllerUTest : BaseControllerIntegrationTest() {
 
     @MockkBean
     private lateinit var userService: UserService
 
     @Test
+    @WithMockUser(roles = [])
     fun `should require authorization`() {
         mockMvc.get(ENDPOINT_URL) {
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
-            status { isUnauthorized() }
+            status { isForbidden() }
         }
     }
 
@@ -61,7 +62,6 @@ class UserControllerUTest : BaseControllerIntegrationTest() {
         every { userService.createAccount(any(), any()) } returns externalId
 
         mockMvc.post(ENDPOINT_URL) {
-            with(jwt().authorities(Authorities.ADMINISTRATION))
             contentType = MediaType.APPLICATION_JSON
             content = JsonPayload("user/create")
         }.andExpect {
@@ -84,12 +84,11 @@ class UserControllerUTest : BaseControllerIntegrationTest() {
             "name" to "is-null-or-blank",
             "email" to "is-null-or-blank",
             "password" to "is-null-or-blank",
-            "authorities" to "is-empty",
+            "roles" to "is-empty",
             "defaultLanguage" to "is-null"
         )
 
         val jsonResponse = mockMvc.post(ENDPOINT_URL) {
-            with(jwt().authorities(Authorities.ADMINISTRATION))
             contentType = MediaType.APPLICATION_JSON
             content = JsonPayload("user/invalid")
         }.andExpect {
@@ -123,7 +122,6 @@ class UserControllerUTest : BaseControllerIntegrationTest() {
         every { userService.updateAccount(expectedUser, authorities) } returns expectedUser
 
         val jsonResponse = mockMvc.put("$ENDPOINT_URL/$externalId") {
-            with(jwt().authorities(Authorities.ADMINISTRATION))
             contentType = MediaType.APPLICATION_JSON
             content = JsonPayload("user/update")
         }.andExpect {
@@ -162,7 +160,6 @@ class UserControllerUTest : BaseControllerIntegrationTest() {
         every { userService.updatePassword(expectedUser, password, true) } just runs
 
         mockMvc.patch("$ENDPOINT_URL/$externalId/update-password") {
-            with(jwt().authorities(Authorities.ADMINISTRATION))
             contentType = MediaType.APPLICATION_JSON
             content = payload
         }.andExpect {
@@ -184,7 +181,6 @@ class UserControllerUTest : BaseControllerIntegrationTest() {
         every { userRepository.findByExternalId(externalId) } returns expectedUser
 
         val jsonResponse = mockMvc.get("$ENDPOINT_URL/$externalId") {
-            with(jwt().authorities(Authorities.ADMINISTRATION))
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isOk() }
@@ -213,7 +209,6 @@ class UserControllerUTest : BaseControllerIntegrationTest() {
         every { userRepository.findByExternalId(externalId) } returns null
 
         mockMvc.get("$ENDPOINT_URL/$externalId") {
-            with(jwt().authorities(Authorities.ADMINISTRATION))
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isNotFound() }
@@ -234,7 +229,6 @@ class UserControllerUTest : BaseControllerIntegrationTest() {
         every { userService.deleteAccount(expectedUser) } just runs
 
         mockMvc.delete("$ENDPOINT_URL/$externalId") {
-            with(jwt().authorities(Authorities.ADMINISTRATION))
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isOk() }
@@ -254,7 +248,6 @@ class UserControllerUTest : BaseControllerIntegrationTest() {
         every { userRepository.findByExternalId(externalId) } returns null
 
         mockMvc.delete("$ENDPOINT_URL/$externalId") {
-            with(jwt().authorities(Authorities.ADMINISTRATION))
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isNotFound() }
@@ -278,7 +271,6 @@ class UserControllerUTest : BaseControllerIntegrationTest() {
         every { userService.deleteAccount(adminUser) } throws IllegalArgumentException("Can't delete admin")
 
         mockMvc.delete("$ENDPOINT_URL/$externalId") {
-            with(jwt().authorities(Authorities.ADMINISTRATION))
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isBadRequest() }
@@ -312,7 +304,6 @@ class UserControllerUTest : BaseControllerIntegrationTest() {
         every { userRepository.findAll(capture(specificationSlot), capture(pageableSlot)) } returns thePage
 
         val jsonResponse = mockMvc.get(ENDPOINT_URL) {
-            with(jwt().authorities(Authorities.ADMINISTRATION))
             contentType = MediaType.APPLICATION_JSON
             params = parameters
         }.andExpect {

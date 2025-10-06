@@ -1,13 +1,12 @@
-package br.com.webbudget.infrastructure.config.spring
+package br.com.webbudget.infrastructure.config.security
 
-import br.com.webbudget.domain.entities.administration.Authority
-import br.com.webbudget.domain.entities.administration.User
+import br.com.webbudget.domain.entities.administration.Role
 import br.com.webbudget.infrastructure.repository.administration.UserRepository
-import com.google.common.collect.ImmutableList
 import com.nimbusds.jose.jwk.JWKSet
 import com.nimbusds.jose.jwk.RSAKey
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet
 import com.nimbusds.jose.proc.SecurityContext
+import jakarta.servlet.http.HttpServletRequest
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -15,9 +14,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.invoke
 import org.springframework.security.config.http.SessionCreationPolicy
-import org.springframework.security.core.GrantedAuthority
-import org.springframework.security.core.authority.SimpleGrantedAuthority
-import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
@@ -26,7 +22,10 @@ import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.security.oauth2.jwt.JwtEncoder
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter
 import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint
+import org.springframework.security.oauth2.server.resource.web.BearerTokenResolver
+import org.springframework.security.oauth2.server.resource.web.DefaultBearerTokenResolver
 import org.springframework.security.oauth2.server.resource.web.access.BearerTokenAccessDeniedHandler
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.web.cors.CorsConfiguration
@@ -35,34 +34,42 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
 
+@Configuration
 @EnableWebSecurity
-@Configuration(proxyBeanMethods = false)
 class SecurityConfiguration(
-    @Value("\${web-budget.jwt.public-key}")
+    @param:Value("\${web-budget.jwt.public-key}")
     private val publicKey: RSAPublicKey,
-    @Value("\${web-budget.jwt.private-key}")
+    @param:Value("\${web-budget.jwt.private-key}")
     private val privateKey: RSAPrivateKey,
     private val userRepository: UserRepository
 ) {
 
     @Bean
-    fun configureSecurity(http: HttpSecurity): SecurityFilterChain {
+    fun configureSecurity(
+        http: HttpSecurity,
+        jwtAuthenticationConverter: JwtAuthenticationConverter
+    ): SecurityFilterChain {
         http {
-            cors {  }
+            cors { }
             csrf { disable() }
             authorizeHttpRequests {
                 authorize("/actuator/health/**", permitAll)
                 authorize("/actuator/info/**", permitAll)
                 authorize("/accounts/**", permitAll)
-                authorize("/api/administration/**", hasAuthority(Authority.ADMINISTRATION))
-                authorize("/api/registration/**", hasAuthority(Authority.REGISTRATION))
-                authorize("/api/financial/**", hasAuthority(Authority.FINANCIAL))
-                authorize("/api/dashboards/**", hasAuthority(Authority.DASHBOARDS))
-                authorize("/api/investments/**", hasAuthority(Authority.INVESTMENTS))
+                authorize("/api/administration/**", hasRole(Role.ADMINISTRATION))
+                authorize("/api/registration/**", hasRole(Role.REGISTRATION))
+                authorize("/api/financial/**", hasRole(Role.FINANCIAL))
+                authorize("/api/dashboards/**", hasRole(Role.DASHBOARDS))
+                authorize("/api/investments/**", hasRole(Role.INVESTMENTS))
                 authorize(anyRequest, authenticated)
             }
             httpBasic { }
-            oauth2ResourceServer { jwt { } }
+            oauth2ResourceServer {
+                jwt {
+                    this.jwtAuthenticationConverter = jwtAuthenticationConverter()
+                }
+                bearerTokenResolver = cookieOrHeaderBearerTokenResolver()
+            }
             sessionManagement { sessionCreationPolicy = SessionCreationPolicy.STATELESS }
             exceptionHandling {
                 authenticationEntryPoint = BearerTokenAuthenticationEntryPoint()
@@ -74,12 +81,30 @@ class SecurityConfiguration(
     }
 
     @Bean
+    fun jwtAuthenticationConverter(): JwtAuthenticationConverter {
+        val converter = JwtAuthenticationConverter()
+        converter.setJwtGrantedAuthoritiesConverter(JWTScopeToRolesConverter())
+        return converter
+    }
+
+    @Bean
+    fun cookieOrHeaderBearerTokenResolver(): BearerTokenResolver = object : BearerTokenResolver {
+        private val headerResolver = DefaultBearerTokenResolver()
+        override fun resolve(request: HttpServletRequest): String? {
+            val fromCookie = request.cookies?.firstOrNull { it.name == COOKIE_NAME }?.value
+            return fromCookie ?: headerResolver.resolve(request)
+        }
+    }
+
+    @Bean
     fun corsConfigurationSource(@Value("\${web-budget.frontend-url}") frontendUrl: String): CorsConfigurationSource {
 
         val configuration = CorsConfiguration()
         configuration.allowedOrigins = listOf(frontendUrl)
         configuration.allowedMethods = listOf("GET", "POST", "PUT", "PATCH", "DELETE", "HEAD")
         configuration.allowedHeaders = listOf("*")
+
+        configuration.allowCredentials = true
 
         val source = UrlBasedCorsConfigurationSource()
         source.registerCorsConfiguration("/**", configuration)
@@ -107,36 +132,8 @@ class SecurityConfiguration(
             ?: throw UsernameNotFoundException("User [$username] not found")
     }
 
-    data class AuthenticableUser(
-        private val username: String,
-        private val password: String,
-        private val active: Boolean,
-        private val authorities: List<GrantedAuthority>
-    ) : UserDetails {
-
-        override fun getAuthorities(): List<GrantedAuthority> = ImmutableList.copyOf(authorities)
-
-        override fun getUsername(): String = username
-
-        override fun getPassword(): String = password
-
-        override fun isAccountNonExpired(): Boolean = active
-
-        override fun isAccountNonLocked(): Boolean = active
-
-        override fun isCredentialsNonExpired(): Boolean = active
-
-        override fun isEnabled(): Boolean = active
-
-        companion object {
-            fun of(user: User): AuthenticableUser = user.grants
-                .map { grant -> grant.authority }
-                .map { authority -> SimpleGrantedAuthority(authority.name) }
-                .let { AuthenticableUser(user.email, user.password, user.active, it) }
-        }
-    }
-
     companion object {
         private const val BCRYPT_STRENGTH = 11
+        private const val COOKIE_NAME = "wb-auth"
     }
 }

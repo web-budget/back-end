@@ -8,8 +8,8 @@ import br.com.webbudget.infrastructure.repository.financial.ApportionmentReposit
 import br.com.webbudget.infrastructure.repository.financial.PeriodMovementRepository
 import br.com.webbudget.infrastructure.repository.registration.FinancialPeriodRepository
 import br.com.webbudget.infrastructure.repository.registration.MovementClassRepository
-import br.com.webbudget.utilities.fixture.createApportionment
-import br.com.webbudget.utilities.fixture.createPeriodMovement
+import br.com.webbudget.utilities.fixtures.createApportionment
+import br.com.webbudget.utilities.fixtures.createPeriodMovement
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
