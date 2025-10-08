@@ -38,7 +38,7 @@
         </createTable>
 
         <addUniqueConstraint columnNames="id,external_id"
-                             tableName="cards"
+                             tableName="financial_periods"
                              schemaName="registration"/>
 
         <addUniqueConstraint columnNames="name"

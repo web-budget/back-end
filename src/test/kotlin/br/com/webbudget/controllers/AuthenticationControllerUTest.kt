@@ -89,7 +89,8 @@ class AuthenticationControllerUTest : BaseControllerIntegrationTest() {
         every { jwt.subject } returns expectedUser.email
         every { userRepository.findByEmail(ofType<String>()) } returns expectedUser
 
-        val authentication = UsernamePasswordAuthenticationToken(jwt, null, listOf(SimpleGrantedAuthority("ROLE_ADMINISTRATOR")))
+        val authorities = listOf(SimpleGrantedAuthority("ROLE_ADMINISTRATOR"))
+        val authentication = UsernamePasswordAuthenticationToken(jwt, null, authorities)
 
         val jsonResponse = mockMvc.get("$ENDPOINT_URL/me") {
             principal = authentication

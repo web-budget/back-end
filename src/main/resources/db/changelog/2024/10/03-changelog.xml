@@ -51,10 +51,6 @@
                              tableName="cards"
                              schemaName="registration"/>
 
-        <addUniqueConstraint columnNames="last_four_digits"
-                             tableName="cards"
-                             schemaName="registration"/>
-
         <addUniqueConstraint columnNames="last_four_digits,type"
                              tableName="cards"
                              schemaName="registration"/>
