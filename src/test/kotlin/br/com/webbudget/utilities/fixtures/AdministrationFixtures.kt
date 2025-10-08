@@ -15,13 +15,13 @@ fun createUser(
     email: String = "user@test.com",
     password: String = "s3cr3t",
     language: Language = PT_BR,
-    vararg authorities: String
+    vararg roles: String
 ) = User(active, name, email, password, language, mutableListOf())
     .apply {
         this.id = id
         this.externalId = externalId
-        this.grants = authorities
-            .map { authority -> Grant(this, Role(authority)) }
+        this.grants = roles
+            .map { role -> Grant(this, Role(role)) }
             .toCollection(mutableListOf())
     }
 

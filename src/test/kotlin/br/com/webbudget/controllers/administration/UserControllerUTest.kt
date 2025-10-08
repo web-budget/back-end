@@ -116,7 +116,7 @@ class UserControllerUTest : BaseControllerIntegrationTest() {
 
         val authorities = listOf("FINANCIAL")
         val externalId = UUID.randomUUID()
-        val expectedUser = createUser(externalId = externalId, authorities = authorities.toTypedArray())
+        val expectedUser = createUser(externalId = externalId, roles = authorities.toTypedArray())
 
         every { userRepository.findByExternalId(externalId) } returns expectedUser
         every { userService.updateAccount(expectedUser, authorities) } returns expectedUser
@@ -176,7 +176,7 @@ class UserControllerUTest : BaseControllerIntegrationTest() {
     fun `should call find by id and expect ok`() {
 
         val externalId = UUID.randomUUID()
-        val expectedUser = createUser(externalId = externalId, authorities = arrayOf("REGISTRATION"))
+        val expectedUser = createUser(externalId = externalId, roles = arrayOf("REGISTRATION"))
 
         every { userRepository.findByExternalId(externalId) } returns expectedUser
 
@@ -223,7 +223,7 @@ class UserControllerUTest : BaseControllerIntegrationTest() {
     fun `should call delete and return ok`() {
 
         val externalId = UUID.randomUUID()
-        val expectedUser = createUser(externalId = externalId, authorities = arrayOf("REGISTRATION"))
+        val expectedUser = createUser(externalId = externalId, roles = arrayOf("REGISTRATION"))
 
         every { userRepository.findByExternalId(externalId) } returns expectedUser
         every { userService.deleteAccount(expectedUser) } just runs

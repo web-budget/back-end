@@ -33,8 +33,6 @@ class User(
         return this.email == ADMIN_USERNAME
     }
 
-    fun grantedRoles(): List<String>  = this.grants.map { it.role.name }
-
     companion object {
         private const val ADMIN_USERNAME = "admin@webbudget.com.br"
     }

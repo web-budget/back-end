@@ -45,10 +45,7 @@ class SecurityConfiguration(
 ) {
 
     @Bean
-    fun configureSecurity(
-        http: HttpSecurity,
-        jwtAuthenticationConverter: JwtAuthenticationConverter
-    ): SecurityFilterChain {
+    fun configureSecurity(http: HttpSecurity): SecurityFilterChain {
         http {
             cors { }
             csrf { disable() }

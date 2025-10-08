@@ -8,8 +8,6 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.ResponseCookie
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.Authentication
-import org.springframework.security.oauth2.jwt.Jwt
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -48,12 +46,12 @@ class AuthenticationController(
     @GetMapping("/me")
     fun me(authentication: Authentication): ResponseEntity<ProfileView> {
 
-        val jwtToken = authentication.principal as Jwt
+        val username = authentication.name
 
-        val user = userRepository.findByEmail(jwtToken.subject)
+        val user = userRepository.findByEmail(username)
             ?: return ResponseEntity.notFound().build()
 
-        return ResponseEntity.ok(ProfileView(user.name,user.email))
+        return ResponseEntity.ok(ProfileView(user.name, user.email))
     }
 
     private fun buildCookie(jwt: String, duration: Duration): ResponseCookie = ResponseCookie.from(COOKIE_NAME, jwt)
