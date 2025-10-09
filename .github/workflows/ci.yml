@@ -2,19 +2,51 @@ name: ci
 
 on:
   push:
-    branches:
-      - main
+    branches: [ "main" ]
   pull_request:
-    branches:
-      - main
 
 jobs:
-  detekt:
-    uses: ./.github/workflows/gradle-build.yml
-    with:
-      gradle-task: clean detekt -x test
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
-  test:
-    uses: ./.github/workflows/gradle-build.yml
-    with:
-      gradle-task: clean test -x detekt
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate Gradle Wrapper
+        uses: gradle/wrapper-validation-action@v2
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: liberica
+          java-version: "21"
+
+      - name: Setup Gradle with Cache
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: ${{ github.event_name == 'pull_request' }}
+
+      - name: Detekt + Build
+        run: ./gradlew clean detekt build --stacktrace
+
+      - name: Upload Detekt reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: detekt-reports
+          path: |
+            **/build/reports/detekt/*
+          if-no-files-found: ignore
+
+      - name: Upload Test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: |
+            **/build/reports/tests/test/*
+            **/build/test-results/test/*
+          if-no-files-found: ignore
