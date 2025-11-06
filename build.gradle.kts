@@ -5,7 +5,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     // spring
-    id("org.springframework.boot") version "3.5.5"
+    id("org.springframework.boot") version "3.5.7"
     id("io.spring.dependency-management") version "1.1.7"
 
     // detekt
@@ -24,12 +24,6 @@ group = "br.com.webbudget"
 version = "4.0.0"
 
 java.sourceCompatibility = JavaVersion.VERSION_21
-
-configurations {
-    compileOnly {
-        extendsFrom(configurations.annotationProcessor.get())
-    }
-}
 
 repositories {
     mavenCentral()
@@ -133,6 +127,39 @@ tasks.withType<Detekt> {
 tasks {
     test {
         useJUnitPlatform()
+    }
+
+    bootJar {
+        layered {
+            enabled.set(true)
+            application {
+                intoLayer("spring-boot-loader") {
+                    include("org/springframework/boot/loader/**")
+                }
+                intoLayer("application")
+            }
+            dependencies {
+                intoLayer("application") {
+                    includeProjectDependencies()
+                }
+                intoLayer("snapshot-dependencies") {
+                    include("*:*:*SNAPSHOT")
+                }
+                intoLayer("dependencies")
+            }
+            layerOrder.set(listOf("dependencies", "spring-boot-loader", "snapshot-dependencies", "application"))
+        }
+        archiveFileName.set("${project.name}.${archiveExtension.get()}")
+    }
+
+    bootBuildImage {
+        environment.put("BP_JVM_VERSION", "21")
+        environment.put("BPE_DELIM_JAVA_TOOL_OPTIONS", " ")
+        environment.put(
+            "BPE_APPEND_JAVA_TOOL_OPTIONS",
+            "-XX:MetaspaceSize=128M -XX:MaxMetaspaceSize=256M -XX:+UseG1GC -XX:+UseStringDeduplication -Dfile.encoding=UTF-8 -Duser.timezone=UTC"
+        )
+        imageName.set("web-budget/${project.name}:v${project.version}")
     }
 }
 
