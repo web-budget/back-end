@@ -20,4 +20,12 @@ class CostCenter(
     var incomeBudget: BigDecimal? = null,
     @field:Column(name = "expense_budget")
     var expenseBudget: BigDecimal? = null
-) : PersistentEntity<Long>()
+) : PersistentEntity<Long>() {
+
+    fun isBudgetValidationRequired(movementClassType: MovementClass.Type): Boolean {
+        return when (movementClassType) {
+            MovementClass.Type.INCOME -> this.incomeBudget != null
+            MovementClass.Type.EXPENSE -> this.expenseBudget != null
+        }
+    }
+}

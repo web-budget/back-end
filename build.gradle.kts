@@ -121,6 +121,9 @@ tasks.withType<KotlinCompile> {
 }
 
 tasks.withType<Detekt> {
+    parallel = true
+    buildUponDefaultConfig = true
+
     exclude("**/fixtures/**")
 }
 

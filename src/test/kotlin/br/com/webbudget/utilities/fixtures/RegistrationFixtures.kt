@@ -32,8 +32,8 @@ fun createCostCenter(
     name: String = "Cost Center",
     active: Boolean = true,
     description: String = "Some description",
-    incomeBudget: BigDecimal = BigDecimal.ONE,
-    expenseBudget: BigDecimal = BigDecimal.ONE,
+    incomeBudget: BigDecimal? = BigDecimal.ONE,
+    expenseBudget: BigDecimal? = BigDecimal.ONE,
 ) = CostCenter(name, active, description, incomeBudget, expenseBudget)
     .apply {
         this.id = id
@@ -47,7 +47,7 @@ fun createMovementClass(
     type: MovementClass.Type = MovementClass.Type.INCOME,
     active: Boolean = true,
     costCenter: CostCenter = createCostCenter(),
-    budget: BigDecimal = BigDecimal.ONE,
+    budget: BigDecimal? = BigDecimal.ONE,
     description: String = "Some description"
 ) = MovementClass(name, type, active, costCenter, budget, description)
     .apply {

@@ -74,7 +74,7 @@ class MovementClassServiceITest : BaseIntegrationTest() {
         val costCenter = costCenterRepository.findByExternalId(UUID.fromString("52e3456b-1b0d-42c5-8be0-07ddaecce441"))
             ?: fail { OBJECT_NOT_FOUND_ERROR }
 
-        val toCreate = createMovementClass(name = "Mercado", costCenter = costCenter)
+        val toCreate = createMovementClass(name = "Mercado", costCenter = costCenter, budget = null)
 
         assertThatThrownBy { movementClassService.create(toCreate) }
             .isInstanceOf(ConflictingPropertyException::class.java)
@@ -122,10 +122,13 @@ class MovementClassServiceITest : BaseIntegrationTest() {
     fun `should not update when name is duplicated`() {
 
         val externalId = UUID.fromString("f21d94d2-d28e-4aa3-b12d-8a520023edd9")
-        val toUpdate = movementClassRepository.findByExternalId(externalId) ?: fail { OBJECT_NOT_FOUND_ERROR }
+
+        val toUpdate = movementClassRepository.findByExternalId(externalId)
+            ?: fail { OBJECT_NOT_FOUND_ERROR }
 
         toUpdate.apply {
             this.name = "Vendas"
+            this.budget = null
         }
 
         assertThatThrownBy { movementClassService.update(toUpdate) }
@@ -141,7 +144,9 @@ class MovementClassServiceITest : BaseIntegrationTest() {
     fun `should delete`() {
 
         val externalId = UUID.fromString("98cb4961-5cde-46fb-abfd-8461be7d628b")
-        val toDelete = movementClassRepository.findByExternalId(externalId) ?: fail { OBJECT_NOT_FOUND_ERROR }
+
+        val toDelete = movementClassRepository.findByExternalId(externalId)
+            ?: fail { OBJECT_NOT_FOUND_ERROR }
 
         movementClassService.delete(toDelete)
 

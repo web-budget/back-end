@@ -4,6 +4,7 @@ import br.com.webbudget.domain.entities.registration.MovementClass
 import br.com.webbudget.domain.entities.registration.MovementClass.Type
 import br.com.webbudget.domain.exceptions.BusinessException
 import br.com.webbudget.domain.exceptions.ErrorCodes.BUDGET_LIMIT_EXCEEDED
+import br.com.webbudget.domain.exceptions.ErrorCodes.BUDGET_REQUIRED_FOR_COST_CENTER
 import br.com.webbudget.domain.validators.OnCreateValidation
 import br.com.webbudget.domain.validators.OnUpdateValidation
 import br.com.webbudget.infrastructure.repository.registration.MovementClassRepository
@@ -20,20 +21,12 @@ class BudgetLimitValidator(
     override fun validate(value: MovementClass) {
 
         // no budget limit, so the movement class is valid
-        if (value.budget == null) {
-            return
-        }
-
         val costCenter = value.costCenter
 
-        // for income or expense, if cost center doesn't have budget limit, movement class is valid
-        if ((value.isForExpense() && costCenter.expenseBudget == null)
-            || (value.isForIncome() && costCenter.incomeBudget == null)
-        ) {
+        if (value.budget == null || costCenter.isBudgetValidationRequired(value.type).not()) {
             return
         }
 
-        // get the cost center budget based on the movement class type
         val costCenterBudget = if (value.isForIncome()) {
             costCenter.incomeBudget!!
         } else {
