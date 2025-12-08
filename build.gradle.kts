@@ -25,6 +25,20 @@ version = "4.0.0"
 
 java.sourceCompatibility = JavaVersion.VERSION_21
 
+springBoot {
+    buildInfo {
+        properties {
+            group.set(project.group as String)
+            version.set(project.version as String)
+            artifact.set(project.name)
+
+            description = "webBudget backend application"
+
+            name.set("webBudget Backend")
+        }
+    }
+}
+
 repositories {
     mavenCentral()
 }
@@ -107,26 +121,6 @@ dependencyManagement {
     }
 }
 
-tasks.withType<KotlinCompile> {
-    compilerOptions {
-        jvmTarget.set(JVM_21)
-        languageVersion.set(KOTLIN_2_0)
-        freeCompilerArgs.set(
-            listOf(
-                "-Xjsr305=strict",
-                "-Xjdk-release=${java.sourceCompatibility}"
-            )
-        )
-    }
-}
-
-tasks.withType<Detekt> {
-    parallel = true
-    buildUponDefaultConfig = true
-
-    exclude("**/fixtures/**")
-}
-
 tasks {
     test {
         useJUnitPlatform()
@@ -166,16 +160,22 @@ tasks {
     }
 }
 
-springBoot {
-    buildInfo {
-        properties {
-            group.set(project.group as String)
-            version.set(project.version as String)
-            artifact.set(project.name)
-
-            description = "webBudget backend application"
-
-            name.set("webBudget Backend")
-        }
+tasks.withType<KotlinCompile> {
+    compilerOptions {
+        jvmTarget.set(JVM_21)
+        languageVersion.set(KOTLIN_2_0)
+        freeCompilerArgs.set(
+            listOf(
+                "-Xjsr305=strict",
+                "-Xjdk-release=${java.sourceCompatibility}"
+            )
+        )
     }
+}
+
+tasks.withType<Detekt> {
+    parallel = true
+    buildUponDefaultConfig = true
+
+    exclude("**/fixtures/**")
 }
