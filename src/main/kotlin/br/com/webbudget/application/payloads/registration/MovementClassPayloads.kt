@@ -18,12 +18,11 @@ data class MovementClassCreateForm(
     @field:Size(message = "max-150-chars", max = 150)
     val name: String?,
     @field:NotNull(message = "is-null")
-    val type: MovementClass.Type?,
+    var type: MovementClass.Type?,
     @field:NotNull(message = "is-null")
-    val costCenter: UUID?,
+    var costCenter: UUID?,
     val budget: BigDecimal?,
-    val description: String?,
-    val active: Boolean = true
+    val description: String?
 )
 
 data class MovementClassUpdateForm(
@@ -31,7 +30,7 @@ data class MovementClassUpdateForm(
     @field:Size(message = "max-150-chars", max = 150)
     val name: String?,
     @field:NotNull(message = "is-null")
-    val costCenter: UUID?,
+    var costCenter: UUID?,
     val budget: BigDecimal?,
     val description: String?,
     val active: Boolean = true

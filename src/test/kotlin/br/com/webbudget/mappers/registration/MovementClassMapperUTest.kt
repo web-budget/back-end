@@ -57,7 +57,6 @@ class MovementClassMapperUTest {
                 assertThat(it.type).isEqualTo(form.type)
                 assertThat(it.budget).isEqualTo(form.budget)
                 assertThat(it.description).isEqualTo(form.description)
-                assertThat(it.active).isEqualTo(form.active)
                 assertThat(it.costCenter)
                     .satisfies({ costCenter -> assertThat(costCenter.externalId).isEqualTo(form.costCenter) })
             })

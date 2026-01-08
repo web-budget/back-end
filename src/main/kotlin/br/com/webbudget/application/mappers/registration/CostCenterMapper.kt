@@ -21,6 +21,7 @@ interface CostCenterMapper {
     @Mapping(target = "id", source = "externalId")
     fun mapToListView(costCenter: CostCenter): CostCenterListView
 
+    @Mapping(target = "active", constant = "true")
     fun mapToDomain(form: CostCenterCreateForm): CostCenter
 
     fun mapToDomain(form: CostCenterUpdateForm, @MappingTarget costCenter: CostCenter)

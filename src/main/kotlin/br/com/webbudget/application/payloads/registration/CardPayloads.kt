@@ -23,10 +23,9 @@ data class CardCreateForm(
     val lastFourDigits: String?,
     val invoicePaymentDay: Int?,
     @field:NotNull(message = "is-null")
-    val type: Type?,
+    var type: Type?,
     val wallet: UUID?,
-    val flag: String?,
-    val active: Boolean = true,
+    val flag: String?
 )
 
 data class CardUpdateForm(

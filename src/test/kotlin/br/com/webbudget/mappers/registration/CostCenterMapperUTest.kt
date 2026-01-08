@@ -16,14 +16,13 @@ class CostCenterMapperUTest {
     @Test
     fun `should map create form to domain object`() {
 
-        val form = CostCenterCreateForm("Cost Center", true, "Some cost center", BigDecimal.ONE, BigDecimal.ONE)
+        val form = CostCenterCreateForm("Cost Center", "Some cost center", BigDecimal.ONE, BigDecimal.ONE)
 
         val domainObject = costCenterMapper.mapToDomain(form)
 
         assertThat(domainObject)
             .isNotNull
             .satisfies({
-                assertThat(it.active).isEqualTo(form.active)
                 assertThat(it.name).isEqualTo(form.name)
                 assertThat(it.description).isEqualTo(form.description)
             })

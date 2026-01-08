@@ -16,7 +16,6 @@ data class CostCenterCreateForm(
     @field:NotBlank(message = "is-null-or-blank")
     @field:Size(message = "max-150-chars", max = 150)
     val name: String?,
-    val active: Boolean = true,
     val description: String? = null,
     val incomeBudget: BigDecimal? = null,
     val expenseBudget: BigDecimal? = null

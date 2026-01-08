@@ -22,12 +22,11 @@ data class WalletCreateForm(
     @field:Size(message = "max-150-chars", max = 150)
     val name: String?,
     @field:NotNull(message = "is-null")
-    val type: Type?,
+    var type: Type?,
     val description: String? = null,
     val bank: String? = null,
     val agency: String? = null,
     val number: String? = null,
-    val active: Boolean = true,
 )
 
 data class WalletUpdateForm(

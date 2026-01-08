@@ -30,6 +30,7 @@ abstract class MovementClassMapper {
     @Mapping(target = "id", source = "externalId")
     abstract fun mapToListView(movementClass: MovementClass): MovementClassListView
 
+    @Mapping(target = "active", constant = "true")
     @Mapping(target = "costCenter", expression = "java(mapCostCenter(form.getCostCenter()))")
     abstract fun mapToDomain(form: MovementClassCreateForm): MovementClass
 

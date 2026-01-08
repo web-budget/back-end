@@ -29,6 +29,7 @@ abstract class CardMapper {
     @Mapping(target = "id", source = "externalId")
     abstract fun mapToListView(card: Card): CardListView
 
+    @Mapping(target = "active", constant = "true")
     @Mapping(target = "wallet", expression = "java(mapWallet(form.getWallet()))")
     abstract fun mapToDomain(form: CardCreateForm): Card
 

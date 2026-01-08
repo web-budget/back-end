@@ -50,9 +50,9 @@ class CardMapperUTest {
         assertThat(domainObject)
             .isNotNull
             .satisfies({
+                assertThat(it.active).isTrue()
                 assertThat(it.name).isEqualTo(form.name)
                 assertThat(it.type).isEqualTo(form.type)
-                assertThat(it.active).isEqualTo(form.active)
                 assertThat(it.lastFourDigits).isEqualTo(form.lastFourDigits)
                 assertThat(it.flag).isEqualTo(form.flag)
                 assertThat(it.invoicePaymentDay).isEqualTo(form.invoicePaymentDay)

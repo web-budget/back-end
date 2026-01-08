@@ -21,6 +21,7 @@ interface WalletMapper {
     @Mapping(target = "id", source = "externalId")
     fun mapToListView(wallet: Wallet): WalletListView
 
+    @Mapping(target = "active", constant = "true")
     @Mapping(target = "currentBalance", expression = "java(java.math.BigDecimal.ZERO)")
     fun mapToDomain(form: WalletCreateForm): Wallet
 
