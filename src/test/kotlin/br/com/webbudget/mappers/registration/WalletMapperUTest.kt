@@ -1,6 +1,6 @@
 package br.com.webbudget.mappers.registration
 
-import br.com.webbudget.application.mappers.registration.WalletMapperImpl
+import br.com.webbudget.application.mappers.registration.WalletMapper
 import br.com.webbudget.application.payloads.registration.WalletCreateForm
 import br.com.webbudget.application.payloads.registration.WalletUpdateForm
 import br.com.webbudget.domain.entities.registration.Wallet
@@ -18,7 +18,7 @@ import java.util.UUID
 
 class WalletMapperUTest {
 
-    private val walletMapper = WalletMapperImpl()
+    private val walletMapper = WalletMapper()
 
     @ParameterizedTest
     @MethodSource("createFormObjects")
@@ -123,12 +123,12 @@ class WalletMapperUTest {
         @JvmStatic
         fun domainObjects() = listOf(
             Arguments.of(createWallet(name = "Personal", type = PERSONAL, description = "Personal")),
-            Arguments.of(createWallet(name = "Bank", balance = BigDecimal.TEN)),
+            Arguments.of(createWallet(name = "Bank", currentBalance = BigDecimal.TEN)),
             Arguments.of(
                 createWallet(
                     name = "Investments",
                     type = INVESTMENT,
-                    balance = BigDecimal.ONE,
+                    currentBalance = BigDecimal.ONE,
                     active = false,
                     description = "Investments"
                 )

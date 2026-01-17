@@ -1,7 +1,6 @@
 package br.com.webbudget.mappers.administration
 
-import br.com.webbudget.application.mappers.configuration.UserMapper
-import br.com.webbudget.application.mappers.configuration.UserMapperImpl
+import br.com.webbudget.application.mappers.administration.UserMapper
 import br.com.webbudget.application.payloads.administration.UserCreateForm
 import br.com.webbudget.application.payloads.administration.UserUpdateForm
 import br.com.webbudget.domain.entities.administration.Grant
@@ -15,7 +14,7 @@ import java.util.UUID
 
 class UserMapperUTest {
 
-    private val userMapper: UserMapper = UserMapperImpl()
+    private val userMapper: UserMapper = UserMapper()
 
     @Test
     fun `should map create form to domain object`() {

@@ -4,8 +4,8 @@ import br.com.webbudget.BaseControllerIntegrationTest
 import br.com.webbudget.application.controllers.financial.RecurringMovementController
 import br.com.webbudget.application.mappers.financial.ApportionmentMapperImpl
 import br.com.webbudget.application.mappers.financial.RecurringMovementMapperImpl
-import br.com.webbudget.application.mappers.registration.CostCenterMapperImpl
-import br.com.webbudget.application.mappers.registration.MovementClassMapperImpl
+import br.com.webbudget.application.mappers.registration.CostCenterMapper
+import br.com.webbudget.application.mappers.registration.MovementClassMapper
 import br.com.webbudget.application.payloads.ErrorCodes.IS_EMPTY
 import br.com.webbudget.application.payloads.ErrorCodes.IS_NULL
 import br.com.webbudget.application.payloads.ErrorCodes.IS_NULL_OR_BLANK
@@ -47,8 +47,8 @@ import java.util.UUID
     value = [
         RecurringMovementMapperImpl::class,
         ApportionmentMapperImpl::class,
-        CostCenterMapperImpl::class,
-        MovementClassMapperImpl::class
+        CostCenterMapper::class,
+        MovementClassMapper::class
     ]
 )
 class RecurringMovementControllerUTest : BaseControllerIntegrationTest() {

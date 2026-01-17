@@ -17,9 +17,9 @@ class Wallet(
     var name: String,
     @field:Enumerated(STRING)
     @field:Column(name = "type", nullable = false)
-    var type: Type?,
+    var type: Type,
     @field:Column(name = "current_balance", nullable = false)
-    var currentBalance: BigDecimal? = BigDecimal.ZERO,
+    var currentBalance: BigDecimal = BigDecimal.ZERO,
     @field:Column(name = "active", nullable = false)
     var active: Boolean = true,
     @field:Column(name = "description", columnDefinition = "TEXT")

@@ -4,9 +4,9 @@ import br.com.webbudget.BaseControllerIntegrationTest
 import br.com.webbudget.application.controllers.financial.PeriodMovementController
 import br.com.webbudget.application.mappers.financial.ApportionmentMapperImpl
 import br.com.webbudget.application.mappers.financial.PeriodMovementMapperImpl
-import br.com.webbudget.application.mappers.registration.CostCenterMapperImpl
-import br.com.webbudget.application.mappers.registration.FinancialPeriodMapperImpl
-import br.com.webbudget.application.mappers.registration.MovementClassMapperImpl
+import br.com.webbudget.application.mappers.registration.CostCenterMapper
+import br.com.webbudget.application.mappers.registration.FinancialPeriodMapper
+import br.com.webbudget.application.mappers.registration.MovementClassMapper
 import br.com.webbudget.application.payloads.ErrorCodes.IS_EMPTY
 import br.com.webbudget.application.payloads.ErrorCodes.IS_NULL
 import br.com.webbudget.application.payloads.ErrorCodes.IS_NULL_OR_BLANK
@@ -50,9 +50,9 @@ import java.util.UUID
     value = [
         PeriodMovementMapperImpl::class,
         ApportionmentMapperImpl::class,
-        CostCenterMapperImpl::class,
-        FinancialPeriodMapperImpl::class,
-        MovementClassMapperImpl::class
+        CostCenterMapper::class,
+        FinancialPeriodMapper::class,
+        MovementClassMapper::class
     ]
 )
 class PeriodMovementControllerUTest : BaseControllerIntegrationTest() {

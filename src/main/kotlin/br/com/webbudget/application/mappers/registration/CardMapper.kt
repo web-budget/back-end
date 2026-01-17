@@ -1,6 +1,5 @@
 package br.com.webbudget.application.mappers.registration
 
-import br.com.webbudget.application.mappers.MappingConfiguration
 import br.com.webbudget.application.payloads.registration.CardCreateForm
 import br.com.webbudget.application.payloads.registration.CardListView
 import br.com.webbudget.application.payloads.registration.CardUpdateForm
@@ -9,35 +8,53 @@ import br.com.webbudget.domain.entities.registration.Card
 import br.com.webbudget.domain.entities.registration.Wallet
 import br.com.webbudget.domain.exceptions.ResourceNotFoundException
 import br.com.webbudget.infrastructure.repository.registration.WalletRepository
-import org.mapstruct.Mapper
-import org.mapstruct.Mapping
-import org.mapstruct.MappingTarget
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import java.util.UUID
 
 @Component
-@Mapper(config = MappingConfiguration::class, uses = [WalletMapper::class])
-abstract class CardMapper {
+class CardMapper(
+    private val walletMapper: WalletMapper,
+    private val walletRepository: WalletRepository
+) {
 
-    @Autowired
-    private lateinit var walletRepository: WalletRepository
+    fun mapToView(card: Card): CardView = CardView(
+        id = card.externalId!!,
+        name = card.name,
+        lastFourDigits = card.lastFourDigits,
+        type = card.type,
+        active = card.active,
+        flag = card.flag,
+        invoicePaymentDay = card.invoicePaymentDay,
+        wallet = card.wallet?.let { walletMapper.mapToListView(it) }
+    )
 
-    @Mapping(target = "id", source = "externalId")
-    abstract fun mapToView(card: Card): CardView
+    fun mapToListView(card: Card): CardListView = CardListView(
+        id = card.externalId!!,
+        name = card.name,
+        type = card.type,
+        active = card.active,
+        flag = card.flag
+    )
 
-    @Mapping(target = "id", source = "externalId")
-    abstract fun mapToListView(card: Card): CardListView
+    fun mapToDomain(form: CardCreateForm): Card = Card(
+        name = form.name!!,
+        lastFourDigits = form.lastFourDigits!!,
+        type = form.type!!,
+        invoicePaymentDay = form.invoicePaymentDay,
+        flag = form.flag,
+        wallet = mapWallet(form.wallet)
+    )
 
-    @Mapping(target = "active", constant = "true")
-    @Mapping(target = "wallet", expression = "java(mapWallet(form.getWallet()))")
-    abstract fun mapToDomain(form: CardCreateForm): Card
+    fun mapToDomain(form: CardUpdateForm, card: Card) = card.apply {
+        this.name = form.name!!
+        this.lastFourDigits = form.lastFourDigits!!
+        this.invoicePaymentDay = form.invoicePaymentDay
+        this.active = form.active!!
+        this.flag = form.flag
+        this.wallet = mapWallet(form.wallet)
+    }
 
-    @Mapping(target = "wallet", expression = "java(mapWallet(form.getWallet()))")
-    abstract fun mapToDomain(form: CardUpdateForm, @MappingTarget card: Card)
-
-    fun mapWallet(id: UUID?): Wallet? = id?.let {
-        walletRepository.findByExternalId(id)
-            ?: throw ResourceNotFoundException()
+    private fun mapWallet(id: UUID?): Wallet? = id?.let {
+        walletRepository.findByExternalId(id) ?: throw ResourceNotFoundException()
     }
 }

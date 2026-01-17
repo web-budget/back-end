@@ -197,7 +197,7 @@ class WalletServiceITest : BaseIntegrationTest() {
                 createWallet(
                     name = "Other investments",
                     type = INVESTMENT,
-                    balance = BigDecimal.ONE,
+                    currentBalance = BigDecimal.ONE,
                     bank = "Broker",
                     agency = "1",
                     number = "1"
@@ -206,7 +206,7 @@ class WalletServiceITest : BaseIntegrationTest() {
             Arguments.of(
                 createWallet(
                     name = "Other bank account",
-                    balance = BigDecimal.TEN,
+                    currentBalance = BigDecimal.TEN,
                     agency = "2",
                     number = "2"
                 )

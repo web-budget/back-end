@@ -9,5 +9,5 @@ import java.util.UUID
 @NoRepositoryBean
 interface BaseRepository<T : PersistentEntity<Long>> : BaseJpaRepository<T, Long>, JpaSpecificationExecutor<T> {
 
-    fun findByExternalId(uuid: UUID): T?
+    fun findByExternalId(externalId: UUID): T?
 }

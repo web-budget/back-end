@@ -1,6 +1,6 @@
 package br.com.webbudget.application.controllers.administration
 
-import br.com.webbudget.application.mappers.configuration.UserMapper
+import br.com.webbudget.application.mappers.administration.UserMapper
 import br.com.webbudget.application.payloads.administration.PasswordChangeForm
 import br.com.webbudget.application.payloads.administration.UserCreateForm
 import br.com.webbudget.application.payloads.administration.UserFilter
@@ -66,7 +66,7 @@ class UserController(
             ?: throw ResourceNotFoundException()
 
         userMapper.mapToDomain(form, user)
-        userService.updateAccount(user, form.roles)
+        userService.updateAccount(user, form.roles!!)
 
         return ResponseEntity.ok(userMapper.mapToView(user))
     }

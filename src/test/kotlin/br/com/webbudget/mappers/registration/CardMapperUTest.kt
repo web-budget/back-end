@@ -1,7 +1,7 @@
 package br.com.webbudget.mappers.registration
 
-import br.com.webbudget.application.mappers.registration.CardMapperImpl
-import br.com.webbudget.application.mappers.registration.WalletMapperImpl
+import br.com.webbudget.application.mappers.registration.CardMapper
+import br.com.webbudget.application.mappers.registration.WalletMapper
 import br.com.webbudget.application.payloads.registration.CardCreateForm
 import br.com.webbudget.application.payloads.registration.CardUpdateForm
 import br.com.webbudget.domain.entities.registration.Card
@@ -21,7 +21,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
-import org.springframework.test.util.ReflectionTestUtils
 import java.util.UUID
 import java.util.stream.Stream
 
@@ -31,12 +30,11 @@ class CardMapperUTest {
     @MockK
     private lateinit var walletRepository: WalletRepository
 
-    private val cardMapper = CardMapperImpl()
+    private lateinit var cardMapper: CardMapper
 
     @BeforeEach
     fun setup() {
-        ReflectionTestUtils.setField(cardMapper, "walletMapper", WalletMapperImpl())
-        ReflectionTestUtils.setField(cardMapper, "walletRepository", walletRepository)
+        cardMapper = CardMapper(WalletMapper(), walletRepository)
     }
 
     @ParameterizedTest

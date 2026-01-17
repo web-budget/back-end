@@ -4,7 +4,6 @@ import br.com.webbudget.domain.entities.registration.MovementClass
 import br.com.webbudget.domain.entities.registration.MovementClass.Type
 import br.com.webbudget.domain.exceptions.BusinessException
 import br.com.webbudget.domain.exceptions.ErrorCodes.BUDGET_LIMIT_EXCEEDED
-import br.com.webbudget.domain.exceptions.ErrorCodes.BUDGET_REQUIRED_FOR_COST_CENTER
 import br.com.webbudget.domain.validators.OnCreateValidation
 import br.com.webbudget.domain.validators.OnUpdateValidation
 import br.com.webbudget.infrastructure.repository.registration.MovementClassRepository

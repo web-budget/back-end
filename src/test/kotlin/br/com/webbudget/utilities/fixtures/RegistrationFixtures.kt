@@ -14,13 +14,13 @@ fun createWallet(
     externalId: UUID? = UUID.randomUUID(),
     name: String = "Wallet",
     type: Wallet.Type = Wallet.Type.BANK_ACCOUNT,
-    balance: BigDecimal = BigDecimal.ZERO,
+    currentBalance: BigDecimal = BigDecimal.ZERO,
     active: Boolean = true,
     description: String = "Some description",
     bank: String? = "Bank",
     agency: String? = "123",
     number: String? = "456789"
-) = Wallet(name, type, balance, active, description, bank, agency, number)
+) = Wallet(name, type, currentBalance, active, description, bank, agency, number)
     .apply {
         this.id = id
         this.externalId = externalId

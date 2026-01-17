@@ -2,7 +2,7 @@ package br.com.webbudget.controllers.administration
 
 import br.com.webbudget.BaseControllerIntegrationTest
 import br.com.webbudget.application.controllers.administration.UserController
-import br.com.webbudget.application.mappers.configuration.UserMapperImpl
+import br.com.webbudget.application.mappers.administration.UserMapper
 import br.com.webbudget.domain.entities.administration.Language.PT_BR
 import br.com.webbudget.domain.entities.administration.User
 import br.com.webbudget.domain.services.administration.UserService
@@ -36,7 +36,7 @@ import org.springframework.test.web.servlet.put
 import org.springframework.util.LinkedMultiValueMap
 import java.util.UUID
 
-@Import(value = [UserMapperImpl::class])
+@Import(value = [UserMapper::class])
 @WebMvcTest(UserController::class)
 @WithMockUser(roles = [Roles.ADMINISTRATION])
 class UserControllerUTest : BaseControllerIntegrationTest() {

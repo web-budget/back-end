@@ -2,7 +2,7 @@ package br.com.webbudget.controllers.registration
 
 import br.com.webbudget.BaseControllerIntegrationTest
 import br.com.webbudget.application.controllers.registration.WalletController
-import br.com.webbudget.application.mappers.registration.WalletMapperImpl
+import br.com.webbudget.application.mappers.registration.WalletMapper
 import br.com.webbudget.domain.entities.registration.Wallet
 import br.com.webbudget.domain.services.registration.WalletService
 import br.com.webbudget.infrastructure.repository.registration.WalletRepository
@@ -35,7 +35,7 @@ import org.springframework.test.web.servlet.put
 import org.springframework.util.LinkedMultiValueMap
 import java.util.UUID
 
-@Import(value = [WalletMapperImpl::class])
+@Import(value = [WalletMapper::class])
 @WithMockUser(roles = [Roles.REGISTRATION])
 @WebMvcTest(WalletController::class)
 class WalletControllerUTest : BaseControllerIntegrationTest() {

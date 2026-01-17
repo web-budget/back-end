@@ -2,8 +2,8 @@ package br.com.webbudget.controllers.registration
 
 import br.com.webbudget.BaseControllerIntegrationTest
 import br.com.webbudget.application.controllers.registration.CardController
-import br.com.webbudget.application.mappers.registration.CardMapperImpl
-import br.com.webbudget.application.mappers.registration.WalletMapperImpl
+import br.com.webbudget.application.mappers.registration.CardMapper
+import br.com.webbudget.application.mappers.registration.WalletMapper
 import br.com.webbudget.domain.entities.registration.Card
 import br.com.webbudget.domain.exceptions.BusinessException
 import br.com.webbudget.domain.services.registration.CardService
@@ -42,7 +42,7 @@ import java.util.UUID
 
 @WebMvcTest(CardController::class)
 @WithMockUser(roles = [Roles.REGISTRATION])
-@Import(value = [CardMapperImpl::class, WalletMapperImpl::class])
+@Import(value = [CardMapper::class, WalletMapper::class])
 class CardControllerUTest : BaseControllerIntegrationTest() {
 
     @MockkBean

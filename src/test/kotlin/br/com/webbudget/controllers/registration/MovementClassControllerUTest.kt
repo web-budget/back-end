@@ -2,8 +2,8 @@ package br.com.webbudget.controllers.registration
 
 import br.com.webbudget.BaseControllerIntegrationTest
 import br.com.webbudget.application.controllers.registration.MovementClassController
-import br.com.webbudget.application.mappers.registration.CostCenterMapperImpl
-import br.com.webbudget.application.mappers.registration.MovementClassMapperImpl
+import br.com.webbudget.application.mappers.registration.CostCenterMapper
+import br.com.webbudget.application.mappers.registration.MovementClassMapper
 import br.com.webbudget.domain.entities.registration.MovementClass
 import br.com.webbudget.domain.services.registration.MovementClassService
 import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository
@@ -39,7 +39,7 @@ import java.util.UUID
 
 @WithMockUser(roles = [Roles.REGISTRATION])
 @WebMvcTest(MovementClassController::class)
-@Import(value = [MovementClassMapperImpl::class, CostCenterMapperImpl::class])
+@Import(value = [MovementClassMapper::class, CostCenterMapper::class])
 class MovementClassControllerUTest : BaseControllerIntegrationTest() {
 
     @MockkBean

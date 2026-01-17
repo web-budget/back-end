@@ -1,5 +1,8 @@
 package br.com.webbudget.application.payloads.registration
 
+import br.com.webbudget.application.payloads.ErrorCodes.IS_NULL
+import br.com.webbudget.application.payloads.ErrorCodes.IS_NULL_OR_BLANK
+import br.com.webbudget.application.payloads.ErrorCodes.MAX_CHARS
 import br.com.webbudget.application.payloads.SpecificationSupport
 import br.com.webbudget.application.payloads.StatusFilter
 import br.com.webbudget.domain.entities.registration.Wallet
@@ -18,10 +21,10 @@ import java.math.BigDecimal
 import java.util.UUID
 
 data class WalletCreateForm(
-    @field:NotBlank(message = "is-null-or-blank")
-    @field:Size(message = "max-150-chars", max = 150)
+    @field:NotBlank(message = IS_NULL_OR_BLANK)
+    @field:Size(message = MAX_CHARS, max = 150)
     val name: String?,
-    @field:NotNull(message = "is-null")
+    @field:NotNull(message = IS_NULL)
     var type: Type?,
     val description: String? = null,
     val bank: String? = null,
@@ -30,16 +33,17 @@ data class WalletCreateForm(
 )
 
 data class WalletUpdateForm(
-    @field:NotBlank(message = "is-null-or-blank")
-    @field:Size(message = "max-150-chars", max = 150)
-    val name: String,
-    val active: Boolean,
+    @field:NotBlank(message = IS_NULL_OR_BLANK)
+    @field:Size(message = MAX_CHARS, max = 150)
+    val name: String?,
+    @field:NotNull(message = IS_NULL)
+    var active: Boolean?,
     val description: String? = null,
-    @field:Size(message = "max-150-chars", max = 150)
+    @field:Size(message = MAX_CHARS, max = 150)
     val bank: String? = null,
-    @field:Size(message = "max-10-chars", max = 10)
+    @field:Size(message = MAX_CHARS, max = 10)
     val agency: String? = null,
-    @field:Size(message = "max-16-chars", max = 16)
+    @field:Size(message = MAX_CHARS, max = 16)
     val number: String? = null,
 )
 

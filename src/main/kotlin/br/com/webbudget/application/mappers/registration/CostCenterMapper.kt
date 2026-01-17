@@ -1,28 +1,44 @@
 package br.com.webbudget.application.mappers.registration
 
-import br.com.webbudget.application.mappers.MappingConfiguration
 import br.com.webbudget.application.payloads.registration.CostCenterCreateForm
 import br.com.webbudget.application.payloads.registration.CostCenterListView
 import br.com.webbudget.application.payloads.registration.CostCenterUpdateForm
 import br.com.webbudget.application.payloads.registration.CostCenterView
 import br.com.webbudget.domain.entities.registration.CostCenter
-import org.mapstruct.Mapper
-import org.mapstruct.Mapping
-import org.mapstruct.MappingTarget
 import org.springframework.stereotype.Component
 
 @Component
-@Mapper(config = MappingConfiguration::class)
-interface CostCenterMapper {
+class CostCenterMapper {
 
-    @Mapping(target = "id", source = "externalId")
-    fun mapToView(costCenter: CostCenter): CostCenterView
+    fun mapToView(costCenter: CostCenter): CostCenterView = CostCenterView(
+        id = costCenter.externalId!!,
+        name = costCenter.name,
+        active = costCenter.active,
+        description = costCenter.description,
+        incomeBudget = costCenter.incomeBudget,
+        expenseBudget = costCenter.expenseBudget
+    )
 
-    @Mapping(target = "id", source = "externalId")
-    fun mapToListView(costCenter: CostCenter): CostCenterListView
+    fun mapToListView(costCenter: CostCenter): CostCenterListView = CostCenterListView(
+        id = costCenter.externalId!!,
+        name = costCenter.name,
+        active = costCenter.active,
+        incomeBudget = costCenter.incomeBudget,
+        expenseBudget = costCenter.expenseBudget
+    )
 
-    @Mapping(target = "active", constant = "true")
-    fun mapToDomain(form: CostCenterCreateForm): CostCenter
+    fun mapToDomain(form: CostCenterCreateForm): CostCenter = CostCenter(
+        name = form.name!!,
+        description = form.description,
+        incomeBudget = form.incomeBudget,
+        expenseBudget = form.expenseBudget
+    )
 
-    fun mapToDomain(form: CostCenterUpdateForm, @MappingTarget costCenter: CostCenter)
+    fun mapToDomain(form: CostCenterUpdateForm, costCenter: CostCenter) = costCenter.apply {
+        this.name = form.name!!
+        this.active = form.active!!
+        this.description = form.description
+        this.incomeBudget = form.incomeBudget
+        this.expenseBudget = form.expenseBudget
+    }
 }

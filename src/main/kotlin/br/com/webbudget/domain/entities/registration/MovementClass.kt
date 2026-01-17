@@ -18,12 +18,12 @@ class MovementClass(
     var name: String,
     @field:Enumerated(EnumType.STRING)
     @field:Column(name = "type", length = 45, nullable = false)
-    val type: Type,
-    @field:Column(name = "active", nullable = false)
-    var active: Boolean = true,
+    var type: Type,
     @field:ManyToOne(optional = false)
     @field:JoinColumn(name = "id_cost_center", nullable = false)
     var costCenter: CostCenter,
+    @field:Column(name = "active", nullable = false)
+    var active: Boolean = true,
     @field:Column(name = "budget")
     var budget: BigDecimal? = null,
     @field:Column(name = "description", columnDefinition = "TEXT")

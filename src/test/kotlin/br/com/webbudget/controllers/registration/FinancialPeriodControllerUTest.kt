@@ -2,7 +2,7 @@ package br.com.webbudget.controllers.registration
 
 import br.com.webbudget.BaseControllerIntegrationTest
 import br.com.webbudget.application.controllers.registration.FinancialPeriodController
-import br.com.webbudget.application.mappers.registration.FinancialPeriodMapperImpl
+import br.com.webbudget.application.mappers.registration.FinancialPeriodMapper
 import br.com.webbudget.domain.entities.registration.FinancialPeriod
 import br.com.webbudget.domain.services.registration.FinancialPeriodService
 import br.com.webbudget.infrastructure.repository.registration.FinancialPeriodRepository
@@ -36,7 +36,7 @@ import org.springframework.util.LinkedMultiValueMap
 import java.util.UUID
 
 @WithMockUser(roles = [Roles.REGISTRATION])
-@Import(value = [FinancialPeriodMapperImpl::class])
+@Import(value = [FinancialPeriodMapper::class])
 @WebMvcTest(FinancialPeriodController::class)
 class FinancialPeriodControllerUTest : BaseControllerIntegrationTest() {
 

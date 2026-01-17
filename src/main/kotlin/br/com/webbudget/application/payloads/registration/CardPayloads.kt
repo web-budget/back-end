@@ -1,5 +1,8 @@
 package br.com.webbudget.application.payloads.registration
 
+import br.com.webbudget.application.payloads.ErrorCodes.IS_NULL
+import br.com.webbudget.application.payloads.ErrorCodes.IS_NULL_OR_BLANK
+import br.com.webbudget.application.payloads.ErrorCodes.MAX_CHARS
 import br.com.webbudget.application.payloads.SpecificationSupport
 import br.com.webbudget.application.payloads.StatusFilter
 import br.com.webbudget.domain.entities.registration.Card
@@ -15,30 +18,31 @@ import org.springframework.data.jpa.domain.Specification
 import java.util.UUID
 
 data class CardCreateForm(
-    @field:NotBlank(message = "is-null-or-blank")
-    @field:Size(message = "max-150-chars", max = 150)
+    @field:NotBlank(message = IS_NULL_OR_BLANK)
+    @field:Size(message = MAX_CHARS, max = 150)
     val name: String?,
-    @field:NotBlank(message = "is-null-or-blank")
-    @field:Size(message = "max-4-chars", max = 4)
+    @field:NotBlank(message = IS_NULL_OR_BLANK)
+    @field:Size(message = MAX_CHARS, max = 4)
     val lastFourDigits: String?,
     val invoicePaymentDay: Int?,
-    @field:NotNull(message = "is-null")
+    @field:NotNull(message = IS_NULL)
     var type: Type?,
     val wallet: UUID?,
     val flag: String?
 )
 
 data class CardUpdateForm(
-    @field:NotBlank(message = "is-null-or-blank")
-    @field:Size(message = "max-150-chars", max = 150)
+    @field:NotBlank(message = IS_NULL_OR_BLANK)
+    @field:Size(message = MAX_CHARS, max = 150)
     val name: String?,
-    @field:NotBlank(message = "is-null-or-blank")
-    @field:Size(message = "max-4-chars", max = 4)
+    @field:NotBlank(message = IS_NULL_OR_BLANK)
+    @field:Size(message = MAX_CHARS, max = 4)
     val lastFourDigits: String?,
     val invoicePaymentDay: Int?,
     val wallet: UUID?,
     val flag: String?,
-    val active: Boolean = true,
+    @field:NotNull(message = IS_NULL)
+    var active: Boolean?
 )
 
 data class CardView(

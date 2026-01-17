@@ -1,5 +1,8 @@
 package br.com.webbudget.application.payloads.registration
 
+import br.com.webbudget.application.payloads.ErrorCodes.IS_NULL
+import br.com.webbudget.application.payloads.ErrorCodes.IS_NULL_OR_BLANK
+import br.com.webbudget.application.payloads.ErrorCodes.MAX_CHARS
 import br.com.webbudget.application.payloads.SpecificationSupport
 import br.com.webbudget.application.payloads.StatusFilter
 import br.com.webbudget.domain.entities.registration.MovementClass
@@ -14,26 +17,27 @@ import java.math.BigDecimal
 import java.util.UUID
 
 data class MovementClassCreateForm(
-    @field:NotBlank(message = "is-null-or-blank")
-    @field:Size(message = "max-150-chars", max = 150)
+    @field:NotBlank(message = IS_NULL_OR_BLANK)
+    @field:Size(message = MAX_CHARS, max = 150)
     val name: String?,
-    @field:NotNull(message = "is-null")
+    @field:NotNull(message = IS_NULL)
     var type: MovementClass.Type?,
-    @field:NotNull(message = "is-null")
+    @field:NotNull(message = IS_NULL)
     var costCenter: UUID?,
     val budget: BigDecimal?,
     val description: String?
 )
 
 data class MovementClassUpdateForm(
-    @field:NotBlank(message = "is-null-or-blank")
-    @field:Size(message = "max-150-chars", max = 150)
+    @field:NotBlank(message = IS_NULL_OR_BLANK)
+    @field:Size(message = MAX_CHARS, max = 150)
     val name: String?,
-    @field:NotNull(message = "is-null")
+    @field:NotNull(message = IS_NULL)
     var costCenter: UUID?,
     val budget: BigDecimal?,
     val description: String?,
-    val active: Boolean = true
+    @field:NotNull(message = IS_NULL)
+    var active: Boolean?
 )
 
 data class MovementClassView(

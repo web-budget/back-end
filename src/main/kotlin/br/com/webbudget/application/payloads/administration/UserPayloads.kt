@@ -1,5 +1,9 @@
 package br.com.webbudget.application.payloads.administration
 
+import br.com.webbudget.application.payloads.ErrorCodes.EMAIL_IS_INVALID
+import br.com.webbudget.application.payloads.ErrorCodes.IS_EMPTY
+import br.com.webbudget.application.payloads.ErrorCodes.IS_NULL
+import br.com.webbudget.application.payloads.ErrorCodes.IS_NULL_OR_BLANK
 import br.com.webbudget.application.payloads.SpecificationSupport
 import br.com.webbudget.application.payloads.StatusFilter
 import br.com.webbudget.domain.entities.administration.Language
@@ -15,34 +19,34 @@ import org.springframework.data.jpa.domain.Specification
 import java.util.UUID
 
 data class UserCreateForm(
-    @field:NotBlank(message = "is-null-or-blank")
+    @field:NotBlank(message = IS_NULL_OR_BLANK)
     val name: String?,
-    @field:Email(message = "is-not-valid")
-    @field:NotBlank(message = "is-null-or-blank")
+    @field:Email(message = EMAIL_IS_INVALID)
+    @field:NotBlank(message = IS_NULL_OR_BLANK)
     val email: String?,
-    @field:NotBlank(message = "is-null-or-blank")
+    @field:NotBlank(message = IS_NULL_OR_BLANK)
     val password: String?,
-    @field:NotNull(message = "is-null")
-    val defaultLanguage: Language?,
-    @field:NotEmpty(message = "is-empty")
+    @field:NotNull(message = IS_NULL)
+    var defaultLanguage: Language?,
+    @field:NotEmpty(message = IS_EMPTY)
     val roles: List<String>,
     val sendActivationEmail: Boolean = false
 )
 
 data class UserUpdateForm(
     val active: Boolean,
-    @field:NotBlank(message = "is-null-or-blank")
-    val name: String,
-    @field:NotNull(message = "is-null")
-    val defaultLanguage: Language,
-    @field:NotEmpty(message = "is-empty")
-    val roles: List<String>,
+    @field:NotBlank(message = IS_NULL_OR_BLANK)
+    var name: String?,
+    @field:NotNull(message = IS_NULL)
+    var defaultLanguage: Language?,
+    @field:NotEmpty(message = IS_EMPTY)
+    var roles: List<String>?,
 )
 
 data class PasswordChangeForm(
-    @field:NotNull(message = "is-null")
-    val temporary: Boolean,
-    @field:NotBlank(message = "is-null-or-blank")
+    @field:NotNull(message = IS_NULL)
+    var temporary: Boolean,
+    @field:NotBlank(message = IS_NULL_OR_BLANK)
     val password: String
 )
 

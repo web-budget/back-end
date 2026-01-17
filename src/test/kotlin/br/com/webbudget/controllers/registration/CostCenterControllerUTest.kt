@@ -2,7 +2,7 @@ package br.com.webbudget.controllers.registration
 
 import br.com.webbudget.BaseControllerIntegrationTest
 import br.com.webbudget.application.controllers.registration.CostCenterController
-import br.com.webbudget.application.mappers.registration.CostCenterMapperImpl
+import br.com.webbudget.application.mappers.registration.CostCenterMapper
 import br.com.webbudget.domain.entities.registration.CostCenter
 import br.com.webbudget.domain.services.registration.CostCenterService
 import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository
@@ -36,7 +36,7 @@ import org.springframework.util.LinkedMultiValueMap
 import java.util.UUID
 
 @WithMockUser(roles = [Roles.REGISTRATION])
-@Import(value = [CostCenterMapperImpl::class])
+@Import(value = [CostCenterMapper::class])
 @WebMvcTest(CostCenterController::class)
 class CostCenterControllerUTest : BaseControllerIntegrationTest() {
 
