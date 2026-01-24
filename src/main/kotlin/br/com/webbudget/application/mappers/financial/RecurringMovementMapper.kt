@@ -1,35 +1,70 @@
 package br.com.webbudget.application.mappers.financial
 
-import br.com.webbudget.application.mappers.MappingConfiguration
+import br.com.webbudget.application.mappers.registration.ClassificationMapper
 import br.com.webbudget.application.payloads.financial.RecurringMovementCreateForm
 import br.com.webbudget.application.payloads.financial.RecurringMovementListView
 import br.com.webbudget.application.payloads.financial.RecurringMovementUpdateForm
 import br.com.webbudget.application.payloads.financial.RecurringMovementView
 import br.com.webbudget.domain.entities.financial.RecurringMovement
-import org.mapstruct.AfterMapping
-import org.mapstruct.Mapper
-import org.mapstruct.Mapping
-import org.mapstruct.MappingTarget
+import br.com.webbudget.domain.entities.registration.Classification
+import br.com.webbudget.domain.exceptions.ResourceNotFoundException
+import br.com.webbudget.infrastructure.repository.registration.ClassificationRepository
 import org.springframework.stereotype.Component
+import java.util.UUID
 
 @Component
-@Mapper(config = MappingConfiguration::class, uses = [ApportionmentMapper::class])
-abstract class RecurringMovementMapper {
+class RecurringMovementMapper(
+    private val classificationMapper: ClassificationMapper,
+    private val classificationRepository: ClassificationRepository
+) {
 
-    @Mapping(target = "id", source = "externalId")
-    abstract fun mapToView(recurringMovement: RecurringMovement): RecurringMovementView
+    fun mapToView(recurringMovement: RecurringMovement): RecurringMovementView = RecurringMovementView(
+        id = recurringMovement.externalId!!,
+        name = recurringMovement.name,
+        value = recurringMovement.value,
+        startingAt = recurringMovement.startingAt,
+        state = recurringMovement.state.name,
+        autoLaunch = recurringMovement.autoLaunch,
+        indeterminate = recurringMovement.indeterminate,
+        totalQuotes = recurringMovement.totalQuotes,
+        startingQuote = recurringMovement.startingQuote,
+        currentQuote = recurringMovement.currentQuote,
+        classification = classificationMapper.mapToListView(recurringMovement.classification),
+        description = recurringMovement.description
+    )
 
-    @Mapping(target = "id", source = "externalId")
-    abstract fun mapToListView(recurringMovement: RecurringMovement): RecurringMovementListView
+    fun mapToListView(recurringMovement: RecurringMovement): RecurringMovementListView = RecurringMovementListView(
+        id = recurringMovement.externalId!!,
+        name = recurringMovement.name,
+        value = recurringMovement.value,
+        state = recurringMovement.state.name,
+        autoLaunch = recurringMovement.autoLaunch,
+        indeterminate = recurringMovement.indeterminate,
+        totalQuotes = recurringMovement.totalQuotes,
+        currentQuote = recurringMovement.currentQuote
+    )
 
-    @Mapping(target = "state", constant = "ACTIVE")
-    abstract fun mapToDomain(form: RecurringMovementCreateForm): RecurringMovement
+    fun mapToDomain(form: RecurringMovementCreateForm): RecurringMovement = RecurringMovement(
+        name = form.name!!,
+        value = form.value!!,
+        startingAt = form.startingAt!!,
+        autoLaunch = form.autoLaunch!!,
+        classification = mapClassification(form.classification!!),
+        indeterminate = form.indeterminate!!,
+        totalQuotes = form.totalQuotes,
+        startingQuote = form.startingQuote,
+        currentQuote = form.currentQuote,
+        description = form.description
+    )
 
-    abstract fun mapToDomain(form: RecurringMovementUpdateForm, @MappingTarget recurringMovement: RecurringMovement)
-
-    @AfterMapping
-    @Suppress("UnusedPrivateMember")
-    fun afterMapFormToDomain(form: RecurringMovementCreateForm, @MappingTarget recurringMovement: RecurringMovement) {
-        recurringMovement.apportionments.forEach { it.recurringMovement = recurringMovement }
+    fun mapToDomain(form: RecurringMovementUpdateForm, recurringMovement: RecurringMovement) = recurringMovement.apply {
+        this.name = form.name!!
+        this.classification = mapClassification(form.classification!!)
+        this.startingAt = form.startingAt!!
+        this.autoLaunch = form.autoLaunch!!
+        this.description = form.description
     }
+
+    private fun mapClassification(externalId: UUID): Classification =
+        classificationRepository.findByExternalId(externalId) ?: throw ResourceNotFoundException()
 }

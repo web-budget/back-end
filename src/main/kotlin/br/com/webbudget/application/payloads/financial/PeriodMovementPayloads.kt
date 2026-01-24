@@ -1,12 +1,11 @@
 package br.com.webbudget.application.payloads.financial
 
-import br.com.webbudget.application.payloads.ErrorCodes.IS_EMPTY
 import br.com.webbudget.application.payloads.ErrorCodes.IS_NULL
 import br.com.webbudget.application.payloads.ErrorCodes.IS_NULL_OR_BLANK
 import br.com.webbudget.application.payloads.ErrorCodes.MAX_CHARS
+import br.com.webbudget.application.payloads.registration.ClassificationListView
 import br.com.webbudget.application.payloads.registration.FinancialPeriodListView
 import jakarta.validation.constraints.NotBlank
-import jakarta.validation.constraints.NotEmpty
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Size
 import java.math.BigDecimal
@@ -18,14 +17,14 @@ data class PeriodMovementCreateForm(
     @field:NotBlank(message = IS_NULL_OR_BLANK)
     val name: String?,
     @field:NotNull(message = IS_NULL)
-    val dueDate: LocalDate?,
+    var dueDate: LocalDate?,
     @field:NotNull(message = IS_NULL)
-    val value: BigDecimal?,
+    var value: BigDecimal?,
     @field:NotNull(message = IS_NULL)
-    val financialPeriod: UUID?,
+    var financialPeriod: UUID?,
+    @field:NotNull(message = IS_NULL)
+    var classification: UUID?,
     val description: String?,
-    @field:NotEmpty(message = IS_EMPTY)
-    val apportionments: List<ApportionmentForm>? = null
 )
 
 data class PeriodMovementUpdateForm(
@@ -33,14 +32,14 @@ data class PeriodMovementUpdateForm(
     @field:NotBlank(message = IS_NULL_OR_BLANK)
     val name: String? = null,
     @field:NotNull(message = IS_NULL)
-    val dueDate: LocalDate? = null,
+    var dueDate: LocalDate? = null,
     @field:NotNull(message = IS_NULL)
-    val value: BigDecimal? = null,
+    var value: BigDecimal? = null,
     @field:NotNull(message = IS_NULL)
-    val financialPeriod: UUID? = null,
+    var financialPeriod: UUID? = null,
+    @field:NotNull(message = IS_NULL)
+    var classification: UUID? = null,
     val description: String? = null,
-    @field:NotEmpty(message = IS_EMPTY)
-    val apportionments: List<ApportionmentForm>? = null
 )
 
 data class PeriodMovementView(
@@ -49,8 +48,8 @@ data class PeriodMovementView(
     val dueDate: LocalDate,
     val value: BigDecimal,
     val state: String,
+    val classification: ClassificationListView,
     val financialPeriod: FinancialPeriodListView,
-    val apportionments: List<ApportionmentView>,
     val quoteNumber: Int? = null,
     val description: String? = null
 )
@@ -68,7 +67,7 @@ data class PeriodMovementFilter(
     val filter: String? = null,
     val states: List<String>? = null,
     val costCenter: UUID? = null,
-    val movementClass: UUID? = null,
+    val classification: UUID? = null,
     val financialPeriods: List<UUID>? = null
 ) {
     fun decimalValue(): String? = this.filter?.let {

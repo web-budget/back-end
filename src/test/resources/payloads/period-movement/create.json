@@ -4,10 +4,5 @@
   "value": 320,
   "financialPeriod": "bc67ba91-7c0a-466d-877c-0b1fe2fb56bd",
   "description": "Despesas com a nova academia",
-  "apportionments": [
-    {
-      "value": 320,
-      "movementClass": "ff8ac873-2cbd-43dd-a3e8-2bc451f4e3fa"
-    }
-  ]
+  "classification": "ff8ac873-2cbd-43dd-a3e8-2bc451f4e3fa"
 }

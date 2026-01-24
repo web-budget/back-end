@@ -3,7 +3,6 @@ package br.com.webbudget.domain.exceptions
 object ErrorCodes {
     const val INVALID_TOKEN = "invalid-token"
     const val ACCOUNTED_PERIOD_MOVEMENT = "accounted-period-movement"
-    const val INVALID_APPORTIONMENTS = "invalid-apportionments"
     const val FINANCIAL_PERIOD_NOT_OPEN = "financial-period-not-open"
     const val BUDGET_LIMIT_EXCEEDED = "budget-limit-exceeded"
     const val BUDGET_REQUIRED_FOR_COST_CENTER = "budget-required-for-cost-center"

@@ -4,11 +4,9 @@ import br.com.webbudget.BaseIntegrationTest
 import br.com.webbudget.domain.entities.financial.PeriodMovement
 import br.com.webbudget.domain.exceptions.BusinessException
 import br.com.webbudget.domain.services.financial.PeriodMovementService
-import br.com.webbudget.infrastructure.repository.financial.ApportionmentRepository
 import br.com.webbudget.infrastructure.repository.financial.PeriodMovementRepository
+import br.com.webbudget.infrastructure.repository.registration.ClassificationRepository
 import br.com.webbudget.infrastructure.repository.registration.FinancialPeriodRepository
-import br.com.webbudget.infrastructure.repository.registration.MovementClassRepository
-import br.com.webbudget.utilities.fixtures.createApportionment
 import br.com.webbudget.utilities.fixtures.createPeriodMovement
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
@@ -23,13 +21,10 @@ import java.util.UUID
 class PeriodMovementServiceITest : BaseIntegrationTest() {
 
     @Autowired
-    private lateinit var apportionmentRepository: ApportionmentRepository
-
-    @Autowired
     private lateinit var financialPeriodRepository: FinancialPeriodRepository
 
     @Autowired
-    private lateinit var movementClassRepository: MovementClassRepository
+    private lateinit var classificationRepository: ClassificationRepository
 
     @Autowired
     private lateinit var periodMovementRepository: PeriodMovementRepository
@@ -42,28 +37,24 @@ class PeriodMovementServiceITest : BaseIntegrationTest() {
         "/sql/financial/clear-tables.sql",
         "/sql/registration/clear-tables.sql",
         "/sql/registration/create-cost-centers.sql",
-        "/sql/registration/create-movement-classes.sql",
+        "/sql/registration/create-classifications.sql",
         "/sql/registration/create-financial-period.sql"
     )
     fun `should create period movement`() {
 
         val financialPeriodId = UUID.fromString("27881a12-5e61-43cd-a6d0-fdb32eaa75c0")
-        val movementClassId = UUID.fromString("f21d94d2-d28e-4aa3-b12d-8a520023edd9")
+        val classificationId = UUID.fromString("f21d94d2-d28e-4aa3-b12d-8a520023edd9")
 
         val financialPeriod = financialPeriodRepository.findByExternalId(financialPeriodId)
             ?: fail { OBJECT_NOT_FOUND_ERROR }
 
-        val movementClass = movementClassRepository.findByExternalId(movementClassId)
+        val classification = classificationRepository.findByExternalId(classificationId)
             ?: fail { OBJECT_NOT_FOUND_ERROR }
-
-        val apportionments = mutableListOf(
-            createApportionment(value = BigDecimal("10.99"), movementClass = movementClass)
-        )
 
         val periodMovement = createPeriodMovement(
             value = BigDecimal("10.99"),
-            apportionments = apportionments,
-            financialPeriod = financialPeriod
+            financialPeriod = financialPeriod,
+            classification = classification
         )
 
         val externalId = periodMovementService.create(periodMovement)
@@ -88,18 +79,6 @@ class PeriodMovementServiceITest : BaseIntegrationTest() {
             assertThat(it.recurringMovement).isEqualTo(periodMovement.recurringMovement)
         })
 
-        assertThat(periodMovement.apportionments)
-            .isNotEmpty
-            .hasSize(1)
-            .satisfiesExactlyInAnyOrder({
-                assertThat(it.id).isNotNull()
-                assertThat(it.externalId).isNotNull()
-                assertThat(it.version).isZero()
-                assertThat(it.createdOn).isNotNull()
-                assertThat(it.lastUpdate).isNotNull()
-                assertThat(it.value).isEqualTo(BigDecimal("10.99"))
-                assertThat(it.movementClass).isEqualTo(movementClass)
-            })
     }
 
     @Test
@@ -107,60 +86,23 @@ class PeriodMovementServiceITest : BaseIntegrationTest() {
         "/sql/financial/clear-tables.sql",
         "/sql/registration/clear-tables.sql",
         "/sql/registration/create-cost-centers.sql",
-        "/sql/registration/create-movement-classes.sql",
-        "/sql/registration/create-financial-period.sql"
-    )
-    fun `should fail to create if apportionments total is not equal to movement total`() {
-
-        val financialPeriodId = UUID.fromString("27881a12-5e61-43cd-a6d0-fdb32eaa75c0")
-        val movementClassId = UUID.fromString("f21d94d2-d28e-4aa3-b12d-8a520023edd9")
-
-        val financialPeriod = financialPeriodRepository.findByExternalId(financialPeriodId)
-            ?: fail { OBJECT_NOT_FOUND_ERROR }
-
-        val movementClass = movementClassRepository.findByExternalId(movementClassId)
-            ?: fail { OBJECT_NOT_FOUND_ERROR }
-
-        val apportionments = mutableListOf(
-            createApportionment(value = BigDecimal("5.99"), movementClass = movementClass)
-        )
-
-        val periodMovement = createPeriodMovement(
-            value = BigDecimal("10.99"),
-            apportionments = apportionments,
-            financialPeriod = financialPeriod
-        )
-
-        assertThatThrownBy { periodMovementService.create(periodMovement) }
-            .isInstanceOf(BusinessException::class.java)
-    }
-
-    @Test
-    @Sql(
-        "/sql/financial/clear-tables.sql",
-        "/sql/registration/clear-tables.sql",
-        "/sql/registration/create-cost-centers.sql",
-        "/sql/registration/create-movement-classes.sql",
+        "/sql/registration/create-classifications.sql",
         "/sql/registration/create-financial-period.sql"
     )
     fun `should fail to create if financial period is not open`() {
 
         val financialPeriodId = UUID.fromString("df05156c-3fce-4f56-88ff-918d50200312")
-        val movementClassId = UUID.fromString("f21d94d2-d28e-4aa3-b12d-8a520023edd9")
+        val classificationId = UUID.fromString("f21d94d2-d28e-4aa3-b12d-8a520023edd9")
 
         val financialPeriod = financialPeriodRepository.findByExternalId(financialPeriodId)
             ?: fail { OBJECT_NOT_FOUND_ERROR }
 
-        val movementClass = movementClassRepository.findByExternalId(movementClassId)
+        val classification = classificationRepository.findByExternalId(classificationId)
             ?: fail { OBJECT_NOT_FOUND_ERROR }
-
-        val apportionments = mutableListOf(
-            createApportionment(value = BigDecimal("10.99"), movementClass = movementClass)
-        )
 
         val periodMovement = createPeriodMovement(
             value = BigDecimal("10.99"),
-            apportionments = apportionments,
+            classification = classification,
             financialPeriod = financialPeriod
         )
 
@@ -175,7 +117,7 @@ class PeriodMovementServiceITest : BaseIntegrationTest() {
         "/sql/registration/create-financial-period.sql",
         "/sql/financial/create-period-movement.sql",
         "/sql/registration/create-cost-centers.sql",
-        "/sql/registration/create-movement-classes.sql"
+        "/sql/registration/create-classifications.sql"
     )
     fun `should update period movement`() {
 
@@ -183,23 +125,18 @@ class PeriodMovementServiceITest : BaseIntegrationTest() {
 
         val toUpdate = periodMovementRepository.findByExternalId(externalId) ?: fail { OBJECT_NOT_FOUND_ERROR }
 
-        val movementClassId = UUID.fromString("f21d94d2-d28e-4aa3-b12d-8a520023edd9")
+        val classificationId = UUID.fromString("f21d94d2-d28e-4aa3-b12d-8a520023edd9")
 
-        val movementClass = movementClassRepository.findByExternalId(movementClassId)
+        val classification = classificationRepository.findByExternalId(classificationId)
             ?: fail { OBJECT_NOT_FOUND_ERROR }
-
-        val apportionments = mutableListOf(
-            createApportionment(value = BigDecimal("111.50"), movementClass = movementClass)
-        )
 
         toUpdate.apply {
             this.name = "Updated"
             this.value = BigDecimal("111.50")
             this.dueDate = LocalDate.of(2025, 1, 1)
             this.state = PeriodMovement.State.PAID
+            this.classification = classification
         }
-
-        toUpdate.setApportionments(apportionments)
 
         periodMovementService.update(toUpdate)
 
@@ -215,6 +152,7 @@ class PeriodMovementServiceITest : BaseIntegrationTest() {
             assertThat(it.dueDate).isEqualTo(toUpdate.dueDate)
             assertThat(it.value).isEqualTo(toUpdate.value)
             assertThat(it.financialPeriod).isEqualTo(toUpdate.financialPeriod)
+            assertThat(it.classification).isEqualTo(toUpdate.classification)
             assertThat(it.state).isEqualTo(toUpdate.state)
             assertThat(it.quoteNumber).isEqualTo(toUpdate.quoteNumber)
             assertThat(it.description).isEqualTo(toUpdate.description)
@@ -222,58 +160,6 @@ class PeriodMovementServiceITest : BaseIntegrationTest() {
             assertThat(it.creditCardInvoice).isEqualTo(toUpdate.creditCardInvoice)
             assertThat(it.recurringMovement).isEqualTo(toUpdate.recurringMovement)
         })
-
-        val updatedApportionments = apportionmentRepository.findByPeriodMovementExternalId(externalId)
-
-        assertThat(updatedApportionments)
-            .isNotEmpty
-            .hasSize(1)
-            .satisfiesExactlyInAnyOrder({
-                assertThat(it.id).isNotNull()
-                assertThat(it.externalId).isNotNull()
-                assertThat(it.version).isZero()
-                assertThat(it.createdOn).isNotNull()
-                assertThat(it.lastUpdate).isNotNull()
-                assertThat(it.value).isEqualTo(BigDecimal("111.50"))
-                assertThat(it.movementClass).isEqualTo(movementClass)
-            })
-    }
-
-    @Test
-    @Sql(
-        "/sql/financial/clear-tables.sql",
-        "/sql/registration/clear-tables.sql",
-        "/sql/registration/create-financial-period.sql",
-        "/sql/financial/create-period-movement.sql",
-        "/sql/registration/create-cost-centers.sql",
-        "/sql/registration/create-movement-classes.sql"
-    )
-    fun `should fail to update if apportionments total is not equal to movement total`() {
-
-        val externalId = UUID.fromString("287e26fa-763b-4efb-908e-734e637bb6fd")
-
-        val toUpdate = periodMovementRepository.findByExternalId(externalId) ?: fail { OBJECT_NOT_FOUND_ERROR }
-
-        val movementClassId = UUID.fromString("f21d94d2-d28e-4aa3-b12d-8a520023edd9")
-
-        val movementClass = movementClassRepository.findByExternalId(movementClassId)
-            ?: fail { OBJECT_NOT_FOUND_ERROR }
-
-        val apportionments = mutableListOf(
-            createApportionment(value = BigDecimal("111.50"), movementClass = movementClass)
-        )
-
-        toUpdate.apply {
-            this.name = "Updated"
-            this.value = BigDecimal("111.49")
-            this.dueDate = LocalDate.of(2025, 1, 1)
-            this.state = PeriodMovement.State.PAID
-        }
-
-        toUpdate.setApportionments(apportionments)
-
-        assertThatThrownBy { periodMovementService.update(toUpdate) }
-            .isInstanceOf(BusinessException::class.java)
     }
 
     @Test

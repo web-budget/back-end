@@ -1,13 +1,13 @@
 package br.com.webbudget.services.registration
 
 import br.com.webbudget.BaseIntegrationTest
-import br.com.webbudget.domain.entities.registration.MovementClass
+import br.com.webbudget.domain.entities.registration.Classification
 import br.com.webbudget.domain.exceptions.BusinessException
 import br.com.webbudget.domain.exceptions.ConflictingPropertyException
-import br.com.webbudget.domain.services.registration.MovementClassService
+import br.com.webbudget.domain.services.registration.ClassificationService
 import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository
-import br.com.webbudget.infrastructure.repository.registration.MovementClassRepository
-import br.com.webbudget.utilities.fixtures.createMovementClass
+import br.com.webbudget.infrastructure.repository.registration.ClassificationRepository
+import br.com.webbudget.utilities.fixtures.createClassification
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Disabled
@@ -22,16 +22,16 @@ import java.math.BigDecimal
 import java.util.UUID
 import java.util.stream.Stream
 
-class MovementClassServiceITest : BaseIntegrationTest() {
+class ClassificationServiceITest : BaseIntegrationTest() {
 
     @Autowired
     private lateinit var costCenterRepository: CostCenterRepository
 
     @Autowired
-    private lateinit var movementClassRepository: MovementClassRepository
+    private lateinit var classificationRepository: ClassificationRepository
 
     @Autowired
-    private lateinit var movementClassService: MovementClassService
+    private lateinit var classificationService: ClassificationService
 
     @Test
     @Sql(
@@ -43,11 +43,11 @@ class MovementClassServiceITest : BaseIntegrationTest() {
         val costCenter = costCenterRepository.findByExternalId(UUID.fromString("52e3456b-1b0d-42c5-8be0-07ddaecce441"))
             ?: fail { OBJECT_NOT_FOUND_ERROR }
 
-        val toCreate = createMovementClass(costCenter = costCenter, budget = BigDecimal.valueOf(1.99))
+        val toCreate = createClassification(costCenter = costCenter, budget = BigDecimal.valueOf(1.99))
 
-        val externalId = movementClassService.create(toCreate)
+        val externalId = classificationService.create(toCreate)
 
-        val created = movementClassRepository.findByExternalId(externalId) ?: fail { OBJECT_NOT_FOUND_ERROR }
+        val created = classificationRepository.findByExternalId(externalId) ?: fail { OBJECT_NOT_FOUND_ERROR }
 
         assertThat(created)
             .isNotNull
@@ -67,16 +67,16 @@ class MovementClassServiceITest : BaseIntegrationTest() {
     @Sql(
         "/sql/registration/clear-tables.sql",
         "/sql/registration/create-cost-centers.sql",
-        "/sql/registration/create-movement-classes.sql"
+        "/sql/registration/create-classifications.sql"
     )
     fun `should not create when name is duplicated`() {
 
         val costCenter = costCenterRepository.findByExternalId(UUID.fromString("52e3456b-1b0d-42c5-8be0-07ddaecce441"))
             ?: fail { OBJECT_NOT_FOUND_ERROR }
 
-        val toCreate = createMovementClass(name = "Mercado", costCenter = costCenter, budget = null)
+        val toCreate = createClassification(name = "Mercado", costCenter = costCenter, budget = null)
 
-        assertThatThrownBy { movementClassService.create(toCreate) }
+        assertThatThrownBy { classificationService.create(toCreate) }
             .isInstanceOf(ConflictingPropertyException::class.java)
     }
 
@@ -84,12 +84,12 @@ class MovementClassServiceITest : BaseIntegrationTest() {
     @Sql(
         "/sql/registration/clear-tables.sql",
         "/sql/registration/create-cost-centers.sql",
-        "/sql/registration/create-movement-classes.sql"
+        "/sql/registration/create-classifications.sql"
     )
     fun `should update`() {
 
         val externalId = UUID.fromString("98cb4961-5cde-46fb-abfd-8461be7d628b")
-        val toUpdate = movementClassRepository.findByExternalId(externalId) ?: fail { OBJECT_NOT_FOUND_ERROR }
+        val toUpdate = classificationRepository.findByExternalId(externalId) ?: fail { OBJECT_NOT_FOUND_ERROR }
 
         toUpdate.apply {
             this.name = "Updated"
@@ -98,7 +98,7 @@ class MovementClassServiceITest : BaseIntegrationTest() {
             this.active = false
         }
 
-        val updated = movementClassService.update(toUpdate)
+        val updated = classificationService.update(toUpdate)
 
         assertThat(updated)
             .isNotNull
@@ -117,13 +117,13 @@ class MovementClassServiceITest : BaseIntegrationTest() {
     @Sql(
         "/sql/registration/clear-tables.sql",
         "/sql/registration/create-cost-centers.sql",
-        "/sql/registration/create-movement-classes.sql"
+        "/sql/registration/create-classifications.sql"
     )
     fun `should not update when name is duplicated`() {
 
         val externalId = UUID.fromString("f21d94d2-d28e-4aa3-b12d-8a520023edd9")
 
-        val toUpdate = movementClassRepository.findByExternalId(externalId)
+        val toUpdate = classificationRepository.findByExternalId(externalId)
             ?: fail { OBJECT_NOT_FOUND_ERROR }
 
         toUpdate.apply {
@@ -131,7 +131,7 @@ class MovementClassServiceITest : BaseIntegrationTest() {
             this.budget = null
         }
 
-        assertThatThrownBy { movementClassService.update(toUpdate) }
+        assertThatThrownBy { classificationService.update(toUpdate) }
             .isInstanceOf(ConflictingPropertyException::class.java)
     }
 
@@ -139,18 +139,18 @@ class MovementClassServiceITest : BaseIntegrationTest() {
     @Sql(
         "/sql/registration/clear-tables.sql",
         "/sql/registration/create-cost-centers.sql",
-        "/sql/registration/create-movement-classes.sql"
+        "/sql/registration/create-classifications.sql"
     )
     fun `should delete`() {
 
         val externalId = UUID.fromString("98cb4961-5cde-46fb-abfd-8461be7d628b")
 
-        val toDelete = movementClassRepository.findByExternalId(externalId)
+        val toDelete = classificationRepository.findByExternalId(externalId)
             ?: fail { OBJECT_NOT_FOUND_ERROR }
 
-        movementClassService.delete(toDelete)
+        classificationService.delete(toDelete)
 
-        val deleted = movementClassRepository.findByExternalId(externalId)
+        val deleted = classificationRepository.findByExternalId(externalId)
         assertThat(deleted).isNull()
     }
 
@@ -166,34 +166,34 @@ class MovementClassServiceITest : BaseIntegrationTest() {
     )
     @ParameterizedTest
     @MethodSource("movementClassesToCreate")
-    fun `should validate cost center budget limit on create`(toCreate: MovementClass) {
+    fun `should validate cost center budget limit on create`(toCreate: Classification) {
 
         val costCenter = costCenterRepository.findByExternalId(UUID.fromString("3cb5732d-2551-4eb9-8b41-f5d312ba7aac"))
             ?: fail { OBJECT_NOT_FOUND_ERROR }
 
         toCreate.costCenter = costCenter
 
-        assertThatThrownBy { movementClassService.create(toCreate) }
+        assertThatThrownBy { classificationService.create(toCreate) }
             .isInstanceOf(BusinessException::class.java)
     }
 
     @Sql(
         "/sql/registration/clear-tables.sql",
         "/sql/registration/create-cost-centers.sql",
-        "/sql/registration/create-movement-classes.sql"
+        "/sql/registration/create-classifications.sql"
     )
     @ParameterizedTest
     @MethodSource("movementClassesToUpdate")
     fun `should validate cost center budget limit on update`(externalId: UUID) {
 
-        val toUpdate = movementClassRepository.findByExternalId(externalId)
+        val toUpdate = classificationRepository.findByExternalId(externalId)
             ?: fail { OBJECT_NOT_FOUND_ERROR }
 
         toUpdate.apply {
             this.budget = BigDecimal.valueOf(1001)
         }
 
-        assertThatThrownBy { movementClassService.update(toUpdate) }
+        assertThatThrownBy { classificationService.update(toUpdate) }
             .isInstanceOf(BusinessException::class.java)
     }
 
@@ -202,16 +202,16 @@ class MovementClassServiceITest : BaseIntegrationTest() {
         @JvmStatic
         fun movementClassesToCreate(): Stream<Arguments> = Stream.of(
             Arguments.of(
-                createMovementClass(
+                createClassification(
                     name = "Impostos",
-                    type = MovementClass.Type.EXPENSE,
+                    type = Classification.Type.EXPENSE,
                     budget = BigDecimal.valueOf(1001),
                 )
             ),
             Arguments.of(
-                createMovementClass(
+                createClassification(
                     name = "Trabalho como uber",
-                    type = MovementClass.Type.INCOME,
+                    type = Classification.Type.INCOME,
                     budget = BigDecimal.valueOf(1001),
                 )
             )

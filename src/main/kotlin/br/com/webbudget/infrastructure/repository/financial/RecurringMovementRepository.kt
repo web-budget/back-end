@@ -5,7 +5,6 @@ import br.com.webbudget.domain.entities.financial.RecurringMovement
 import br.com.webbudget.infrastructure.repository.BaseRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
-import org.springframework.data.jpa.repository.EntityGraph
 import org.springframework.data.jpa.repository.Query
 import org.springframework.stereotype.Repository
 import java.util.UUID
@@ -16,20 +15,17 @@ interface RecurringMovementRepository : BaseRepository<RecurringMovement> {
     @Query(
         """
         from RecurringMovement rm 
-            left join Apportionment ap on ap.recurringMovement.id = rm.id
+            left join Classification cl 
         where (:#{#filter.filter} is null 
                 or rm.value = :#{#filter.decimalValue()}
                 or lower(rm.name) like lower(concat('%', :#{#filter.filter}, '%') )
               )
         and (:#{#filter.states} is null or rm.state in :#{#filter.states})
-        and (:#{#filter.movementClass} is null or ap.movementClass.externalId = :#{#filter.movementClass})
-        and (:#{#filter.costCenter} is null or ap.movementClass.costCenter.externalId = :#{#filter.costCenter})
+        and (:#{#filter.classification} is null or cl.externalId = :#{#filter.classification})
+        and (:#{#filter.costCenter} is null or cl.costCenter.externalId = :#{#filter.costCenter})
         """
     )
     fun findByFilter(filter: RecurringMovementFilter, pageable: Pageable): Page<RecurringMovement>
-
-    @EntityGraph(attributePaths = ["apportionments"])
-    override fun findByExternalId(uuid: UUID): RecurringMovement?
 
     fun findByExternalIdAndState(externalId: UUID, state: RecurringMovement.State): RecurringMovement?
 }

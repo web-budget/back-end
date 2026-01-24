@@ -2,17 +2,14 @@ package br.com.webbudget.domain.entities.financial
 
 import br.com.webbudget.domain.entities.PersistentEntity
 import br.com.webbudget.domain.entities.registration.FinancialPeriod
+import br.com.webbudget.domain.entities.registration.Classification
 import br.com.webbudget.infrastructure.config.ApplicationSchemas.FINANCIAL
-import jakarta.persistence.CascadeType.MERGE
-import jakarta.persistence.CascadeType.PERSIST
-import jakarta.persistence.CascadeType.REMOVE
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
-import jakarta.persistence.OneToMany
 import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
 import java.math.BigDecimal
@@ -28,6 +25,9 @@ class PeriodMovement(
     @field:Column(name = "value", nullable = false)
     var value: BigDecimal,
 
+    @field:ManyToOne
+    @field:JoinColumn(name = "id_classification", nullable = false)
+    var classification: Classification,
     @field:ManyToOne
     @field:JoinColumn(name = "id_financial_period", nullable = false)
     var financialPeriod: FinancialPeriod,
@@ -50,27 +50,11 @@ class PeriodMovement(
     @field:ManyToOne
     @field:JoinColumn(name = "id_recurring_movement")
     var recurringMovement: RecurringMovement? = null,
-
-    @field:OneToMany(mappedBy = "periodMovement", cascade = [REMOVE, PERSIST, MERGE])
-    val apportionments: MutableList<Apportionment> = mutableListOf()
 ) : PersistentEntity<Long>() {
 
     fun isOpen(): Boolean = state == State.OPEN
 
     fun isAccounted(): Boolean = state == State.ACCOUNTED
-
-    /**
-     * this is a workaround caused by the way mapstruct works
-     *
-     * since it is set to target immutable for mapping collections, MS try to find a setter to map the collection
-     * items to the target collection
-     */
-    fun setApportionments(apportionments: List<Apportionment>?) {
-        apportionments?.let {
-            this.apportionments.clear()
-            this.apportionments.addAll(it)
-        }
-    }
 
     enum class State {
         OPEN, PAID, ACCOUNTED

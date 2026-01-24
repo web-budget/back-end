@@ -12,8 +12,8 @@ import jakarta.persistence.Table
 import java.math.BigDecimal
 
 @Entity
-@Table(name = "movement_classes", schema = REGISTRATION)
-class MovementClass(
+@Table(name = "classifications", schema = REGISTRATION)
+class Classification(
     @field:Column(name = "name", length = 150, nullable = false)
     var name: String,
     @field:Enumerated(EnumType.STRING)
@@ -29,8 +29,6 @@ class MovementClass(
     @field:Column(name = "description", columnDefinition = "TEXT")
     var description: String? = null,
 ) : PersistentEntity<Long>() {
-
-    fun isForExpense() = type == Type.EXPENSE
 
     fun isForIncome() = type == Type.INCOME
 

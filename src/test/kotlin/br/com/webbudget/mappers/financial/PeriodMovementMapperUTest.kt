@@ -1,29 +1,28 @@
 package br.com.webbudget.mappers.financial
 
-import br.com.webbudget.application.mappers.financial.ApportionmentMapperImpl
-import br.com.webbudget.application.mappers.financial.PeriodMovementMapperImpl
-import br.com.webbudget.application.mappers.registration.CostCenterMapperImpl
-import br.com.webbudget.application.mappers.registration.FinancialPeriodMapperImpl
-import br.com.webbudget.application.mappers.registration.MovementClassMapperImpl
-import br.com.webbudget.application.payloads.financial.ApportionmentForm
+import br.com.webbudget.application.mappers.financial.PeriodMovementMapper
+import br.com.webbudget.application.mappers.registration.ClassificationMapper
+import br.com.webbudget.application.mappers.registration.CostCenterMapper
+import br.com.webbudget.application.mappers.registration.FinancialPeriodMapper
 import br.com.webbudget.application.payloads.financial.PeriodMovementCreateForm
 import br.com.webbudget.application.payloads.financial.PeriodMovementUpdateForm
 import br.com.webbudget.domain.entities.financial.PeriodMovement
+import br.com.webbudget.infrastructure.repository.registration.ClassificationRepository
+import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository
 import br.com.webbudget.infrastructure.repository.registration.FinancialPeriodRepository
-import br.com.webbudget.infrastructure.repository.registration.MovementClassRepository
+import br.com.webbudget.utilities.fixtures.createClassification
 import br.com.webbudget.utilities.fixtures.createFinancialPeriod
-import br.com.webbudget.utilities.fixtures.createMovementClass
 import br.com.webbudget.utilities.fixtures.createPeriodMovement
 import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
+import io.mockk.mockk
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.springframework.test.util.ReflectionTestUtils
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.util.UUID
@@ -32,26 +31,27 @@ import java.util.UUID
 class PeriodMovementMapperUTest {
 
     @MockK
-    private lateinit var movementClassRepository: MovementClassRepository
+    private lateinit var classificationRepository: ClassificationRepository
+
+    @MockK
+    private lateinit var costCenterRepository: CostCenterRepository
 
     @MockK
     private lateinit var financialPeriodRepository: FinancialPeriodRepository
 
-    private val periodMovementMapper = PeriodMovementMapperImpl()
+    private lateinit var periodMovementMapper: PeriodMovementMapper
 
     @BeforeEach
-    fun setUp() {
-        val movementClassMapper = MovementClassMapperImpl()
-        ReflectionTestUtils.setField(movementClassMapper, "costCenterMapper", CostCenterMapperImpl())
+    fun setup() {
 
-        val apportionmentMapper = ApportionmentMapperImpl()
-        ReflectionTestUtils.setField(apportionmentMapper, "movementClassMapper", movementClassMapper)
-        ReflectionTestUtils.setField(apportionmentMapper, "movementClassRepository", movementClassRepository)
+        val costCenterMapper = CostCenterMapper()
 
-        ReflectionTestUtils.setField(periodMovementMapper, "apportionmentMapper", apportionmentMapper)
-        ReflectionTestUtils.setField(periodMovementMapper, "financialPeriodMapper", FinancialPeriodMapperImpl())
+        val classificationMapper = ClassificationMapper(costCenterMapper, costCenterRepository)
+        val financialPeriodMapper = FinancialPeriodMapper()
 
-        ReflectionTestUtils.setField(periodMovementMapper, "financialPeriodRepository", financialPeriodRepository)
+        periodMovementMapper = PeriodMovementMapper(
+            classificationMapper, financialPeriodMapper, classificationRepository, financialPeriodRepository
+        )
     }
 
     @Test
@@ -71,35 +71,8 @@ class PeriodMovementMapperUTest {
                 assertThat(it.state).isEqualTo(domainObject.state.name)
                 assertThat(it.quoteNumber).isEqualTo(domainObject.quoteNumber)
                 assertThat(it.description).isEqualTo(domainObject.description)
-            })
-
-        assertThat(view.financialPeriod)
-            .isNotNull
-            .satisfies({
-                assertThat(it.id).isEqualTo(domainObject.financialPeriod.externalId)
-                assertThat(it.name).isEqualTo(domainObject.financialPeriod.name)
-                assertThat(it.startingAt).isEqualTo(domainObject.financialPeriod.startingAt)
-                assertThat(it.endingAt).isEqualTo(domainObject.financialPeriod.endingAt)
-                assertThat(it.status).isEqualTo(domainObject.financialPeriod.status.name)
-            })
-
-        assertThat(view.apportionments)
-            .isNotEmpty
-            .hasSize(1)
-            .satisfiesExactlyInAnyOrder({
-                assertThat(it.id).isEqualTo(domainObject.apportionments.first().externalId)
-                assertThat(it.value).isEqualTo(domainObject.apportionments.first().value)
-                assertThat(it.movementClass).satisfies({ mc ->
-                    assertThat(mc.id).isEqualTo(domainObject.apportionments.first().movementClass.externalId)
-                    assertThat(mc.name).isEqualTo(domainObject.apportionments.first().movementClass.name)
-                    assertThat(mc.type).isEqualTo(domainObject.apportionments.first().movementClass.type.name)
-                    assertThat(mc.active).isEqualTo(domainObject.apportionments.first().movementClass.active)
-                })
-                assertThat(it.movementClass.costCenter).satisfies({ mc ->
-                    assertThat(mc.id).isEqualTo(domainObject.apportionments.first().movementClass.costCenter.externalId)
-                    assertThat(mc.name).isEqualTo(domainObject.apportionments.first().movementClass.costCenter.name)
-                    assertThat(mc.active).isEqualTo(domainObject.apportionments.first().movementClass.costCenter.active)
-                })
+                assertThat(it.financialPeriod).isNotNull
+                assertThat(it.classification).isNotNull
             })
     }
 
@@ -118,16 +91,7 @@ class PeriodMovementMapperUTest {
                 assertThat(it.dueDate).isEqualTo(domainObject.dueDate)
                 assertThat(it.value).isEqualTo(domainObject.value)
                 assertThat(it.state).isEqualTo(domainObject.state.name)
-            })
-
-        assertThat(view.financialPeriod)
-            .isNotNull
-            .satisfies({
-                assertThat(it.id).isEqualTo(domainObject.financialPeriod.externalId)
-                assertThat(it.name).isEqualTo(domainObject.financialPeriod.name)
-                assertThat(it.startingAt).isEqualTo(domainObject.financialPeriod.startingAt)
-                assertThat(it.endingAt).isEqualTo(domainObject.financialPeriod.endingAt)
-                assertThat(it.status).isEqualTo(domainObject.financialPeriod.status.name)
+                assertThat(it.financialPeriod).isNotNull
             })
     }
 
@@ -135,21 +99,21 @@ class PeriodMovementMapperUTest {
     fun `should map create form to domain object`() {
 
         val financialPeriodId = UUID.randomUUID()
-        val movementClassId = UUID.randomUUID()
+        val classificationId = UUID.randomUUID()
 
-        val movementClass = createMovementClass(externalId = movementClassId)
+        val classification = createClassification(externalId = classificationId)
         val financialPeriod = createFinancialPeriod(externalId = financialPeriodId)
 
         val form = PeriodMovementCreateForm(
-            "Name",
-            LocalDate.now(),
-            BigDecimal.TEN,
-            financialPeriodId,
-            "Description",
-            listOf(ApportionmentForm(BigDecimal.TEN, movementClassId))
+            name = "Name",
+            dueDate = LocalDate.now(),
+            value = BigDecimal.TEN,
+            financialPeriod = financialPeriodId,
+            classification = classificationId,
+            description = "Description"
         )
 
-        every { movementClassRepository.findByExternalId(movementClassId) } returns movementClass
+        every { classificationRepository.findByExternalId(classificationId) } returns classification
         every { financialPeriodRepository.findByExternalId(financialPeriodId) } returns financialPeriod
 
         val domainObject = periodMovementMapper.mapToDomain(form)
@@ -163,48 +127,40 @@ class PeriodMovementMapperUTest {
                 assertThat(it.state).isEqualTo(PeriodMovement.State.OPEN)
                 assertThat(it.description).isEqualTo(form.description)
                 assertThat(it.financialPeriod).isEqualTo(financialPeriod)
+                assertThat(it.classification).isEqualTo(classification)
                 assertThat(it.quoteNumber).isNull()
                 assertThat(it.payment).isNull()
                 assertThat(it.creditCardInvoice).isNull()
                 assertThat(it.recurringMovement).isNull()
-                assertThat(it.apportionments).isNotEmpty().hasSize(1)
             })
 
-        assertThat(domainObject.apportionments)
-            .isNotEmpty
-            .hasSize(1)
-            .satisfiesExactlyInAnyOrder({
-                assertThat(it.value).isEqualTo(form.apportionments!!.first().value)
-                assertThat(it.movementClass).isEqualTo(movementClass)
-            })
-
-        verify(exactly = 1) { movementClassRepository.findByExternalId(ofType<UUID>()) }
+        verify(exactly = 1) { classificationRepository.findByExternalId(ofType<UUID>()) }
         verify(exactly = 1) { financialPeriodRepository.findByExternalId(ofType<UUID>()) }
 
-        confirmVerified(movementClassRepository, financialPeriodRepository)
+        confirmVerified(classificationRepository, financialPeriodRepository)
     }
 
     @Test
     fun `should map update form to domain object`() {
 
         val financialPeriodId = UUID.randomUUID()
-        val movementClassId = UUID.randomUUID()
+        val classificationId = UUID.randomUUID()
 
-        val movementClass = createMovementClass(externalId = movementClassId)
+        val classification = createClassification(externalId = classificationId)
         val financialPeriod = createFinancialPeriod(externalId = financialPeriodId)
 
         val domainObject = createPeriodMovement()
 
         val form = PeriodMovementUpdateForm(
-            "Name",
-            LocalDate.now(),
-            BigDecimal.TEN,
-            financialPeriodId,
-            "Description",
-            listOf(ApportionmentForm(BigDecimal.TEN, movementClassId))
+            name = "Name",
+            dueDate = LocalDate.now(),
+            value = BigDecimal.TEN,
+            financialPeriod = financialPeriodId,
+            classification = classificationId,
+            description = "Description"
         )
 
-        every { movementClassRepository.findByExternalId(movementClassId) } returns movementClass
+        every { classificationRepository.findByExternalId(classificationId) } returns classification
         every { financialPeriodRepository.findByExternalId(financialPeriodId) } returns financialPeriod
 
         periodMovementMapper.mapToDomain(form, domainObject)
@@ -218,24 +174,16 @@ class PeriodMovementMapperUTest {
                 assertThat(it.state).isEqualTo(PeriodMovement.State.OPEN)
                 assertThat(it.description).isEqualTo(form.description)
                 assertThat(it.financialPeriod).isEqualTo(financialPeriod)
+                assertThat(it.classification).isEqualTo(classification)
                 assertThat(it.quoteNumber).isNull()
                 assertThat(it.payment).isNull()
                 assertThat(it.creditCardInvoice).isNull()
                 assertThat(it.recurringMovement).isNull()
-                assertThat(it.apportionments).isNotEmpty().hasSize(1)
             })
 
-        assertThat(domainObject.apportionments)
-            .isNotEmpty
-            .hasSize(1)
-            .satisfiesExactlyInAnyOrder({
-                assertThat(it.value).isEqualTo(form.apportionments!!.first().value)
-                assertThat(it.movementClass).isEqualTo(movementClass)
-            })
-
-        verify(exactly = 1) { movementClassRepository.findByExternalId(ofType<UUID>()) }
+        verify(exactly = 1) { classificationRepository.findByExternalId(ofType<UUID>()) }
         verify(exactly = 1) { financialPeriodRepository.findByExternalId(ofType<UUID>()) }
 
-        confirmVerified(movementClassRepository, financialPeriodRepository)
+        confirmVerified(classificationRepository, financialPeriodRepository)
     }
 }

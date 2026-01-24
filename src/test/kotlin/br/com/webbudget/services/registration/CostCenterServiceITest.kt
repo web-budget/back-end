@@ -121,7 +121,7 @@ class CostCenterServiceITest : BaseIntegrationTest() {
     @Sql(
         "/sql/registration/clear-tables.sql",
         "/sql/registration/create-cost-centers.sql",
-        "/sql/registration/create-movement-classes.sql"
+        "/sql/registration/create-classifications.sql"
     )
     fun `should fail to delete when in use`() {
 

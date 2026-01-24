@@ -1,4 +1,3 @@
-truncate table financial.apportionments cascade;
 truncate table financial.period_movements cascade;
 truncate table financial.recurring_movements cascade;
 truncate table financial.transferences cascade;

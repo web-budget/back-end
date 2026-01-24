@@ -6,7 +6,7 @@
                       https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <changeSet id="back-end#55" author="${arthur}">
-        <createTable tableName="movement_classes" schemaName="registration">
+        <createTable tableName="classifications" schemaName="registration">
             <column name="id" autoIncrement="true" type="bigint">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
@@ -40,20 +40,20 @@
             </column>
         </createTable>
 
-        <addForeignKeyConstraint constraintName="fk_cost_centers_on_movement_classes"
+        <addForeignKeyConstraint constraintName="fk_cost_centers_on_classifications"
                                  baseColumnNames="id_cost_center"
-                                 baseTableName="movement_classes"
+                                 baseTableName="classifications"
                                  baseTableSchemaName="registration"
                                  referencedTableName="cost_centers"
                                  referencedTableSchemaName="registration"
                                  referencedColumnNames="id"/>
 
         <addUniqueConstraint columnNames="id,external_id"
-                             tableName="movement_classes"
+                             tableName="classifications"
                              schemaName="registration"/>
 
         <addUniqueConstraint columnNames="name"
-                             tableName="movement_classes"
+                             tableName="classifications"
                              schemaName="registration"/>
     </changeSet>
 </databaseChangeLog>

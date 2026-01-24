@@ -2,11 +2,10 @@ package br.com.webbudget.controllers.financial
 
 import br.com.webbudget.BaseControllerIntegrationTest
 import br.com.webbudget.application.controllers.financial.PeriodMovementController
-import br.com.webbudget.application.mappers.financial.ApportionmentMapperImpl
-import br.com.webbudget.application.mappers.financial.PeriodMovementMapperImpl
+import br.com.webbudget.application.mappers.financial.PeriodMovementMapper
+import br.com.webbudget.application.mappers.registration.ClassificationMapper
 import br.com.webbudget.application.mappers.registration.CostCenterMapper
 import br.com.webbudget.application.mappers.registration.FinancialPeriodMapper
-import br.com.webbudget.application.mappers.registration.MovementClassMapper
 import br.com.webbudget.application.payloads.ErrorCodes.IS_EMPTY
 import br.com.webbudget.application.payloads.ErrorCodes.IS_NULL
 import br.com.webbudget.application.payloads.ErrorCodes.IS_NULL_OR_BLANK
@@ -15,13 +14,13 @@ import br.com.webbudget.domain.entities.financial.PeriodMovement
 import br.com.webbudget.domain.exceptions.BusinessException
 import br.com.webbudget.domain.services.financial.PeriodMovementService
 import br.com.webbudget.infrastructure.repository.financial.PeriodMovementRepository
+import br.com.webbudget.infrastructure.repository.registration.ClassificationRepository
 import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository
 import br.com.webbudget.infrastructure.repository.registration.FinancialPeriodRepository
-import br.com.webbudget.infrastructure.repository.registration.MovementClassRepository
 import br.com.webbudget.utilities.JsonPayload
 import br.com.webbudget.utilities.Roles
+import br.com.webbudget.utilities.fixtures.createClassification
 import br.com.webbudget.utilities.fixtures.createFinancialPeriod
-import br.com.webbudget.utilities.fixtures.createMovementClass
 import br.com.webbudget.utilities.fixtures.createPeriodMovement
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.confirmVerified
@@ -48,11 +47,10 @@ import java.util.UUID
 @WebMvcTest(PeriodMovementController::class)
 @Import(
     value = [
-        PeriodMovementMapperImpl::class,
-        ApportionmentMapperImpl::class,
+        PeriodMovementMapper::class,
         CostCenterMapper::class,
         FinancialPeriodMapper::class,
-        MovementClassMapper::class
+        ClassificationMapper::class
     ]
 )
 class PeriodMovementControllerUTest : BaseControllerIntegrationTest() {
@@ -65,7 +63,7 @@ class PeriodMovementControllerUTest : BaseControllerIntegrationTest() {
     private lateinit var financialPeriodRepository: FinancialPeriodRepository
 
     @MockkBean
-    private lateinit var movementClassRepository: MovementClassRepository
+    private lateinit var classificationRepository: ClassificationRepository
 
     @MockkBean
     private lateinit var periodMovementRepository: PeriodMovementRepository
@@ -90,11 +88,11 @@ class PeriodMovementControllerUTest : BaseControllerIntegrationTest() {
         val financialPeriodId = UUID.fromString("bc67ba91-7c0a-466d-877c-0b1fe2fb56bd")
         val movementClassId = UUID.fromString("ff8ac873-2cbd-43dd-a3e8-2bc451f4e3fa")
 
-        val movementClass = createMovementClass()
+        val movementClass = createClassification()
         val financialPeriod = createFinancialPeriod()
 
         every { periodMovementService.create(any<PeriodMovement>()) } returns externalId
-        every { movementClassRepository.findByExternalId(eq(movementClassId)) } returns movementClass
+        every { classificationRepository.findByExternalId(eq(movementClassId)) } returns movementClass
         every { financialPeriodRepository.findByExternalId(eq(financialPeriodId)) } returns financialPeriod
 
         mockMvc.post(ENDPOINT_URL) {
@@ -109,10 +107,10 @@ class PeriodMovementControllerUTest : BaseControllerIntegrationTest() {
         }
 
         verify(exactly = 1) { periodMovementService.create(ofType<PeriodMovement>()) }
-        verify(exactly = 1) { movementClassRepository.findByExternalId(ofType<UUID>()) }
+        verify(exactly = 1) { classificationRepository.findByExternalId(ofType<UUID>()) }
         verify(exactly = 1) { financialPeriodRepository.findByExternalId(ofType<UUID>()) }
 
-        confirmVerified(periodMovementService, movementClassRepository, financialPeriodRepository)
+        confirmVerified(periodMovementService, classificationRepository, financialPeriodRepository)
     }
 
     @Test
@@ -123,13 +121,13 @@ class PeriodMovementControllerUTest : BaseControllerIntegrationTest() {
         val movementClassId = UUID.fromString("ff8ac873-2cbd-43dd-a3e8-2bc451f4e3fa")
 
         val periodMovement = createPeriodMovement()
-        val movementClass = createMovementClass()
+        val movementClass = createClassification()
         val financialPeriod = createFinancialPeriod()
 
         every { periodMovementService.update(any<PeriodMovement>()) } returns periodMovement
 
         every { periodMovementRepository.findByExternalId(eq(externalId)) } returns periodMovement
-        every { movementClassRepository.findByExternalId(eq(movementClassId)) } returns movementClass
+        every { classificationRepository.findByExternalId(eq(movementClassId)) } returns movementClass
         every { financialPeriodRepository.findByExternalId(eq(financialPeriodId)) } returns financialPeriod
 
         mockMvc.put("$ENDPOINT_URL/{id}", externalId) {
@@ -140,13 +138,13 @@ class PeriodMovementControllerUTest : BaseControllerIntegrationTest() {
         }
 
         verify(exactly = 1) { periodMovementService.update(ofType<PeriodMovement>()) }
-        verify(exactly = 1) { movementClassRepository.findByExternalId(ofType<UUID>()) }
+        verify(exactly = 1) { classificationRepository.findByExternalId(ofType<UUID>()) }
         verify(exactly = 1) { financialPeriodRepository.findByExternalId(ofType<UUID>()) }
         verify(exactly = 1) { periodMovementRepository.findByExternalId(ofType<UUID>()) }
 
         confirmVerified(
             periodMovementService,
-            movementClassRepository,
+            classificationRepository,
             financialPeriodRepository,
             periodMovementRepository
         )
@@ -201,7 +199,7 @@ class PeriodMovementControllerUTest : BaseControllerIntegrationTest() {
             "dueDate" to IS_NULL,
             "value" to IS_NULL,
             "financialPeriod" to IS_NULL,
-            "apportionments" to IS_EMPTY
+            "classification" to IS_NULL
         )
 
         val jsonResponse = mockMvc.post(ENDPOINT_URL) {
@@ -231,7 +229,7 @@ class PeriodMovementControllerUTest : BaseControllerIntegrationTest() {
             "dueDate" to IS_NULL,
             "value" to IS_NULL,
             "financialPeriod" to IS_NULL,
-            "apportionments" to IS_EMPTY
+            "classification" to IS_NULL
         )
 
         val jsonResponse = mockMvc.put("$ENDPOINT_URL/{id}", UUID.randomUUID()) {
@@ -260,11 +258,11 @@ class PeriodMovementControllerUTest : BaseControllerIntegrationTest() {
         val financialPeriodId = UUID.fromString("bc67ba91-7c0a-466d-877c-0b1fe2fb56bd")
         val movementClassId = UUID.fromString("ff8ac873-2cbd-43dd-a3e8-2bc451f4e3fa")
 
-        val movementClass = createMovementClass()
+        val movementClass = createClassification()
         val financialPeriod = createFinancialPeriod()
 
         every { periodMovementService.create(any<PeriodMovement>()) } throws BusinessException("Message", "Detail")
-        every { movementClassRepository.findByExternalId(eq(movementClassId)) } returns movementClass
+        every { classificationRepository.findByExternalId(eq(movementClassId)) } returns movementClass
         every { financialPeriodRepository.findByExternalId(eq(financialPeriodId)) } returns financialPeriod
 
         mockMvc.post(ENDPOINT_URL) {
@@ -275,10 +273,10 @@ class PeriodMovementControllerUTest : BaseControllerIntegrationTest() {
         }
 
         verify(exactly = 1) { periodMovementService.create(ofType<PeriodMovement>()) }
-        verify(exactly = 1) { movementClassRepository.findByExternalId(ofType<UUID>()) }
+        verify(exactly = 1) { classificationRepository.findByExternalId(ofType<UUID>()) }
         verify(exactly = 1) { financialPeriodRepository.findByExternalId(ofType<UUID>()) }
 
-        confirmVerified(periodMovementService, movementClassRepository, financialPeriodRepository)
+        confirmVerified(periodMovementService, classificationRepository, financialPeriodRepository)
     }
 
     @Test
@@ -300,9 +298,16 @@ class PeriodMovementControllerUTest : BaseControllerIntegrationTest() {
 
         assertThatJson(jsonResponse)
             .isObject
-            .node("apportionments")
-            .isArray
-            .isNotEmpty
+
+        assertThatJson(jsonResponse)
+            .node("financialPeriod")
+            .isObject
+            .isNotNull
+
+        assertThatJson(jsonResponse)
+            .node("classification")
+            .isObject
+            .isNotNull
 
         verify(exactly = 1) { periodMovementRepository.findByExternalId(ofType<UUID>()) }
 

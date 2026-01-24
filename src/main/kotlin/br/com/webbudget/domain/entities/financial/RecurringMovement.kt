@@ -1,15 +1,14 @@
 package br.com.webbudget.domain.entities.financial
 
 import br.com.webbudget.domain.entities.PersistentEntity
+import br.com.webbudget.domain.entities.registration.Classification
 import br.com.webbudget.infrastructure.config.ApplicationSchemas.FINANCIAL
-import jakarta.persistence.CascadeType.MERGE
-import jakarta.persistence.CascadeType.PERSIST
-import jakarta.persistence.CascadeType.REMOVE
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
-import jakarta.persistence.OneToMany
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -23,6 +22,10 @@ class RecurringMovement(
     var value: BigDecimal,
     @field:Column(name = "starting_at", nullable = false)
     var startingAt: LocalDate,
+
+    @field:ManyToOne
+    @field:JoinColumn(name = "id_classification", nullable = false)
+    var classification: Classification,
 
     @field:Enumerated(EnumType.STRING)
     @field:Column(name = "state", nullable = false, length = 6)
@@ -40,23 +43,7 @@ class RecurringMovement(
     var currentQuote: Int? = null,
     @field:Column(name = "description", columnDefinition = "TEXT")
     var description: String? = null,
-
-    @field:OneToMany(mappedBy = "recurringMovement", cascade = [REMOVE, PERSIST, MERGE])
-    val apportionments: MutableList<Apportionment> = mutableListOf()
 ) : PersistentEntity<Long>() {
-
-    /**
-     * this is a workaround caused by the way mapstruct works
-     *
-     * since it is set to target immutable for mapping collections, MS try to find a setter to map the collection
-     * items to the target collection
-     */
-    fun setApportionments(apportionments: List<Apportionment>?) {
-        apportionments?.let {
-            this.apportionments.clear()
-            this.apportionments.addAll(it)
-        }
-    }
 
     enum class State {
         ACTIVE, ENDED

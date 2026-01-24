@@ -1,20 +1,20 @@
 package br.com.webbudget.domain.validators.registration
 
-import br.com.webbudget.domain.entities.registration.MovementClass
+import br.com.webbudget.domain.entities.registration.Classification
 import br.com.webbudget.domain.exceptions.ConflictingPropertyException
 import br.com.webbudget.domain.validators.OnCreateValidation
 import br.com.webbudget.domain.validators.OnUpdateValidation
-import br.com.webbudget.infrastructure.repository.registration.MovementClassRepository
+import br.com.webbudget.infrastructure.repository.registration.ClassificationRepository
 import org.springframework.stereotype.Component
 
 @Component
 @OnUpdateValidation
 @OnCreateValidation
-class MovementClassNameValidator(
-    private val movementClassRepository: MovementClassRepository
-) : MovementClassValidator {
+class ClassificationNameValidator(
+    private val classificationRepository: ClassificationRepository
+) : ClassificationValidator {
 
-    override fun validate(value: MovementClass) {
+    override fun validate(value: Classification) {
         if (value.isSaved()) {
             this.validateSaved(value)
         } else {
@@ -22,13 +22,13 @@ class MovementClassNameValidator(
         }
     }
 
-    private fun validateSaved(value: MovementClass) {
-        movementClassRepository.findByNameIgnoreCaseAndExternalIdNot(value.name, value.externalId!!)
+    private fun validateSaved(value: Classification) {
+        classificationRepository.findByNameIgnoreCaseAndExternalIdNot(value.name, value.externalId!!)
             ?.let { throw ConflictingPropertyException(parameters = mapOf("movement-class.name" to value.name)) }
     }
 
-    private fun validateNotSaved(value: MovementClass) {
-        movementClassRepository.findByNameIgnoreCase(value.name)
+    private fun validateNotSaved(value: Classification) {
+        classificationRepository.findByNameIgnoreCase(value.name)
             ?.let { throw ConflictingPropertyException(parameters = mapOf("movement-class.name" to value.name)) }
     }
 }

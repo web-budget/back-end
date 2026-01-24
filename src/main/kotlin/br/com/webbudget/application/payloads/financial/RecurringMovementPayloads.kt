@@ -1,11 +1,10 @@
 package br.com.webbudget.application.payloads.financial
 
-import br.com.webbudget.application.payloads.ErrorCodes.IS_EMPTY
 import br.com.webbudget.application.payloads.ErrorCodes.IS_NULL
 import br.com.webbudget.application.payloads.ErrorCodes.IS_NULL_OR_BLANK
 import br.com.webbudget.application.payloads.ErrorCodes.MAX_CHARS
+import br.com.webbudget.application.payloads.registration.ClassificationListView
 import jakarta.validation.constraints.NotBlank
-import jakarta.validation.constraints.NotEmpty
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Size
 import java.math.BigDecimal
@@ -17,19 +16,19 @@ data class RecurringMovementCreateForm(
     @field:NotBlank(message = IS_NULL_OR_BLANK)
     val name: String?,
     @field:NotNull(message = IS_NULL)
-    val value: BigDecimal?,
+    var value: BigDecimal?,
     @field:NotNull(message = IS_NULL)
-    val startingAt: LocalDate?,
+    var startingAt: LocalDate?,
     @field:NotNull(message = IS_NULL)
-    val autoLaunch: Boolean?,
+    var autoLaunch: Boolean?,
     @field:NotNull(message = IS_NULL)
-    val indeterminate: Boolean? = false,
+    var classification: UUID?,
+    @field:NotNull(message = IS_NULL)
+    var indeterminate: Boolean? = false,
     val totalQuotes: Int? = null,
     val startingQuote: Int? = null,
     val currentQuote: Int? = null,
     val description: String? = null,
-    @field:NotEmpty(message = IS_EMPTY)
-    val apportionments: List<ApportionmentForm>? = null
 )
 
 data class RecurringMovementUpdateForm(
@@ -37,12 +36,12 @@ data class RecurringMovementUpdateForm(
     @field:NotBlank(message = IS_NULL_OR_BLANK)
     val name: String?,
     @field:NotNull(message = IS_NULL)
-    val startingAt: LocalDate? = null,
+    var classification: UUID?,
     @field:NotNull(message = IS_NULL)
-    val autoLaunch: Boolean? = null,
+    var startingAt: LocalDate? = null,
+    @field:NotNull(message = IS_NULL)
+    var autoLaunch: Boolean? = null,
     val description: String? = null,
-    @field:NotEmpty(message = IS_EMPTY)
-    val apportionments: List<ApportionmentForm>? = null
 )
 
 data class RecurringMovementView(
@@ -57,7 +56,7 @@ data class RecurringMovementView(
     val startingQuote: Int?,
     val currentQuote: Int?,
     val description: String?,
-    val apportionments: List<ApportionmentView>?
+    val classification: ClassificationListView
 )
 
 data class RecurringMovementListView(
@@ -75,7 +74,7 @@ data class RecurringMovementFilter(
     val filter: String? = null,
     val states: List<String>? = null,
     val costCenter: UUID? = null,
-    val movementClass: UUID? = null
+    val classification: UUID? = null
 ) {
     fun decimalValue(): String? = this.filter?.let {
         it.replace(",", ".").toDoubleOrNull()?.toString()

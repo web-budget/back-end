@@ -20,7 +20,7 @@ class WalletMapper {
         number = wallet.number,
         description = wallet.description,
         active = wallet.active,
-        currentBalance = wallet.currentBalance ?: BigDecimal.ZERO
+        currentBalance = wallet.currentBalance
     )
 
     fun mapToListView(wallet: Wallet): WalletListView = WalletListView(

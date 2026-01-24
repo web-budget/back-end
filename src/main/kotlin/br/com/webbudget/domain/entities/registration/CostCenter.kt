@@ -22,10 +22,10 @@ class CostCenter(
     var expenseBudget: BigDecimal? = null
 ) : PersistentEntity<Long>() {
 
-    fun isBudgetValidationRequired(movementClassType: MovementClass.Type): Boolean {
-        return when (movementClassType) {
-            MovementClass.Type.INCOME -> this.incomeBudget != null
-            MovementClass.Type.EXPENSE -> this.expenseBudget != null
+    fun isBudgetValidationRequired(classificationType: Classification.Type): Boolean {
+        return when (classificationType) {
+            Classification.Type.INCOME -> this.incomeBudget != null
+            Classification.Type.EXPENSE -> this.expenseBudget != null
         }
     }
 }

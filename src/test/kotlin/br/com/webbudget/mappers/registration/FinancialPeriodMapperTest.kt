@@ -1,6 +1,6 @@
 package br.com.webbudget.mappers.registration
 
-import br.com.webbudget.application.mappers.registration.FinancialPeriodMapperImpl
+import br.com.webbudget.application.mappers.registration.FinancialPeriodMapper
 import br.com.webbudget.application.payloads.registration.FinancialPeriodCreateForm
 import br.com.webbudget.application.payloads.registration.FinancialPeriodUpdateForm
 import br.com.webbudget.domain.entities.registration.FinancialPeriod
@@ -12,7 +12,7 @@ import java.time.LocalDate
 
 class FinancialPeriodMapperTest {
 
-    private val financialPeriodMapper = FinancialPeriodMapperImpl()
+    private val financialPeriodMapper = FinancialPeriodMapper()
 
     @Test
     fun `should map create form to domain object`() {

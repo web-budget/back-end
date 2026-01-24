@@ -6,46 +6,6 @@
                       https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <changeSet id="back-end#67" author="${arthur}">
-
-        <createTable tableName="apportionments" schemaName="financial">
-            <column name="id" autoIncrement="true" type="bigint">
-                <constraints nullable="false" primaryKey="true"/>
-            </column>
-            <column name="external_id" type="${uuid_type}">
-                <constraints nullable="false"/>
-            </column>
-            <column name="version" type="smallint">
-                <constraints nullable="false"/>
-            </column>
-            <column name="created_on" type="timestamp">
-                <constraints nullable="false"/>
-            </column>
-            <column name="last_update" type="timestamp"/>
-
-            <column name="value" type="decimal(15,2)">
-                <constraints nullable="false"/>
-            </column>
-
-            <column name="id_movement_class" type="bigint">
-                <constraints nullable="false"/>
-            </column>
-
-            <column name="id_period_movement" type="bigint"/>
-            <column name="id_recurring_movement" type="bigint"/>
-        </createTable>
-
-        <addUniqueConstraint columnNames="id"
-                             tableName="apportionments"
-                             schemaName="financial"/>
-
-        <addUniqueConstraint columnNames="external_id"
-                             tableName="apportionments"
-                             schemaName="financial"/>
-
-        <addUniqueConstraint columnNames="id,external_id"
-                             tableName="apportionments"
-                             schemaName="financial"/>
-
         <createTable tableName="period_movements" schemaName="financial">
             <column name="id" autoIncrement="true" type="bigint">
                 <constraints nullable="false" primaryKey="true"/>
@@ -76,14 +36,16 @@
 
             <column name="quote_number" type="int"/>
             <column name="description" type="clob"/>
+            <column name="id_payment" type="bigint"/>
+            <column name="id_credit_card_invoice" type="bigint"/>
+            <column name="id_recurring_movement" type="bigint"/>
 
             <column name="id_financial_period" type="bigint">
                 <constraints nullable="false"/>
             </column>
-
-            <column name="id_payment" type="bigint"/>
-            <column name="id_credit_card_invoice" type="bigint"/>
-            <column name="id_recurring_movement" type="bigint"/>
+            <column name="id_classification" type="bigint">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
 
         <addUniqueConstraint columnNames="id"
@@ -136,6 +98,10 @@
             <column name="starting_quote" type="int"/>
             <column name="current_quote" type="int"/>
             <column name="description" type="clob"/>
+
+            <column name="id_classification" type="bigint">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
 
         <addUniqueConstraint columnNames="id"
@@ -379,6 +345,14 @@
                                  referencedTableSchemaName="registration"
                                  referencedColumnNames="id"/>
 
+        <addForeignKeyConstraint constraintName="fk_classifications_on_period_movements"
+                                 baseColumnNames="id_classification"
+                                 baseTableName="period_movements"
+                                 baseTableSchemaName="financial"
+                                 referencedTableName="classifications"
+                                 referencedTableSchemaName="registration"
+                                 referencedColumnNames="id"/>
+
         <addForeignKeyConstraint constraintName="fk_payments_on_period_movements"
                                  baseColumnNames="id_payment"
                                  baseTableName="period_movements"
@@ -403,28 +377,12 @@
                                  referencedTableSchemaName="financial"
                                  referencedColumnNames="id"/>
 
-        <addForeignKeyConstraint constraintName="fk_movement_classes_on_apportionments"
-                                 baseColumnNames="id_movement_class"
-                                 baseTableName="apportionments"
+        <addForeignKeyConstraint constraintName="fk_classifications_on_recurring_movements"
+                                 baseColumnNames="id_classification"
+                                 baseTableName="recurring_movements"
                                  baseTableSchemaName="financial"
-                                 referencedTableName="movement_classes"
+                                 referencedTableName="classifications"
                                  referencedTableSchemaName="registration"
-                                 referencedColumnNames="id"/>
-
-        <addForeignKeyConstraint constraintName="fk_period_movements_on_apportionments"
-                                 baseColumnNames="id_period_movement"
-                                 baseTableName="apportionments"
-                                 baseTableSchemaName="financial"
-                                 referencedTableName="period_movements"
-                                 referencedTableSchemaName="financial"
-                                 referencedColumnNames="id"/>
-
-        <addForeignKeyConstraint constraintName="fk_recurring_movements_on_apportionments"
-                                 baseColumnNames="id_recurring_movement"
-                                 baseTableName="apportionments"
-                                 baseTableSchemaName="financial"
-                                 referencedTableName="recurring_movements"
-                                 referencedTableSchemaName="financial"
                                  referencedColumnNames="id"/>
 
         <addForeignKeyConstraint constraintName="fk_from_wallets_on_payments"

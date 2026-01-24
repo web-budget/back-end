@@ -4,10 +4,8 @@ import br.com.webbudget.BaseIntegrationTest
 import br.com.webbudget.domain.entities.financial.RecurringMovement
 import br.com.webbudget.domain.exceptions.BusinessException
 import br.com.webbudget.domain.services.financial.RecurringMovementService
-import br.com.webbudget.infrastructure.repository.financial.ApportionmentRepository
 import br.com.webbudget.infrastructure.repository.financial.RecurringMovementRepository
-import br.com.webbudget.infrastructure.repository.registration.MovementClassRepository
-import br.com.webbudget.utilities.fixtures.createApportionment
+import br.com.webbudget.infrastructure.repository.registration.ClassificationRepository
 import br.com.webbudget.utilities.fixtures.createRecurringMovement
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
@@ -23,10 +21,7 @@ import java.util.UUID
 class RecurringMovementServiceITest : BaseIntegrationTest() {
 
     @Autowired
-    private lateinit var apportionmentRepository: ApportionmentRepository
-
-    @Autowired
-    private lateinit var movementClassRepository: MovementClassRepository
+    private lateinit var classificationRepository: ClassificationRepository
 
     @Autowired
     private lateinit var recurringMovementRepository: RecurringMovementRepository
@@ -39,22 +34,18 @@ class RecurringMovementServiceITest : BaseIntegrationTest() {
         "/sql/financial/clear-tables.sql",
         "/sql/registration/clear-tables.sql",
         "/sql/registration/create-cost-centers.sql",
-        "/sql/registration/create-movement-classes.sql"
+        "/sql/registration/create-classifications.sql"
     )
     fun `should create period movement`() {
 
-        val movementClassId = UUID.fromString("f21d94d2-d28e-4aa3-b12d-8a520023edd9")
+        val classificationId = UUID.fromString("f21d94d2-d28e-4aa3-b12d-8a520023edd9")
 
-        val movementClass = movementClassRepository.findByExternalId(movementClassId)
+        val classification = classificationRepository.findByExternalId(classificationId)
             ?: fail { OBJECT_NOT_FOUND_ERROR }
-
-        val apportionments = mutableListOf(
-            createApportionment(value = BigDecimal("10.99"), movementClass = movementClass)
-        )
 
         val recurringMovement = createRecurringMovement(
             value = BigDecimal("10.99"),
-            apportionments = apportionments
+            classification = classification
         )
 
         val externalId = recurringMovementService.create(recurringMovement)
@@ -77,47 +68,8 @@ class RecurringMovementServiceITest : BaseIntegrationTest() {
             assertThat(it.startingQuote).isEqualTo(recurringMovement.startingQuote)
             assertThat(it.currentQuote).isEqualTo(recurringMovement.currentQuote)
             assertThat(it.description).isEqualTo(recurringMovement.description)
+            assertThat(it.classification).isEqualTo(recurringMovement.classification)
         })
-
-        assertThat(recurringMovement.apportionments)
-            .isNotEmpty
-            .hasSize(1)
-            .satisfiesExactlyInAnyOrder({
-                assertThat(it.id).isNotNull()
-                assertThat(it.externalId).isNotNull()
-                assertThat(it.version).isZero()
-                assertThat(it.createdOn).isNotNull()
-                assertThat(it.lastUpdate).isNotNull()
-                assertThat(it.value).isEqualTo(BigDecimal("10.99"))
-                assertThat(it.movementClass).isEqualTo(movementClass)
-            })
-    }
-
-    @Test
-    @Sql(
-        "/sql/financial/clear-tables.sql",
-        "/sql/registration/clear-tables.sql",
-        "/sql/registration/create-cost-centers.sql",
-        "/sql/registration/create-movement-classes.sql"
-    )
-    fun `should fail to create if apportionments total is not equal to movement total`() {
-
-        val movementClassId = UUID.fromString("f21d94d2-d28e-4aa3-b12d-8a520023edd9")
-
-        val movementClass = movementClassRepository.findByExternalId(movementClassId)
-            ?: fail { OBJECT_NOT_FOUND_ERROR }
-
-        val apportionments = mutableListOf(
-            createApportionment(value = BigDecimal("5.99"), movementClass = movementClass)
-        )
-
-        val recurringMovement = createRecurringMovement(
-            value = BigDecimal("10.99"),
-            apportionments = apportionments
-        )
-
-        assertThatThrownBy { recurringMovementService.create(recurringMovement) }
-            .isInstanceOf(BusinessException::class.java)
     }
 
     @Test
@@ -126,7 +78,7 @@ class RecurringMovementServiceITest : BaseIntegrationTest() {
         "/sql/registration/clear-tables.sql",
         "/sql/financial/create-recurring-movement.sql",
         "/sql/registration/create-cost-centers.sql",
-        "/sql/registration/create-movement-classes.sql"
+        "/sql/registration/create-classifications.sql"
     )
     fun `should update recurring movement`() {
 
@@ -134,23 +86,18 @@ class RecurringMovementServiceITest : BaseIntegrationTest() {
 
         val toUpdate = recurringMovementRepository.findByExternalId(externalId) ?: fail { OBJECT_NOT_FOUND_ERROR }
 
-        val movementClassId = UUID.fromString("ff8ac873-2cbd-43dd-a3e8-2bc451f4e3fa")
+        val classificationId = UUID.fromString("ff8ac873-2cbd-43dd-a3e8-2bc451f4e3fa")
 
-        val movementClass = movementClassRepository.findByExternalId(movementClassId)
+        val classification = classificationRepository.findByExternalId(classificationId)
             ?: fail { OBJECT_NOT_FOUND_ERROR }
-
-        val apportionments = mutableListOf(
-            createApportionment(value = BigDecimal("111.50"), movementClass = movementClass)
-        )
 
         toUpdate.apply {
             this.name = "Updated"
             this.value = BigDecimal("111.50")
             this.startingAt = LocalDate.of(2025, 1, 1)
             this.state = RecurringMovement.State.ENDED
+            this.classification = classification
         }
-
-        toUpdate.setApportionments(apportionments)
 
         recurringMovementService.update(toUpdate)
 
@@ -172,59 +119,8 @@ class RecurringMovementServiceITest : BaseIntegrationTest() {
             assertThat(it.startingQuote).isEqualTo(toUpdate.startingQuote)
             assertThat(it.currentQuote).isEqualTo(toUpdate.currentQuote)
             assertThat(it.description).isEqualTo(toUpdate.description)
+            assertThat(it.classification).isEqualTo(toUpdate.classification)
         })
-
-        val updatedApportionments = apportionmentRepository.findByRecurringMovementExternalId(externalId)
-
-        assertThat(updatedApportionments)
-            .isNotEmpty
-            .hasSize(1)
-            .satisfiesExactlyInAnyOrder({
-                assertThat(it.id).isNotNull()
-                assertThat(it.externalId).isNotNull()
-                assertThat(it.version).isZero()
-                assertThat(it.createdOn).isNotNull()
-                assertThat(it.lastUpdate).isNotNull()
-                assertThat(it.value).isEqualTo(BigDecimal("111.50"))
-                assertThat(it.movementClass).isEqualTo(movementClass)
-            })
-    }
-
-    @Test
-    @Sql(
-        "/sql/financial/clear-tables.sql",
-        "/sql/registration/clear-tables.sql",
-        "/sql/financial/create-recurring-movement.sql",
-        "/sql/registration/create-cost-centers.sql",
-        "/sql/registration/create-movement-classes.sql"
-    )
-    fun `should fail to update if apportionments total is not equal to movement total`() {
-
-        val externalId = UUID.fromString("ba870b58-01aa-4477-8ea1-1c644a6770c4")
-
-        val toUpdate = recurringMovementRepository.findByExternalId(externalId) ?: fail { OBJECT_NOT_FOUND_ERROR }
-
-        val movementClassId = UUID.fromString("ff8ac873-2cbd-43dd-a3e8-2bc451f4e3fa")
-
-        val movementClass = movementClassRepository.findByExternalId(movementClassId)
-            ?: fail { OBJECT_NOT_FOUND_ERROR }
-
-        val apportionments = mutableListOf(
-            createApportionment(value = BigDecimal("111.50"), movementClass = movementClass)
-        )
-
-        toUpdate.apply {
-            this.name = "Updated"
-            this.startingAt = LocalDate.of(2025, 1, 1)
-            this.autoLaunch = false
-            this.description = "Any description"
-            this.state = RecurringMovement.State.ENDED
-        }
-
-        toUpdate.setApportionments(apportionments)
-
-        assertThatThrownBy { recurringMovementService.update(toUpdate) }
-            .isInstanceOf(BusinessException::class.java)
     }
 
     @Test

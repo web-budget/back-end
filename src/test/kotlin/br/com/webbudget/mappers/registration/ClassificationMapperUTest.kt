@@ -1,15 +1,15 @@
 package br.com.webbudget.mappers.registration
 
-import br.com.webbudget.application.mappers.registration.CostCenterMapperImpl
-import br.com.webbudget.application.mappers.registration.MovementClassMapperImpl
-import br.com.webbudget.application.payloads.registration.MovementClassCreateForm
-import br.com.webbudget.application.payloads.registration.MovementClassUpdateForm
-import br.com.webbudget.domain.entities.registration.MovementClass
-import br.com.webbudget.domain.entities.registration.MovementClass.Type.EXPENSE
-import br.com.webbudget.domain.entities.registration.MovementClass.Type.INCOME
+import br.com.webbudget.application.mappers.registration.ClassificationMapper
+import br.com.webbudget.application.mappers.registration.CostCenterMapper
+import br.com.webbudget.application.payloads.registration.ClassificationCreateForm
+import br.com.webbudget.application.payloads.registration.ClassificationUpdateForm
+import br.com.webbudget.domain.entities.registration.Classification
+import br.com.webbudget.domain.entities.registration.Classification.Type.EXPENSE
+import br.com.webbudget.domain.entities.registration.Classification.Type.INCOME
 import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository
+import br.com.webbudget.utilities.fixtures.createClassification
 import br.com.webbudget.utilities.fixtures.createCostCenter
-import br.com.webbudget.utilities.fixtures.createMovementClass
 import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -22,33 +22,31 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
-import org.springframework.test.util.ReflectionTestUtils
 import java.math.BigDecimal
 import java.util.UUID
 
 @ExtendWith(MockKExtension::class)
-class MovementClassMapperUTest {
+class ClassificationMapperUTest {
 
     @MockK
     private lateinit var costCenterRepository: CostCenterRepository
 
-    private val movementClassMapper = MovementClassMapperImpl()
+    private lateinit var classificationMapper: ClassificationMapper
 
     @BeforeEach
     fun setup() {
-        ReflectionTestUtils.setField(movementClassMapper, "costCenterMapper", CostCenterMapperImpl())
-        ReflectionTestUtils.setField(movementClassMapper, "costCenterRepository", costCenterRepository)
+        classificationMapper = ClassificationMapper(CostCenterMapper(), costCenterRepository)
     }
 
     @ParameterizedTest
     @MethodSource("createFormObjects")
-    fun `should map create form to domain object`(form: MovementClassCreateForm) {
+    fun `should map create form to domain object`(form: ClassificationCreateForm) {
 
         every { costCenterRepository.findByExternalId(any<UUID>()) } answers {
             createCostCenter(externalId = form.costCenter)
         }
 
-        val domainObject = movementClassMapper.mapToDomain(form)
+        val domainObject = classificationMapper.mapToDomain(form)
 
         assertThat(domainObject)
             .isNotNull
@@ -69,14 +67,14 @@ class MovementClassMapperUTest {
     @Test
     fun `should map update form to domain object`() {
 
-        val domainObject = createMovementClass()
-        val form = MovementClassUpdateForm("Expenses", UUID.randomUUID(), BigDecimal.TEN, "Description", false)
+        val domainObject = createClassification()
+        val form = ClassificationUpdateForm("Expenses", UUID.randomUUID(), BigDecimal.TEN, "Description", false)
 
         every { costCenterRepository.findByExternalId(any<UUID>()) } answers {
             createCostCenter(externalId = form.costCenter)
         }
 
-        movementClassMapper.mapToDomain(form, domainObject)
+        classificationMapper.mapToDomain(form, domainObject)
 
         assertThat(domainObject)
             .isNotNull
@@ -98,7 +96,7 @@ class MovementClassMapperUTest {
 
     @ParameterizedTest
     @MethodSource("domainObjects")
-    fun `should map domain object to view`(domainObject: MovementClass) {
+    fun `should map domain object to view`(domainObject: Classification) {
 
         val externalId = UUID.randomUUID()
 
@@ -107,7 +105,7 @@ class MovementClassMapperUTest {
             this.externalId = externalId
         }
 
-        val view = movementClassMapper.mapToView(domainObject)
+        val view = classificationMapper.mapToView(domainObject)
 
         assertThat(view)
             .isNotNull
@@ -123,7 +121,7 @@ class MovementClassMapperUTest {
 
     @ParameterizedTest
     @MethodSource("domainObjects")
-    fun `should map domain object to list view`(domainObject: MovementClass) {
+    fun `should map domain object to list view`(domainObject: Classification) {
 
         val externalId = UUID.randomUUID()
 
@@ -132,7 +130,7 @@ class MovementClassMapperUTest {
             this.externalId = externalId
         }
 
-        val view = movementClassMapper.mapToListView(domainObject)
+        val view = classificationMapper.mapToListView(domainObject)
 
         assertThat(view)
             .isNotNull
@@ -148,14 +146,14 @@ class MovementClassMapperUTest {
 
         @JvmStatic
         fun createFormObjects() = listOf(
-            Arguments.of(MovementClassCreateForm("Income", INCOME, UUID.randomUUID(), BigDecimal.ONE, "Description")),
-            Arguments.of(MovementClassCreateForm("Expense", EXPENSE, UUID.randomUUID(), BigDecimal.ONE, "Description"))
+            Arguments.of(ClassificationCreateForm("Income", INCOME, UUID.randomUUID(), BigDecimal.ONE, "Description")),
+            Arguments.of(ClassificationCreateForm("Expense", EXPENSE, UUID.randomUUID(), BigDecimal.ONE, "Description"))
         )
 
         @JvmStatic
         fun domainObjects() = listOf(
-            Arguments.of(createMovementClass(name = "Expenses", type = EXPENSE)),
-            Arguments.of(createMovementClass(name = "Incomes", type = INCOME))
+            Arguments.of(createClassification(name = "Expenses", type = EXPENSE)),
+            Arguments.of(createClassification(name = "Incomes", type = INCOME))
         )
     }
 }

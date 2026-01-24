@@ -1,15 +1,14 @@
 package br.com.webbudget.mappers.financial
 
-import br.com.webbudget.application.mappers.financial.ApportionmentMapperImpl
-import br.com.webbudget.application.mappers.financial.RecurringMovementMapperImpl
-import br.com.webbudget.application.mappers.registration.CostCenterMapperImpl
-import br.com.webbudget.application.mappers.registration.MovementClassMapperImpl
-import br.com.webbudget.application.payloads.financial.ApportionmentForm
+import br.com.webbudget.application.mappers.financial.RecurringMovementMapper
+import br.com.webbudget.application.mappers.registration.ClassificationMapper
+import br.com.webbudget.application.mappers.registration.CostCenterMapper
 import br.com.webbudget.application.payloads.financial.RecurringMovementCreateForm
 import br.com.webbudget.application.payloads.financial.RecurringMovementUpdateForm
 import br.com.webbudget.domain.entities.financial.RecurringMovement
-import br.com.webbudget.infrastructure.repository.registration.MovementClassRepository
-import br.com.webbudget.utilities.fixtures.createMovementClass
+import br.com.webbudget.infrastructure.repository.registration.ClassificationRepository
+import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository
+import br.com.webbudget.utilities.fixtures.createClassification
 import br.com.webbudget.utilities.fixtures.createRecurringMovement
 import io.mockk.confirmVerified
 import io.mockk.every
@@ -20,7 +19,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.springframework.test.util.ReflectionTestUtils
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.util.UUID
@@ -29,20 +27,17 @@ import java.util.UUID
 class RecurringMovementMapperUTest {
 
     @MockK
-    private lateinit var movementClassRepository: MovementClassRepository
+    private lateinit var costCenterRepository: CostCenterRepository
 
-    private val recurringMovementMapper = RecurringMovementMapperImpl()
+    @MockK
+    private lateinit var classificationRepository: ClassificationRepository
+
+    private lateinit var recurringMovementMapper: RecurringMovementMapper
 
     @BeforeEach
-    fun setUp() {
-        val movementClassMapper = MovementClassMapperImpl()
-        ReflectionTestUtils.setField(movementClassMapper, "costCenterMapper", CostCenterMapperImpl())
-
-        val apportionmentMapper = ApportionmentMapperImpl()
-        ReflectionTestUtils.setField(apportionmentMapper, "movementClassMapper", movementClassMapper)
-        ReflectionTestUtils.setField(apportionmentMapper, "movementClassRepository", movementClassRepository)
-
-        ReflectionTestUtils.setField(recurringMovementMapper, "apportionmentMapper", apportionmentMapper)
+    fun setup() {
+        val classificationMapper = ClassificationMapper(CostCenterMapper(), costCenterRepository)
+        recurringMovementMapper = RecurringMovementMapper(classificationMapper, classificationRepository)
     }
 
     @Test
@@ -66,25 +61,7 @@ class RecurringMovementMapperUTest {
                 assertThat(it.startingQuote).isEqualTo(domainObject.startingQuote)
                 assertThat(it.currentQuote).isEqualTo(domainObject.currentQuote)
                 assertThat(it.description).isEqualTo(domainObject.description)
-            })
-
-        assertThat(view.apportionments)
-            .isNotEmpty
-            .hasSize(1)
-            .satisfiesExactlyInAnyOrder({
-                assertThat(it.id).isEqualTo(domainObject.apportionments.first().externalId)
-                assertThat(it.value).isEqualTo(domainObject.apportionments.first().value)
-                assertThat(it.movementClass).satisfies({ mc ->
-                    assertThat(mc.id).isEqualTo(domainObject.apportionments.first().movementClass.externalId)
-                    assertThat(mc.name).isEqualTo(domainObject.apportionments.first().movementClass.name)
-                    assertThat(mc.type).isEqualTo(domainObject.apportionments.first().movementClass.type.name)
-                    assertThat(mc.active).isEqualTo(domainObject.apportionments.first().movementClass.active)
-                })
-                assertThat(it.movementClass.costCenter).satisfies({ mc ->
-                    assertThat(mc.id).isEqualTo(domainObject.apportionments.first().movementClass.costCenter.externalId)
-                    assertThat(mc.name).isEqualTo(domainObject.apportionments.first().movementClass.costCenter.name)
-                    assertThat(mc.active).isEqualTo(domainObject.apportionments.first().movementClass.costCenter.active)
-                })
+                assertThat(it.classification).isNotNull
             })
     }
 
@@ -112,9 +89,8 @@ class RecurringMovementMapperUTest {
     @Test
     fun `should map create form to domain object`() {
 
-        val movementClassId = UUID.randomUUID()
-
-        val movementClass = createMovementClass(externalId = movementClassId)
+        val classificationId = UUID.randomUUID()
+        val classification = createClassification(externalId = classificationId)
 
         val form = RecurringMovementCreateForm(
             name = "Name",
@@ -123,10 +99,10 @@ class RecurringMovementMapperUTest {
             autoLaunch = true,
             indeterminate = true,
             description = "Description",
-            apportionments = listOf(ApportionmentForm(BigDecimal.TEN, movementClassId))
+            classification = classificationId,
         )
 
-        every { movementClassRepository.findByExternalId(movementClassId) } returns movementClass
+        every { classificationRepository.findByExternalId(classificationId) } returns classification
 
         val domainObject = recurringMovementMapper.mapToDomain(form)
 
@@ -143,27 +119,19 @@ class RecurringMovementMapperUTest {
                 assertThat(it.currentQuote).isEqualTo(form.currentQuote)
                 assertThat(it.description).isEqualTo(form.description)
                 assertThat(it.state).isEqualTo(RecurringMovement.State.ACTIVE)
+                assertThat(it.classification).isEqualTo(classification)
             })
 
-        assertThat(domainObject.apportionments)
-            .isNotEmpty
-            .hasSize(1)
-            .satisfiesExactlyInAnyOrder({
-                assertThat(it.value).isEqualTo(form.apportionments!!.first().value)
-                assertThat(it.movementClass).isEqualTo(movementClass)
-            })
+        verify(exactly = 1) { classificationRepository.findByExternalId(ofType<UUID>()) }
 
-        verify(exactly = 1) { movementClassRepository.findByExternalId(ofType<UUID>()) }
-
-        confirmVerified(movementClassRepository)
+        confirmVerified(classificationRepository)
     }
 
     @Test
     fun `should map update form to domain object`() {
 
-        val movementClassId = UUID.randomUUID()
-
-        val movementClass = createMovementClass(externalId = movementClassId)
+        val classificationId = UUID.randomUUID()
+        val classification = createClassification(externalId = classificationId)
 
         val domainObject = createRecurringMovement()
 
@@ -172,10 +140,10 @@ class RecurringMovementMapperUTest {
             startingAt = LocalDate.now(),
             autoLaunch = true,
             description = "Description",
-            apportionments = listOf(ApportionmentForm(BigDecimal.TEN, movementClassId))
+            classification = classificationId
         )
 
-        every { movementClassRepository.findByExternalId(movementClassId) } returns movementClass
+        every { classificationRepository.findByExternalId(classificationId) } returns classification
 
         recurringMovementMapper.mapToDomain(form, domainObject)
 
@@ -187,18 +155,11 @@ class RecurringMovementMapperUTest {
                 assertThat(it.autoLaunch).isEqualTo(form.autoLaunch)
                 assertThat(it.description).isEqualTo(form.description)
                 assertThat(it.state).isEqualTo(RecurringMovement.State.ACTIVE)
+                assertThat(it.classification).isEqualTo(classification)
             })
 
-        assertThat(domainObject.apportionments)
-            .isNotEmpty
-            .hasSize(1)
-            .satisfiesExactlyInAnyOrder({
-                assertThat(it.value).isEqualTo(form.apportionments!!.first().value)
-                assertThat(it.movementClass).isEqualTo(movementClass)
-            })
+        verify(exactly = 1) { classificationRepository.findByExternalId(ofType<UUID>()) }
 
-        verify(exactly = 1) { movementClassRepository.findByExternalId(ofType<UUID>()) }
-
-        confirmVerified(movementClassRepository)
+        confirmVerified(classificationRepository)
     }
 }
