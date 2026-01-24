@@ -15,9 +15,6 @@ plugins {
     kotlin("jvm") version "2.0.21"
     kotlin("plugin.spring") version "2.0.21"
     kotlin("plugin.jpa") version "2.0.21"
-
-    // mapstruct
-    kotlin("kapt") version "2.0.21"
 }
 
 group = "br.com.webbudget"
@@ -45,7 +42,6 @@ repositories {
 
 val testcontainersVersion = "1.21.0"
 val guavaVersion = "33.4.8-jre"
-val mapstructVersion = "1.6.3"
 val assertJVersion = "3.27.3"
 val mockkVersion = "4.0.2"
 val jsonUnitVersion = "4.1.1"
@@ -69,10 +65,6 @@ dependencies {
     implementation("com.google.guava:guava:$guavaVersion")
     implementation("io.hypersistence:hypersistence-utils-hibernate-63:$hypersistenceUtilsVersion")
     implementation("io.github.oshai:kotlin-logging-jvm:$kotlinLoggingJvmVersion")
-
-    // mapstruct
-    kapt("org.mapstruct:mapstruct-processor:$mapstructVersion")
-    implementation("org.mapstruct:mapstruct:$mapstructVersion")
 
     // dev tools
     developmentOnly("org.springframework.boot:spring-boot-devtools")
