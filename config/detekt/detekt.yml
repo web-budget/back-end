@@ -1,13 +1,13 @@
 complexity:
   CognitiveComplexMethod:
     active: true
-    threshold: 15
+    allowedComplexity: 15
   ComplexCondition:
     active: true
-    threshold: 4
+    allowedConditions: 4
   NestedScopeFunctions:
     active: true
-    threshold: 1
+    allowedDepth: 1
     functions:
       - 'kotlin.apply'
       - 'kotlin.run'
@@ -16,11 +16,14 @@ complexity:
       - 'kotlin.also'
   LongParameterList:
     active: true
-    functionThreshold: 6
-    constructorThreshold: 10
+    allowedFunctionParameters: 6
+    allowedConstructorParameters: 10
     ignoreDefaultParameters: true
     ignoreDataClasses: true
     ignoreAnnotatedParameter: [ Column ]
+  LargeClass:
+    active: true
+    excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/androidUnitTest/**', '**/androidInstrumentedTest/**', '**/jsTest/**', '**/iosTest/**' ]
 
 exceptions:
   NotImplementedDeclaration:
@@ -40,9 +43,6 @@ naming:
   BooleanPropertyNaming:
     active: true
     allowedPattern: '^(is|has|are)'
-  FunctionMinLength:
-    active: true
-    minimumFunctionNameLength: 2
   NonBooleanPropertyPrefixedWithIs:
     active: true
 
@@ -100,12 +100,11 @@ style:
     allowedPatterns: ''
   NewLineAtEndOfFile:
     active: false
-  SpacingBetweenPackageAndImports:
-    active: true
   TrailingWhitespace:
     active: true
-  UnusedImports:
+  UnusedImport:
     active: true
+    additionalOperatorSet: []
   ReturnCount:
     active: true
     max: 3
@@ -114,3 +113,5 @@ style:
     excludeLabeled: false
     excludeReturnFromLambda: true
     excludeGuardClauses: true
+  WildcardImport:
+    active: true

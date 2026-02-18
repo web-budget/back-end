@@ -2,7 +2,7 @@ package br.com.webbudget.domain.entities.financial
 
 import br.com.webbudget.domain.entities.PersistentEntity
 import br.com.webbudget.domain.entities.registration.Wallet
-import br.com.webbudget.infrastructure.config.ApplicationSchemas.FINANCIAL
+import br.com.webbudget.infrastructure.config.DatabaseSchemas.FINANCIAL
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType

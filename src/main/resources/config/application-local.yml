@@ -1,3 +1,7 @@
+spring:
+  main:
+    banner-mode: console
+
 logging:
   level:
     br.com.webbudget: debug

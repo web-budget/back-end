@@ -3,6 +3,7 @@ package br.com.webbudget.controllers
 import br.com.webbudget.BaseControllerIntegrationTest
 import br.com.webbudget.application.controllers.AuthenticationController
 import br.com.webbudget.domain.services.administration.TokenService
+import br.com.webbudget.utilities.Roles
 import br.com.webbudget.utilities.fixtures.createUser
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.confirmVerified
@@ -11,13 +12,14 @@ import io.mockk.mockk
 import io.mockk.verify
 import net.javacrumbs.jsonunit.assertj.assertThatJson
 import org.junit.jupiter.api.Test
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.http.MediaType
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import java.util.UUID
@@ -60,11 +62,11 @@ class AuthenticationControllerUTest : BaseControllerIntegrationTest() {
     }
 
     @Test
-    @WithMockUser(username = "user@test.com", password = "admin", roles = ["ADMINISTRATION"])
     fun `should logout and destroy the cookie with the token`() {
         mockMvc.post("$ENDPOINT_URL/logout") {
             contentType = MediaType.APPLICATION_JSON
             with(csrf())
+            with(user("user@test.com").password("admin").roles(Roles.ADMINISTRATION))
         }.andExpect {
             status { isOk() }
             cookie {

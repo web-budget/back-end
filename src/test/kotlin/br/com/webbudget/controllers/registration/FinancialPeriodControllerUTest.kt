@@ -11,7 +11,6 @@ import br.com.webbudget.utilities.Roles
 import br.com.webbudget.utilities.fixtures.createFinancialPeriod
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.Runs
-import io.mockk.called
 import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
@@ -20,7 +19,7 @@ import io.mockk.verify
 import net.javacrumbs.jsonunit.assertj.assertThatJson
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
@@ -153,7 +152,7 @@ class FinancialPeriodControllerUTest : BaseControllerIntegrationTest() {
     }
 
     @Test
-    fun `should expect unprocessable entity if required fields are not present`() {
+    fun `should expect unprocessable content if required fields are not present`() {
         val requiredEntries = mapOf(
             "name" to "is-null-or-blank",
             "startingAt" to "is-null",
@@ -164,7 +163,7 @@ class FinancialPeriodControllerUTest : BaseControllerIntegrationTest() {
             contentType = MediaType.APPLICATION_JSON
             content = JsonPayload("financial-period/invalid")
         }.andExpect {
-            status { isUnprocessableEntity() }
+            status { isUnprocessableContent() }
         }.andReturn()
             .response
             .contentAsString
@@ -178,7 +177,7 @@ class FinancialPeriodControllerUTest : BaseControllerIntegrationTest() {
             .hasSize(requiredEntries.size)
             .containsExactlyInAnyOrderEntriesOf(requiredEntries)
 
-        verify { financialPeriodService.create(any()) wasNot called }
+        verify(exactly = 0) { financialPeriodService.create(ofType<FinancialPeriod>()) }
 
         confirmVerified(financialPeriodService)
     }

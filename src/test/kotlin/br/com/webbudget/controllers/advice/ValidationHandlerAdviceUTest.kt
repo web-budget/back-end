@@ -4,7 +4,7 @@ import br.com.webbudget.BaseControllerIntegrationTest
 import br.com.webbudget.utilities.Roles
 import net.javacrumbs.jsonunit.assertj.assertThatJson
 import org.junit.jupiter.api.Test
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.http.MediaType
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.web.servlet.get
@@ -43,7 +43,7 @@ class ValidationHandlerAdviceUTest : BaseControllerIntegrationTest() {
         val response = mockMvc.get("$ENDPOINT_URL/method-argument-no-valid-exception") {
             content = MediaType.APPLICATION_JSON_VALUE
         }.andExpect {
-            status { isUnprocessableEntity() }
+            status { isUnprocessableContent() }
         }.andReturn()
             .response
             .contentAsString
@@ -51,7 +51,7 @@ class ValidationHandlerAdviceUTest : BaseControllerIntegrationTest() {
         assertThatJson(response)
             .isObject
             .containsEntry("detail", "Some fields are missing or invalid")
-            .containsEntry("title", "Unprocessable Entity")
+            .containsEntry("title", "Unprocessable Content")
             .containsEntry("status", 422)
     }
 

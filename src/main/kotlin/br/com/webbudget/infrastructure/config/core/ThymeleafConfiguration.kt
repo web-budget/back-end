@@ -2,15 +2,13 @@ package br.com.webbudget.infrastructure.config.core
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.scheduling.annotation.EnableScheduling
 import org.thymeleaf.spring6.SpringTemplateEngine
 import org.thymeleaf.spring6.templateresolver.SpringResourceTemplateResolver
 import org.thymeleaf.templatemode.TemplateMode.HTML
 import java.nio.charset.StandardCharsets
 
 @Configuration
-@EnableScheduling
-class CommonsConfiguration {
+class ThymeleafConfiguration {
 
     private lateinit var templateResolver: SpringResourceTemplateResolver
 

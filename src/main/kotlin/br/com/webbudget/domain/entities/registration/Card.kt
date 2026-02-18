@@ -1,7 +1,7 @@
 package br.com.webbudget.domain.entities.registration
 
 import br.com.webbudget.domain.entities.PersistentEntity
-import br.com.webbudget.infrastructure.config.ApplicationSchemas.REGISTRATION
+import br.com.webbudget.infrastructure.config.DatabaseSchemas.REGISTRATION
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType.STRING

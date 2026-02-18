@@ -11,7 +11,6 @@ import br.com.webbudget.utilities.Roles
 import br.com.webbudget.utilities.fixtures.createWallet
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.Runs
-import io.mockk.called
 import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
@@ -20,7 +19,7 @@ import io.mockk.verify
 import net.javacrumbs.jsonunit.assertj.assertThatJson
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
@@ -151,7 +150,7 @@ class WalletControllerUTest : BaseControllerIntegrationTest() {
     }
 
     @Test
-    fun `should expect unprocessable entity if required fields are not present`() {
+    fun `should expect unprocessable content if required fields are not present`() {
 
         val requiredEntries = mapOf(
             "name" to "is-null-or-blank",
@@ -162,7 +161,7 @@ class WalletControllerUTest : BaseControllerIntegrationTest() {
             contentType = MediaType.APPLICATION_JSON
             content = JsonPayload("wallet/invalid")
         }.andExpect {
-            status { isUnprocessableEntity() }
+            status { isUnprocessableContent() }
         }.andReturn()
             .response
             .contentAsString
@@ -176,7 +175,7 @@ class WalletControllerUTest : BaseControllerIntegrationTest() {
             .hasSize(requiredEntries.size)
             .containsExactlyInAnyOrderEntriesOf(requiredEntries)
 
-        verify { walletService.create(any()) wasNot called }
+        verify(exactly = 0) { walletService.create(any()) }
 
         confirmVerified(walletService)
     }

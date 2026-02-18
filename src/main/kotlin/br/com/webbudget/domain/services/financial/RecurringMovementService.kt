@@ -26,7 +26,9 @@ class RecurringMovementService(
         val externalId = requireNotNull(recurringMovement.externalId) { EXTERNAL_ID_IS_NULL }
 
         recurringMovementRepository.findByExternalIdAndState(externalId, ENDED)
-            ?.let { throw BusinessException("Recurring movement isn't active", "recurring-movement.errors.invalid-state") }
+            ?.let {
+                throw BusinessException("Recurring movement isn't active", "recurring-movement.errors.invalid-state")
+            }
 
         return recurringMovementRepository.merge(recurringMovement)
     }
