@@ -19,7 +19,7 @@ private val logger = KotlinLogging.logger {}
 @Service
 @Transactional(readOnly = true)
 class AccountActivationService(
-    @Value("\${web-budget.front-end-url}")
+    @param:Value($$"${web-budget.front-end-url}")
     private val frontendUrl: String,
     private val userRepository: UserRepository,
     private val mailSenderService: MailSenderService,
