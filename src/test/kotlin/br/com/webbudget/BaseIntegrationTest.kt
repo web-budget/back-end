@@ -1,12 +1,12 @@
 package br.com.webbudget
 
-import br.com.webbudget.utilities.TestContainersInitializer
+import br.com.webbudget.configuration.TestcontainersConfiguration
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.annotation.Import
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.ContextConfiguration
 
 @ActiveProfiles("test")
-@ContextConfiguration(initializers = [TestContainersInitializer::class])
+@Import(value = [TestcontainersConfiguration::class])
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class BaseIntegrationTest internal constructor() {
 

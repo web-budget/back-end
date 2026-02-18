@@ -1,6 +1,13 @@
 spring:
-  application.name: webbudget
-  jmx.enabled: false
+  application:
+    name: webbudget
+
+  main:
+    banner-mode: off
+
+  threads:
+    virtual:
+      enabled: true
 
   datasource:
     url: jdbc:postgresql://${DATABASE_URL:localhost:5433/webbudget}
@@ -32,29 +39,16 @@ spring:
       mail.smtp.starttls.enable: true
       mail.debug: false
 
-  threads:
-    virtual:
-      enabled: true
-
 server:
   port: ${APPLICATION_PORT:8085}
-  servlet:
-    encoding:
-      charset: utf-8
-      force: true
 
 management:
   endpoints:
     access:
-      default: none
+      default: read_only
     web:
       exposure:
         include: [ 'health', 'info' ]
-  endpoint:
-    health:
-      access: read_only
-    info:
-      access: read_only
 
 web-budget:
   frontend-url: ${APPLICATION_FRONTEND_URL:http://localhost:8080}

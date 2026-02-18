@@ -27,7 +27,7 @@ class AuthenticationController(
         val username = authentication.name
 
         val grantedAuthorities = authentication.authorities
-            .map { it.authority }
+            .map { it.authority!! }
             .toList()
 
         val jwt = tokenService.generate(username, grantedAuthorities)

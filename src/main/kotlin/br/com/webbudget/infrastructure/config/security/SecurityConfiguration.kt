@@ -53,6 +53,7 @@ class SecurityConfiguration(
                 authorize("/actuator/health/**", permitAll)
                 authorize("/actuator/info/**", permitAll)
                 authorize("/accounts/**", permitAll)
+                authorize("/auth/**", permitAll)
                 authorize("/api/administration/**", hasRole(Role.ADMINISTRATION))
                 authorize("/api/registration/**", hasRole(Role.REGISTRATION))
                 authorize("/api/financial/**", hasRole(Role.FINANCIAL))

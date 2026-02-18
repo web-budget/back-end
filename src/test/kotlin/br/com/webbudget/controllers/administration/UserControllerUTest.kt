@@ -10,7 +10,6 @@ import br.com.webbudget.utilities.JsonPayload
 import br.com.webbudget.utilities.Roles
 import br.com.webbudget.utilities.fixtures.createUser
 import com.ninjasquad.springmockk.MockkBean
-import io.mockk.called
 import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
@@ -20,7 +19,7 @@ import io.mockk.verify
 import net.javacrumbs.jsonunit.assertj.assertThatJson
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
@@ -92,7 +91,7 @@ class UserControllerUTest : BaseControllerIntegrationTest() {
             contentType = MediaType.APPLICATION_JSON
             content = JsonPayload("user/invalid")
         }.andExpect {
-            status { isUnprocessableEntity() }
+            status { isUnprocessableContent() }
         }.andReturn()
             .response
             .contentAsString
@@ -106,7 +105,7 @@ class UserControllerUTest : BaseControllerIntegrationTest() {
             .hasSize(requiredEntries.size)
             .containsExactlyInAnyOrderEntriesOf(requiredEntries)
 
-        verify { userService.createAccount(any(), any()) wasNot called }
+        verify(exactly = 0) { userService.createAccount(any(), any()) }
 
         confirmVerified(userService)
     }

@@ -15,7 +15,6 @@ import br.com.webbudget.utilities.fixtures.createCard
 import br.com.webbudget.utilities.fixtures.createWallet
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.Runs
-import io.mockk.called
 import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
@@ -25,7 +24,7 @@ import net.javacrumbs.jsonunit.assertj.assertThatJson
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
@@ -209,7 +208,7 @@ class CardControllerUTest : BaseControllerIntegrationTest() {
     }
 
     @Test
-    fun `should expect unprocessable entity if required fields are not present for credit card`() {
+    fun `should expect unprocessable content if required fields are not present for credit card`() {
 
         val requiredEntries = mapOf(
             "type" to "is-null",
@@ -221,7 +220,7 @@ class CardControllerUTest : BaseControllerIntegrationTest() {
             contentType = MediaType.APPLICATION_JSON
             content = JsonPayload("card/invalid-credit")
         }.andExpect {
-            status { isUnprocessableEntity() }
+            status { isUnprocessableContent() }
         }.andReturn()
             .response
             .contentAsString
@@ -235,13 +234,13 @@ class CardControllerUTest : BaseControllerIntegrationTest() {
             .hasSize(requiredEntries.size)
             .containsExactlyInAnyOrderEntriesOf(requiredEntries)
 
-        verify { cardService.create(ofType<Card>()) wasNot called }
+        verify(exactly = 0) { cardService.create(ofType<Card>()) }
 
         confirmVerified(cardService)
     }
 
     @Test
-    fun `should expect unprocessable entity if required fields are not present for debit card`() {
+    fun `should expect unprocessable content if required fields are not present for debit card`() {
 
         val requiredEntries = mapOf(
             "type" to "is-null",
@@ -253,7 +252,7 @@ class CardControllerUTest : BaseControllerIntegrationTest() {
             contentType = MediaType.APPLICATION_JSON
             content = JsonPayload("card/invalid-debit")
         }.andExpect {
-            status { isUnprocessableEntity() }
+            status { isUnprocessableContent() }
         }.andReturn()
             .response
             .contentAsString
@@ -267,7 +266,7 @@ class CardControllerUTest : BaseControllerIntegrationTest() {
             .hasSize(requiredEntries.size)
             .containsExactlyInAnyOrderEntriesOf(requiredEntries)
 
-        verify { cardService.create(ofType<Card>()) wasNot called }
+        verify(exactly = 0) { cardService.create(ofType<Card>()) }
 
         confirmVerified(cardService)
     }

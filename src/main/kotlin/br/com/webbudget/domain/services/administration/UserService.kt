@@ -37,7 +37,7 @@ class UserService(
         creationValidators.forEach { it.validate(user) }
 
         val password = passwordEncoder.encode(user.password)
-        user.password = password
+        user.password = password!!
 
         val saved = userRepository.persist(user)
 
@@ -80,9 +80,9 @@ class UserService(
         println(temporary)
 
         val newPassword = passwordEncoder.encode(password)
-        user.password = newPassword
+        user.password = newPassword!!
 
-        userRepository.update(user)
+        userRepository.merge(user)
     }
 
     @Transactional
