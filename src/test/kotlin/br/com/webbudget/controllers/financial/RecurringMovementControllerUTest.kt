@@ -189,7 +189,7 @@ class RecurringMovementControllerUTest : BaseControllerIntegrationTest() {
             contentType = MediaType.APPLICATION_JSON
             content = JsonPayload("recurring-movement/unprocessable")
         }.andExpect {
-            status { isUnprocessableEntity() }
+            status { isUnprocessableContent() }
         }.andReturn()
             .response
             .contentAsString
@@ -218,7 +218,7 @@ class RecurringMovementControllerUTest : BaseControllerIntegrationTest() {
             contentType = MediaType.APPLICATION_JSON
             content = JsonPayload("recurring-movement/unprocessable")
         }.andExpect {
-            status { isUnprocessableEntity() }
+            status { isUnprocessableContent() }
         }.andReturn()
             .response
             .contentAsString

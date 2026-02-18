@@ -59,7 +59,7 @@ class UserAccountControllerUTest : BaseControllerIntegrationTest() {
             content = body
             with(csrf())
         }.andExpect {
-            status { isUnprocessableEntity() }
+            status { isUnprocessableContent() }
         }
     }
 
@@ -134,7 +134,7 @@ class UserAccountControllerUTest : BaseControllerIntegrationTest() {
             content = body
             with(csrf())
         }.andExpect {
-            status { isUnprocessableEntity() }
+            status { isUnprocessableContent() }
         }
     }
 
@@ -177,7 +177,7 @@ class UserAccountControllerUTest : BaseControllerIntegrationTest() {
             content = body
             with(csrf())
         }.andExpect {
-            status { isUnprocessableEntity() }
+            status { isUnprocessableContent() }
         }
     }
 
