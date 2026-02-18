@@ -6,7 +6,7 @@ on:
   pull_request:
 
 jobs:
-  build:
+  run:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -26,8 +26,8 @@ jobs:
         with:
           cache-read-only: ${{ github.event_name == 'pull_request' }}
 
-      - name: Detekt + Test
-        run: ./gradlew clean detekt test
+      - name: Detekt
+        run: ./gradlew clean detekt -x test
 
       - name: Upload Detekt reports
         if: always()
@@ -37,6 +37,9 @@ jobs:
           path: |
             **/build/reports/detekt/*
           if-no-files-found: ignore
+
+      - name: Test
+        run: ./gradlew clean test -x detekt
 
       - name: Upload Test reports
         if: always()
