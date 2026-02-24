@@ -16,6 +16,6 @@ class TestcontainersConfiguration {
     }
 
     companion object {
-        const val POSTGRES_IMAGE = "postgres:16-alpine"
+        const val POSTGRES_IMAGE = "postgres:17-alpine"
     }
 }
