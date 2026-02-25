@@ -63,6 +63,7 @@ data class WalletListView(
     val id: UUID,
     val name: String,
     val type: Type,
+    val bank: String? = null,
     val active: Boolean = true
 )
 
