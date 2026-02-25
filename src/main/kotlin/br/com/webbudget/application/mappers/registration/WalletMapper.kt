@@ -27,6 +27,7 @@ class WalletMapper {
         id = wallet.externalId!!,
         name = wallet.name,
         type = wallet.type,
+        bank = wallet.bank,
         active = wallet.active
     )
 

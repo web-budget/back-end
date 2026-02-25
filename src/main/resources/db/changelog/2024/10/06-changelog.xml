@@ -189,12 +189,8 @@
                 <constraints nullable="false"/>
             </column>
 
-            <column name="id_card" type="bigint">
-                <constraints nullable="false"/>
-            </column>
-            <column name="id_wallet" type="bigint">
-                <constraints nullable="false"/>
-            </column>
+            <column name="id_card" type="bigint"/>
+            <column name="id_wallet" type="bigint"/>
         </createTable>
 
         <addUniqueConstraint columnNames="id"

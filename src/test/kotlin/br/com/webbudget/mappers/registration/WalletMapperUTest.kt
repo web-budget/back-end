@@ -108,6 +108,7 @@ class WalletMapperUTest {
                 assertThat(it.active).isEqualTo(domainObject.active)
                 assertThat(it.name).isEqualTo(domainObject.name)
                 assertThat(it.type).isEqualTo(domainObject.type)
+                assertThat(it.bank).isEqualTo(domainObject.bank)
             })
     }
 

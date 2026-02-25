@@ -1,16 +1,11 @@
 **Objective**
-Clear and concise description of what's the objective of your PR
+<!--Clear and concise description of what's the objective of your PR-->
 
-**What's changed**
-Which are the changes you've done
+**What's changed?**
+<!--Which changes you did-->
 
-**How to test it**
-Impacts of those changes for persons who are already using the application
+**How can I test it?**
+<!--Describe how to test the changes-->
 
 **Additional context**
-Any other information relevant to the ones who will evaluate your PR
-
-**Checklist**
-[ ] - I did the necessary Unit and Integration tests
-[ ] - My PR has an isolated context, I'm changing just one feature
- 
+<!--Any other relevant information or about the impact of those changes-->
