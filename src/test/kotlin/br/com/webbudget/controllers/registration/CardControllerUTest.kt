@@ -285,7 +285,7 @@ class CardControllerUTest : BaseControllerIntegrationTest() {
         }.andExpect {
             status { isBadRequest() }
         }.andExpect {
-            jsonPath("\$.detail", equalTo("Debit card has no wallet"))
+            jsonPath("$.detail", equalTo("Debit card has no wallet"))
         }
 
         verify(exactly = 1) { cardService.create(ofType<Card>()) }
@@ -306,7 +306,7 @@ class CardControllerUTest : BaseControllerIntegrationTest() {
         }.andExpect {
             status { isBadRequest() }
         }.andExpect {
-            jsonPath("\$.detail", equalTo("Credit card has has invalid invoice payment day"))
+            jsonPath("$.detail", equalTo("Credit card has has invalid invoice payment day"))
         }
 
         verify(exactly = 1) { cardService.create(ofType<Card>()) }

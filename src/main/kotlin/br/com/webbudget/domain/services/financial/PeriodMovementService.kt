@@ -5,7 +5,6 @@ import br.com.webbudget.domain.exceptions.BusinessException
 import br.com.webbudget.domain.exceptions.ErrorCodes.ACCOUNTED_PERIOD_MOVEMENT
 import br.com.webbudget.domain.exceptions.ErrorCodes.FINANCIAL_PERIOD_NOT_OPEN
 import br.com.webbudget.infrastructure.repository.financial.PeriodMovementRepository
-import br.com.webbudget.infrastructure.utilities.CommonErrorMessages.EXTERNAL_ID_IS_NULL
 import br.com.webbudget.infrastructure.utilities.ensure
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional

@@ -36,7 +36,9 @@ class RecurringMovementMapperUTest {
 
     @BeforeEach
     fun setup() {
-        val classificationMapper = ClassificationMapper(CostCenterMapper(), costCenterRepository)
+        val costCenterMapper = CostCenterMapper(costCenterRepository)
+
+        val classificationMapper = ClassificationMapper(costCenterMapper, costCenterRepository)
         recurringMovementMapper = RecurringMovementMapper(classificationMapper, classificationRepository)
     }
 

@@ -54,7 +54,6 @@ dependencies {
     // utilities
     implementation("com.google.guava:guava:$guavaVersion")
     implementation("io.github.oshai:kotlin-logging-jvm:$kotlinLoggingJvmVersion")
-    implementation("io.hypersistence:hypersistence-utils-hibernate-71:$hypersistenceUtilsVersion")
 
     // kotlin
     implementation("org.jetbrains.kotlin:kotlin-reflect")
@@ -62,14 +61,16 @@ dependencies {
 
     // database
     runtimeOnly("org.postgresql:postgresql")
+    implementation("io.hypersistence:hypersistence-utils-hibernate-71:${hypersistenceUtilsVersion}")
 
     // testing
-    testImplementation("org.springframework.boot:spring-boot-testcontainers")
     testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
     testImplementation("org.springframework.boot:spring-boot-starter-liquibase-test")
     testImplementation("org.springframework.boot:spring-boot-starter-validation-test")
     testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
     testImplementation("org.springframework.boot:spring-boot-starter-security-test")
+
+    testImplementation("org.springframework.boot:spring-boot-testcontainers")
 
     testImplementation("org.assertj:assertj-core:$assertJVersion")
 
@@ -88,12 +89,6 @@ dependencies {
     testImplementation("org.testcontainers:testcontainers-postgresql")
 }
 
-dependencyManagement {
-    imports {
-        mavenBom("org.testcontainers:testcontainers-bom:$testcontainersVersion")
-    }
-}
-
 allOpen {
     annotation("jakarta.persistence.Entity")
     annotation("jakarta.persistence.MappedSuperclass")
@@ -103,6 +98,7 @@ allOpen {
 tasks {
     test {
         useJUnitPlatform()
+        maxParallelForks = Runtime.getRuntime().availableProcessors()
     }
 
     bootJar {

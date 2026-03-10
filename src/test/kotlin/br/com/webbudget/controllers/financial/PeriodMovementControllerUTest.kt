@@ -6,7 +6,6 @@ import br.com.webbudget.application.mappers.financial.PeriodMovementMapper
 import br.com.webbudget.application.mappers.registration.ClassificationMapper
 import br.com.webbudget.application.mappers.registration.CostCenterMapper
 import br.com.webbudget.application.mappers.registration.FinancialPeriodMapper
-import br.com.webbudget.application.payloads.ErrorCodes.IS_EMPTY
 import br.com.webbudget.application.payloads.ErrorCodes.IS_NULL
 import br.com.webbudget.application.payloads.ErrorCodes.IS_NULL_OR_BLANK
 import br.com.webbudget.application.payloads.financial.PeriodMovementFilter

@@ -35,7 +35,8 @@ class ClassificationMapperUTest {
 
     @BeforeEach
     fun setup() {
-        classificationMapper = ClassificationMapper(CostCenterMapper(), costCenterRepository)
+        val costCenterMapper = CostCenterMapper(costCenterRepository)
+        classificationMapper = ClassificationMapper(costCenterMapper, costCenterRepository)
     }
 
     @ParameterizedTest

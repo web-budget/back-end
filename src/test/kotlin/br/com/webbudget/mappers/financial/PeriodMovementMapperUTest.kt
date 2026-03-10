@@ -17,7 +17,6 @@ import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
-import io.mockk.mockk
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -44,7 +43,7 @@ class PeriodMovementMapperUTest {
     @BeforeEach
     fun setup() {
 
-        val costCenterMapper = CostCenterMapper()
+        val costCenterMapper = CostCenterMapper(costCenterRepository)
 
         val classificationMapper = ClassificationMapper(costCenterMapper, costCenterRepository)
         val financialPeriodMapper = FinancialPeriodMapper()

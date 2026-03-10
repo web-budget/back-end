@@ -37,9 +37,9 @@ import java.security.interfaces.RSAPublicKey
 @Configuration
 @EnableWebSecurity
 class SecurityConfiguration(
-    @param:Value("\${web-budget.jwt.public-key}")
+    @param:Value($$"${web-budget.jwt.public-key}")
     private val publicKey: RSAPublicKey,
-    @param:Value("\${web-budget.jwt.private-key}")
+    @param:Value($$"${web-budget.jwt.private-key}")
     private val privateKey: RSAPrivateKey,
     private val userRepository: UserRepository
 ) {
@@ -95,7 +95,7 @@ class SecurityConfiguration(
     }
 
     @Bean
-    fun corsConfigurationSource(@Value("\${web-budget.frontend-url}") frontendUrl: String): CorsConfigurationSource {
+    fun corsConfigurationSource(@Value($$"${web-budget.frontend-url}") frontendUrl: String): CorsConfigurationSource {
 
         val configuration = CorsConfiguration()
         configuration.allowedOrigins = listOf(frontendUrl)

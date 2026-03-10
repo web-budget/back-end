@@ -4,6 +4,8 @@ import br.com.webbudget.domain.entities.PersistentEntity
 import br.com.webbudget.infrastructure.config.DatabaseSchemas
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 import java.math.BigDecimal
 
@@ -19,7 +21,10 @@ class CostCenter(
     @field:Column(name = "income_budget")
     var incomeBudget: BigDecimal? = null,
     @field:Column(name = "expense_budget")
-    var expenseBudget: BigDecimal? = null
+    var expenseBudget: BigDecimal? = null,
+    @field:ManyToOne
+    @field:JoinColumn(name = "id_parent")
+    var parent: CostCenter? = null
 ) : PersistentEntity<Long>() {
 
     fun isBudgetValidationRequired(classificationType: Classification.Type): Boolean {

@@ -34,7 +34,8 @@ fun createCostCenter(
     description: String = "Some description",
     incomeBudget: BigDecimal? = BigDecimal.ONE,
     expenseBudget: BigDecimal? = BigDecimal.ONE,
-) = CostCenter(name, active, description, incomeBudget, expenseBudget)
+    parentCostCenter: CostCenter? = null
+) = CostCenter(name, active, description, incomeBudget, expenseBudget, parentCostCenter)
     .apply {
         this.id = id
         this.externalId = externalId
