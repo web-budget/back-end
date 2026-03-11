@@ -7,18 +7,27 @@ import br.com.webbudget.infrastructure.repository.administration.PasswordRecover
 import br.com.webbudget.utilities.memoryLogAppender
 import br.com.webbudget.utilities.startMemoryLogAppender
 import br.com.webbudget.utilities.stopMemoryLogAppender
-import com.icegreen.greenmail.configuration.GreenMailConfiguration
-import com.icegreen.greenmail.junit5.GreenMailExtension
-import com.icegreen.greenmail.util.ServerSetupTest
+import ch.martinelli.oss.testcontainers.mailpit.MailpitClient
+import ch.martinelli.oss.testcontainers.mailpit.assertions.MailpitAssertions
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.awaitility.kotlin.atMost
+import org.awaitility.kotlin.await
+import org.awaitility.kotlin.untilAsserted
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.RegisterExtension
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.jdbc.Sql
 import java.util.UUID
+import java.util.stream.Stream
+import kotlin.time.Duration.Companion.seconds
 
 class RecoverPasswordServiceITest : BaseIntegrationTest() {
+
+    @Autowired
+    private lateinit var mailpitClient: MailpitClient
 
     @Autowired
     private lateinit var passwordRecoverAttemptRepository: PasswordRecoverAttemptRepository
@@ -26,24 +35,31 @@ class RecoverPasswordServiceITest : BaseIntegrationTest() {
     @Autowired
     private lateinit var recoverPasswordService: RecoverPasswordService
 
-    @Test
+    @ParameterizedTest
+    @MethodSource("usersToTest")
     @Sql("/sql/administration/clear-tables.sql", "/sql/administration/create-user.sql")
-    fun `should send recover password e-mail when user exists and register attempt`() {
+    fun `should send recover password e-mail when user exists and register attempt`(
+        userEmail: String,
+        expectedSubject: String
+    ) {
+        mailpitClient.deleteAllMessages()
 
-        val userEmail = "user@webbudget.com.br"
         recoverPasswordService.registerRecoveryAttempt(userEmail)
 
-        assertThat(greenMail.waitForIncomingEmail(20000, 1)).isTrue()
-        assertThat(greenMail.receivedMessages[0])
-            .satisfies({
-                assertThat(it.allRecipients[0].toString()).isEqualTo(userEmail)
-            })
+        await atMost 10.seconds untilAsserted {
+            assertThat(mailpitClient.messageCount).isOne
+        }
+
+        val message = mailpitClient.allMessages.first()
+
+        MailpitAssertions.assertThat(message)
+            .isFrom("noreply@webbudget.com.br")
+            .hasSubject(expectedSubject)
+            .hasRecipient(userEmail)
+            .hasRecipientCount(1)
 
         val attempts = passwordRecoverAttemptRepository.findByUserEmail(userEmail)
-
-        assertThat(attempts)
-            .isNotEmpty
-            .hasSize(1)
+        assertThat(attempts).hasSize(1)
     }
 
     @Test
@@ -52,7 +68,7 @@ class RecoverPasswordServiceITest : BaseIntegrationTest() {
 
         startMemoryLogAppender()
 
-        val userEmail = "other_user@webbudget.com.br"
+        val userEmail = "unknown@webbudget.com.br"
         val expectedLogMessage = "No user found with e-mail [${userEmail}], ignoring password recover request"
 
         recoverPasswordService.registerRecoveryAttempt(userEmail)
@@ -113,12 +129,9 @@ class RecoverPasswordServiceITest : BaseIntegrationTest() {
     companion object {
 
         @JvmStatic
-        @RegisterExtension
-        val greenMail: GreenMailExtension = GreenMailExtension(ServerSetupTest.SMTP)
-            .withConfiguration(
-                GreenMailConfiguration.aConfig()
-                    .withUser("mail_user", "mail_password")
-            )
-            .withPerMethodLifecycle(false)
+        fun usersToTest(): Stream<Arguments> = Stream.of(
+            Arguments.of("other-user@webbudget.com.br", "Password recovery"),
+            Arguments.of("user@webbudget.com.br", "Recuperação de senha")
+        )
     }
 }

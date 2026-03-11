@@ -5,19 +5,28 @@ import br.com.webbudget.domain.exceptions.InvalidAccountActivationTokenException
 import br.com.webbudget.domain.services.administration.AccountActivationService
 import br.com.webbudget.infrastructure.repository.administration.AccountActivationAttemptRepository
 import br.com.webbudget.infrastructure.repository.administration.UserRepository
-import com.icegreen.greenmail.configuration.GreenMailConfiguration
-import com.icegreen.greenmail.junit5.GreenMailExtension
-import com.icegreen.greenmail.util.ServerSetupTest
+import ch.martinelli.oss.testcontainers.mailpit.MailpitClient
+import ch.martinelli.oss.testcontainers.mailpit.assertions.MailpitAssertions
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.assertj.core.api.Assertions.fail
+import org.awaitility.kotlin.atMost
+import org.awaitility.kotlin.await
+import org.awaitility.kotlin.untilAsserted
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.RegisterExtension
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.jdbc.Sql
 import java.util.UUID
+import java.util.stream.Stream
+import kotlin.time.Duration.Companion.seconds
 
 class AccountActivationServiceITest : BaseIntegrationTest() {
+
+    @Autowired
+    private lateinit var mailpitClient: MailpitClient
 
     @Autowired
     private lateinit var userRepository: UserRepository
@@ -28,21 +37,31 @@ class AccountActivationServiceITest : BaseIntegrationTest() {
     @Autowired
     private lateinit var accountActivationAttemptRepository: AccountActivationAttemptRepository
 
-    @Test
+    @ParameterizedTest
+    @MethodSource("usersToTest")
     @Sql("/sql/administration/clear-tables.sql", "/sql/administration/create-user.sql")
-    fun `should send activation e-mail`() {
+    fun `should send activation e-mail`(
+        userEmail: String,
+        expectedSubject: String
+    ) {
+        mailpitClient.deleteAllMessages()
 
-        val userName = "user@webbudget.com.br"
-        accountActivationService.requestActivation(userName)
+        accountActivationService.requestActivation(userEmail)
 
-        assertThat(greenMail.waitForIncomingEmail(20000, 1)).isTrue()
-        assertThat(greenMail.receivedMessages[0]).satisfies({
-            assertThat(it.allRecipients[0].toString()).isEqualTo(userName)
-        })
+        await atMost 10.seconds untilAsserted {
+            assertThat(mailpitClient.messageCount).isOne
+        }
 
-        val attempts = accountActivationAttemptRepository.findByUserEmail(userName)
+        val message = mailpitClient.allMessages.first()
 
-        assertThat(attempts).isNotEmpty.hasSize(1)
+        MailpitAssertions.assertThat(message)
+            .isFrom("noreply@webbudget.com.br")
+            .hasSubject(expectedSubject)
+            .hasRecipient(userEmail)
+            .hasRecipientCount(1)
+
+        val attempts = accountActivationAttemptRepository.findByUserEmail(userEmail)
+        assertThat(attempts).hasSize(1)
     }
 
     @Test
@@ -91,12 +110,9 @@ class AccountActivationServiceITest : BaseIntegrationTest() {
     companion object {
 
         @JvmStatic
-        @RegisterExtension
-        val greenMail: GreenMailExtension = GreenMailExtension(ServerSetupTest.SMTP)
-            .withConfiguration(
-                GreenMailConfiguration.aConfig()
-                    .withUser("mail_user", "mail_password")
-            )
-            .withPerMethodLifecycle(false)
+        fun usersToTest(): Stream<Arguments> = Stream.of(
+            Arguments.of("other-user@webbudget.com.br", "User account activation"),
+            Arguments.of("user@webbudget.com.br", "Ativar conta de usuário")
+        )
     }
 }

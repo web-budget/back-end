@@ -33,8 +33,8 @@ val mockkVersion = "5.0.1"
 val jsonUnitVersion = "5.1.0"
 val awaitilityVersion = "4.3.0"
 val hypersistenceUtilsVersion = "3.15.1"
-val greenMailVersion = "2.1.3"
 val kotlinLoggingJvmVersion = "7.0.14"
+val mailpitVersion = "1.3.0"
 
 dependencies {
     // spring
@@ -82,11 +82,11 @@ dependencies {
     testImplementation("org.awaitility:awaitility:$awaitilityVersion")
     testImplementation("org.awaitility:awaitility-kotlin:$awaitilityVersion")
 
-    testImplementation("com.icegreen:greenmail-junit5:$greenMailVersion")
-
     // testcontainers
     testImplementation("org.testcontainers:testcontainers-junit-jupiter")
     testImplementation("org.testcontainers:testcontainers-postgresql")
+
+    testImplementation("ch.martinelli.oss:testcontainers-mailpit:$mailpitVersion")
 }
 
 allOpen {
