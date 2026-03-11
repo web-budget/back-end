@@ -2,10 +2,9 @@
 <databaseChangeLog
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-                      https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <changeSet id="create-schemas" author="${arthur}" dbms="postgresql">
+    <changeSet id="202404032300" author="${arthur}" dbms="postgresql">
         <sql>
             CREATE SCHEMA IF NOT EXISTS "registration";
             CREATE SCHEMA IF NOT EXISTS "administration";

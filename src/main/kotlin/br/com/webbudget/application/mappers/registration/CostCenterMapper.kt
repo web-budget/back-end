@@ -5,10 +5,15 @@ import br.com.webbudget.application.payloads.registration.CostCenterListView
 import br.com.webbudget.application.payloads.registration.CostCenterUpdateForm
 import br.com.webbudget.application.payloads.registration.CostCenterView
 import br.com.webbudget.domain.entities.registration.CostCenter
+import br.com.webbudget.domain.exceptions.ResourceNotFoundException
+import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository
 import org.springframework.stereotype.Component
+import java.util.UUID
 
 @Component
-class CostCenterMapper {
+class CostCenterMapper(
+    private val costCenterRepository: CostCenterRepository
+) {
 
     fun mapToView(costCenter: CostCenter): CostCenterView = CostCenterView(
         id = costCenter.externalId!!,
@@ -16,12 +21,13 @@ class CostCenterMapper {
         active = costCenter.active,
         description = costCenter.description,
         incomeBudget = costCenter.incomeBudget,
-        expenseBudget = costCenter.expenseBudget
+        expenseBudget = costCenter.expenseBudget,
+        parentCostCenter = costCenter.parent?.let { mapToListView(it) }
     )
 
     fun mapToListView(costCenter: CostCenter): CostCenterListView = CostCenterListView(
         id = costCenter.externalId!!,
-        name = costCenter.name,
+        name = mapName(costCenter),
         active = costCenter.active,
         incomeBudget = costCenter.incomeBudget,
         expenseBudget = costCenter.expenseBudget
@@ -31,7 +37,8 @@ class CostCenterMapper {
         name = form.name!!,
         description = form.description,
         incomeBudget = form.incomeBudget,
-        expenseBudget = form.expenseBudget
+        expenseBudget = form.expenseBudget,
+        parent = form.parentCostCenter?.let { mapParent(it) }
     )
 
     fun mapToDomain(form: CostCenterUpdateForm, costCenter: CostCenter) = costCenter.apply {
@@ -40,5 +47,13 @@ class CostCenterMapper {
         this.description = form.description
         this.incomeBudget = form.incomeBudget
         this.expenseBudget = form.expenseBudget
+        this.parent = form.parentCostCenter?.let { mapParent(it) }
     }
+
+    private fun mapName(costCenter: CostCenter): String =
+        costCenter.parent?.let { "${it.name} > ${costCenter.name}" } ?: costCenter.name
+
+    private fun mapParent(parentId: UUID): CostCenter = costCenterRepository.findByExternalId(parentId)
+        ?: throw ResourceNotFoundException()
+
 }

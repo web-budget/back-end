@@ -18,11 +18,11 @@ private val logger = KotlinLogging.logger {}
 class MailSenderService(
     private val mailSender: JavaMailSender,
     private val templateEngine: SpringTemplateEngine,
-    @param:Value("\${web-budget.mail.default-from-address}")
+    @param:Value($$"${web-budget.mail.default-from-address}")
     private val defaultFromAddress: String,
-    @param:Value("\${web-budget.mail.reply-to-address}")
+    @param:Value($$"${web-budget.mail.reply-to-address}")
     private val replyToAddress: String,
-    @param:Value("\${web-budget.mail.logo-url}")
+    @param:Value($$"${web-budget.mail.logo-url}")
     private val logoUrl: String,
     @param:Value($$"${web-budget.front-end-url}")
     private val frontendUrl: String

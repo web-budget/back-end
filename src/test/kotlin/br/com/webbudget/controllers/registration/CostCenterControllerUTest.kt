@@ -34,8 +34,8 @@ import org.springframework.test.web.servlet.put
 import org.springframework.util.LinkedMultiValueMap
 import java.util.UUID
 
-@WithMockUser(roles = [Roles.REGISTRATION])
 @Import(value = [CostCenterMapper::class])
+@WithMockUser(roles = [Roles.REGISTRATION])
 @WebMvcTest(CostCenterController::class)
 class CostCenterControllerUTest : BaseControllerIntegrationTest() {
 
@@ -60,7 +60,7 @@ class CostCenterControllerUTest : BaseControllerIntegrationTest() {
 
         val externalId = UUID.randomUUID()
 
-        every { costCenterService.create(any()) } returns externalId
+        every { costCenterService.create(any<CostCenter>()) } returns externalId
 
         mockMvc.post(ENDPOINT_URL) {
             contentType = MediaType.APPLICATION_JSON
@@ -73,9 +73,37 @@ class CostCenterControllerUTest : BaseControllerIntegrationTest() {
             }
         }
 
-        verify(exactly = 1) { costCenterService.create(any()) }
+        verify(exactly = 1) { costCenterService.create(ofType<CostCenter>()) }
 
         confirmVerified(costCenterService)
+    }
+
+    @Test
+    fun `should call create with parent and return created`() {
+
+        val externalId = UUID.randomUUID()
+        val parentExternalId = UUID.fromString("123e4567-e89b-12d3-a456-426655440000")
+
+        val parentCostCenter = createCostCenter(externalId = parentExternalId)
+
+        every { costCenterService.create(any<CostCenter>()) } returns externalId
+        every { costCenterRepository.findByExternalId(parentExternalId) } returns parentCostCenter
+
+        mockMvc.post(ENDPOINT_URL) {
+            contentType = MediaType.APPLICATION_JSON
+            content = JsonPayload("cost-center/create-with-parent")
+        }.andExpect {
+            status { isCreated() }
+        }.andExpect {
+            header {
+                stringValues("Location", "http://localhost$ENDPOINT_URL/$externalId")
+            }
+        }
+
+        verify(exactly = 1) { costCenterService.create(ofType<CostCenter>()) }
+        verify(exactly = 1) { costCenterRepository.findByExternalId(parentExternalId) }
+
+        confirmVerified(costCenterService, costCenterRepository)
     }
 
     @Test
@@ -104,6 +132,42 @@ class CostCenterControllerUTest : BaseControllerIntegrationTest() {
             .containsEntry("description", "Updated description")
 
         verify(exactly = 1) { costCenterRepository.findByExternalId(eq(externalId)) }
+        verify(exactly = 1) { costCenterService.update(ofType<CostCenter>()) }
+
+        confirmVerified(costCenterService, costCenterRepository)
+    }
+
+    @Test
+    fun `should call update with parent and return ok`() {
+
+        val parentCostCenterExternalId = UUID.fromString("123e4567-e89b-12d3-a456-426655440000")
+        val parentCostCenter = createCostCenter(name = "cc 1", externalId = parentCostCenterExternalId)
+
+        val externalId = UUID.randomUUID()
+        val expectedCostCenter = createCostCenter(externalId = externalId)
+
+        every { costCenterRepository.findByExternalId(eq(parentCostCenterExternalId)) } returns parentCostCenter
+        every { costCenterRepository.findByExternalId(eq(externalId)) } returns expectedCostCenter
+        every { costCenterService.update(any<CostCenter>()) } returns expectedCostCenter
+
+        val jsonResponse = mockMvc.put("$ENDPOINT_URL/$externalId") {
+            contentType = MediaType.APPLICATION_JSON
+            content = JsonPayload("cost-center/update-with-parent")
+        }.andExpect {
+            status { isOk() }
+        }.andReturn()
+            .response
+            .contentAsString
+
+        assertThatJson(jsonResponse)
+            .isObject
+            .containsEntry("id", externalId.toString())
+            .containsEntry("name", "cc 2")
+            .containsEntry("active", false)
+            .containsEntry("description", "Updated description")
+
+        verify(exactly = 1) { costCenterRepository.findByExternalId(eq(externalId)) }
+        verify(exactly = 1) { costCenterRepository.findByExternalId(eq(parentCostCenterExternalId)) }
         verify(exactly = 1) { costCenterService.update(ofType<CostCenter>()) }
 
         confirmVerified(costCenterService, costCenterRepository)
@@ -150,6 +214,7 @@ class CostCenterControllerUTest : BaseControllerIntegrationTest() {
 
     @Test
     fun `should expect unprocessable content if required fields are not present`() {
+
         val requiredEntries = mapOf("name" to "is-null-or-blank")
 
         val jsonResponse = mockMvc.post(ENDPOINT_URL) {
@@ -170,7 +235,7 @@ class CostCenterControllerUTest : BaseControllerIntegrationTest() {
             .hasSize(requiredEntries.size)
             .containsExactlyInAnyOrderEntriesOf(requiredEntries)
 
-        verify(exactly = 0) { costCenterService.create(any()) }
+        verify(exactly = 0) { costCenterService.create(ofType<CostCenter>()) }
 
         confirmVerified(costCenterService)
     }
@@ -197,6 +262,47 @@ class CostCenterControllerUTest : BaseControllerIntegrationTest() {
             .containsEntry("name", "Cost Center")
             .containsEntry("description", "Some description")
             .containsEntry("active", true)
+
+        verify(exactly = 1) { costCenterRepository.findByExternalId(externalId) }
+
+        confirmVerified(costCenterRepository)
+    }
+
+    @Test
+    fun `should call find by id and expect ok with parent cost center data`() {
+
+        val parentCostCenterExternalId = UUID.fromString("123e4567-e89b-12d3-a456-426655440000")
+        val parentCostCenter = createCostCenter(name = "cc 1", externalId = parentCostCenterExternalId)
+
+        val externalId = UUID.randomUUID()
+        val expectedCostCenter = createCostCenter(
+            name = "cc 2",
+            externalId = externalId,
+            parentCostCenter = parentCostCenter
+        )
+
+        every { costCenterRepository.findByExternalId(externalId) } returns expectedCostCenter
+
+        val jsonResponse = mockMvc.get("$ENDPOINT_URL/$externalId") {
+            contentType = MediaType.APPLICATION_JSON
+        }.andExpect {
+            status { isOk() }
+        }.andReturn()
+            .response
+            .contentAsString
+
+        assertThatJson(jsonResponse)
+            .isObject
+            .containsEntry("id", expectedCostCenter.externalId!!.toString())
+            .containsEntry("name", "cc 2")
+            .containsEntry("description", "Some description")
+            .containsEntry("active", true)
+
+        assertThatJson(jsonResponse)
+            .node("parentCostCenter")
+            .isObject
+            .containsEntry("id", parentCostCenterExternalId.toString())
+            .containsEntry("name", "cc 1")
 
         verify(exactly = 1) { costCenterRepository.findByExternalId(externalId) }
 

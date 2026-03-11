@@ -33,8 +33,8 @@ val mockkVersion = "5.0.1"
 val jsonUnitVersion = "5.1.0"
 val awaitilityVersion = "4.3.0"
 val hypersistenceUtilsVersion = "3.15.1"
-val greenMailVersion = "2.1.3"
 val kotlinLoggingJvmVersion = "7.0.14"
+val mailpitVersion = "1.3.0"
 
 dependencies {
     // spring
@@ -54,7 +54,6 @@ dependencies {
     // utilities
     implementation("com.google.guava:guava:$guavaVersion")
     implementation("io.github.oshai:kotlin-logging-jvm:$kotlinLoggingJvmVersion")
-    implementation("io.hypersistence:hypersistence-utils-hibernate-71:$hypersistenceUtilsVersion")
 
     // kotlin
     implementation("org.jetbrains.kotlin:kotlin-reflect")
@@ -62,14 +61,16 @@ dependencies {
 
     // database
     runtimeOnly("org.postgresql:postgresql")
+    implementation("io.hypersistence:hypersistence-utils-hibernate-71:${hypersistenceUtilsVersion}")
 
     // testing
-    testImplementation("org.springframework.boot:spring-boot-testcontainers")
     testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
     testImplementation("org.springframework.boot:spring-boot-starter-liquibase-test")
     testImplementation("org.springframework.boot:spring-boot-starter-validation-test")
     testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
     testImplementation("org.springframework.boot:spring-boot-starter-security-test")
+
+    testImplementation("org.springframework.boot:spring-boot-testcontainers")
 
     testImplementation("org.assertj:assertj-core:$assertJVersion")
 
@@ -81,17 +82,11 @@ dependencies {
     testImplementation("org.awaitility:awaitility:$awaitilityVersion")
     testImplementation("org.awaitility:awaitility-kotlin:$awaitilityVersion")
 
-    testImplementation("com.icegreen:greenmail-junit5:$greenMailVersion")
-
     // testcontainers
     testImplementation("org.testcontainers:testcontainers-junit-jupiter")
     testImplementation("org.testcontainers:testcontainers-postgresql")
-}
 
-dependencyManagement {
-    imports {
-        mavenBom("org.testcontainers:testcontainers-bom:$testcontainersVersion")
-    }
+    testImplementation("ch.martinelli.oss:testcontainers-mailpit:$mailpitVersion")
 }
 
 allOpen {
@@ -103,6 +98,7 @@ allOpen {
 tasks {
     test {
         useJUnitPlatform()
+        maxParallelForks = Runtime.getRuntime().availableProcessors()
     }
 
     bootJar {

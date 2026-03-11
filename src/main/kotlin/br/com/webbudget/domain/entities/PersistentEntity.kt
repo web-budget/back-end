@@ -17,7 +17,7 @@ import java.util.UUID
 
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener::class)
-open class PersistentEntity<T : Serializable> {
+class PersistentEntity<T : Serializable> {
 
     @field:Id
     @field:GeneratedValue(strategy = GenerationType.IDENTITY)

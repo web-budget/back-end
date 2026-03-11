@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="202603032335" author="${arthur}">
+        <addColumn tableName="cost_centers" schemaName="registration">
+            <column name="id_parent" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+
+        <addForeignKeyConstraint constraintName="fk_parent_on_cost_centers"
+                                 baseColumnNames="id_parent"
+                                 baseTableName="cost_centers"
+                                 baseTableSchemaName="registration"
+                                 referencedTableName="cost_centers"
+                                 referencedTableSchemaName="registration"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+</databaseChangeLog>

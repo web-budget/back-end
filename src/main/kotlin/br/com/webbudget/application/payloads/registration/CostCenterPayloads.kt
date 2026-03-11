@@ -22,7 +22,8 @@ data class CostCenterCreateForm(
     val name: String?,
     val description: String? = null,
     val incomeBudget: BigDecimal? = null,
-    val expenseBudget: BigDecimal? = null
+    val expenseBudget: BigDecimal? = null,
+    val parentCostCenter: UUID? = null
 )
 
 data class CostCenterUpdateForm(
@@ -33,7 +34,8 @@ data class CostCenterUpdateForm(
     var active: Boolean?,
     val description: String?,
     val incomeBudget: BigDecimal? = null,
-    val expenseBudget: BigDecimal? = null
+    val expenseBudget: BigDecimal? = null,
+    val parentCostCenter: UUID? = null
 )
 
 data class CostCenterView(
@@ -42,7 +44,8 @@ data class CostCenterView(
     val active: Boolean,
     val description: String? = null,
     val incomeBudget: BigDecimal? = null,
-    val expenseBudget: BigDecimal? = null
+    val expenseBudget: BigDecimal? = null,
+    val parentCostCenter: CostCenterListView? = null
 )
 
 data class CostCenterListView(
