@@ -53,7 +53,7 @@ Keep service methods focused and explicit. Prefer small private helpers over lon
 
 ## Testing Guidelines
 
-Tests use JUnit 5, Spring Boot Test, Testcontainers (PostgreSQL), MockK, AssertJ, GreenMail (email), and JSON Unit.
+Tests use JUnit 5, Spring Boot Test, Testcontainers (PostgreSQL, Mailpit), MockK, AssertJ, and JSON Unit.
 
 - **Unit tests:** suffix `UTest` (e.g., `UserMapperUTest.kt`). No Spring context, no database.
 - **Integration tests:** suffix `ITest` (e.g., `UserServiceITest.kt`). Extend `BaseIntegrationTest` or `BaseControllerIntegrationTest`. Require Docker.
