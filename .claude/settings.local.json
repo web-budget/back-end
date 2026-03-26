@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gradlew:*)",
+      "Bash(ls:*)",
+      "Bash(curl -s https://repo1.maven.org/maven2/org/springframework/boot/spring-boot-starter-parent/maven-metadata.xml)",
+      "Bash(grep -E \"\\\\.kt$|\\\\.yml$|\\\\.properties$|src/\")",
+      "Bash(git ls-tree:*)",
+      "Bash(grep -E \"\\\\.\\(kt|yml|properties|xml\\)$\")",
+      "Bash(docker-compose up:*)",
+      "Bash(docker ps:*)",
+      "Bash(docker exec:*)",
+      "Bash(docker-compose down:*)",
+      "Bash(git commit:*)",
+      "Read(//c/Users/arthur/.claude/**)"
+    ]
+  }
+}
