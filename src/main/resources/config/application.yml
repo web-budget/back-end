@@ -53,8 +53,7 @@ management:
 web-budget:
   frontend-url: ${APPLICATION_FRONTEND_URL:http://localhost:8080}
   jwt:
-    private-key: classpath:keys/rsa.key
-    public-key: classpath:keys/rsa.pub
+    secret: ${APPLICATION_JWT_SECRET}
     expiration-seconds: ${APPLICATION_JWT_TIMEOUT:3600} # seconds
   mail:
     reply-to-address: ${MAIL_REPLY_TO_ADDRESS:noreply@webbudget.com.br}

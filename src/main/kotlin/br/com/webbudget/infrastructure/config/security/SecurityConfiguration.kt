@@ -3,7 +3,7 @@ package br.com.webbudget.infrastructure.config.security
 import br.com.webbudget.domain.entities.administration.Role
 import br.com.webbudget.infrastructure.repository.administration.UserRepository
 import com.nimbusds.jose.jwk.JWKSet
-import com.nimbusds.jose.jwk.RSAKey
+import com.nimbusds.jose.jwk.OctetSequenceKey
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet
 import com.nimbusds.jose.proc.SecurityContext
 import jakarta.servlet.http.HttpServletRequest
@@ -31,16 +31,13 @@ import org.springframework.security.web.SecurityFilterChain
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
-import java.security.interfaces.RSAPrivateKey
-import java.security.interfaces.RSAPublicKey
+import javax.crypto.spec.SecretKeySpec
 
 @Configuration
 @EnableWebSecurity
 class SecurityConfiguration(
-    @param:Value($$"${web-budget.jwt.public-key}")
-    private val publicKey: RSAPublicKey,
-    @param:Value($$"${web-budget.jwt.private-key}")
-    private val privateKey: RSAPrivateKey,
+    @param:Value($$"${web-budget.jwt.secret}")
+    private val jwtSecret: String,
     private val userRepository: UserRepository
 ) {
 
@@ -111,11 +108,11 @@ class SecurityConfiguration(
     }
 
     @Bean
-    fun configureJwtDecoder(): JwtDecoder = NimbusJwtDecoder.withPublicKey(publicKey).build()
+    fun configureJwtDecoder(): JwtDecoder = NimbusJwtDecoder.withSecretKey(secretKey()).build()
 
     @Bean
     fun configureJwtEncoder(): JwtEncoder {
-        val jwk = RSAKey.Builder(publicKey).privateKey(privateKey).build()
+        val jwk = OctetSequenceKey.Builder(secretKey()).build()
         val jwkSource = ImmutableJWKSet<SecurityContext>(JWKSet(jwk))
         return NimbusJwtEncoder(jwkSource)
     }
@@ -129,6 +126,8 @@ class SecurityConfiguration(
             ?.let { AuthenticableUser.of(it) }
             ?: throw UsernameNotFoundException("User [$username] not found")
     }
+
+    private fun secretKey() = SecretKeySpec(jwtSecret.toByteArray(Charsets.UTF_8), "HmacSHA256")
 
     companion object {
         private const val BCRYPT_STRENGTH = 11
