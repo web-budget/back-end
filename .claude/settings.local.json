@@ -12,7 +12,9 @@
       "Bash(docker exec:*)",
       "Bash(docker-compose down:*)",
       "Bash(git commit:*)",
-      "Read(//c/Users/arthur/.claude/**)"
+      "mcp__github__issue_read",
+      "mcp__MCP_DOCKER__get_run_configurations",
+      "Bash(./gradlew:*)"
     ]
   }
 }
