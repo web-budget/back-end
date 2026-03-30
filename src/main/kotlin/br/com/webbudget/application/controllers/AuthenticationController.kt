@@ -4,7 +4,9 @@ import br.com.webbudget.application.payloads.ProfileView
 import br.com.webbudget.domain.services.administration.TokenService
 import br.com.webbudget.infrastructure.repository.administration.UserRepository
 import jakarta.servlet.http.HttpServletResponse
+import org.jspecify.annotations.Nullable
 import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseCookie
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.Authentication
@@ -44,7 +46,11 @@ class AuthenticationController(
     }
 
     @GetMapping("/me")
-    fun me(authentication: Authentication): ResponseEntity<ProfileView> {
+    fun me(authentication: Authentication?): ResponseEntity<ProfileView> {
+
+        if (authentication == null) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build()
+        }
 
         val username = authentication.name
 

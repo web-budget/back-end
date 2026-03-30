@@ -1,6 +1,8 @@
 package br.com.webbudget.domain.services.administration
 
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.security.oauth2.jose.jws.MacAlgorithm
+import org.springframework.security.oauth2.jwt.JwsHeader
 import org.springframework.security.oauth2.jwt.JwtClaimsSet
 import org.springframework.security.oauth2.jwt.JwtEncoder
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters
@@ -26,7 +28,8 @@ class TokenService(
             .expiresAt(Instant.now().plusSeconds(expirationSeconds))
             .build()
 
-        val jwt = jwtEncoder.encode(JwtEncoderParameters.from(claims))
+        val jwsHeader = JwsHeader.with(MacAlgorithm.HS256).build()
+        val jwt = jwtEncoder.encode(JwtEncoderParameters.from(jwsHeader, claims))
 
         return jwt.tokenValue
     }
