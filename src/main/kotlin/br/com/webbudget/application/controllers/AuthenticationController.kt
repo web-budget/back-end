@@ -24,7 +24,7 @@ class AuthenticationController(
 ) {
 
     @PostMapping("/login")
-    fun login(authentication: Authentication, response: HttpServletResponse): ResponseEntity<Void> {
+    fun login(authentication: Authentication, response: HttpServletResponse): ResponseEntity<Unit> {
 
         val username = authentication.name
 
@@ -40,7 +40,7 @@ class AuthenticationController(
     }
 
     @PostMapping("/logout")
-    fun logout(response: HttpServletResponse): ResponseEntity<Void> {
+    fun logout(response: HttpServletResponse): ResponseEntity<Unit> {
         response.setHeader(HttpHeaders.SET_COOKIE, buildCookie("", Duration.ofSeconds(0)).toString())
         return ResponseEntity.ok().build()
     }
