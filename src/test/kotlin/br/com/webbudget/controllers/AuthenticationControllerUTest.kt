@@ -115,6 +115,16 @@ class AuthenticationControllerUTest : BaseControllerIntegrationTest() {
         confirmVerified(userRepository)
     }
 
+    @Test
+    fun `should return forbidden if not authenticated`() {
+        mockMvc.get("$ENDPOINT_URL/me") {
+            contentType = MediaType.APPLICATION_JSON
+            with(csrf())
+        }.andExpect {
+            status { isForbidden() }
+        }
+    }
+
     companion object {
         private const val ENDPOINT_URL = "/auth"
     }
