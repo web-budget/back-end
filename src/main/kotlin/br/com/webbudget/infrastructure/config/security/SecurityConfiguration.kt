@@ -2,6 +2,7 @@ package br.com.webbudget.infrastructure.config.security
 
 import br.com.webbudget.domain.entities.administration.Role
 import br.com.webbudget.infrastructure.repository.administration.UserRepository
+import com.nimbusds.jose.JWSAlgorithm
 import com.nimbusds.jose.jwk.JWKSet
 import com.nimbusds.jose.jwk.OctetSequenceKey
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet
@@ -61,7 +62,7 @@ class SecurityConfiguration(
             httpBasic { }
             oauth2ResourceServer {
                 jwt {
-                    this.jwtAuthenticationConverter = jwtAuthenticationConverter()
+                    jwtAuthenticationConverter = jwtAuthenticationConverter()
                 }
                 bearerTokenResolver = cookieOrHeaderBearerTokenResolver()
             }
@@ -112,8 +113,13 @@ class SecurityConfiguration(
 
     @Bean
     fun configureJwtEncoder(): JwtEncoder {
-        val jwk = OctetSequenceKey.Builder(secretKey()).build()
+
+        val jwk = OctetSequenceKey.Builder(secretKey())
+            .algorithm(JWSAlgorithm.HS256)
+            .build()
+
         val jwkSource = ImmutableJWKSet<SecurityContext>(JWKSet(jwk))
+
         return NimbusJwtEncoder(jwkSource)
     }
 
