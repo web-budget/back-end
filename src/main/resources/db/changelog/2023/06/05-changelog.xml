@@ -45,5 +45,8 @@
                                  referencedTableName="users"
                                  referencedTableSchemaName="administration"
                                  referencedColumnNames="id"/>
+
+        <addUniqueConstraint columnNames="external_id" tableName="password_recover_attempts" schemaName="administration"/>
+        <addUniqueConstraint columnNames="id,external_id" tableName="password_recover_attempts" schemaName="administration"/>
     </changeSet>
 </databaseChangeLog>
