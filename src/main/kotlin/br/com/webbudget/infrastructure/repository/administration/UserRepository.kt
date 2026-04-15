@@ -10,6 +10,8 @@ import java.util.UUID
 @Repository
 interface UserRepository : BaseRepository<User> {
 
+    fun existsByEmail(email: String): Boolean
+
     fun findByEmail(username: String?): User?
 
     fun findByEmailAndExternalIdNot(email: String, externalId: UUID): User?
