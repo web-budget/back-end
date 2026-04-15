@@ -19,7 +19,9 @@ class AdminUserBootstrap(
 
     override fun run(args: ApplicationArguments) {
 
-        if (userRepository.existsByEmail(ADMIN_EMAIL)) {
+        val adminEmail = "admin@webbudget.com.br"
+
+        if (userRepository.existsByEmail(adminEmail)) {
             logger.debug { "Admin user already exists, skipping bootstrap" }
             return
         }
@@ -31,7 +33,7 @@ class AdminUserBootstrap(
         val admin = User(
             active = true,
             name = "Administrador",
-            email = ADMIN_EMAIL,
+            email = adminEmail,
             password = initialPassword,
             defaultLanguage = Language.PT_BR
         )
@@ -42,10 +44,12 @@ class AdminUserBootstrap(
         logger.warn { "Initial password is $initialPassword change it as soon as possible" }
     }
 
-    private fun generateInitialPassword(): String = "Admin@" + (1000..9999).random()
+    private fun generateInitialPassword(): String = "Admin@" + (MIN_RANGE..MAX_RANGE).random()
 
     companion object {
-        private const val ADMIN_EMAIL = "admin@webbudget.com.br"
+        private const val MIN_RANGE = 1000
+        private const val MAX_RANGE = 9999
+
         private val ALL_ROLES = listOf("ADMINISTRATION", "REGISTRATION", "FINANCIAL", "DASHBOARDS", "INVESTMENTS")
     }
 }
