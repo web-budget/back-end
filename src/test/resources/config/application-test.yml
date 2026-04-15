@@ -15,8 +15,6 @@ spring:
       mail.debug: true
 
 web-budget:
-  admin:
-    initial-password: test-admin-password
   jwt:
     secret: test-secret-used-only-in-tests-must-be-at-least-32-chars
 
