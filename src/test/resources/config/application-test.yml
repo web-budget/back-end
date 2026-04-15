@@ -2,10 +2,6 @@ spring:
   liquibase:
     contexts: test
 
-web-budget:
-  jwt:
-    secret: test-secret-used-only-in-tests-must-be-at-least-32-chars
-
   jpa:
     hibernate:
       ddl-auto: none
@@ -17,6 +13,12 @@ web-budget:
     password: mail_password
     properties:
       mail.debug: true
+
+web-budget:
+  admin:
+    initial-password: test-admin-password
+  jwt:
+    secret: test-secret-used-only-in-tests-must-be-at-least-32-chars
 
 logging:
   level:
