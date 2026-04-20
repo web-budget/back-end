@@ -59,7 +59,9 @@ class SecurityConfiguration(
                 authorize("/api/investments/**", hasRole(Role.INVESTMENTS))
                 authorize(anyRequest, authenticated)
             }
-            httpBasic { }
+            httpBasic {
+                authenticationEntryPoint = BearerTokenAuthenticationEntryPoint()
+            }
             oauth2ResourceServer {
                 jwt {
                     jwtAuthenticationConverter = jwtAuthenticationConverter()
