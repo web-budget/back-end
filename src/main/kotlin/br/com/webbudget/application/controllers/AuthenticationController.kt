@@ -48,7 +48,7 @@ class AuthenticationController(
     fun me(authentication: Authentication?): ResponseEntity<ProfileView> {
 
         if (authentication == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build()
         }
 
         val username = authentication.name
