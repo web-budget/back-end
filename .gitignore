@@ -35,3 +35,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+# claude local settings
+.claude/*.local*
