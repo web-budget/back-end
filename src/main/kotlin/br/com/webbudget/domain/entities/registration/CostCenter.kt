@@ -27,6 +27,10 @@ class CostCenter(
     var parent: CostCenter? = null
 ) : PersistentEntity<Long>() {
 
+    fun updateNameThroughParents() {
+        this.name = mapNameThroughParents(this)
+    }
+
     fun isBudgetValidationRequired(classificationType: Classification.Type): Boolean {
         return when (classificationType) {
             Classification.Type.INCOME -> this.incomeBudget != null
@@ -34,3 +38,7 @@ class CostCenter(
         }
     }
 }
+
+fun CostCenter.mapNameThroughParents(costCenter: CostCenter): String = costCenter.parent
+    ?.let { "${mapNameThroughParents(costCenter.parent!!)} > ${costCenter.name}" }
+    ?: costCenter.name

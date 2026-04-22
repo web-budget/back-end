@@ -27,7 +27,7 @@ class CostCenterMapper(
 
     fun mapToListView(costCenter: CostCenter): CostCenterListView = CostCenterListView(
         id = costCenter.externalId!!,
-        name = mapName(costCenter),
+        name = costCenter.name,
         active = costCenter.active,
         incomeBudget = costCenter.incomeBudget,
         expenseBudget = costCenter.expenseBudget
@@ -49,9 +49,6 @@ class CostCenterMapper(
         this.expenseBudget = form.expenseBudget
         this.parent = form.parentCostCenter?.let { mapParent(it) }
     }
-
-    private fun mapName(costCenter: CostCenter): String =
-        costCenter.parent?.let { "${it.name} > ${costCenter.name}" } ?: costCenter.name
 
     private fun mapParent(parentId: UUID): CostCenter = costCenterRepository.findByExternalId(parentId)
         ?: throw ResourceNotFoundException()

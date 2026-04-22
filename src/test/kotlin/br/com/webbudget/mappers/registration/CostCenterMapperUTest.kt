@@ -2,7 +2,6 @@ package br.com.webbudget.mappers.registration
 
 import br.com.webbudget.application.mappers.registration.CostCenterMapper
 import br.com.webbudget.application.payloads.registration.CostCenterCreateForm
-import br.com.webbudget.application.payloads.registration.CostCenterListView
 import br.com.webbudget.application.payloads.registration.CostCenterUpdateForm
 import br.com.webbudget.application.payloads.registration.CostCenterView
 import br.com.webbudget.domain.entities.registration.CostCenter
@@ -159,55 +158,26 @@ class CostCenterMapperUTest {
         extraAssert(view)
     }
 
-    @ParameterizedTest
-    @MethodSource("costCenterAndParentsNaming")
-    fun `should map domain object to list view`(
-        domainObject: CostCenter,
-        externalId: UUID,
-        extraAssert: (CostCenterListView) -> Unit
-    ) {
+    @Test
+    fun `should map domain object to list view`() {
+
+        val externalId = UUID.randomUUID()
+        val domainObject = createCostCenter(externalId = externalId)
+
         val view = costCenterMapper.mapToListView(domainObject)
 
         assertThat(view)
             .isNotNull
             .satisfies({
                 assertThat(it.id).isEqualTo(externalId)
+                assertThat(it.name).isEqualTo(domainObject.name)
                 assertThat(it.active).isEqualTo(domainObject.active)
                 assertThat(it.incomeBudget).isEqualTo(domainObject.incomeBudget)
                 assertThat(it.expenseBudget).isEqualTo(domainObject.expenseBudget)
             })
-
-        extraAssert(view)
     }
 
     companion object {
-
-        @JvmStatic
-        fun costCenterAndParentsNaming(): Stream<Arguments> {
-
-            val domainObjectWithoutParentExternalId = UUID.randomUUID()
-            val domainObjectWithoutParent = createCostCenter(externalId = domainObjectWithoutParentExternalId)
-
-            val parentCostCenter = createCostCenter(externalId = UUID.randomUUID())
-
-            val domainObjectWithParentExternalId = UUID.randomUUID()
-            val domainObjectWithParent = createCostCenter(
-                externalId = domainObjectWithParentExternalId,
-                parentCostCenter = parentCostCenter
-            )
-
-            val assertParentNaming = { view: CostCenterListView ->
-                assertThat(view.name).isEqualTo("${parentCostCenter.name} > ${domainObjectWithParent.name}")
-            }
-            val assertNamingWithoutParent = { view: CostCenterListView ->
-                assertThat(view.name).isEqualTo(domainObjectWithoutParent.name)
-            }
-
-            return Stream.of(
-                Arguments.of(domainObjectWithParent, domainObjectWithParentExternalId, assertParentNaming),
-                Arguments.of(domainObjectWithoutParent, domainObjectWithoutParentExternalId, assertNamingWithoutParent)
-            )
-        }
 
         @JvmStatic
         fun costCenterAndParents(): Stream<Arguments> {
