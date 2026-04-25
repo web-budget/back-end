@@ -23,12 +23,22 @@ class CostCenterNameValidator(
     }
 
     private fun validateSaved(value: CostCenter) {
-        costCenterRepository.findByNameIgnoreCaseAndExternalIdNot(value.name, value.externalId!!)
-            ?.let { throw ConflictingPropertyException(parameters = mapOf("cost-center.name" to value.name)) }
+        if (value.parent != null) {
+            costCenterRepository.findByFullNameIgnoreCaseAndExternalIdNot(value.fullName, value.externalId!!)
+                ?.let { throw ConflictingPropertyException(parameters = mapOf("cost-center.name" to value.name)) }
+        } else {
+            costCenterRepository.findByNameIgnoreCaseAndExternalIdNot(value.name, value.externalId!!)
+                ?.let { throw ConflictingPropertyException(parameters = mapOf("cost-center.name" to value.name)) }
+        }
     }
 
     private fun validateNotSaved(value: CostCenter) {
-        costCenterRepository.findByNameIgnoreCase(value.name)
-            ?.let { throw ConflictingPropertyException(parameters = mapOf("cost-center.name" to value.name)) }
+        if (value.parent != null) {
+            costCenterRepository.findByFullNameIgnoreCase(value.fullName)
+                ?.let { throw ConflictingPropertyException(parameters = mapOf("cost-center.name" to value.name)) }
+        } else {
+            costCenterRepository.findByNameIgnoreCase(value.name)
+                ?.let { throw ConflictingPropertyException(parameters = mapOf("cost-center.name" to value.name)) }
+        }
     }
 }

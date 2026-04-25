@@ -1,7 +1,6 @@
 package br.com.webbudget.domain.services.registration
 
 import br.com.webbudget.domain.entities.registration.CostCenter
-import br.com.webbudget.domain.entities.registration.mapNameThroughParents
 import br.com.webbudget.domain.validators.OnCreateValidation
 import br.com.webbudget.domain.validators.OnUpdateValidation
 import br.com.webbudget.domain.validators.registration.CostCenterValidator
@@ -23,7 +22,7 @@ class CostCenterService(
     @Transactional
     fun create(costCenter: CostCenter): UUID {
 
-        costCenter.updateNameThroughParents()
+        costCenter.updateFullName()
 
         creationValidators.forEach { it.validate(costCenter) }
         costCenterRepository.persist(costCenter)
@@ -34,9 +33,23 @@ class CostCenterService(
     @Transactional
     fun update(costCenter: CostCenter): CostCenter {
 
+        costCenter.updateFullName()
+
         updateValidators.forEach { it.validate(costCenter) }
 
-        return costCenterRepository.merge(costCenter)
+        val updated = costCenterRepository.merge(costCenter)
+        updateChildrenFullName(updated)
+
+        return updated
+    }
+
+    private fun updateChildrenFullName(parent: CostCenter) {
+        costCenterRepository.findByParent(parent)
+            .forEach {
+                it.updateFullName()
+                costCenterRepository.merge(it)
+                updateChildrenFullName(it)
+            }
     }
 
     @Transactional
