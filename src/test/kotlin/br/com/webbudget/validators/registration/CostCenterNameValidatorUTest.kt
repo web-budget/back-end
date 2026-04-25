@@ -43,6 +43,27 @@ class CostCenterNameValidatorUTest {
     }
 
     @Test
+    fun `should fail for different entities and equal name with parent`() {
+
+        val expectedName = "Parent > Cost Center"
+        val parent = createCostCenter(id = 2L, name = "Parent")
+
+        every {
+            costCenterRepository.findByFullNameIgnoreCase(expectedName)
+        } returns createCostCenter(parentCostCenter = parent)
+
+        val toValidate = createCostCenter(id = null, externalId = null, parentCostCenter = parent)
+        toValidate.updateFullName()
+
+        assertThatThrownBy { costCenterNameValidator.validate(toValidate) }
+            .isInstanceOf(ConflictingPropertyException::class.java)
+
+        verify(exactly = 1) { costCenterRepository.findByFullNameIgnoreCase(expectedName) }
+
+        confirmVerified(costCenterRepository)
+    }
+
+    @Test
     fun `should not fail if entities are equal`() {
 
         val externalId = UUID.randomUUID()
@@ -57,6 +78,30 @@ class CostCenterNameValidatorUTest {
 
         verify(exactly = 1) {
             costCenterRepository.findByNameIgnoreCaseAndExternalIdNot("Cost Center", externalId)
+        }
+
+        confirmVerified(costCenterRepository)
+    }
+
+    @Test
+    fun `should not fail if entities are equal with parent`() {
+
+        val expectedName = "Parent > Cost Center"
+        val parent = createCostCenter(id = 2L, name = "Parent")
+
+        val externalId = UUID.randomUUID()
+        val toValidate = createCostCenter(id = 1L, externalId = externalId, parentCostCenter = parent)
+        toValidate.updateFullName()
+
+        every {
+            costCenterRepository.findByFullNameIgnoreCaseAndExternalIdNot(expectedName, externalId)
+        } returns null
+
+        assertThatNoException()
+            .isThrownBy { costCenterNameValidator.validate(toValidate) }
+
+        verify(exactly = 1) {
+            costCenterRepository.findByFullNameIgnoreCaseAndExternalIdNot(expectedName, externalId)
         }
 
         confirmVerified(costCenterRepository)

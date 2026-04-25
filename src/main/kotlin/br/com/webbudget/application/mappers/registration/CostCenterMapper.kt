@@ -27,7 +27,8 @@ class CostCenterMapper(
 
     fun mapToListView(costCenter: CostCenter): CostCenterListView = CostCenterListView(
         id = costCenter.externalId!!,
-        name = mapName(costCenter),
+        name = costCenter.name,
+        fullName = costCenter.fullName,
         active = costCenter.active,
         incomeBudget = costCenter.incomeBudget,
         expenseBudget = costCenter.expenseBudget
@@ -35,6 +36,7 @@ class CostCenterMapper(
 
     fun mapToDomain(form: CostCenterCreateForm): CostCenter = CostCenter(
         name = form.name!!,
+        fullName = form.name, // this will be mapped correctly by the service before save/update
         description = form.description,
         incomeBudget = form.incomeBudget,
         expenseBudget = form.expenseBudget,
@@ -50,10 +52,6 @@ class CostCenterMapper(
         this.parent = form.parentCostCenter?.let { mapParent(it) }
     }
 
-    private fun mapName(costCenter: CostCenter): String =
-        costCenter.parent?.let { "${it.name} > ${costCenter.name}" } ?: costCenter.name
-
     private fun mapParent(parentId: UUID): CostCenter = costCenterRepository.findByExternalId(parentId)
         ?: throw ResourceNotFoundException()
-
 }

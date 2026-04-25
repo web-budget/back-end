@@ -40,6 +40,33 @@ class CostCenterServiceITest : BaseIntegrationTest() {
                 assertThat(it.createdOn).isNotNull()
                 assertThat(it.active).isEqualTo(toCreate.active)
                 assertThat(it.name).isEqualTo(toCreate.name)
+                assertThat(it.fullName).isEqualTo(toCreate.fullName)
+                assertThat(it.description).isEqualTo(toCreate.description)
+            })
+    }
+
+    @Test
+    @Sql("/sql/registration/clear-tables.sql", "/sql/registration/create-cost-centers.sql")
+    fun `should create and name it correctly with parent hierarchy`() {
+
+        val parent = costCenterRepository.findByExternalId(UUID.fromString("3cb5732d-2551-4eb9-8b41-f5d312ba7aac"))
+            ?: fail { OBJECT_NOT_FOUND_ERROR }
+
+        val toCreate = createCostCenter(parentCostCenter = parent)
+        val externalId = costCenterService.create(toCreate)
+
+        val created = costCenterRepository.findByExternalId(externalId)
+            ?: fail(OBJECT_NOT_FOUND_ERROR)
+
+        assertThat(created)
+            .satisfies({
+                assertThat(it.id).isNotNull()
+                assertThat(it.externalId).isEqualTo(externalId)
+                assertThat(it.version).isNotNull()
+                assertThat(it.createdOn).isNotNull()
+                assertThat(it.active).isEqualTo(toCreate.active)
+                assertThat(it.name).isEqualTo(toCreate.name)
+                assertThat(it.fullName).isEqualTo("${parent.name} > ${toCreate.name}")
                 assertThat(it.description).isEqualTo(toCreate.description)
             })
     }
@@ -52,6 +79,19 @@ class CostCenterServiceITest : BaseIntegrationTest() {
         costCenterService.create(toCreate)
 
         val duplicated = createCostCenter()
+
+        assertThatThrownBy { costCenterService.create(duplicated) }
+            .isInstanceOf(ConflictingPropertyException::class.java)
+    }
+
+    @Test
+    @Sql("/sql/registration/clear-tables.sql", "/sql/registration/create-cost-centers.sql")
+    fun `should not create when name is duplicated and has parent hierarchy`() {
+
+        val parent = costCenterRepository.findByExternalId(UUID.fromString("3cb5732d-2551-4eb9-8b41-f5d312ba7aac"))
+            ?: fail { OBJECT_NOT_FOUND_ERROR }
+
+        val duplicated = createCostCenter(name = "Impostos", parentCostCenter = parent)
 
         assertThatThrownBy { costCenterService.create(duplicated) }
             .isInstanceOf(ConflictingPropertyException::class.java)
@@ -85,8 +125,61 @@ class CostCenterServiceITest : BaseIntegrationTest() {
     }
 
     @Test
-    @Sql("/sql/registration/clear-tables.sql")
+    @Sql("/sql/registration/clear-tables.sql", "/sql/registration/create-cost-centers.sql")
+    fun `should update with parent hierarchy`() {
+
+        val newParent = costCenterRepository.findByExternalId(UUID.fromString("52e3456b-1b0d-42c5-8be0-07ddaecce441"))
+            ?: fail(OBJECT_NOT_FOUND_ERROR)
+
+        val externalId = UUID.fromString("99a9e2df-0980-4724-b9a4-bba7d8c12120")
+        val toUpdate = costCenterRepository.findByExternalId(externalId) ?: fail(OBJECT_NOT_FOUND_ERROR)
+
+        toUpdate.apply {
+            this.name = "Manutenção"
+            this.description = "Updated"
+            this.active = false
+            this.parent = newParent
+        }
+
+        val updated = costCenterService.update(toUpdate)
+
+        assertThat(updated)
+            .isNotNull
+            .satisfies({
+                assertThat(it.id).isEqualTo(toUpdate.id)
+                assertThat(it.externalId).isEqualTo(externalId)
+                assertThat(it.version).isGreaterThan(toUpdate.version)
+                assertThat(it.active).isEqualTo(toUpdate.active)
+                assertThat(it.name).isEqualTo(toUpdate.name)
+                assertThat(it.fullName).isEqualTo("${newParent.name} > ${toUpdate.name}")
+                assertThat(it.description).isEqualTo(toUpdate.description)
+            })
+    }
+
+    @Test
+    @Sql("/sql/registration/clear-tables.sql", "/sql/registration/create-cost-centers.sql")
     fun `should not update when name is duplicated`() {
+
+        val parent = costCenterRepository.findByExternalId(UUID.fromString("52e3456b-1b0d-42c5-8be0-07ddaecce441"))
+            ?: fail(OBJECT_NOT_FOUND_ERROR)
+
+        costCenterService.create(createCostCenter(name = "Cost Center One", parentCostCenter = parent))
+        val externalId = costCenterService.create(createCostCenter(name = "Cost Center Two", parentCostCenter = parent))
+
+        val toUpdate = costCenterRepository.findByExternalId(externalId)
+            ?: fail(OBJECT_NOT_FOUND_ERROR)
+
+        toUpdate.apply {
+            this.name = "Cost Center One"
+        }
+
+        assertThatThrownBy { costCenterService.update(toUpdate) }
+            .isInstanceOf(ConflictingPropertyException::class.java)
+    }
+
+    @Test
+    @Sql("/sql/registration/clear-tables.sql")
+    fun `should not update when name is duplicated with parent hierarchy`() {
 
         costCenterService.create(createCostCenter(name = "Cost Center One"))
         val externalId = costCenterService.create(createCostCenter(name = "Cost Center Two"))
@@ -100,6 +193,34 @@ class CostCenterServiceITest : BaseIntegrationTest() {
 
         assertThatThrownBy { costCenterService.update(toUpdate) }
             .isInstanceOf(ConflictingPropertyException::class.java)
+    }
+
+    @Test
+    @Sql("/sql/registration/clear-tables.sql")
+    fun `should update children full name when parent name changes`() {
+
+        val parentId = costCenterService.create(createCostCenter(name = "Parent"))
+        val parent = costCenterRepository.findByExternalId(parentId)
+            ?: fail(OBJECT_NOT_FOUND_ERROR)
+
+        val childId = costCenterService.create(createCostCenter(name = "Child", parentCostCenter = parent))
+        val child = costCenterRepository.findByExternalId(childId)
+            ?: fail(OBJECT_NOT_FOUND_ERROR)
+
+        val grandChildId = costCenterService.create(createCostCenter(name = "Grandchild", parentCostCenter = child))
+
+        parent.name = "Updated Parent"
+        costCenterService.update(parent)
+
+        val updatedChild = costCenterRepository.findByExternalId(childId)
+            ?: fail(OBJECT_NOT_FOUND_ERROR)
+
+        assertThat(updatedChild.fullName).isEqualTo("Updated Parent > Child")
+
+        val updatedGrandChild = costCenterRepository.findByExternalId(grandChildId)
+            ?: fail(OBJECT_NOT_FOUND_ERROR)
+
+        assertThat(updatedGrandChild.fullName).isEqualTo("Updated Parent > Child > Grandchild")
     }
 
     @Test

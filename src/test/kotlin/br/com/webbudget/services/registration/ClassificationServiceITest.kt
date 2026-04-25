@@ -5,8 +5,8 @@ import br.com.webbudget.domain.entities.registration.Classification
 import br.com.webbudget.domain.exceptions.BusinessException
 import br.com.webbudget.domain.exceptions.ConflictingPropertyException
 import br.com.webbudget.domain.services.registration.ClassificationService
-import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository
 import br.com.webbudget.infrastructure.repository.registration.ClassificationRepository
+import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository
 import br.com.webbudget.utilities.fixtures.createClassification
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy

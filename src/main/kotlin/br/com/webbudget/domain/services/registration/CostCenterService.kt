@@ -22,18 +22,34 @@ class CostCenterService(
     @Transactional
     fun create(costCenter: CostCenter): UUID {
 
-        creationValidators.forEach { it.validate(costCenter) }
+        costCenter.updateFullName()
 
-        val created = costCenterRepository.persist(costCenter)
-        return created.externalId!!
+        creationValidators.forEach { it.validate(costCenter) }
+        costCenterRepository.persist(costCenter)
+
+        return costCenter.externalId!!
     }
 
     @Transactional
     fun update(costCenter: CostCenter): CostCenter {
 
+        costCenter.updateFullName()
+
         updateValidators.forEach { it.validate(costCenter) }
 
-        return costCenterRepository.merge(costCenter)
+        val updated = costCenterRepository.merge(costCenter)
+        updateChildrenFullName(updated)
+
+        return updated
+    }
+
+    private fun updateChildrenFullName(parent: CostCenter) {
+        costCenterRepository.findByParent(parent)
+            .forEach {
+                it.updateFullName()
+                costCenterRepository.merge(it)
+                updateChildrenFullName(it)
+            }
     }
 
     @Transactional

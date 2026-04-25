@@ -10,14 +10,24 @@ import java.util.UUID
 @Repository
 interface CostCenterRepository : BaseRepository<CostCenter> {
 
+    fun findByFullNameIgnoreCase(fullName: String): CostCenter?
+
+    fun findByFullNameIgnoreCaseAndExternalIdNot(fullName: String, externalId: UUID): CostCenter?
+
     fun findByNameIgnoreCase(name: String): CostCenter?
 
     fun findByNameIgnoreCaseAndExternalIdNot(name: String, externalId: UUID): CostCenter?
+
+    fun findByParent(parent: CostCenter): List<CostCenter>
 
     object Specifications : SpecificationHelpers {
 
         fun byName(name: String?) = Specification<CostCenter> { root, _, builder ->
             name?.let { builder.like(builder.lower(root["name"]), likeIgnoreCase(name)) }
+        }
+
+        fun byFullName(name: String?) = Specification<CostCenter> { root, _, builder ->
+            name?.let { builder.like(builder.lower(root["fullName"]), likeIgnoreCase(name)) }
         }
 
         fun byDescription(description: String?) = Specification<CostCenter> { root, _, builder ->

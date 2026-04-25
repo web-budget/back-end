@@ -14,6 +14,8 @@ import java.math.BigDecimal
 class CostCenter(
     @field:Column(name = "name", length = 150, nullable = false)
     var name: String,
+    @field:Column(name = "full_name", length = 300, nullable = false)
+    var fullName: String,
     @field:Column(name = "active", nullable = false)
     var active: Boolean = true,
     @field:Column(name = "description", columnDefinition = "TEXT")
@@ -27,6 +29,10 @@ class CostCenter(
     var parent: CostCenter? = null
 ) : PersistentEntity<Long>() {
 
+    fun updateFullName() {
+        this.fullName = mapNameThroughParents(this)
+    }
+
     fun isBudgetValidationRequired(classificationType: Classification.Type): Boolean {
         return when (classificationType) {
             Classification.Type.INCOME -> this.incomeBudget != null
@@ -34,3 +40,7 @@ class CostCenter(
         }
     }
 }
+
+fun CostCenter.mapNameThroughParents(costCenter: CostCenter): String = costCenter.parent
+    ?.let { "${mapNameThroughParents(costCenter.parent!!)} > ${costCenter.name}" }
+    ?: costCenter.name
