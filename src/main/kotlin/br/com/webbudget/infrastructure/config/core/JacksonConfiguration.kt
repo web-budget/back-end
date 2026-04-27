@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils
 import org.springframework.boot.jackson.autoconfigure.JsonMapperBuilderCustomizer
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.data.web.config.EnableSpringDataWebSupport
 import tools.jackson.core.JsonParser
 import tools.jackson.databind.DeserializationContext
 import tools.jackson.databind.DeserializationFeature
@@ -16,6 +17,7 @@ import tools.jackson.module.kotlin.KotlinFeature.NullIsSameAsDefault
 import tools.jackson.module.kotlin.KotlinModule
 
 @Configuration(proxyBeanMethods = false)
+@EnableSpringDataWebSupport(pageSerializationMode = EnableSpringDataWebSupport.PageSerializationMode.VIA_DTO)
 class JacksonConfiguration {
 
     @Bean

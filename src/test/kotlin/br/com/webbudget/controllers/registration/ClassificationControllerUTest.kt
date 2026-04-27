@@ -284,12 +284,12 @@ class ClassificationControllerUTest : BaseControllerIntegrationTest() {
             .contentAsString
 
         assertThatJson(jsonResponse)
+            .node("page")
             .isObject
             .containsEntry("totalElements", 1)
             .containsEntry("totalPages", 1)
             .containsEntry("size", pageRequest.pageSize)
             .containsEntry("number", pageRequest.pageNumber)
-            .containsEntry("empty", false)
 
         assertThatJson(jsonResponse)
             .node("content")
