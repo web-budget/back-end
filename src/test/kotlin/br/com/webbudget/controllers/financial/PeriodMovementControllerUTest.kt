@@ -85,15 +85,15 @@ class PeriodMovementControllerUTest : BaseControllerIntegrationTest() {
 
         val externalId = UUID.randomUUID()
         val financialPeriodId = UUID.fromString("bc67ba91-7c0a-466d-877c-0b1fe2fb56bd")
-        val movementClassId = UUID.fromString("ff8ac873-2cbd-43dd-a3e8-2bc451f4e3fa")
+        val classificationId = UUID.fromString("ff8ac873-2cbd-43dd-a3e8-2bc451f4e3fa")
         val costCenterId = UUID.fromString("52e3456b-1b0d-42c5-8be0-07ddaecce441")
 
-        val movementClass = createClassification()
+        val classification = createClassification()
         val costCenter = createCostCenter()
         val financialPeriod = createFinancialPeriod()
 
         every { periodMovementService.create(any<PeriodMovement>()) } returns externalId
-        every { classificationRepository.findByExternalId(eq(movementClassId)) } returns movementClass
+        every { classificationRepository.findByExternalId(eq(classificationId)) } returns classification
         every { costCenterRepository.findByExternalId(eq(costCenterId)) } returns costCenter
         every { financialPeriodRepository.findByExternalId(eq(financialPeriodId)) } returns financialPeriod
 
@@ -123,18 +123,18 @@ class PeriodMovementControllerUTest : BaseControllerIntegrationTest() {
 
         val externalId = UUID.randomUUID()
         val financialPeriodId = UUID.fromString("bc67ba91-7c0a-466d-877c-0b1fe2fb56bd")
-        val movementClassId = UUID.fromString("ff8ac873-2cbd-43dd-a3e8-2bc451f4e3fa")
+        val classificationId = UUID.fromString("ff8ac873-2cbd-43dd-a3e8-2bc451f4e3fa")
         val costCenterId = UUID.fromString("52e3456b-1b0d-42c5-8be0-07ddaecce441")
 
         val periodMovement = createPeriodMovement()
-        val movementClass = createClassification()
+        val classification = createClassification()
         val costCenter = createCostCenter()
         val financialPeriod = createFinancialPeriod()
 
         every { periodMovementService.update(any<PeriodMovement>()) } returns periodMovement
 
         every { periodMovementRepository.findByExternalId(eq(externalId)) } returns periodMovement
-        every { classificationRepository.findByExternalId(eq(movementClassId)) } returns movementClass
+        every { classificationRepository.findByExternalId(eq(classificationId)) } returns classification
         every { costCenterRepository.findByExternalId(eq(costCenterId)) } returns costCenter
         every { financialPeriodRepository.findByExternalId(eq(financialPeriodId)) } returns financialPeriod
 
@@ -267,15 +267,15 @@ class PeriodMovementControllerUTest : BaseControllerIntegrationTest() {
     fun `should expect bad request if validations failed`() {
 
         val financialPeriodId = UUID.fromString("bc67ba91-7c0a-466d-877c-0b1fe2fb56bd")
-        val movementClassId = UUID.fromString("ff8ac873-2cbd-43dd-a3e8-2bc451f4e3fa")
+        val classificationId = UUID.fromString("ff8ac873-2cbd-43dd-a3e8-2bc451f4e3fa")
         val costCenterId = UUID.fromString("52e3456b-1b0d-42c5-8be0-07ddaecce441")
 
-        val movementClass = createClassification()
+        val classification = createClassification()
         val costCenter = createCostCenter()
         val financialPeriod = createFinancialPeriod()
 
         every { periodMovementService.create(any<PeriodMovement>()) } throws BusinessException("Message", "Detail")
-        every { classificationRepository.findByExternalId(eq(movementClassId)) } returns movementClass
+        every { classificationRepository.findByExternalId(eq(classificationId)) } returns classification
         every { costCenterRepository.findByExternalId(eq(costCenterId)) } returns costCenter
         every { financialPeriodRepository.findByExternalId(eq(financialPeriodId)) } returns financialPeriod
 
