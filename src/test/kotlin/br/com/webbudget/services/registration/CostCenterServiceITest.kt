@@ -240,13 +240,14 @@ class CostCenterServiceITest : BaseIntegrationTest() {
 
     @Test
     @Sql(
+        "/sql/financial/clear-tables.sql",
         "/sql/registration/clear-tables.sql",
-        "/sql/registration/create-cost-centers.sql",
-        "/sql/registration/create-classifications.sql"
+        "/sql/registration/create-financial-period.sql",
+        "/sql/financial/create-period-movement.sql"
     )
     fun `should fail to delete when in use`() {
 
-        val externalId = UUID.fromString("52e3456b-1b0d-42c5-8be0-07ddaecce441")
+        val externalId = UUID.fromString("2bed30e7-419d-4097-841c-7d88fbc708ad")
 
         val toDelete = costCenterRepository.findByExternalId(externalId) ?: fail(OBJECT_NOT_FOUND_ERROR)
 

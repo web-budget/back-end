@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="202605101200" author="${arthur}">
+        <addColumn tableName="period_movements" schemaName="financial">
+            <column name="id_cost_center" type="bigint"/>
+        </addColumn>
+
+        <addColumn tableName="recurring_movements" schemaName="financial">
+            <column name="id_cost_center" type="bigint"/>
+        </addColumn>
+
+        <sql>
+            UPDATE financial.period_movements pm
+            SET id_cost_center = (
+                SELECT c.id_cost_center
+                FROM registration.classifications c
+                WHERE c.id = pm.id_classification
+            )
+        </sql>
+
+        <sql>
+            UPDATE financial.recurring_movements rm
+            SET id_cost_center = (
+                SELECT c.id_cost_center
+                FROM registration.classifications c
+                WHERE c.id = rm.id_classification
+            )
+        </sql>
+
+        <addNotNullConstraint tableName="period_movements" schemaName="financial"
+                              columnName="id_cost_center" columnDataType="bigint"/>
+
+        <addNotNullConstraint tableName="recurring_movements" schemaName="financial"
+                              columnName="id_cost_center" columnDataType="bigint"/>
+
+        <addForeignKeyConstraint constraintName="fk_cost_centers_on_period_movements"
+                                 baseColumnNames="id_cost_center"
+                                 baseTableName="period_movements"
+                                 baseTableSchemaName="financial"
+                                 referencedTableName="cost_centers"
+                                 referencedTableSchemaName="registration"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint constraintName="fk_cost_centers_on_recurring_movements"
+                                 baseColumnNames="id_cost_center"
+                                 baseTableName="recurring_movements"
+                                 baseTableSchemaName="financial"
+                                 referencedTableName="cost_centers"
+                                 referencedTableSchemaName="registration"
+                                 referencedColumnNames="id"/>
+
+        <dropForeignKeyConstraint baseTableName="classifications"
+                                  baseTableSchemaName="registration"
+                                  constraintName="fk_cost_centers_on_classifications"/>
+
+        <dropColumn tableName="classifications" schemaName="registration" columnName="id_cost_center"/>
+    </changeSet>
+</databaseChangeLog>

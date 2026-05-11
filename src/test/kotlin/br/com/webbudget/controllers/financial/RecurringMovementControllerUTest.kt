@@ -17,6 +17,7 @@ import br.com.webbudget.infrastructure.repository.registration.CostCenterReposit
 import br.com.webbudget.utilities.JsonPayload
 import br.com.webbudget.utilities.Roles
 import br.com.webbudget.utilities.fixtures.createClassification
+import br.com.webbudget.utilities.fixtures.createCostCenter
 import br.com.webbudget.utilities.fixtures.createRecurringMovement
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.confirmVerified
@@ -51,7 +52,6 @@ import java.util.UUID
 class RecurringMovementControllerUTest : BaseControllerIntegrationTest() {
 
     @MockkBean
-    @Suppress("UnusedPrivateMember")
     private lateinit var costCenterRepository: CostCenterRepository
 
     @MockkBean
@@ -78,11 +78,14 @@ class RecurringMovementControllerUTest : BaseControllerIntegrationTest() {
 
         val externalId = UUID.randomUUID()
         val classificationId = UUID.fromString("0100a0f9-ccbb-4f61-a6fa-fb4644361ffd")
+        val costCenterId = UUID.fromString("52e3456b-1b0d-42c5-8be0-07ddaecce441")
 
         val classification = createClassification()
+        val costCenter = createCostCenter()
 
         every { recurringMovementService.create(any<RecurringMovement>()) } returns externalId
         every { classificationRepository.findByExternalId(eq(classificationId)) } returns classification
+        every { costCenterRepository.findByExternalId(eq(costCenterId)) } returns costCenter
 
         mockMvc.post(ENDPOINT_URL) {
             contentType = MediaType.APPLICATION_JSON
@@ -97,8 +100,9 @@ class RecurringMovementControllerUTest : BaseControllerIntegrationTest() {
 
         verify(exactly = 1) { recurringMovementService.create(ofType<RecurringMovement>()) }
         verify(exactly = 1) { classificationRepository.findByExternalId(ofType<UUID>()) }
+        verify(exactly = 1) { costCenterRepository.findByExternalId(ofType<UUID>()) }
 
-        confirmVerified(recurringMovementService, classificationRepository)
+        confirmVerified(recurringMovementService, classificationRepository, costCenterRepository)
     }
 
     @Test
@@ -106,14 +110,17 @@ class RecurringMovementControllerUTest : BaseControllerIntegrationTest() {
 
         val externalId = UUID.randomUUID()
         val classificationId = UUID.fromString("0100a0f9-ccbb-4f61-a6fa-fb4644361ffd")
+        val costCenterId = UUID.fromString("52e3456b-1b0d-42c5-8be0-07ddaecce441")
 
         val recurringMovement = createRecurringMovement()
         val classification = createClassification()
+        val costCenter = createCostCenter()
 
         every { recurringMovementService.update(any<RecurringMovement>()) } returns recurringMovement
 
         every { recurringMovementRepository.findByExternalId(eq(externalId)) } returns recurringMovement
         every { classificationRepository.findByExternalId(eq(classificationId)) } returns classification
+        every { costCenterRepository.findByExternalId(eq(costCenterId)) } returns costCenter
 
         mockMvc.put("$ENDPOINT_URL/{id}", externalId) {
             contentType = MediaType.APPLICATION_JSON
@@ -124,11 +131,13 @@ class RecurringMovementControllerUTest : BaseControllerIntegrationTest() {
 
         verify(exactly = 1) { recurringMovementService.update(ofType<RecurringMovement>()) }
         verify(exactly = 1) { classificationRepository.findByExternalId(ofType<UUID>()) }
+        verify(exactly = 1) { costCenterRepository.findByExternalId(ofType<UUID>()) }
         verify(exactly = 1) { recurringMovementRepository.findByExternalId(ofType<UUID>()) }
 
         confirmVerified(
             recurringMovementService,
             classificationRepository,
+            costCenterRepository,
             recurringMovementRepository
         )
     }
@@ -182,6 +191,7 @@ class RecurringMovementControllerUTest : BaseControllerIntegrationTest() {
             "startingAt" to IS_NULL,
             "value" to IS_NULL,
             "classification" to IS_NULL,
+            "costCenter" to IS_NULL,
             "autoLaunch" to IS_NULL
         )
 
@@ -211,6 +221,7 @@ class RecurringMovementControllerUTest : BaseControllerIntegrationTest() {
             "name" to IS_NULL_OR_BLANK,
             "startingAt" to IS_NULL,
             "classification" to IS_NULL,
+            "costCenter" to IS_NULL,
             "autoLaunch" to IS_NULL
         )
 
@@ -231,21 +242,23 @@ class RecurringMovementControllerUTest : BaseControllerIntegrationTest() {
             .isObject
             .hasSize(requiredEntries.size)
             .containsExactlyInAnyOrderEntriesOf(requiredEntries)
-            .containsExactlyInAnyOrderEntriesOf(requiredEntries)
     }
 
     @Test
     fun `should expect bad request if validations failed`() {
 
         val classificationId = UUID.fromString("0100a0f9-ccbb-4f61-a6fa-fb4644361ffd")
+        val costCenterId = UUID.fromString("52e3456b-1b0d-42c5-8be0-07ddaecce441")
 
         val classification = createClassification()
+        val costCenter = createCostCenter()
 
         every { recurringMovementService.create(any<RecurringMovement>()) } throws BusinessException(
             "Message",
             "Detail"
         )
         every { classificationRepository.findByExternalId(eq(classificationId)) } returns classification
+        every { costCenterRepository.findByExternalId(eq(costCenterId)) } returns costCenter
 
         mockMvc.post(ENDPOINT_URL) {
             contentType = MediaType.APPLICATION_JSON
@@ -256,8 +269,9 @@ class RecurringMovementControllerUTest : BaseControllerIntegrationTest() {
 
         verify(exactly = 1) { recurringMovementService.create(ofType<RecurringMovement>()) }
         verify(exactly = 1) { classificationRepository.findByExternalId(ofType<UUID>()) }
+        verify(exactly = 1) { costCenterRepository.findByExternalId(ofType<UUID>()) }
 
-        confirmVerified(recurringMovementService, classificationRepository)
+        confirmVerified(recurringMovementService, classificationRepository, costCenterRepository)
     }
 
     @Test
@@ -282,6 +296,11 @@ class RecurringMovementControllerUTest : BaseControllerIntegrationTest() {
 
         assertThatJson(jsonResponse)
             .node("classification")
+            .isObject
+            .isNotNull
+
+        assertThatJson(jsonResponse)
+            .node("costCenter")
             .isObject
             .isNotNull
 

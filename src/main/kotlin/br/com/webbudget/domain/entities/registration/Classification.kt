@@ -6,8 +6,6 @@ import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
-import jakarta.persistence.JoinColumn
-import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 import java.math.BigDecimal
 
@@ -19,9 +17,6 @@ class Classification(
     @field:Enumerated(EnumType.STRING)
     @field:Column(name = "type", length = 45, nullable = false)
     var type: Type,
-    @field:ManyToOne(optional = false)
-    @field:JoinColumn(name = "id_cost_center", nullable = false)
-    var costCenter: CostCenter,
     @field:Column(name = "active", nullable = false)
     var active: Boolean = true,
     @field:Column(name = "budget")
@@ -29,8 +24,6 @@ class Classification(
     @field:Column(name = "description", columnDefinition = "TEXT")
     var description: String? = null,
 ) : PersistentEntity<Long>() {
-
-    fun isForIncome() = type == Type.INCOME
 
     enum class Type {
         INCOME, EXPENSE

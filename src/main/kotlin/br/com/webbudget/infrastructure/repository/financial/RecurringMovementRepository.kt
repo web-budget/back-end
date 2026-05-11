@@ -22,7 +22,7 @@ interface RecurringMovementRepository : BaseRepository<RecurringMovement> {
               )
         and (:#{#filter.states} is null or rm.state in :#{#filter.states})
         and (:#{#filter.classification} is null or cl.externalId = :#{#filter.classification})
-        and (:#{#filter.costCenter} is null or cl.costCenter.externalId = :#{#filter.costCenter})
+        and (:#{#filter.costCenter} is null or rm.costCenter.externalId = :#{#filter.costCenter})
         """
     )
     fun findByFilter(filter: RecurringMovementFilter, pageable: Pageable): Page<RecurringMovement>

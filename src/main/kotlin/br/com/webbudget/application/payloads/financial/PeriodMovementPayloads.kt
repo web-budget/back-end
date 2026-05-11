@@ -4,6 +4,7 @@ import br.com.webbudget.application.payloads.ErrorCodes.IS_NULL
 import br.com.webbudget.application.payloads.ErrorCodes.IS_NULL_OR_BLANK
 import br.com.webbudget.application.payloads.ErrorCodes.MAX_CHARS
 import br.com.webbudget.application.payloads.registration.ClassificationListView
+import br.com.webbudget.application.payloads.registration.CostCenterListView
 import br.com.webbudget.application.payloads.registration.FinancialPeriodListView
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
@@ -24,6 +25,8 @@ data class PeriodMovementCreateForm(
     var financialPeriod: UUID?,
     @field:NotNull(message = IS_NULL)
     var classification: UUID?,
+    @field:NotNull(message = IS_NULL)
+    var costCenter: UUID?,
     val description: String?,
 )
 
@@ -39,6 +42,8 @@ data class PeriodMovementUpdateForm(
     var financialPeriod: UUID? = null,
     @field:NotNull(message = IS_NULL)
     var classification: UUID? = null,
+    @field:NotNull(message = IS_NULL)
+    var costCenter: UUID? = null,
     val description: String? = null,
 )
 
@@ -49,6 +54,7 @@ data class PeriodMovementView(
     val value: BigDecimal,
     val state: String,
     val classification: ClassificationListView,
+    val costCenter: CostCenterListView,
     val financialPeriod: FinancialPeriodListView,
     val quoteNumber: Int? = null,
     val description: String? = null

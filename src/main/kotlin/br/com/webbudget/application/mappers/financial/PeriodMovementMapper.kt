@@ -1,6 +1,7 @@
 package br.com.webbudget.application.mappers.financial
 
 import br.com.webbudget.application.mappers.registration.ClassificationMapper
+import br.com.webbudget.application.mappers.registration.CostCenterMapper
 import br.com.webbudget.application.mappers.registration.FinancialPeriodMapper
 import br.com.webbudget.application.payloads.financial.PeriodMovementCreateForm
 import br.com.webbudget.application.payloads.financial.PeriodMovementListView
@@ -8,9 +9,11 @@ import br.com.webbudget.application.payloads.financial.PeriodMovementUpdateForm
 import br.com.webbudget.application.payloads.financial.PeriodMovementView
 import br.com.webbudget.domain.entities.financial.PeriodMovement
 import br.com.webbudget.domain.entities.registration.Classification
+import br.com.webbudget.domain.entities.registration.CostCenter
 import br.com.webbudget.domain.entities.registration.FinancialPeriod
 import br.com.webbudget.domain.exceptions.ResourceNotFoundException
 import br.com.webbudget.infrastructure.repository.registration.ClassificationRepository
+import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository
 import br.com.webbudget.infrastructure.repository.registration.FinancialPeriodRepository
 import org.springframework.stereotype.Component
 import java.util.UUID
@@ -18,8 +21,10 @@ import java.util.UUID
 @Component
 class PeriodMovementMapper(
     private val classificationMapper: ClassificationMapper,
+    private val costCenterMapper: CostCenterMapper,
     private val financialPeriodMapper: FinancialPeriodMapper,
     private val classificationRepository: ClassificationRepository,
+    private val costCenterRepository: CostCenterRepository,
     private val financialPeriodRepository: FinancialPeriodRepository
 ) {
 
@@ -30,6 +35,7 @@ class PeriodMovementMapper(
         value = periodMovement.value,
         state = periodMovement.state.name,
         classification = classificationMapper.mapToListView(periodMovement.classification),
+        costCenter = costCenterMapper.mapToListView(periodMovement.costCenter),
         financialPeriod = financialPeriodMapper.mapToListView(periodMovement.financialPeriod),
         quoteNumber = periodMovement.quoteNumber,
         description = periodMovement.description
@@ -49,6 +55,7 @@ class PeriodMovementMapper(
         dueDate = form.dueDate!!,
         value = form.value!!,
         classification = mapClassification(form.classification!!),
+        costCenter = mapCostCenter(form.costCenter!!),
         financialPeriod = mapFinancialPeriod(form.financialPeriod!!),
         description = form.description
     )
@@ -59,6 +66,7 @@ class PeriodMovementMapper(
         this.value = form.value!!
         this.financialPeriod = mapFinancialPeriod(form.financialPeriod!!)
         this.classification = mapClassification(form.classification!!)
+        this.costCenter = mapCostCenter(form.costCenter!!)
         this.description = form.description
     }
 
@@ -67,4 +75,7 @@ class PeriodMovementMapper(
 
     private fun mapClassification(externalId: UUID): Classification =
         classificationRepository.findByExternalId(externalId) ?: throw ResourceNotFoundException()
+
+    private fun mapCostCenter(externalId: UUID): CostCenter =
+        costCenterRepository.findByExternalId(externalId) ?: throw ResourceNotFoundException()
 }

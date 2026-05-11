@@ -11,6 +11,7 @@ import br.com.webbudget.infrastructure.repository.registration.ClassificationRep
 import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository
 import br.com.webbudget.infrastructure.repository.registration.FinancialPeriodRepository
 import br.com.webbudget.utilities.fixtures.createClassification
+import br.com.webbudget.utilities.fixtures.createCostCenter
 import br.com.webbudget.utilities.fixtures.createFinancialPeriod
 import br.com.webbudget.utilities.fixtures.createPeriodMovement
 import io.mockk.confirmVerified
@@ -42,14 +43,13 @@ class PeriodMovementMapperUTest {
 
     @BeforeEach
     fun setup() {
-
+        val classificationMapper = ClassificationMapper()
         val costCenterMapper = CostCenterMapper(costCenterRepository)
-
-        val classificationMapper = ClassificationMapper(costCenterMapper, costCenterRepository)
         val financialPeriodMapper = FinancialPeriodMapper()
 
         periodMovementMapper = PeriodMovementMapper(
-            classificationMapper, financialPeriodMapper, classificationRepository, financialPeriodRepository
+            classificationMapper, costCenterMapper, financialPeriodMapper,
+            classificationRepository, costCenterRepository, financialPeriodRepository
         )
     }
 
@@ -72,6 +72,7 @@ class PeriodMovementMapperUTest {
                 assertThat(it.description).isEqualTo(domainObject.description)
                 assertThat(it.financialPeriod).isNotNull
                 assertThat(it.classification).isNotNull
+                assertThat(it.costCenter).isNotNull
             })
     }
 
@@ -99,8 +100,10 @@ class PeriodMovementMapperUTest {
 
         val financialPeriodId = UUID.randomUUID()
         val classificationId = UUID.randomUUID()
+        val costCenterId = UUID.randomUUID()
 
         val classification = createClassification(externalId = classificationId)
+        val costCenter = createCostCenter(externalId = costCenterId)
         val financialPeriod = createFinancialPeriod(externalId = financialPeriodId)
 
         val form = PeriodMovementCreateForm(
@@ -109,10 +112,12 @@ class PeriodMovementMapperUTest {
             value = BigDecimal.TEN,
             financialPeriod = financialPeriodId,
             classification = classificationId,
+            costCenter = costCenterId,
             description = "Description"
         )
 
         every { classificationRepository.findByExternalId(classificationId) } returns classification
+        every { costCenterRepository.findByExternalId(costCenterId) } returns costCenter
         every { financialPeriodRepository.findByExternalId(financialPeriodId) } returns financialPeriod
 
         val domainObject = periodMovementMapper.mapToDomain(form)
@@ -127,6 +132,7 @@ class PeriodMovementMapperUTest {
                 assertThat(it.description).isEqualTo(form.description)
                 assertThat(it.financialPeriod).isEqualTo(financialPeriod)
                 assertThat(it.classification).isEqualTo(classification)
+                assertThat(it.costCenter).isEqualTo(costCenter)
                 assertThat(it.quoteNumber).isNull()
                 assertThat(it.payment).isNull()
                 assertThat(it.creditCardInvoice).isNull()
@@ -134,9 +140,10 @@ class PeriodMovementMapperUTest {
             })
 
         verify(exactly = 1) { classificationRepository.findByExternalId(ofType<UUID>()) }
+        verify(exactly = 1) { costCenterRepository.findByExternalId(ofType<UUID>()) }
         verify(exactly = 1) { financialPeriodRepository.findByExternalId(ofType<UUID>()) }
 
-        confirmVerified(classificationRepository, financialPeriodRepository)
+        confirmVerified(classificationRepository, costCenterRepository, financialPeriodRepository)
     }
 
     @Test
@@ -144,8 +151,10 @@ class PeriodMovementMapperUTest {
 
         val financialPeriodId = UUID.randomUUID()
         val classificationId = UUID.randomUUID()
+        val costCenterId = UUID.randomUUID()
 
         val classification = createClassification(externalId = classificationId)
+        val costCenter = createCostCenter(externalId = costCenterId)
         val financialPeriod = createFinancialPeriod(externalId = financialPeriodId)
 
         val domainObject = createPeriodMovement()
@@ -156,10 +165,12 @@ class PeriodMovementMapperUTest {
             value = BigDecimal.TEN,
             financialPeriod = financialPeriodId,
             classification = classificationId,
+            costCenter = costCenterId,
             description = "Description"
         )
 
         every { classificationRepository.findByExternalId(classificationId) } returns classification
+        every { costCenterRepository.findByExternalId(costCenterId) } returns costCenter
         every { financialPeriodRepository.findByExternalId(financialPeriodId) } returns financialPeriod
 
         periodMovementMapper.mapToDomain(form, domainObject)
@@ -174,15 +185,13 @@ class PeriodMovementMapperUTest {
                 assertThat(it.description).isEqualTo(form.description)
                 assertThat(it.financialPeriod).isEqualTo(financialPeriod)
                 assertThat(it.classification).isEqualTo(classification)
-                assertThat(it.quoteNumber).isNull()
-                assertThat(it.payment).isNull()
-                assertThat(it.creditCardInvoice).isNull()
-                assertThat(it.recurringMovement).isNull()
+                assertThat(it.costCenter).isEqualTo(costCenter)
             })
 
         verify(exactly = 1) { classificationRepository.findByExternalId(ofType<UUID>()) }
+        verify(exactly = 1) { costCenterRepository.findByExternalId(ofType<UUID>()) }
         verify(exactly = 1) { financialPeriodRepository.findByExternalId(ofType<UUID>()) }
 
-        confirmVerified(classificationRepository, financialPeriodRepository)
+        confirmVerified(classificationRepository, costCenterRepository, financialPeriodRepository)
     }
 }

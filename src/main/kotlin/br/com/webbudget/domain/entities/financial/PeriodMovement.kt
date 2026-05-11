@@ -1,8 +1,9 @@
 package br.com.webbudget.domain.entities.financial
 
 import br.com.webbudget.domain.entities.PersistentEntity
-import br.com.webbudget.domain.entities.registration.FinancialPeriod
 import br.com.webbudget.domain.entities.registration.Classification
+import br.com.webbudget.domain.entities.registration.CostCenter
+import br.com.webbudget.domain.entities.registration.FinancialPeriod
 import br.com.webbudget.infrastructure.config.DatabaseSchemas.FINANCIAL
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -28,6 +29,9 @@ class PeriodMovement(
     @field:ManyToOne
     @field:JoinColumn(name = "id_classification", nullable = false)
     var classification: Classification,
+    @field:ManyToOne
+    @field:JoinColumn(name = "id_cost_center", nullable = false)
+    var costCenter: CostCenter,
     @field:ManyToOne
     @field:JoinColumn(name = "id_financial_period", nullable = false)
     var financialPeriod: FinancialPeriod,

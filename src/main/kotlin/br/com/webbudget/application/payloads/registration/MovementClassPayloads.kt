@@ -22,8 +22,6 @@ data class ClassificationCreateForm(
     val name: String?,
     @field:NotNull(message = IS_NULL)
     var type: Classification.Type?,
-    @field:NotNull(message = IS_NULL)
-    var costCenter: UUID?,
     val budget: BigDecimal?,
     val description: String?
 )
@@ -32,8 +30,6 @@ data class ClassificationUpdateForm(
     @field:NotBlank(message = IS_NULL_OR_BLANK)
     @field:Size(message = MAX_CHARS, max = 150)
     val name: String?,
-    @field:NotNull(message = IS_NULL)
-    var costCenter: UUID?,
     val budget: BigDecimal?,
     val description: String?,
     @field:NotNull(message = IS_NULL)
@@ -45,7 +41,6 @@ data class ClassificationView(
     val name: String,
     val type: String,
     val active: Boolean,
-    val costCenter: CostCenterListView,
     val budget: BigDecimal?,
     val description: String?
 )
@@ -55,7 +50,6 @@ data class ClassificationListView(
     val name: String,
     val type: String,
     val active: Boolean,
-    val costCenter: CostCenterListView,
 )
 
 data class ClassificationFilter(

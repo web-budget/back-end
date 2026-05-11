@@ -20,7 +20,7 @@ interface PeriodMovementRepository : BaseRepository<PeriodMovement> {
         and (:#{#filter.states} is null or pm.state in :#{#filter.states})
         and (:#{#filter.financialPeriods} is null or pm.financialPeriod.externalId in :#{#filter.financialPeriods})
         and (:#{#filter.classification} is null or cl.externalId = :#{#filter.classification})
-        and (:#{#filter.costCenter} is null or cl.costCenter.externalId = :#{#filter.costCenter})
+        and (:#{#filter.costCenter} is null or pm.costCenter.externalId = :#{#filter.costCenter})
         """
     )
     fun findByFilter(filter: PeriodMovementFilter, pageable: Pageable): Page<PeriodMovement>
