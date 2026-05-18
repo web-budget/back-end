@@ -24,6 +24,7 @@ class ClassificationMapper {
         name = classification.name,
         type = classification.type.name,
         active = classification.active,
+        budget = classification.budget
     )
 
     fun mapToDomain(form: ClassificationCreateForm): Classification = Classification(
