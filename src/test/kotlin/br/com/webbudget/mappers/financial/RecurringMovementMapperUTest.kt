@@ -9,6 +9,7 @@ import br.com.webbudget.domain.entities.financial.RecurringMovement
 import br.com.webbudget.infrastructure.repository.registration.ClassificationRepository
 import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository
 import br.com.webbudget.utilities.fixtures.createClassification
+import br.com.webbudget.utilities.fixtures.createCostCenter
 import br.com.webbudget.utilities.fixtures.createRecurringMovement
 import io.mockk.confirmVerified
 import io.mockk.every
@@ -36,10 +37,11 @@ class RecurringMovementMapperUTest {
 
     @BeforeEach
     fun setup() {
+        val classificationMapper = ClassificationMapper()
         val costCenterMapper = CostCenterMapper(costCenterRepository)
-
-        val classificationMapper = ClassificationMapper(costCenterMapper, costCenterRepository)
-        recurringMovementMapper = RecurringMovementMapper(classificationMapper, classificationRepository)
+        recurringMovementMapper = RecurringMovementMapper(
+            classificationMapper, costCenterMapper, classificationRepository, costCenterRepository
+        )
     }
 
     @Test
@@ -64,6 +66,7 @@ class RecurringMovementMapperUTest {
                 assertThat(it.currentQuote).isEqualTo(domainObject.currentQuote)
                 assertThat(it.description).isEqualTo(domainObject.description)
                 assertThat(it.classification).isNotNull
+                assertThat(it.costCenter).isNotNull
             })
     }
 
@@ -92,7 +95,9 @@ class RecurringMovementMapperUTest {
     fun `should map create form to domain object`() {
 
         val classificationId = UUID.randomUUID()
+        val costCenterId = UUID.randomUUID()
         val classification = createClassification(externalId = classificationId)
+        val costCenter = createCostCenter(externalId = costCenterId)
 
         val form = RecurringMovementCreateForm(
             name = "Name",
@@ -102,9 +107,11 @@ class RecurringMovementMapperUTest {
             indeterminate = true,
             description = "Description",
             classification = classificationId,
+            costCenter = costCenterId,
         )
 
         every { classificationRepository.findByExternalId(classificationId) } returns classification
+        every { costCenterRepository.findByExternalId(costCenterId) } returns costCenter
 
         val domainObject = recurringMovementMapper.mapToDomain(form)
 
@@ -122,18 +129,22 @@ class RecurringMovementMapperUTest {
                 assertThat(it.description).isEqualTo(form.description)
                 assertThat(it.state).isEqualTo(RecurringMovement.State.ACTIVE)
                 assertThat(it.classification).isEqualTo(classification)
+                assertThat(it.costCenter).isEqualTo(costCenter)
             })
 
         verify(exactly = 1) { classificationRepository.findByExternalId(ofType<UUID>()) }
+        verify(exactly = 1) { costCenterRepository.findByExternalId(ofType<UUID>()) }
 
-        confirmVerified(classificationRepository)
+        confirmVerified(classificationRepository, costCenterRepository)
     }
 
     @Test
     fun `should map update form to domain object`() {
 
         val classificationId = UUID.randomUUID()
+        val costCenterId = UUID.randomUUID()
         val classification = createClassification(externalId = classificationId)
+        val costCenter = createCostCenter(externalId = costCenterId)
 
         val domainObject = createRecurringMovement()
 
@@ -142,10 +153,12 @@ class RecurringMovementMapperUTest {
             startingAt = LocalDate.now(),
             autoLaunch = true,
             description = "Description",
-            classification = classificationId
+            classification = classificationId,
+            costCenter = costCenterId
         )
 
         every { classificationRepository.findByExternalId(classificationId) } returns classification
+        every { costCenterRepository.findByExternalId(costCenterId) } returns costCenter
 
         recurringMovementMapper.mapToDomain(form, domainObject)
 
@@ -158,10 +171,12 @@ class RecurringMovementMapperUTest {
                 assertThat(it.description).isEqualTo(form.description)
                 assertThat(it.state).isEqualTo(RecurringMovement.State.ACTIVE)
                 assertThat(it.classification).isEqualTo(classification)
+                assertThat(it.costCenter).isEqualTo(costCenter)
             })
 
         verify(exactly = 1) { classificationRepository.findByExternalId(ofType<UUID>()) }
+        verify(exactly = 1) { costCenterRepository.findByExternalId(ofType<UUID>()) }
 
-        confirmVerified(classificationRepository)
+        confirmVerified(classificationRepository, costCenterRepository)
     }
 }

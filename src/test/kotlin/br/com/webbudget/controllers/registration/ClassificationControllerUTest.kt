@@ -2,15 +2,12 @@ package br.com.webbudget.controllers.registration
 
 import br.com.webbudget.BaseControllerIntegrationTest
 import br.com.webbudget.application.controllers.registration.ClassificationController
-import br.com.webbudget.application.mappers.registration.CostCenterMapper
 import br.com.webbudget.application.mappers.registration.ClassificationMapper
 import br.com.webbudget.domain.entities.registration.Classification
 import br.com.webbudget.domain.services.registration.ClassificationService
-import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository
 import br.com.webbudget.infrastructure.repository.registration.ClassificationRepository
 import br.com.webbudget.utilities.JsonPayload
 import br.com.webbudget.utilities.Roles
-import br.com.webbudget.utilities.fixtures.createCostCenter
 import br.com.webbudget.utilities.fixtures.createClassification
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.Runs
@@ -39,7 +36,7 @@ import java.util.UUID
 
 @WithMockUser(roles = [Roles.REGISTRATION])
 @WebMvcTest(ClassificationController::class)
-@Import(value = [ClassificationMapper::class, CostCenterMapper::class])
+@Import(value = [ClassificationMapper::class])
 class ClassificationControllerUTest : BaseControllerIntegrationTest() {
 
     @MockkBean
@@ -47,9 +44,6 @@ class ClassificationControllerUTest : BaseControllerIntegrationTest() {
 
     @MockkBean
     private lateinit var classificationRepository: ClassificationRepository
-
-    @MockkBean
-    private lateinit var costCenterRepository: CostCenterRepository
 
     @Test
     @WithMockUser(roles = [])
@@ -67,11 +61,10 @@ class ClassificationControllerUTest : BaseControllerIntegrationTest() {
         val externalId = UUID.randomUUID()
 
         every { classificationService.create(any<Classification>()) } returns externalId
-        every { costCenterRepository.findByExternalId(any<UUID>()) } returns createCostCenter()
 
         mockMvc.post(ENDPOINT_URL) {
             contentType = MediaType.APPLICATION_JSON
-            content = JsonPayload("movement-class/create")
+            content = JsonPayload("classification/create")
         }.andExpect {
             status { isCreated() }
         }.andExpect {
@@ -81,22 +74,20 @@ class ClassificationControllerUTest : BaseControllerIntegrationTest() {
         }
 
         verify(exactly = 1) { classificationService.create(ofType<Classification>()) }
-        verify(exactly = 1) { costCenterRepository.findByExternalId(ofType<UUID>()) }
 
-        confirmVerified(classificationService, costCenterRepository)
+        confirmVerified(classificationService)
     }
 
     @Test
     fun `should expect unprocessable entity if required fields are not present`() {
         val requiredEntries = mapOf(
             "name" to "is-null-or-blank",
-            "type" to "is-null",
-            "costCenter" to "is-null"
+            "type" to "is-null"
         )
 
         val jsonResponse = mockMvc.post(ENDPOINT_URL) {
             contentType = MediaType.APPLICATION_JSON
-            content = JsonPayload("movement-class/invalid")
+            content = JsonPayload("classification/invalid")
         }.andExpect {
             status { isUnprocessableContent() }
         }.andReturn()
@@ -113,25 +104,22 @@ class ClassificationControllerUTest : BaseControllerIntegrationTest() {
             .containsExactlyInAnyOrderEntriesOf(requiredEntries)
 
         verify(exactly = 0) { classificationService.create(ofType<Classification>()) }
-        verify(exactly = 0) { costCenterRepository.findByExternalId(ofType<UUID>()) }
 
-        confirmVerified(classificationService, costCenterRepository)
+        confirmVerified(classificationService)
     }
 
     @Test
     fun `should call update and expect ok`() {
 
         val externalId = UUID.randomUUID()
-        val expectedMovementClass = createClassification(externalId = externalId)
-        val expectedCostCenter = createCostCenter(externalId = externalId)
+        val expectedclassification = createClassification(externalId = externalId)
 
-        every { classificationService.update(any<Classification>()) } returns expectedMovementClass
-        every { classificationRepository.findByExternalId(any<UUID>()) } returns expectedMovementClass
-        every { costCenterRepository.findByExternalId(any<UUID>()) } returns expectedCostCenter
+        every { classificationService.update(any<Classification>()) } returns expectedclassification
+        every { classificationRepository.findByExternalId(any<UUID>()) } returns expectedclassification
 
         val jsonResponse = mockMvc.put("$ENDPOINT_URL/$externalId") {
             contentType = MediaType.APPLICATION_JSON
-            content = JsonPayload("movement-class/update")
+            content = JsonPayload("classification/update")
         }.andExpect {
             status { isOk() }
         }.andReturn()
@@ -142,31 +130,24 @@ class ClassificationControllerUTest : BaseControllerIntegrationTest() {
             .isObject
             .containsEntry("id", externalId.toString())
             .containsEntry("name", "Manutenção")
-            .containsEntry("type", "INCOME")
             .containsEntry("budget", 2000)
             .containsEntry("description", "Manutenção do carro")
             .containsEntry("active", true)
 
-        assertThatJson(jsonResponse)
-            .node("costCenter")
-            .isObject
-            .containsEntry("id", externalId.toString())
-
         verify(exactly = 1) { classificationService.update(ofType<Classification>()) }
-        verify(exactly = 1) { costCenterRepository.findByExternalId(ofType<UUID>()) }
         verify(exactly = 1) { classificationRepository.findByExternalId(ofType<UUID>()) }
 
-        confirmVerified(classificationService, costCenterRepository, classificationRepository)
+        confirmVerified(classificationService, classificationRepository)
     }
 
     @Test
     fun `should call delete and expect ok`() {
 
         val externalId = UUID.randomUUID()
-        val expectedMovementClass = createClassification(externalId = externalId)
+        val expectedclassification = createClassification(externalId = externalId)
 
-        every { classificationRepository.findByExternalId(eq(externalId)) } returns expectedMovementClass
-        every { classificationService.delete(eq(expectedMovementClass)) } just Runs
+        every { classificationRepository.findByExternalId(eq(externalId)) } returns expectedclassification
+        every { classificationService.delete(eq(expectedclassification)) } just Runs
 
         mockMvc.delete("${ENDPOINT_URL}/$externalId") {
             contentType = MediaType.APPLICATION_JSON
@@ -175,7 +156,7 @@ class ClassificationControllerUTest : BaseControllerIntegrationTest() {
         }
 
         verify(exactly = 1) { classificationRepository.findByExternalId(eq(externalId)) }
-        verify(exactly = 1) { classificationService.delete(eq(expectedMovementClass)) }
+        verify(exactly = 1) { classificationService.delete(eq(expectedclassification)) }
 
         confirmVerified(classificationService, classificationRepository)
     }
@@ -203,9 +184,9 @@ class ClassificationControllerUTest : BaseControllerIntegrationTest() {
     fun `should call find by id and expect ok`() {
 
         val externalId = UUID.randomUUID()
-        val expectedMovementClass = createClassification(externalId = externalId)
+        val expectedclassification = createClassification(externalId = externalId)
 
-        every { classificationRepository.findByExternalId(externalId) } returns expectedMovementClass
+        every { classificationRepository.findByExternalId(externalId) } returns expectedclassification
 
         val jsonResponse = mockMvc.get("${ENDPOINT_URL}/$externalId") {
             contentType = MediaType.APPLICATION_JSON
@@ -222,11 +203,6 @@ class ClassificationControllerUTest : BaseControllerIntegrationTest() {
             .containsEntry("type", "INCOME")
             .containsEntry("description", "Some description")
             .containsEntry("active", true)
-
-        assertThatJson(jsonResponse)
-            .node("costCenter")
-            .isObject
-            .isNotNull
 
         verify(exactly = 1) { classificationRepository.findByExternalId(eq(externalId)) }
 
@@ -256,7 +232,7 @@ class ClassificationControllerUTest : BaseControllerIntegrationTest() {
 
         val pageRequest = PageRequest.of(0, 1)
 
-        val movementClasses = listOf(createClassification())
+        val classificationes = listOf(createClassification())
 
         val parameters = LinkedMultiValueMap<String, String>()
 
@@ -269,7 +245,7 @@ class ClassificationControllerUTest : BaseControllerIntegrationTest() {
         val pageableSlot = slot<Pageable>()
         val specificationSlot = slot<Specification<Classification>>()
 
-        val thePage = PageImpl(movementClasses, pageRequest, movementClasses.size.toLong())
+        val thePage = PageImpl(classificationes, pageRequest, classificationes.size.toLong())
 
         every {
             classificationRepository.findAll(capture(specificationSlot), capture(pageableSlot))

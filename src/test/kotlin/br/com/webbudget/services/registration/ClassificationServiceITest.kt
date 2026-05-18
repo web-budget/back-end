@@ -2,30 +2,21 @@ package br.com.webbudget.services.registration
 
 import br.com.webbudget.BaseIntegrationTest
 import br.com.webbudget.domain.entities.registration.Classification
-import br.com.webbudget.domain.exceptions.BusinessException
 import br.com.webbudget.domain.exceptions.ConflictingPropertyException
 import br.com.webbudget.domain.services.registration.ClassificationService
 import br.com.webbudget.infrastructure.repository.registration.ClassificationRepository
-import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository
 import br.com.webbudget.utilities.fixtures.createClassification
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
-import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.Arguments
-import org.junit.jupiter.params.provider.MethodSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.jdbc.Sql
 import java.math.BigDecimal
 import java.util.UUID
-import java.util.stream.Stream
 
 class ClassificationServiceITest : BaseIntegrationTest() {
-
-    @Autowired
-    private lateinit var costCenterRepository: CostCenterRepository
 
     @Autowired
     private lateinit var classificationRepository: ClassificationRepository
@@ -34,16 +25,10 @@ class ClassificationServiceITest : BaseIntegrationTest() {
     private lateinit var classificationService: ClassificationService
 
     @Test
-    @Sql(
-        "/sql/registration/clear-tables.sql",
-        "/sql/registration/create-cost-centers.sql"
-    )
+    @Sql("/sql/registration/clear-tables.sql")
     fun `should create`() {
 
-        val costCenter = costCenterRepository.findByExternalId(UUID.fromString("52e3456b-1b0d-42c5-8be0-07ddaecce441"))
-            ?: fail { OBJECT_NOT_FOUND_ERROR }
-
-        val toCreate = createClassification(costCenter = costCenter, budget = BigDecimal.valueOf(1.99))
+        val toCreate = createClassification(budget = BigDecimal.valueOf(1.99))
 
         val externalId = classificationService.create(toCreate)
 
@@ -66,15 +51,11 @@ class ClassificationServiceITest : BaseIntegrationTest() {
     @Test
     @Sql(
         "/sql/registration/clear-tables.sql",
-        "/sql/registration/create-cost-centers.sql",
         "/sql/registration/create-classifications.sql"
     )
     fun `should not create when name is duplicated`() {
 
-        val costCenter = costCenterRepository.findByExternalId(UUID.fromString("52e3456b-1b0d-42c5-8be0-07ddaecce441"))
-            ?: fail { OBJECT_NOT_FOUND_ERROR }
-
-        val toCreate = createClassification(name = "Mercado", costCenter = costCenter, budget = null)
+        val toCreate = createClassification(name = "Mercado", budget = null)
 
         assertThatThrownBy { classificationService.create(toCreate) }
             .isInstanceOf(ConflictingPropertyException::class.java)
@@ -83,7 +64,6 @@ class ClassificationServiceITest : BaseIntegrationTest() {
     @Test
     @Sql(
         "/sql/registration/clear-tables.sql",
-        "/sql/registration/create-cost-centers.sql",
         "/sql/registration/create-classifications.sql"
     )
     fun `should update`() {
@@ -116,7 +96,6 @@ class ClassificationServiceITest : BaseIntegrationTest() {
     @Test
     @Sql(
         "/sql/registration/clear-tables.sql",
-        "/sql/registration/create-cost-centers.sql",
         "/sql/registration/create-classifications.sql"
     )
     fun `should not update when name is duplicated`() {
@@ -138,7 +117,6 @@ class ClassificationServiceITest : BaseIntegrationTest() {
     @Test
     @Sql(
         "/sql/registration/clear-tables.sql",
-        "/sql/registration/create-cost-centers.sql",
         "/sql/registration/create-classifications.sql"
     )
     fun `should delete`() {
@@ -158,69 +136,5 @@ class ClassificationServiceITest : BaseIntegrationTest() {
     @Disabled
     fun `should fail to delete when in use`() {
         // TODO this should be done after the movement feature is created
-    }
-
-    @Sql(
-        "/sql/registration/clear-tables.sql",
-        "/sql/registration/create-cost-centers.sql"
-    )
-    @ParameterizedTest
-    @MethodSource("movementClassesToCreate")
-    fun `should validate cost center budget limit on create`(toCreate: Classification) {
-
-        val costCenter = costCenterRepository.findByExternalId(UUID.fromString("3cb5732d-2551-4eb9-8b41-f5d312ba7aac"))
-            ?: fail { OBJECT_NOT_FOUND_ERROR }
-
-        toCreate.costCenter = costCenter
-
-        assertThatThrownBy { classificationService.create(toCreate) }
-            .isInstanceOf(BusinessException::class.java)
-    }
-
-    @Sql(
-        "/sql/registration/clear-tables.sql",
-        "/sql/registration/create-cost-centers.sql",
-        "/sql/registration/create-classifications.sql"
-    )
-    @ParameterizedTest
-    @MethodSource("movementClassesToUpdate")
-    fun `should validate cost center budget limit on update`(externalId: UUID) {
-
-        val toUpdate = classificationRepository.findByExternalId(externalId)
-            ?: fail { OBJECT_NOT_FOUND_ERROR }
-
-        toUpdate.apply {
-            this.budget = BigDecimal.valueOf(1001)
-        }
-
-        assertThatThrownBy { classificationService.update(toUpdate) }
-            .isInstanceOf(BusinessException::class.java)
-    }
-
-    companion object {
-
-        @JvmStatic
-        fun movementClassesToCreate(): Stream<Arguments> = Stream.of(
-            Arguments.of(
-                createClassification(
-                    name = "Impostos",
-                    type = Classification.Type.EXPENSE,
-                    budget = BigDecimal.valueOf(1001),
-                )
-            ),
-            Arguments.of(
-                createClassification(
-                    name = "Trabalho como uber",
-                    type = Classification.Type.INCOME,
-                    budget = BigDecimal.valueOf(1001),
-                )
-            )
-        )
-
-        @JvmStatic
-        fun movementClassesToUpdate(): Stream<Arguments> = Stream.of(
-            Arguments.of(UUID.fromString("86158792-f34e-4cdf-bce6-44394d645d0d")),
-            Arguments.of(UUID.fromString("067e62d5-725f-44c6-bfdf-79f9cf19fff8"))
-        )
     }
 }

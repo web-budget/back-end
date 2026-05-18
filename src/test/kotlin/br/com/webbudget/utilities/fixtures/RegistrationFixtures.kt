@@ -1,9 +1,9 @@
 package br.com.webbudget.utilities.fixtures
 
 import br.com.webbudget.domain.entities.registration.Card
+import br.com.webbudget.domain.entities.registration.Classification
 import br.com.webbudget.domain.entities.registration.CostCenter
 import br.com.webbudget.domain.entities.registration.FinancialPeriod
-import br.com.webbudget.domain.entities.registration.Classification
 import br.com.webbudget.domain.entities.registration.Wallet
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -48,10 +48,9 @@ fun createClassification(
     name: String = "Classification",
     type: Classification.Type = Classification.Type.INCOME,
     active: Boolean = true,
-    costCenter: CostCenter = createCostCenter(),
     budget: BigDecimal? = BigDecimal.ONE,
     description: String = "Some description"
-) = Classification(name, type, costCenter, active, budget, description)
+) = Classification(name, type, active, budget, description)
     .apply {
         this.id = id
         this.externalId = externalId

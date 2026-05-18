@@ -19,6 +19,7 @@ import br.com.webbudget.infrastructure.repository.registration.FinancialPeriodRe
 import br.com.webbudget.utilities.JsonPayload
 import br.com.webbudget.utilities.Roles
 import br.com.webbudget.utilities.fixtures.createClassification
+import br.com.webbudget.utilities.fixtures.createCostCenter
 import br.com.webbudget.utilities.fixtures.createFinancialPeriod
 import br.com.webbudget.utilities.fixtures.createPeriodMovement
 import com.ninjasquad.springmockk.MockkBean
@@ -55,7 +56,6 @@ import java.util.UUID
 class PeriodMovementControllerUTest : BaseControllerIntegrationTest() {
 
     @MockkBean
-    @Suppress("UnusedPrivateMember")
     private lateinit var costCenterRepository: CostCenterRepository
 
     @MockkBean
@@ -85,13 +85,16 @@ class PeriodMovementControllerUTest : BaseControllerIntegrationTest() {
 
         val externalId = UUID.randomUUID()
         val financialPeriodId = UUID.fromString("bc67ba91-7c0a-466d-877c-0b1fe2fb56bd")
-        val movementClassId = UUID.fromString("ff8ac873-2cbd-43dd-a3e8-2bc451f4e3fa")
+        val classificationId = UUID.fromString("ff8ac873-2cbd-43dd-a3e8-2bc451f4e3fa")
+        val costCenterId = UUID.fromString("52e3456b-1b0d-42c5-8be0-07ddaecce441")
 
-        val movementClass = createClassification()
+        val classification = createClassification()
+        val costCenter = createCostCenter()
         val financialPeriod = createFinancialPeriod()
 
         every { periodMovementService.create(any<PeriodMovement>()) } returns externalId
-        every { classificationRepository.findByExternalId(eq(movementClassId)) } returns movementClass
+        every { classificationRepository.findByExternalId(eq(classificationId)) } returns classification
+        every { costCenterRepository.findByExternalId(eq(costCenterId)) } returns costCenter
         every { financialPeriodRepository.findByExternalId(eq(financialPeriodId)) } returns financialPeriod
 
         mockMvc.post(ENDPOINT_URL) {
@@ -107,9 +110,12 @@ class PeriodMovementControllerUTest : BaseControllerIntegrationTest() {
 
         verify(exactly = 1) { periodMovementService.create(ofType<PeriodMovement>()) }
         verify(exactly = 1) { classificationRepository.findByExternalId(ofType<UUID>()) }
+        verify(exactly = 1) { costCenterRepository.findByExternalId(ofType<UUID>()) }
         verify(exactly = 1) { financialPeriodRepository.findByExternalId(ofType<UUID>()) }
 
-        confirmVerified(periodMovementService, classificationRepository, financialPeriodRepository)
+        confirmVerified(
+            periodMovementService, classificationRepository, costCenterRepository, financialPeriodRepository
+        )
     }
 
     @Test
@@ -117,16 +123,19 @@ class PeriodMovementControllerUTest : BaseControllerIntegrationTest() {
 
         val externalId = UUID.randomUUID()
         val financialPeriodId = UUID.fromString("bc67ba91-7c0a-466d-877c-0b1fe2fb56bd")
-        val movementClassId = UUID.fromString("ff8ac873-2cbd-43dd-a3e8-2bc451f4e3fa")
+        val classificationId = UUID.fromString("ff8ac873-2cbd-43dd-a3e8-2bc451f4e3fa")
+        val costCenterId = UUID.fromString("52e3456b-1b0d-42c5-8be0-07ddaecce441")
 
         val periodMovement = createPeriodMovement()
-        val movementClass = createClassification()
+        val classification = createClassification()
+        val costCenter = createCostCenter()
         val financialPeriod = createFinancialPeriod()
 
         every { periodMovementService.update(any<PeriodMovement>()) } returns periodMovement
 
         every { periodMovementRepository.findByExternalId(eq(externalId)) } returns periodMovement
-        every { classificationRepository.findByExternalId(eq(movementClassId)) } returns movementClass
+        every { classificationRepository.findByExternalId(eq(classificationId)) } returns classification
+        every { costCenterRepository.findByExternalId(eq(costCenterId)) } returns costCenter
         every { financialPeriodRepository.findByExternalId(eq(financialPeriodId)) } returns financialPeriod
 
         mockMvc.put("$ENDPOINT_URL/{id}", externalId) {
@@ -138,12 +147,14 @@ class PeriodMovementControllerUTest : BaseControllerIntegrationTest() {
 
         verify(exactly = 1) { periodMovementService.update(ofType<PeriodMovement>()) }
         verify(exactly = 1) { classificationRepository.findByExternalId(ofType<UUID>()) }
+        verify(exactly = 1) { costCenterRepository.findByExternalId(ofType<UUID>()) }
         verify(exactly = 1) { financialPeriodRepository.findByExternalId(ofType<UUID>()) }
         verify(exactly = 1) { periodMovementRepository.findByExternalId(ofType<UUID>()) }
 
         confirmVerified(
             periodMovementService,
             classificationRepository,
+            costCenterRepository,
             financialPeriodRepository,
             periodMovementRepository
         )
@@ -198,7 +209,8 @@ class PeriodMovementControllerUTest : BaseControllerIntegrationTest() {
             "dueDate" to IS_NULL,
             "value" to IS_NULL,
             "financialPeriod" to IS_NULL,
-            "classification" to IS_NULL
+            "classification" to IS_NULL,
+            "costCenter" to IS_NULL
         )
 
         val jsonResponse = mockMvc.post(ENDPOINT_URL) {
@@ -228,7 +240,8 @@ class PeriodMovementControllerUTest : BaseControllerIntegrationTest() {
             "dueDate" to IS_NULL,
             "value" to IS_NULL,
             "financialPeriod" to IS_NULL,
-            "classification" to IS_NULL
+            "classification" to IS_NULL,
+            "costCenter" to IS_NULL
         )
 
         val jsonResponse = mockMvc.put("$ENDPOINT_URL/{id}", UUID.randomUUID()) {
@@ -248,20 +261,22 @@ class PeriodMovementControllerUTest : BaseControllerIntegrationTest() {
             .isObject
             .hasSize(requiredEntries.size)
             .containsExactlyInAnyOrderEntriesOf(requiredEntries)
-            .containsExactlyInAnyOrderEntriesOf(requiredEntries)
     }
 
     @Test
     fun `should expect bad request if validations failed`() {
 
         val financialPeriodId = UUID.fromString("bc67ba91-7c0a-466d-877c-0b1fe2fb56bd")
-        val movementClassId = UUID.fromString("ff8ac873-2cbd-43dd-a3e8-2bc451f4e3fa")
+        val classificationId = UUID.fromString("ff8ac873-2cbd-43dd-a3e8-2bc451f4e3fa")
+        val costCenterId = UUID.fromString("52e3456b-1b0d-42c5-8be0-07ddaecce441")
 
-        val movementClass = createClassification()
+        val classification = createClassification()
+        val costCenter = createCostCenter()
         val financialPeriod = createFinancialPeriod()
 
         every { periodMovementService.create(any<PeriodMovement>()) } throws BusinessException("Message", "Detail")
-        every { classificationRepository.findByExternalId(eq(movementClassId)) } returns movementClass
+        every { classificationRepository.findByExternalId(eq(classificationId)) } returns classification
+        every { costCenterRepository.findByExternalId(eq(costCenterId)) } returns costCenter
         every { financialPeriodRepository.findByExternalId(eq(financialPeriodId)) } returns financialPeriod
 
         mockMvc.post(ENDPOINT_URL) {
@@ -273,9 +288,12 @@ class PeriodMovementControllerUTest : BaseControllerIntegrationTest() {
 
         verify(exactly = 1) { periodMovementService.create(ofType<PeriodMovement>()) }
         verify(exactly = 1) { classificationRepository.findByExternalId(ofType<UUID>()) }
+        verify(exactly = 1) { costCenterRepository.findByExternalId(ofType<UUID>()) }
         verify(exactly = 1) { financialPeriodRepository.findByExternalId(ofType<UUID>()) }
 
-        confirmVerified(periodMovementService, classificationRepository, financialPeriodRepository)
+        confirmVerified(
+            periodMovementService, classificationRepository, costCenterRepository, financialPeriodRepository
+        )
     }
 
     @Test
@@ -305,6 +323,11 @@ class PeriodMovementControllerUTest : BaseControllerIntegrationTest() {
 
         assertThatJson(jsonResponse)
             .node("classification")
+            .isObject
+            .isNotNull
+
+        assertThatJson(jsonResponse)
+            .node("costCenter")
             .isObject
             .isNotNull
 

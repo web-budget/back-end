@@ -4,5 +4,6 @@
   "value": 1,
   "financialPeriod": "bc67ba91-7c0a-466d-877c-0b1fe2fb56bd",
   "description": "Updated",
-  "classification": "ff8ac873-2cbd-43dd-a3e8-2bc451f4e3fa"
+  "classification": "ff8ac873-2cbd-43dd-a3e8-2bc451f4e3fa",
+  "costCenter": "52e3456b-1b0d-42c5-8be0-07ddaecce441"
 }

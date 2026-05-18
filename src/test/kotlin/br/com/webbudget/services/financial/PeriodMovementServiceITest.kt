@@ -6,6 +6,7 @@ import br.com.webbudget.domain.exceptions.BusinessException
 import br.com.webbudget.domain.services.financial.PeriodMovementService
 import br.com.webbudget.infrastructure.repository.financial.PeriodMovementRepository
 import br.com.webbudget.infrastructure.repository.registration.ClassificationRepository
+import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository
 import br.com.webbudget.infrastructure.repository.registration.FinancialPeriodRepository
 import br.com.webbudget.utilities.fixtures.createPeriodMovement
 import org.assertj.core.api.Assertions.assertThat
@@ -27,6 +28,9 @@ class PeriodMovementServiceITest : BaseIntegrationTest() {
     private lateinit var classificationRepository: ClassificationRepository
 
     @Autowired
+    private lateinit var costCenterRepository: CostCenterRepository
+
+    @Autowired
     private lateinit var periodMovementRepository: PeriodMovementRepository
 
     @Autowired
@@ -44,6 +48,7 @@ class PeriodMovementServiceITest : BaseIntegrationTest() {
 
         val financialPeriodId = UUID.fromString("27881a12-5e61-43cd-a6d0-fdb32eaa75c0")
         val classificationId = UUID.fromString("f21d94d2-d28e-4aa3-b12d-8a520023edd9")
+        val costCenterId = UUID.fromString("52e3456b-1b0d-42c5-8be0-07ddaecce441")
 
         val financialPeriod = financialPeriodRepository.findByExternalId(financialPeriodId)
             ?: fail { OBJECT_NOT_FOUND_ERROR }
@@ -51,10 +56,14 @@ class PeriodMovementServiceITest : BaseIntegrationTest() {
         val classification = classificationRepository.findByExternalId(classificationId)
             ?: fail { OBJECT_NOT_FOUND_ERROR }
 
+        val costCenter = costCenterRepository.findByExternalId(costCenterId)
+            ?: fail { OBJECT_NOT_FOUND_ERROR }
+
         val periodMovement = createPeriodMovement(
             value = BigDecimal("10.99"),
             financialPeriod = financialPeriod,
-            classification = classification
+            classification = classification,
+            costCenter = costCenter
         )
 
         val externalId = periodMovementService.create(periodMovement)
@@ -71,6 +80,7 @@ class PeriodMovementServiceITest : BaseIntegrationTest() {
             assertThat(it.dueDate).isEqualTo(periodMovement.dueDate)
             assertThat(it.value).isEqualTo(periodMovement.value)
             assertThat(it.financialPeriod).isEqualTo(periodMovement.financialPeriod)
+            assertThat(it.costCenter).isEqualTo(periodMovement.costCenter)
             assertThat(it.state).isEqualTo(periodMovement.state)
             assertThat(it.quoteNumber).isEqualTo(periodMovement.quoteNumber)
             assertThat(it.description).isEqualTo(periodMovement.description)
@@ -78,7 +88,6 @@ class PeriodMovementServiceITest : BaseIntegrationTest() {
             assertThat(it.creditCardInvoice).isEqualTo(periodMovement.creditCardInvoice)
             assertThat(it.recurringMovement).isEqualTo(periodMovement.recurringMovement)
         })
-
     }
 
     @Test
@@ -93,6 +102,7 @@ class PeriodMovementServiceITest : BaseIntegrationTest() {
 
         val financialPeriodId = UUID.fromString("df05156c-3fce-4f56-88ff-918d50200312")
         val classificationId = UUID.fromString("f21d94d2-d28e-4aa3-b12d-8a520023edd9")
+        val costCenterId = UUID.fromString("52e3456b-1b0d-42c5-8be0-07ddaecce441")
 
         val financialPeriod = financialPeriodRepository.findByExternalId(financialPeriodId)
             ?: fail { OBJECT_NOT_FOUND_ERROR }
@@ -100,9 +110,13 @@ class PeriodMovementServiceITest : BaseIntegrationTest() {
         val classification = classificationRepository.findByExternalId(classificationId)
             ?: fail { OBJECT_NOT_FOUND_ERROR }
 
+        val costCenter = costCenterRepository.findByExternalId(costCenterId)
+            ?: fail { OBJECT_NOT_FOUND_ERROR }
+
         val periodMovement = createPeriodMovement(
             value = BigDecimal("10.99"),
             classification = classification,
+            costCenter = costCenter,
             financialPeriod = financialPeriod
         )
 

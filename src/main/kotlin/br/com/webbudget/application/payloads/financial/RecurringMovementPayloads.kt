@@ -4,6 +4,7 @@ import br.com.webbudget.application.payloads.ErrorCodes.IS_NULL
 import br.com.webbudget.application.payloads.ErrorCodes.IS_NULL_OR_BLANK
 import br.com.webbudget.application.payloads.ErrorCodes.MAX_CHARS
 import br.com.webbudget.application.payloads.registration.ClassificationListView
+import br.com.webbudget.application.payloads.registration.CostCenterListView
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Size
@@ -24,6 +25,8 @@ data class RecurringMovementCreateForm(
     @field:NotNull(message = IS_NULL)
     var classification: UUID?,
     @field:NotNull(message = IS_NULL)
+    var costCenter: UUID?,
+    @field:NotNull(message = IS_NULL)
     var indeterminate: Boolean? = false,
     val totalQuotes: Int? = null,
     val startingQuote: Int? = null,
@@ -37,6 +40,8 @@ data class RecurringMovementUpdateForm(
     val name: String?,
     @field:NotNull(message = IS_NULL)
     var classification: UUID?,
+    @field:NotNull(message = IS_NULL)
+    var costCenter: UUID?,
     @field:NotNull(message = IS_NULL)
     var startingAt: LocalDate? = null,
     @field:NotNull(message = IS_NULL)
@@ -56,7 +61,8 @@ data class RecurringMovementView(
     val startingQuote: Int?,
     val currentQuote: Int?,
     val description: String?,
-    val classification: ClassificationListView
+    val classification: ClassificationListView,
+    val costCenter: CostCenterListView
 )
 
 data class RecurringMovementListView(

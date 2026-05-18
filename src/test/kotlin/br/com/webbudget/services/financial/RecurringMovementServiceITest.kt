@@ -6,6 +6,7 @@ import br.com.webbudget.domain.exceptions.BusinessException
 import br.com.webbudget.domain.services.financial.RecurringMovementService
 import br.com.webbudget.infrastructure.repository.financial.RecurringMovementRepository
 import br.com.webbudget.infrastructure.repository.registration.ClassificationRepository
+import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository
 import br.com.webbudget.utilities.fixtures.createRecurringMovement
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
@@ -24,6 +25,9 @@ class RecurringMovementServiceITest : BaseIntegrationTest() {
     private lateinit var classificationRepository: ClassificationRepository
 
     @Autowired
+    private lateinit var costCenterRepository: CostCenterRepository
+
+    @Autowired
     private lateinit var recurringMovementRepository: RecurringMovementRepository
 
     @Autowired
@@ -39,13 +43,18 @@ class RecurringMovementServiceITest : BaseIntegrationTest() {
     fun `should create period movement`() {
 
         val classificationId = UUID.fromString("f21d94d2-d28e-4aa3-b12d-8a520023edd9")
+        val costCenterId = UUID.fromString("52e3456b-1b0d-42c5-8be0-07ddaecce441")
 
         val classification = classificationRepository.findByExternalId(classificationId)
             ?: fail { OBJECT_NOT_FOUND_ERROR }
 
+        val costCenter = costCenterRepository.findByExternalId(costCenterId)
+            ?: fail { OBJECT_NOT_FOUND_ERROR }
+
         val recurringMovement = createRecurringMovement(
             value = BigDecimal("10.99"),
-            classification = classification
+            classification = classification,
+            costCenter = costCenter
         )
 
         val externalId = recurringMovementService.create(recurringMovement)
@@ -69,6 +78,7 @@ class RecurringMovementServiceITest : BaseIntegrationTest() {
             assertThat(it.currentQuote).isEqualTo(recurringMovement.currentQuote)
             assertThat(it.description).isEqualTo(recurringMovement.description)
             assertThat(it.classification).isEqualTo(recurringMovement.classification)
+            assertThat(it.costCenter).isEqualTo(recurringMovement.costCenter)
         })
     }
 

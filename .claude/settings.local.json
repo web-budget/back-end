@@ -17,7 +17,8 @@
       "mcp__MCP_DOCKER__*",
       "mcp__jetbrains__*",
       "Bash(git remote:*)",
-      "Bash(xargs grep:*)"
+      "Bash(xargs grep:*)",
+      "Bash(Remove-Item *)"
     ]
   }
 }

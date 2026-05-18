@@ -5,6 +5,7 @@ import br.com.webbudget.domain.entities.financial.Payment
 import br.com.webbudget.domain.entities.financial.PeriodMovement
 import br.com.webbudget.domain.entities.financial.RecurringMovement
 import br.com.webbudget.domain.entities.registration.Classification
+import br.com.webbudget.domain.entities.registration.CostCenter
 import br.com.webbudget.domain.entities.registration.FinancialPeriod
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -18,6 +19,7 @@ fun createPeriodMovement(
     value: BigDecimal = BigDecimal.ONE,
     financialPeriod: FinancialPeriod = createFinancialPeriod(),
     classification: Classification = createClassification(),
+    costCenter: CostCenter = createCostCenter(),
     state: PeriodMovement.State = PeriodMovement.State.OPEN,
     quoteNumber: Int? = null,
     description: String? = null,
@@ -29,6 +31,7 @@ fun createPeriodMovement(
     dueDate = dueDate,
     value = value,
     classification = classification,
+    costCenter = costCenter,
     financialPeriod = financialPeriod,
     state = state,
     quoteNumber = quoteNumber,
@@ -49,6 +52,7 @@ fun createRecurringMovement(
     startingAt: LocalDate = LocalDate.now(),
     state: RecurringMovement.State = RecurringMovement.State.ACTIVE,
     classification: Classification = createClassification(),
+    costCenter: CostCenter = createCostCenter(),
     autoLaunch: Boolean = true,
     indeterminate: Boolean = true,
     totalQuotes: Int? = null,
@@ -60,6 +64,7 @@ fun createRecurringMovement(
     value = value,
     startingAt = startingAt,
     classification = classification,
+    costCenter = costCenter,
     state = state,
     autoLaunch = autoLaunch,
     indeterminate = indeterminate,

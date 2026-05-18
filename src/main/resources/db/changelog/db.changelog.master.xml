@@ -21,6 +21,7 @@
     -->
     <include relativeToChangelogFile="true" file="2021/04/03-changelog.xml"/>
     <include relativeToChangelogFile="true" file="2021/04/04-changelog.xml"/>
+
     <include relativeToChangelogFile="true" file="2021/06/20-changelog.xml"/>
 
     <include relativeToChangelogFile="true" file="2023/06/05-changelog.xml"/>
@@ -35,6 +36,8 @@
     <include relativeToChangelogFile="true" file="2026/03/03-changelog.xml"/>
 
     <include relativeToChangelogFile="true" file="2026/04/22-changelog.xml"/>
+
+    <include relativeToChangelogFile="true" file="2026/05/10-changelog.xml"/>
 
     <!--
         use this changelog to initialize the testing database.

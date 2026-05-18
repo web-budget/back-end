@@ -1,21 +1,26 @@
 package br.com.webbudget.application.mappers.financial
 
 import br.com.webbudget.application.mappers.registration.ClassificationMapper
+import br.com.webbudget.application.mappers.registration.CostCenterMapper
 import br.com.webbudget.application.payloads.financial.RecurringMovementCreateForm
 import br.com.webbudget.application.payloads.financial.RecurringMovementListView
 import br.com.webbudget.application.payloads.financial.RecurringMovementUpdateForm
 import br.com.webbudget.application.payloads.financial.RecurringMovementView
 import br.com.webbudget.domain.entities.financial.RecurringMovement
 import br.com.webbudget.domain.entities.registration.Classification
+import br.com.webbudget.domain.entities.registration.CostCenter
 import br.com.webbudget.domain.exceptions.ResourceNotFoundException
 import br.com.webbudget.infrastructure.repository.registration.ClassificationRepository
+import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository
 import org.springframework.stereotype.Component
 import java.util.UUID
 
 @Component
 class RecurringMovementMapper(
     private val classificationMapper: ClassificationMapper,
-    private val classificationRepository: ClassificationRepository
+    private val costCenterMapper: CostCenterMapper,
+    private val classificationRepository: ClassificationRepository,
+    private val costCenterRepository: CostCenterRepository
 ) {
 
     fun mapToView(recurringMovement: RecurringMovement): RecurringMovementView = RecurringMovementView(
@@ -30,6 +35,7 @@ class RecurringMovementMapper(
         startingQuote = recurringMovement.startingQuote,
         currentQuote = recurringMovement.currentQuote,
         classification = classificationMapper.mapToListView(recurringMovement.classification),
+        costCenter = costCenterMapper.mapToListView(recurringMovement.costCenter),
         description = recurringMovement.description
     )
 
@@ -50,6 +56,7 @@ class RecurringMovementMapper(
         startingAt = form.startingAt!!,
         autoLaunch = form.autoLaunch!!,
         classification = mapClassification(form.classification!!),
+        costCenter = mapCostCenter(form.costCenter!!),
         indeterminate = form.indeterminate!!,
         totalQuotes = form.totalQuotes,
         startingQuote = form.startingQuote,
@@ -60,6 +67,7 @@ class RecurringMovementMapper(
     fun mapToDomain(form: RecurringMovementUpdateForm, recurringMovement: RecurringMovement) = recurringMovement.apply {
         this.name = form.name!!
         this.classification = mapClassification(form.classification!!)
+        this.costCenter = mapCostCenter(form.costCenter!!)
         this.startingAt = form.startingAt!!
         this.autoLaunch = form.autoLaunch!!
         this.description = form.description
@@ -67,4 +75,7 @@ class RecurringMovementMapper(
 
     private fun mapClassification(externalId: UUID): Classification =
         classificationRepository.findByExternalId(externalId) ?: throw ResourceNotFoundException()
+
+    private fun mapCostCenter(externalId: UUID): CostCenter =
+        costCenterRepository.findByExternalId(externalId) ?: throw ResourceNotFoundException()
 }

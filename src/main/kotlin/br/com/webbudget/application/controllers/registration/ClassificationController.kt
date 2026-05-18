@@ -48,8 +48,8 @@ class ClassificationController(
     @PostMapping
     fun create(@RequestBody @Valid form: ClassificationCreateForm): ResponseEntity<Any> {
 
-        val movementClass = classificationMapper.mapToDomain(form)
-        val created = classificationService.create(movementClass)
+        val classification = classificationMapper.mapToDomain(form)
+        val created = classificationService.create(classification)
 
         val location = ServletUriComponentsBuilder.fromCurrentRequest()
             .path("/{id}")
@@ -65,13 +65,13 @@ class ClassificationController(
         @RequestBody @Valid form: ClassificationUpdateForm
     ): ResponseEntity<ClassificationView> {
 
-        val movementClass = classificationRepository.findByExternalId(id)
+        val classification = classificationRepository.findByExternalId(id)
             ?: throw ResourceNotFoundException()
 
-        classificationMapper.mapToDomain(form, movementClass)
-        classificationService.update(movementClass)
+        classificationMapper.mapToDomain(form, classification)
+        classificationService.update(classification)
 
-        return ResponseEntity.ok(classificationMapper.mapToView(movementClass))
+        return ResponseEntity.ok(classificationMapper.mapToView(classification))
     }
 
     @DeleteMapping("/{id}")
