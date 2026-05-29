@@ -4,50 +4,95 @@
 
 Welcome to the back-end application for the webBudget project!
 
-The project is based on:
+## Toolchain
 
-- Kotlin 1.9
-- Spring Boot 3
-- Postgres 15
-- Testcontainers
+| Component | Version |
+| --- | --- |
+| Kotlin | 2.3 |
+| Spring Boot | 4.0 |
+| Java (JDK) | 25 |
+| Gradle | via the checked-in wrapper (`gradlew` / `gradlew.bat`) |
+| PostgreSQL | 17 (Docker) |
+| Liquibase | schema migrations |
+| Detekt | static analysis |
+| JUnit 5 + Testcontainers + MockK + AssertJ | testing |
+
+## Prerequisites
+
+Before you start, install:
+
+1. **JDK 25** — [Liberica JDK](https://bell-sw.com/pages/downloads/) is the preferred distribution (it's the one homologated by Spring). Other distributions (Temurin, Zulu, etc.) will also work.
+2. **Docker** — [Docker Desktop](https://docs.docker.com/get-docker/) on Windows/Mac, or Docker Engine on Linux.
+   Required for running the app locally **and** for the integration test suite (Testcontainers).
+3. **IntelliJ IDEA** — Community or Ultimate. Strongly recommended for Kotlin work.
+   Download it [here](https://www.jetbrains.com/?from=webBudget) if you don't have it yet.
+4. **Git** — for cloning and contributing.
+
+You do **not** need to install Gradle separately — the project ships the Gradle wrapper.
 
 ## Project setup
 
-If you are familiar with Java projects using maven, there is nothing too different here. The project is using Gradle as
- a build tool, and Kotlin will compile through it.
+Clone the repository, then from the project root:
 
-> Quick note before start: your [docker](https://docs.docker.com/get-docker/) environment is running? Since we use 
-> testcontainers to run the tests and also to develop things in the project, is required to have a docker instance running.
+```bash
+# 1. Start the supporting services (PostgreSQL + Maildev)
+docker compose -p web-budget up -d
 
-Clone the project, and:
+# 2. Build and run the test suite
+./gradlew clean build
+```
 
-`gradlew clean build` 
+`clean build` cleans previous outputs, runs [Detekt](https://detekt.github.io/detekt/), runs the test suite, and compiles. A `BUILD SUCCESSFUL` message at the end means you're ready to go.
 
-This will clean (older builds), run [Detekt](https://detekt.github.io/detekt/), some automated tests, and compile the project. If everything goes 
-well, you will see a message of _build success_ at the end of the process.
+To run only the linter:
 
-To just lint the project and check if the code is compliant with our Detekt rules, run: `gradlew detekt`. At the first
-run it should fix some simple problems, at the second run only the ones that require your manual intervention should be
-reported.
+```bash
+./gradlew detekt
+```
 
-If you plan to develop in the project, after cloning it, go to the root of the project, run this command:
+The first run may auto-fix simple issues; a second run reports only the ones that need manual attention.
 
-`docker compose -p web-budget up`
+To start the application locally:
 
-It should start some required services to run the project locally, and after that you just need to import the project in 
-your favorite IDE, happy coding!
+```bash
+./gradlew bootRun
+```
 
-> Since this is a Kotlin project, it is highly recommended to use IntelliJ IDEA for development, if you don't have it, 
-> please click [here](https://www.jetbrains.com/?from=webBudget) to download.
+The API will be available on `http://localhost:8085`. Maildev's web UI runs on `http://localhost:1080`.
+
+## IntelliJ IDEA setup
+
+1. **Open the project** as a Gradle project — IntelliJ will detect `build.gradle.kts` and import automatically.
+2. **Project SDK** — set to JDK 25 (`File → Project Structure → Project`).
+3. **Gradle JVM** — also JDK 25 (`Settings → Build, Execution, Deployment → Build Tools → Gradle`). Set _Build and run using_ and _Run tests using_ to **Gradle** for fidelity with CI, or **IntelliJ IDEA** for faster local iteration.
+4. **Enable annotation processing** — `Settings → Build, Execution, Deployment → Compiler → Annotation Processors` (needed by Spring Boot configuration metadata).
+5. **Recommended plugins** — Kotlin (bundled), Spring Boot (bundled in Ultimate), Detekt, Docker, Database Tools (Ultimate).
+6. **Code style** — IntelliJ's default Kotlin style with 4-space indentation matches the project conventions.
+
+After import, run the `Application.kt` main class or use `./gradlew bootRun`.
+
+## Local services
+
+`docker compose -p web-budget up -d` starts:
+
+- **PostgreSQL 17** on `localhost:5433` — database `webbudget`, user/password `sa_webbudget` / `sa_webbudget`.
+- **Maildev** — SMTP on `localhost:1025` (user/password `maildev` / `maildev`), web UI on `http://localhost:1080`.
+
+Stop them with `docker compose -p web-budget down`.
+
+## Further reading
+
+Project documentation for contributors lives under [`docs/`](docs/):
+
+- [Project structure](docs/project-structure.md)
+- [Architecture and patterns](docs/architecture.md)
+- [Development commands and environment](docs/development.md)
+- [Testing](docs/testing.md)
+- [Security](docs/security.md)
+- [Contribution workflow](docs/workflow.md)
 
 ## FAQ
 
-General questions about the project:
-
-- **Why separate front-end and back-end?** Basically because this will make people more comfortable to develop inside the
-  project, not everyone is able to work in a big monolith full of files and with trick configurations to deal with. Doing
-  like this will help beginners searching for a cool project to start with some contributions.
-- **How can I start contributing?** You can start by looking at the [project board here](https://github.com/orgs/web-budget/projects/6)!
-- **Why not stay with Java?** For me Kotlin is more complete in terms of functional programming if compared to Java. This 
-makes it better? Of course not, but it is not possible to ignore the fact that Kotlin has a much more interesting toolset if 
-compared to his "old brother."
+- **Why separate front-end and back-end?** It lowers the barrier to contributing — newcomers don't have to navigate a single huge codebase with tricky cross-stack configuration. It also lets each side use the best tools for the job.
+- **How can I start contributing?** Check the [project board](https://github.com/orgs/web-budget/projects/6) for open tickets.
+- **Why Kotlin instead of Java?** Kotlin gives us a more complete functional toolset and concise syntax while staying fully interoperable with the Java ecosystem we already rely on (Spring, Hibernate, Testcontainers).
