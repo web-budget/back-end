@@ -1,6 +1,6 @@
 package br.com.webbudget.validators.registration
 
-import br.com.webbudget.domain.exceptions.BusinessException
+import br.com.webbudget.domain.exceptions.DomainException
 import br.com.webbudget.domain.validators.registration.FinancialPeriodDatesOverlapValidator
 import br.com.webbudget.infrastructure.repository.registration.FinancialPeriodRepository
 import br.com.webbudget.utilities.fixtures.createFinancialPeriod
@@ -83,7 +83,7 @@ class FinancialPeriodDatesOverlapValidatorTest {
         } returns financialPeriods
 
         assertThatThrownBy { validator.validate(financialPeriod) }
-            .isInstanceOf(BusinessException::class.java)
+            .isInstanceOf(DomainException::class.java)
 
         verify(exactly = 1) {
             financialPeriodRepository.findByStartAndEndDates(ofType<LocalDate>(), ofType<LocalDate>())
@@ -107,7 +107,7 @@ class FinancialPeriodDatesOverlapValidatorTest {
         } returns financialPeriods
 
         assertThatThrownBy { validator.validate(financialPeriod) }
-            .isInstanceOf(BusinessException::class.java)
+            .isInstanceOf(DomainException::class.java)
 
         verify(exactly = 1) {
             financialPeriodRepository.findByStartAndEndDatesAndExternalIdNot(

@@ -1,7 +1,7 @@
 package br.com.webbudget.domain.validators.registration
 
 import br.com.webbudget.domain.entities.registration.CostCenter
-import br.com.webbudget.domain.exceptions.ConflictingPropertyException
+import br.com.webbudget.domain.exceptions.DomainException
 import br.com.webbudget.domain.validators.OnCreateValidation
 import br.com.webbudget.domain.validators.OnUpdateValidation
 import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository
@@ -25,20 +25,20 @@ class CostCenterNameValidator(
     private fun validateSaved(value: CostCenter) {
         if (value.parent != null) {
             costCenterRepository.findByFullNameIgnoreCaseAndExternalIdNot(value.fullName, value.externalId!!)
-                ?.let { throw ConflictingPropertyException(parameters = mapOf("cost-center.name" to value.name)) }
+                ?.let { throw DomainException.conflict(parameters = mapOf("cost-center.name" to value.name)) }
         } else {
             costCenterRepository.findByNameIgnoreCaseAndExternalIdNot(value.name, value.externalId!!)
-                ?.let { throw ConflictingPropertyException(parameters = mapOf("cost-center.name" to value.name)) }
+                ?.let { throw DomainException.conflict(parameters = mapOf("cost-center.name" to value.name)) }
         }
     }
 
     private fun validateNotSaved(value: CostCenter) {
         if (value.parent != null) {
             costCenterRepository.findByFullNameIgnoreCase(value.fullName)
-                ?.let { throw ConflictingPropertyException(parameters = mapOf("cost-center.name" to value.name)) }
+                ?.let { throw DomainException.conflict(parameters = mapOf("cost-center.name" to value.name)) }
         } else {
             costCenterRepository.findByNameIgnoreCase(value.name)
-                ?.let { throw ConflictingPropertyException(parameters = mapOf("cost-center.name" to value.name)) }
+                ?.let { throw DomainException.conflict(parameters = mapOf("cost-center.name" to value.name)) }
         }
     }
 }

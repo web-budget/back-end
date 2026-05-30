@@ -1,7 +1,7 @@
 package br.com.webbudget.validators.registration
 
 import br.com.webbudget.domain.entities.registration.FinancialPeriod.Status
-import br.com.webbudget.domain.exceptions.BusinessException
+import br.com.webbudget.domain.exceptions.DomainException
 import br.com.webbudget.domain.validators.registration.FinancialPeriodStateValidator
 import br.com.webbudget.infrastructure.repository.registration.FinancialPeriodRepository
 import br.com.webbudget.utilities.fixtures.createFinancialPeriod
@@ -56,7 +56,7 @@ class FinancialPeriodStateValidatorTest {
         } returns null
 
         assertThatThrownBy { validator.validate(periodToValidate) }
-            .isInstanceOf(BusinessException::class.java)
+            .isInstanceOf(DomainException::class.java)
             .hasMessage("You can't delete or update non open periods")
 
         verify(exactly = 1) {

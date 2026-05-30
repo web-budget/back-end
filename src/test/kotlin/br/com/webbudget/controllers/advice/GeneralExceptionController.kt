@@ -1,6 +1,6 @@
 package br.com.webbudget.controllers.advice
 
-import br.com.webbudget.domain.exceptions.BusinessException
+import br.com.webbudget.domain.exceptions.DomainException
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.BadCredentialsException
@@ -23,8 +23,8 @@ class GeneralExceptionController {
     }
 
     @GetMapping("/business-exception")
-    fun getBusinessException(): ResponseEntity<Any> {
-        throw BusinessException("The message", "The detail")
+    fun getDomainException(): ResponseEntity<Any> {
+        throw DomainException("The message", "The detail")
     }
 
     @GetMapping("/non-transient-data-access-exception")

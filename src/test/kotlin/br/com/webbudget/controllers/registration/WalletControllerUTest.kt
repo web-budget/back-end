@@ -167,9 +167,8 @@ class WalletControllerUTest : BaseControllerIntegrationTest() {
             .contentAsString
 
         assertThatJson(jsonResponse)
-            .node("message")
             .isObject
-            .containsKey("key")
+            .containsEntry("code", "field-validation-failed")
             .node("parameters")
             .isObject
             .hasSize(requiredEntries.size)

@@ -1,7 +1,7 @@
 package br.com.webbudget.validators.registration
 
 import br.com.webbudget.domain.entities.registration.Card
-import br.com.webbudget.domain.exceptions.BusinessException
+import br.com.webbudget.domain.exceptions.DomainException
 import br.com.webbudget.domain.validators.registration.CreditCardInvoicePaymentDayValidator
 import br.com.webbudget.utilities.fixtures.createCard
 import io.mockk.impl.annotations.InjectMockKs
@@ -35,7 +35,7 @@ class CreditCardInvoicePaymentDayValidatorUTest {
         val card = createCard(type = Card.Type.CREDIT, invoicePaymentDay = invoicePaymentDay)
 
         assertThatThrownBy { creditCardInvoicePaymentDayValidator.validate(card) }
-            .isInstanceOf(BusinessException::class.java)
+            .isInstanceOf(DomainException::class.java)
     }
 
     @Test
@@ -44,6 +44,6 @@ class CreditCardInvoicePaymentDayValidatorUTest {
         val card = createCard(type = Card.Type.CREDIT, invoicePaymentDay = null)
 
         assertThatThrownBy { creditCardInvoicePaymentDayValidator.validate(card) }
-            .isInstanceOf(BusinessException::class.java)
+            .isInstanceOf(DomainException::class.java)
     }
 }

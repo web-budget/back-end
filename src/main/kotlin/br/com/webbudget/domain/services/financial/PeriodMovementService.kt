@@ -1,7 +1,7 @@
 package br.com.webbudget.domain.services.financial
 
 import br.com.webbudget.domain.entities.financial.PeriodMovement
-import br.com.webbudget.domain.exceptions.BusinessException
+import br.com.webbudget.domain.exceptions.DomainException
 import br.com.webbudget.domain.exceptions.ErrorCodes.ACCOUNTED_PERIOD_MOVEMENT
 import br.com.webbudget.domain.exceptions.ErrorCodes.FINANCIAL_PERIOD_NOT_OPEN
 import br.com.webbudget.infrastructure.repository.financial.PeriodMovementRepository
@@ -32,7 +32,7 @@ class PeriodMovementService(
     fun delete(periodMovement: PeriodMovement) {
 
         ensure(periodMovement.isAccounted().not()) {
-            throw BusinessException("Period movement is accounted", ACCOUNTED_PERIOD_MOVEMENT)
+            throw DomainException("Period movement is accounted", ACCOUNTED_PERIOD_MOVEMENT)
         }
 
         periodMovementRepository.delete(periodMovement)
@@ -41,11 +41,11 @@ class PeriodMovementService(
     private fun validateBeforeCreteOrUpdate(periodMovement: PeriodMovement) {
 
         ensure(periodMovement.financialPeriod.isOpen()) {
-            BusinessException("Financial period is not open", FINANCIAL_PERIOD_NOT_OPEN)
+            DomainException("Financial period is not open", FINANCIAL_PERIOD_NOT_OPEN)
         }
 
         ensure(periodMovement.isAccounted().not()) {
-            BusinessException("Period movement is accounted", ACCOUNTED_PERIOD_MOVEMENT)
+            DomainException("Period movement is accounted", ACCOUNTED_PERIOD_MOVEMENT)
         }
     }
 }

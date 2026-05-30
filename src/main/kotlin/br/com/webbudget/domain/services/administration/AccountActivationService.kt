@@ -1,7 +1,8 @@
 package br.com.webbudget.domain.services.administration
 
 import br.com.webbudget.domain.entities.administration.AccountActivationAttempt
-import br.com.webbudget.domain.exceptions.InvalidAccountActivationTokenException
+import br.com.webbudget.domain.exceptions.DomainException
+import br.com.webbudget.domain.exceptions.ErrorCodes.INVALID_TOKEN
 import br.com.webbudget.domain.mail.AccountActivationEmail
 import br.com.webbudget.domain.services.MailSenderService
 import br.com.webbudget.infrastructure.repository.administration.AccountActivationAttemptRepository
@@ -54,11 +55,11 @@ class AccountActivationService(
     fun activate(token: UUID, userEmail: String) {
 
         val attempt = accountActivationAttemptRepository.findByTokenAndUserEmailAndActivatedOnIsNull(token, userEmail)
-            ?: throw InvalidAccountActivationTokenException(userEmail)
+            ?: throw DomainException("Invalid token provided for user [$userEmail]", INVALID_TOKEN)
 
         if (attempt.validity.isBefore(LocalDateTime.now())) {
             logger.debug { "Account activation token has expired on [${attempt.validity}]" }
-            throw InvalidAccountActivationTokenException(userEmail)
+            throw DomainException("Invalid token provided for user [$userEmail]", INVALID_TOKEN)
         }
 
         attempt

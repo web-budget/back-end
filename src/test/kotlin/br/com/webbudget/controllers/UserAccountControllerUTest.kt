@@ -2,7 +2,8 @@ package br.com.webbudget.controllers
 
 import br.com.webbudget.BaseControllerIntegrationTest
 import br.com.webbudget.application.controllers.UserAccountController
-import br.com.webbudget.domain.exceptions.InvalidPasswordRecoverTokenException
+import br.com.webbudget.domain.exceptions.DomainException
+import br.com.webbudget.domain.exceptions.ErrorCodes.INVALID_TOKEN
 import br.com.webbudget.domain.services.administration.AccountActivationService
 import br.com.webbudget.domain.services.administration.RecoverPasswordService
 import com.ninjasquad.springmockk.MockkBean
@@ -105,7 +106,7 @@ class UserAccountControllerUTest : BaseControllerIntegrationTest() {
                 "}"
 
         every { recoverPasswordService.recover(newPassword, token, userEmail) } throws
-                InvalidPasswordRecoverTokenException(userEmail)
+                DomainException("Invalid token provided for user [$userEmail]", INVALID_TOKEN)
 
         mockMvc.patch("$ENDPOINT_URL/recover-password") {
             contentType = MediaType.APPLICATION_JSON

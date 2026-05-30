@@ -2,7 +2,7 @@ package br.com.webbudget.services.financial
 
 import br.com.webbudget.BaseIntegrationTest
 import br.com.webbudget.domain.entities.financial.PeriodMovement
-import br.com.webbudget.domain.exceptions.BusinessException
+import br.com.webbudget.domain.exceptions.DomainException
 import br.com.webbudget.domain.services.financial.PeriodMovementService
 import br.com.webbudget.infrastructure.repository.financial.PeriodMovementRepository
 import br.com.webbudget.infrastructure.repository.registration.ClassificationRepository
@@ -121,7 +121,7 @@ class PeriodMovementServiceITest : BaseIntegrationTest() {
         )
 
         assertThatThrownBy { periodMovementService.create(periodMovement) }
-            .isInstanceOf(BusinessException::class.java)
+            .isInstanceOf(DomainException::class.java)
     }
 
     @Test
@@ -198,7 +198,7 @@ class PeriodMovementServiceITest : BaseIntegrationTest() {
         }
 
         assertThatThrownBy { periodMovementService.update(toUpdate) }
-            .isInstanceOf(BusinessException::class.java)
+            .isInstanceOf(DomainException::class.java)
     }
 
     @Test
@@ -219,7 +219,7 @@ class PeriodMovementServiceITest : BaseIntegrationTest() {
         }
 
         assertThatThrownBy { periodMovementService.update(toUpdate) }
-            .isInstanceOf(BusinessException::class.java)
+            .isInstanceOf(DomainException::class.java)
     }
 
     @Test
@@ -256,6 +256,6 @@ class PeriodMovementServiceITest : BaseIntegrationTest() {
         val toDelete = periodMovementRepository.findByExternalId(externalId) ?: fail { OBJECT_NOT_FOUND_ERROR }
 
         assertThatThrownBy { periodMovementService.delete(toDelete) }
-            .isInstanceOf(BusinessException::class.java)
+            .isInstanceOf(DomainException::class.java)
     }
 }

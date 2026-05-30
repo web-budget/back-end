@@ -1,6 +1,6 @@
 package br.com.webbudget.validators.registration
 
-import br.com.webbudget.domain.exceptions.ConflictingPropertyException
+import br.com.webbudget.domain.exceptions.DomainException
 import br.com.webbudget.domain.validators.registration.ClassificationNameValidator
 import br.com.webbudget.infrastructure.repository.registration.ClassificationRepository
 import br.com.webbudget.utilities.fixtures.createClassification
@@ -33,7 +33,7 @@ class ClassificationNameValidatorUTest {
         val toValidate = createClassification(id = null, externalId = null)
 
         assertThatThrownBy { classificationNameValidator.validate(toValidate) }
-            .isInstanceOf(ConflictingPropertyException::class.java)
+            .isInstanceOf(DomainException::class.java)
 
         verify(exactly = 1) { classificationRepository.findByNameIgnoreCase(eq("Classification")) }
 
