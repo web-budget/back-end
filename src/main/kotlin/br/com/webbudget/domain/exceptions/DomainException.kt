@@ -3,9 +3,9 @@ package br.com.webbudget.domain.exceptions
 import org.springframework.http.HttpStatus
 
 /**
- * Represents a problem in the domain layer: a business rule violation or an invalid/recoverable
- * state reached while processing a request. Carries a machine-readable [code] and optional
- * [parameters] so the client can render a localized, contextual message.
+ * Represents a problem in the domain layer: a business rule violation or an invalid/recoverable state reached while
+ * processing a request. Carries a machine-readable [code] and optional [parameters] so the client can render a
+ * localized, contextual message.
  *
  * Use the [conflict] factory when the violation is caused by data conflicting with existing records.
  */
