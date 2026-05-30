@@ -2,7 +2,7 @@ package br.com.webbudget.services.financial
 
 import br.com.webbudget.BaseIntegrationTest
 import br.com.webbudget.domain.entities.financial.RecurringMovement
-import br.com.webbudget.domain.exceptions.BusinessException
+import br.com.webbudget.domain.exceptions.DomainException
 import br.com.webbudget.domain.services.financial.RecurringMovementService
 import br.com.webbudget.infrastructure.repository.financial.RecurringMovementRepository
 import br.com.webbudget.infrastructure.repository.registration.ClassificationRepository
@@ -150,7 +150,7 @@ class RecurringMovementServiceITest : BaseIntegrationTest() {
         }
 
         assertThatThrownBy { recurringMovementService.update(toUpdate) }
-            .isInstanceOf(BusinessException::class.java)
+            .isInstanceOf(DomainException::class.java)
     }
 
     @Test

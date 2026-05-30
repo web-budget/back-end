@@ -1,7 +1,7 @@
 package br.com.webbudget.services.administration
 
 import br.com.webbudget.BaseIntegrationTest
-import br.com.webbudget.domain.exceptions.InvalidAccountActivationTokenException
+import br.com.webbudget.domain.exceptions.DomainException
 import br.com.webbudget.domain.services.administration.AccountActivationService
 import br.com.webbudget.infrastructure.repository.administration.AccountActivationAttemptRepository
 import br.com.webbudget.infrastructure.repository.administration.UserRepository
@@ -90,7 +90,7 @@ class AccountActivationServiceITest : BaseIntegrationTest() {
                 UUID.randomUUID(),
                 "unknown@webbudget.com.br"
             )
-        }.isInstanceOf(InvalidAccountActivationTokenException::class.java)
+        }.isInstanceOf(DomainException::class.java)
     }
 
     @Test
@@ -104,7 +104,7 @@ class AccountActivationServiceITest : BaseIntegrationTest() {
         accountActivationService.activate(attempt.token, userName)
 
         assertThatThrownBy { accountActivationService.activate(attempt.token, userName) }
-            .isInstanceOf(InvalidAccountActivationTokenException::class.java)
+            .isInstanceOf(DomainException::class.java)
     }
 
     companion object {

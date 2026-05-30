@@ -2,8 +2,7 @@ package br.com.webbudget.services.registration
 
 import br.com.webbudget.BaseIntegrationTest
 import br.com.webbudget.domain.entities.registration.Card
-import br.com.webbudget.domain.exceptions.BusinessException
-import br.com.webbudget.domain.exceptions.ConflictingPropertyException
+import br.com.webbudget.domain.exceptions.DomainException
 import br.com.webbudget.domain.services.registration.CardService
 import br.com.webbudget.infrastructure.repository.registration.CardRepository
 import br.com.webbudget.infrastructure.repository.registration.WalletRepository
@@ -93,7 +92,7 @@ class CardServiceITest : BaseIntegrationTest() {
         val toCreate = createCard(type = Card.Type.DEBIT, wallet = null)
 
         assertThatThrownBy { cardService.create(toCreate) }
-            .isInstanceOf(BusinessException::class.java)
+            .isInstanceOf(DomainException::class.java)
     }
 
     @Test
@@ -102,7 +101,7 @@ class CardServiceITest : BaseIntegrationTest() {
         val toCreate = createCard(type = Card.Type.CREDIT, invoicePaymentDay = null)
 
         assertThatThrownBy { cardService.create(toCreate) }
-            .isInstanceOf(BusinessException::class.java)
+            .isInstanceOf(DomainException::class.java)
     }
 
     @Test
@@ -116,7 +115,7 @@ class CardServiceITest : BaseIntegrationTest() {
         val toCreate = createCard(type = Card.Type.CREDIT, lastFourDigits = "1234")
 
         assertThatThrownBy { cardService.create(toCreate) }
-            .isInstanceOf(ConflictingPropertyException::class.java)
+            .isInstanceOf(DomainException::class.java)
     }
 
     @Test

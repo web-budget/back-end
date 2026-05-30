@@ -29,9 +29,7 @@ class ValidationHandlerAdviceUTest : BaseControllerIntegrationTest() {
             .containsEntry("detail", "The message")
             .containsEntry("title", "Conflict")
             .containsEntry("status", 409)
-            .node("message")
-            .isObject
-            .containsEntry("key", "some.key")
+            .containsEntry("code", "some.key")
             .node("parameters")
             .isObject
             .containsEntry("property", "value")
@@ -53,6 +51,7 @@ class ValidationHandlerAdviceUTest : BaseControllerIntegrationTest() {
             .containsEntry("detail", "Some fields are missing or invalid")
             .containsEntry("title", "Unprocessable Content")
             .containsEntry("status", 422)
+            .containsEntry("code", "field-validation-failed")
     }
 
     companion object {

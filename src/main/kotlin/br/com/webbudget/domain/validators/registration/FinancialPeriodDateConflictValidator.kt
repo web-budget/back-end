@@ -1,7 +1,7 @@
 package br.com.webbudget.domain.validators.registration
 
 import br.com.webbudget.domain.entities.registration.FinancialPeriod
-import br.com.webbudget.domain.exceptions.BusinessException
+import br.com.webbudget.domain.exceptions.DomainException
 import br.com.webbudget.domain.exceptions.ErrorCodes.START_DATE_AFTER_END_DATE
 import br.com.webbudget.domain.validators.OnCreateValidation
 import br.com.webbudget.domain.validators.OnUpdateValidation
@@ -18,7 +18,7 @@ class FinancialPeriodDateConflictValidator : FinancialPeriodValidator {
         val endDate = value.endingAt
 
         if (startDate.isAfter(endDate)) {
-            throw BusinessException("Start date must be before end date", START_DATE_AFTER_END_DATE)
+            throw DomainException("Start date must be before end date", START_DATE_AFTER_END_DATE)
         }
     }
 }

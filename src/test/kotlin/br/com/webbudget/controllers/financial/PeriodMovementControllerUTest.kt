@@ -10,7 +10,7 @@ import br.com.webbudget.application.payloads.ErrorCodes.IS_NULL
 import br.com.webbudget.application.payloads.ErrorCodes.IS_NULL_OR_BLANK
 import br.com.webbudget.application.payloads.financial.PeriodMovementFilter
 import br.com.webbudget.domain.entities.financial.PeriodMovement
-import br.com.webbudget.domain.exceptions.BusinessException
+import br.com.webbudget.domain.exceptions.DomainException
 import br.com.webbudget.domain.services.financial.PeriodMovementService
 import br.com.webbudget.infrastructure.repository.financial.PeriodMovementRepository
 import br.com.webbudget.infrastructure.repository.registration.ClassificationRepository
@@ -223,9 +223,8 @@ class PeriodMovementControllerUTest : BaseControllerIntegrationTest() {
             .contentAsString
 
         assertThatJson(jsonResponse)
-            .node("message")
             .isObject
-            .containsKey("key")
+            .containsEntry("code", "field-validation-failed")
             .node("parameters")
             .isObject
             .hasSize(requiredEntries.size)
@@ -254,9 +253,8 @@ class PeriodMovementControllerUTest : BaseControllerIntegrationTest() {
             .contentAsString
 
         assertThatJson(jsonResponse)
-            .node("message")
             .isObject
-            .containsKey("key")
+            .containsEntry("code", "field-validation-failed")
             .node("parameters")
             .isObject
             .hasSize(requiredEntries.size)
@@ -274,7 +272,7 @@ class PeriodMovementControllerUTest : BaseControllerIntegrationTest() {
         val costCenter = createCostCenter()
         val financialPeriod = createFinancialPeriod()
 
-        every { periodMovementService.create(any<PeriodMovement>()) } throws BusinessException("Message", "Detail")
+        every { periodMovementService.create(any<PeriodMovement>()) } throws DomainException("Message", "Detail")
         every { classificationRepository.findByExternalId(eq(classificationId)) } returns classification
         every { costCenterRepository.findByExternalId(eq(costCenterId)) } returns costCenter
         every { financialPeriodRepository.findByExternalId(eq(financialPeriodId)) } returns financialPeriod

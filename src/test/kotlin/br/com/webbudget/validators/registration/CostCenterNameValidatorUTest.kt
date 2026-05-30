@@ -1,6 +1,6 @@
 package br.com.webbudget.validators.registration
 
-import br.com.webbudget.domain.exceptions.ConflictingPropertyException
+import br.com.webbudget.domain.exceptions.DomainException
 import br.com.webbudget.domain.validators.registration.CostCenterNameValidator
 import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository
 import br.com.webbudget.utilities.fixtures.createCostCenter
@@ -35,7 +35,7 @@ class CostCenterNameValidatorUTest {
         val toValidate = createCostCenter(id = null, externalId = null)
 
         assertThatThrownBy { costCenterNameValidator.validate(toValidate) }
-            .isInstanceOf(ConflictingPropertyException::class.java)
+            .isInstanceOf(DomainException::class.java)
 
         verify(exactly = 1) { costCenterRepository.findByNameIgnoreCase("Cost Center") }
 
@@ -56,7 +56,7 @@ class CostCenterNameValidatorUTest {
         toValidate.updateFullName()
 
         assertThatThrownBy { costCenterNameValidator.validate(toValidate) }
-            .isInstanceOf(ConflictingPropertyException::class.java)
+            .isInstanceOf(DomainException::class.java)
 
         verify(exactly = 1) { costCenterRepository.findByFullNameIgnoreCase(expectedName) }
 

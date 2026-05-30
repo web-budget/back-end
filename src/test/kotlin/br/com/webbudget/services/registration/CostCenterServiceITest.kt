@@ -1,7 +1,7 @@
 package br.com.webbudget.services.registration
 
 import br.com.webbudget.BaseIntegrationTest
-import br.com.webbudget.domain.exceptions.ConflictingPropertyException
+import br.com.webbudget.domain.exceptions.DomainException
 import br.com.webbudget.domain.services.registration.CostCenterService
 import br.com.webbudget.infrastructure.repository.registration.CostCenterRepository
 import br.com.webbudget.utilities.fixtures.createCostCenter
@@ -81,7 +81,7 @@ class CostCenterServiceITest : BaseIntegrationTest() {
         val duplicated = createCostCenter()
 
         assertThatThrownBy { costCenterService.create(duplicated) }
-            .isInstanceOf(ConflictingPropertyException::class.java)
+            .isInstanceOf(DomainException::class.java)
     }
 
     @Test
@@ -94,7 +94,7 @@ class CostCenterServiceITest : BaseIntegrationTest() {
         val duplicated = createCostCenter(name = "Impostos", parentCostCenter = parent)
 
         assertThatThrownBy { costCenterService.create(duplicated) }
-            .isInstanceOf(ConflictingPropertyException::class.java)
+            .isInstanceOf(DomainException::class.java)
     }
 
     @Test
@@ -174,7 +174,7 @@ class CostCenterServiceITest : BaseIntegrationTest() {
         }
 
         assertThatThrownBy { costCenterService.update(toUpdate) }
-            .isInstanceOf(ConflictingPropertyException::class.java)
+            .isInstanceOf(DomainException::class.java)
     }
 
     @Test
@@ -192,7 +192,7 @@ class CostCenterServiceITest : BaseIntegrationTest() {
         }
 
         assertThatThrownBy { costCenterService.update(toUpdate) }
-            .isInstanceOf(ConflictingPropertyException::class.java)
+            .isInstanceOf(DomainException::class.java)
     }
 
     @Test

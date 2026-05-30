@@ -9,7 +9,7 @@ import br.com.webbudget.application.payloads.ErrorCodes.IS_NULL
 import br.com.webbudget.application.payloads.ErrorCodes.IS_NULL_OR_BLANK
 import br.com.webbudget.application.payloads.financial.RecurringMovementFilter
 import br.com.webbudget.domain.entities.financial.RecurringMovement
-import br.com.webbudget.domain.exceptions.BusinessException
+import br.com.webbudget.domain.exceptions.DomainException
 import br.com.webbudget.domain.services.financial.RecurringMovementService
 import br.com.webbudget.infrastructure.repository.financial.RecurringMovementRepository
 import br.com.webbudget.infrastructure.repository.registration.ClassificationRepository
@@ -205,9 +205,8 @@ class RecurringMovementControllerUTest : BaseControllerIntegrationTest() {
             .contentAsString
 
         assertThatJson(jsonResponse)
-            .node("message")
             .isObject
-            .containsKey("key")
+            .containsEntry("code", "field-validation-failed")
             .node("parameters")
             .isObject
             .hasSize(requiredEntries.size)
@@ -235,9 +234,8 @@ class RecurringMovementControllerUTest : BaseControllerIntegrationTest() {
             .contentAsString
 
         assertThatJson(jsonResponse)
-            .node("message")
             .isObject
-            .containsKey("key")
+            .containsEntry("code", "field-validation-failed")
             .node("parameters")
             .isObject
             .hasSize(requiredEntries.size)
@@ -253,7 +251,7 @@ class RecurringMovementControllerUTest : BaseControllerIntegrationTest() {
         val classification = createClassification()
         val costCenter = createCostCenter()
 
-        every { recurringMovementService.create(any<RecurringMovement>()) } throws BusinessException(
+        every { recurringMovementService.create(any<RecurringMovement>()) } throws DomainException(
             "Message",
             "Detail"
         )

@@ -1,7 +1,7 @@
 package br.com.webbudget.domain.validators.registration
 
 import br.com.webbudget.domain.entities.registration.Wallet
-import br.com.webbudget.domain.exceptions.ConflictingPropertyException
+import br.com.webbudget.domain.exceptions.DomainException
 import br.com.webbudget.domain.validators.OnCreateValidation
 import br.com.webbudget.domain.validators.OnUpdateValidation
 import br.com.webbudget.infrastructure.repository.registration.WalletRepository
@@ -24,11 +24,11 @@ class WalletNameValidator(
 
     private fun validateSaved(value: Wallet) {
         walletRepository.findByNameIgnoreCaseAndExternalIdNot(value.name, value.externalId!!)
-            ?.let { throw ConflictingPropertyException(parameters = mapOf("wallet.name" to value.name)) }
+            ?.let { throw DomainException.conflict(parameters = mapOf("wallet.name" to value.name)) }
     }
 
     private fun validateNotSaved(value: Wallet) {
         walletRepository.findByNameIgnoreCase(value.name)
-            ?.let { throw ConflictingPropertyException(parameters = mapOf("wallet.name" to value.name)) }
+            ?.let { throw DomainException.conflict(parameters = mapOf("wallet.name" to value.name)) }
     }
 }

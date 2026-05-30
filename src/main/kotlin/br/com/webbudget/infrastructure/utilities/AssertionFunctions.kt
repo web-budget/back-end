@@ -1,8 +1,8 @@
 package br.com.webbudget.infrastructure.utilities
 
-import br.com.webbudget.domain.exceptions.BusinessException
+import br.com.webbudget.domain.exceptions.DomainException
 
-inline fun ensure(value: Boolean, lazyException: () -> BusinessException) {
+inline fun ensure(value: Boolean, lazyException: () -> DomainException) {
     if (!value) {
         throw lazyException()
     }

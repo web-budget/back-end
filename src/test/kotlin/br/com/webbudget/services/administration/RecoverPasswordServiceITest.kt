@@ -1,7 +1,7 @@
 package br.com.webbudget.services.administration
 
 import br.com.webbudget.BaseIntegrationTest
-import br.com.webbudget.domain.exceptions.InvalidPasswordRecoverTokenException
+import br.com.webbudget.domain.exceptions.DomainException
 import br.com.webbudget.domain.services.administration.RecoverPasswordService
 import br.com.webbudget.infrastructure.repository.administration.PasswordRecoverAttemptRepository
 import br.com.webbudget.utilities.memoryLogAppender
@@ -84,7 +84,7 @@ class RecoverPasswordServiceITest : BaseIntegrationTest() {
         val userEmail = "user@webbudget.com.br"
 
         assertThatThrownBy { recoverPasswordService.recover("s3cr3t", UUID.randomUUID(), userEmail) }
-            .isInstanceOf(InvalidPasswordRecoverTokenException::class.java)
+            .isInstanceOf(DomainException::class.java)
     }
 
     @Test
@@ -123,7 +123,7 @@ class RecoverPasswordServiceITest : BaseIntegrationTest() {
         assertThat(usedAttempt.user.password).isNotEqualTo(unusedAttempt.user.password)
 
         assertThatThrownBy { recoverPasswordService.recover("s3cr3t", unusedAttempt.token, userEmail) }
-            .isInstanceOf(InvalidPasswordRecoverTokenException::class.java)
+            .isInstanceOf(DomainException::class.java)
     }
 
     companion object {

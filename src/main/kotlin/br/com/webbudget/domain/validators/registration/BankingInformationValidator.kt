@@ -1,7 +1,7 @@
 package br.com.webbudget.domain.validators.registration
 
 import br.com.webbudget.domain.entities.registration.Wallet
-import br.com.webbudget.domain.exceptions.ConflictingPropertyException
+import br.com.webbudget.domain.exceptions.DomainException
 import br.com.webbudget.domain.validators.OnCreateValidation
 import br.com.webbudget.domain.validators.OnUpdateValidation
 import br.com.webbudget.infrastructure.repository.registration.WalletRepository
@@ -27,7 +27,7 @@ class BankingInformationValidator(
     private fun validateSaved(value: Wallet) {
         walletRepository.findByBankInfo(value.bank, value.agency, value.number, value.externalId!!)
             ?.let {
-                throw ConflictingPropertyException(
+                throw DomainException.conflict(
                     parameters = mapOf(
                         "wallet.bank" to value.bank,
                         "wallet.agency" to value.agency,
@@ -40,7 +40,7 @@ class BankingInformationValidator(
     private fun validateNotSaved(value: Wallet) {
         walletRepository.findByBankInfo(value.bank, value.agency, value.number)
             ?.let {
-                throw ConflictingPropertyException(
+                throw DomainException.conflict(
                     parameters = mapOf(
                         "wallet.bank" to value.bank,
                         "wallet.agency" to value.agency,

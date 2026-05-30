@@ -2,7 +2,7 @@ package br.com.webbudget.validators.registration
 
 import br.com.webbudget.domain.entities.registration.Card.Type
 import br.com.webbudget.domain.entities.registration.Card.Type.CREDIT
-import br.com.webbudget.domain.exceptions.ConflictingPropertyException
+import br.com.webbudget.domain.exceptions.DomainException
 import br.com.webbudget.domain.validators.registration.CardTypeAndNumberValidator
 import br.com.webbudget.infrastructure.repository.registration.CardRepository
 import br.com.webbudget.utilities.fixtures.createCard
@@ -39,7 +39,7 @@ class CardTypeAndNumberValidatorUTest {
         val toValidate = createCard(id = null, externalId = null, type = type, lastFourDigits = lastFourDigits)
 
         assertThatThrownBy { cardTypeAndNumberValidator.validate(toValidate) }
-            .isInstanceOf(ConflictingPropertyException::class.java)
+            .isInstanceOf(DomainException::class.java)
 
         verify(exactly = 1) { cardRepository.findByTypeAndLastFourDigits(eq(type), eq(lastFourDigits)) }
 

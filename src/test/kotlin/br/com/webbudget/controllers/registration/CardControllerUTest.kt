@@ -5,7 +5,7 @@ import br.com.webbudget.application.controllers.registration.CardController
 import br.com.webbudget.application.mappers.registration.CardMapper
 import br.com.webbudget.application.mappers.registration.WalletMapper
 import br.com.webbudget.domain.entities.registration.Card
-import br.com.webbudget.domain.exceptions.BusinessException
+import br.com.webbudget.domain.exceptions.DomainException
 import br.com.webbudget.domain.services.registration.CardService
 import br.com.webbudget.infrastructure.repository.registration.CardRepository
 import br.com.webbudget.infrastructure.repository.registration.WalletRepository
@@ -226,9 +226,8 @@ class CardControllerUTest : BaseControllerIntegrationTest() {
             .contentAsString
 
         assertThatJson(jsonResponse)
-            .node("message")
             .isObject
-            .containsKey("key")
+            .containsEntry("code", "field-validation-failed")
             .node("parameters")
             .isObject
             .hasSize(requiredEntries.size)
@@ -258,9 +257,8 @@ class CardControllerUTest : BaseControllerIntegrationTest() {
             .contentAsString
 
         assertThatJson(jsonResponse)
-            .node("message")
             .isObject
-            .containsKey("key")
+            .containsEntry("code", "field-validation-failed")
             .node("parameters")
             .isObject
             .hasSize(requiredEntries.size)
@@ -274,7 +272,7 @@ class CardControllerUTest : BaseControllerIntegrationTest() {
     @Test
     fun `should return bad request if debit card has no wallet`() {
 
-        every { cardService.create(any<Card>()) } throws BusinessException(
+        every { cardService.create(any<Card>()) } throws DomainException(
             "Debit card has no wallet",
             "card.errors.debit-without-wallet"
         )
@@ -295,7 +293,7 @@ class CardControllerUTest : BaseControllerIntegrationTest() {
 
     @Test
     fun `should return bad request if credit card has invalid invoice payment day`() {
-        every { cardService.create(any<Card>()) } throws BusinessException(
+        every { cardService.create(any<Card>()) } throws DomainException(
             "Credit card has has invalid invoice payment day",
             "card.errors.credit-invalid-payment-day"
         )

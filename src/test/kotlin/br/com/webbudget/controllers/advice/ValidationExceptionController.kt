@@ -1,7 +1,8 @@
 package br.com.webbudget.controllers.advice
 
-import br.com.webbudget.domain.exceptions.ConflictingPropertyException
+import br.com.webbudget.domain.exceptions.DomainException
 import org.springframework.core.MethodParameter
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.BeanPropertyBindingResult
 import org.springframework.web.bind.MethodArgumentNotValidException
@@ -15,7 +16,7 @@ class ValidationExceptionController {
 
     @GetMapping("/duplicated-property-exception")
     fun getBadCredentialsException(): ResponseEntity<Any> {
-        throw ConflictingPropertyException("The message", "some.key", mapOf("property" to "value"))
+        throw DomainException("The message", "some.key", mapOf("property" to "value"), HttpStatus.CONFLICT)
     }
 
     @GetMapping("/method-argument-no-valid-exception")

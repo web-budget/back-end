@@ -1,6 +1,6 @@
 package br.com.webbudget.validators.registration
 
-import br.com.webbudget.domain.exceptions.BusinessException
+import br.com.webbudget.domain.exceptions.DomainException
 import br.com.webbudget.domain.validators.registration.FinancialPeriodDateConflictValidator
 import br.com.webbudget.utilities.fixtures.createFinancialPeriod
 import io.mockk.impl.annotations.InjectMockKs
@@ -38,7 +38,7 @@ class FinancialPeriodDateConflictValidatorTest {
         )
 
         assertThatThrownBy { validator.validate(financialPeriod) }
-            .isInstanceOf(BusinessException::class.java)
+            .isInstanceOf(DomainException::class.java)
             .hasMessage("Start date must be before end date")
     }
 }

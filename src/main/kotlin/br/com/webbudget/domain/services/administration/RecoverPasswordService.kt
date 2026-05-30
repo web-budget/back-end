@@ -1,7 +1,8 @@
 package br.com.webbudget.domain.services.administration
 
 import br.com.webbudget.domain.entities.administration.PasswordRecoverAttempt
-import br.com.webbudget.domain.exceptions.InvalidPasswordRecoverTokenException
+import br.com.webbudget.domain.exceptions.DomainException
+import br.com.webbudget.domain.exceptions.ErrorCodes.INVALID_TOKEN
 import br.com.webbudget.domain.mail.RecoverPasswordEmail
 import br.com.webbudget.domain.services.MailSenderService
 import br.com.webbudget.infrastructure.repository.administration.PasswordRecoverAttemptRepository
@@ -55,11 +56,11 @@ class RecoverPasswordService(
     fun recover(newPassword: String, recoveryToken: UUID, userEmail: String) {
 
         val attempt = passwordRecoverAttemptRepository.findByTokenAndUserEmailAndUsedFalse(recoveryToken, userEmail)
-            ?: throw InvalidPasswordRecoverTokenException(userEmail)
+            ?: throw DomainException("Invalid token provided for user [$userEmail]", INVALID_TOKEN)
 
         if (attempt.validity.isBefore(LocalDateTime.now())) {
             logger.debug { "Recover password token has expired on [${attempt.validity}]" }
-            throw InvalidPasswordRecoverTokenException(userEmail)
+            throw DomainException("Invalid token provided for user [$userEmail]", INVALID_TOKEN)
         }
 
         userService.updatePassword(attempt.user, newPassword, false)

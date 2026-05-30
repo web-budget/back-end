@@ -2,8 +2,7 @@ package br.com.webbudget.services.registration
 
 import br.com.webbudget.BaseIntegrationTest
 import br.com.webbudget.domain.entities.registration.FinancialPeriod
-import br.com.webbudget.domain.exceptions.BusinessException
-import br.com.webbudget.domain.exceptions.ConflictingPropertyException
+import br.com.webbudget.domain.exceptions.DomainException
 import br.com.webbudget.domain.services.registration.FinancialPeriodService
 import br.com.webbudget.infrastructure.repository.registration.FinancialPeriodRepository
 import br.com.webbudget.utilities.fixtures.createFinancialPeriod
@@ -63,7 +62,7 @@ class FinancialPeriodServiceITest : BaseIntegrationTest() {
         )
 
         assertThatThrownBy { financialPeriodService.create(financialPeriod) }
-            .isInstanceOf(ConflictingPropertyException::class.java)
+            .isInstanceOf(DomainException::class.java)
     }
 
     @Test
@@ -79,7 +78,7 @@ class FinancialPeriodServiceITest : BaseIntegrationTest() {
         val financialPeriod = createFinancialPeriod(name = "Agosto", startingAt = start, endingAt = end)
 
         assertThatThrownBy { financialPeriodService.create(financialPeriod) }
-            .isInstanceOf(BusinessException::class.java)
+            .isInstanceOf(DomainException::class.java)
     }
 
     @Test
@@ -93,7 +92,7 @@ class FinancialPeriodServiceITest : BaseIntegrationTest() {
         )
 
         assertThatThrownBy { financialPeriodService.create(financialPeriod) }
-            .isInstanceOf(BusinessException::class.java)
+            .isInstanceOf(DomainException::class.java)
             .hasMessage("Start date must be before end date")
     }
 
@@ -156,7 +155,7 @@ class FinancialPeriodServiceITest : BaseIntegrationTest() {
         }
 
         assertThatThrownBy { financialPeriodService.update(toUpdate) }
-            .isInstanceOf(ConflictingPropertyException::class.java)
+            .isInstanceOf(DomainException::class.java)
     }
 
     @Test
@@ -181,7 +180,7 @@ class FinancialPeriodServiceITest : BaseIntegrationTest() {
         }
 
         assertThatThrownBy { financialPeriodService.update(toUpdate) }
-            .isInstanceOf(BusinessException::class.java)
+            .isInstanceOf(DomainException::class.java)
     }
 
     @Test
@@ -203,7 +202,7 @@ class FinancialPeriodServiceITest : BaseIntegrationTest() {
         }
 
         assertThatThrownBy { financialPeriodService.update(toUpdate) }
-            .isInstanceOf(BusinessException::class.java)
+            .isInstanceOf(DomainException::class.java)
             .hasMessage("Start date must be before end date")
     }
 
@@ -221,7 +220,7 @@ class FinancialPeriodServiceITest : BaseIntegrationTest() {
         val toUpdate = financialPeriodRepository.findByExternalId(externalId) ?: fail { OBJECT_NOT_FOUND_ERROR }
 
         assertThatThrownBy { financialPeriodService.update(toUpdate) }
-            .isInstanceOf(BusinessException::class.java)
+            .isInstanceOf(DomainException::class.java)
             .hasMessage("You can't delete or update non open periods")
     }
 
@@ -260,7 +259,7 @@ class FinancialPeriodServiceITest : BaseIntegrationTest() {
         val toDelete = financialPeriodRepository.findByExternalId(externalId) ?: fail { OBJECT_NOT_FOUND_ERROR }
 
         assertThatThrownBy { financialPeriodService.delete(toDelete) }
-            .isInstanceOf(BusinessException::class.java)
+            .isInstanceOf(DomainException::class.java)
             .hasMessage("You can't delete or update non open periods")
     }
 

@@ -37,7 +37,8 @@ class ExceptionHandlerAdviceUTest : BaseControllerIntegrationTest() {
 
         assertThatJson(response)
             .isObject
-            .containsEntry("detail", "Illegal argument")
+            .containsEntry("detail", "The request could not be processed")
+            .containsEntry("code", "bad-request")
             .containsEntry("title", "Bad Request")
             .containsEntry("status", 400)
     }
@@ -55,7 +56,7 @@ class ExceptionHandlerAdviceUTest : BaseControllerIntegrationTest() {
 
         assertThatJson(response)
             .isObject
-            .containsEntry("detail", "Data integrity violation")
+            .containsEntry("code", "data-integrity-violation")
             .containsEntry("title", "Bad Request")
             .containsEntry("status", 400)
     }
@@ -74,6 +75,7 @@ class ExceptionHandlerAdviceUTest : BaseControllerIntegrationTest() {
         assertThatJson(response)
             .isObject
             .containsEntry("detail", "The message")
+            .containsEntry("code", "The detail")
             .containsEntry("title", "Bad Request")
             .containsEntry("status", 400)
     }

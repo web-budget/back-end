@@ -2,7 +2,7 @@ package br.com.webbudget.domain.validators.registration
 
 import br.com.webbudget.domain.entities.registration.Card
 import br.com.webbudget.domain.entities.registration.Card.Type
-import br.com.webbudget.domain.exceptions.BusinessException
+import br.com.webbudget.domain.exceptions.DomainException
 import br.com.webbudget.domain.exceptions.ErrorCodes.INVALID_INVOICE_PAYMENT_DAY
 import br.com.webbudget.domain.validators.OnCreateValidation
 import br.com.webbudget.domain.validators.OnUpdateValidation
@@ -20,7 +20,7 @@ class CreditCardInvoicePaymentDayValidator : CardValidator {
         val paymentDay = value.invoicePaymentDay
 
         if (value.type == Type.CREDIT && (paymentDay == null || !validDateRange.contains(paymentDay))) {
-            throw BusinessException(
+            throw DomainException(
                 "Credit card has invalid invoice payment day",
                 INVALID_INVOICE_PAYMENT_DAY,
                 mapOf("payment-day" to paymentDay.toString())

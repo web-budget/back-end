@@ -1,7 +1,7 @@
 package br.com.webbudget.validators.registration
 
 import br.com.webbudget.domain.entities.registration.Card
-import br.com.webbudget.domain.exceptions.BusinessException
+import br.com.webbudget.domain.exceptions.DomainException
 import br.com.webbudget.domain.validators.registration.DebitCardWalletValidator
 import br.com.webbudget.utilities.fixtures.createCard
 import br.com.webbudget.utilities.fixtures.createWallet
@@ -33,6 +33,6 @@ class DebitCardWalletValidatorUTest {
         val card = createCard(type = Card.Type.DEBIT, wallet = null)
 
         assertThatThrownBy { debitCardWalletValidator.validate(card) }
-            .isInstanceOf(BusinessException::class.java)
+            .isInstanceOf(DomainException::class.java)
     }
 }

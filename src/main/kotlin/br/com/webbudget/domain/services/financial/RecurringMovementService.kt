@@ -2,7 +2,7 @@ package br.com.webbudget.domain.services.financial
 
 import br.com.webbudget.domain.entities.financial.RecurringMovement
 import br.com.webbudget.domain.entities.financial.RecurringMovement.State.ENDED
-import br.com.webbudget.domain.exceptions.BusinessException
+import br.com.webbudget.domain.exceptions.DomainException
 import br.com.webbudget.infrastructure.repository.financial.RecurringMovementRepository
 import br.com.webbudget.infrastructure.utilities.CommonErrorMessages.EXTERNAL_ID_IS_NULL
 import org.springframework.stereotype.Service
@@ -27,7 +27,7 @@ class RecurringMovementService(
 
         recurringMovementRepository.findByExternalIdAndState(externalId, ENDED)
             ?.let {
-                throw BusinessException("Recurring movement isn't active", "recurring-movement.errors.invalid-state")
+                throw DomainException("Recurring movement isn't active", "recurring-movement.errors.invalid-state")
             }
 
         return recurringMovementRepository.merge(recurringMovement)

@@ -1,6 +1,6 @@
 package br.com.webbudget.validators.registration
 
-import br.com.webbudget.domain.exceptions.ConflictingPropertyException
+import br.com.webbudget.domain.exceptions.DomainException
 import br.com.webbudget.domain.validators.registration.WalletNameValidator
 import br.com.webbudget.infrastructure.repository.registration.WalletRepository
 import br.com.webbudget.utilities.fixtures.createWallet
@@ -35,7 +35,7 @@ class WalletNameValidatorUTest {
         val toValidate = createWallet(id = null, externalId = null)
 
         assertThatThrownBy { walletNameValidator.validate(toValidate) }
-            .isInstanceOf(ConflictingPropertyException::class.java)
+            .isInstanceOf(DomainException::class.java)
 
         verify(exactly = 1) { walletRepository.findByNameIgnoreCase("Wallet") }
 

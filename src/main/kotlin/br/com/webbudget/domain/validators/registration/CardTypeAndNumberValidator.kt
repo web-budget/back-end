@@ -1,7 +1,7 @@
 package br.com.webbudget.domain.validators.registration
 
 import br.com.webbudget.domain.entities.registration.Card
-import br.com.webbudget.domain.exceptions.ConflictingPropertyException
+import br.com.webbudget.domain.exceptions.DomainException
 import br.com.webbudget.domain.validators.OnCreateValidation
 import br.com.webbudget.domain.validators.OnUpdateValidation
 import br.com.webbudget.infrastructure.repository.registration.CardRepository
@@ -25,7 +25,7 @@ class CardTypeAndNumberValidator(
     private fun validateSaved(value: Card) {
         cardRepository.findByTypeAndLastFourDigitsAndExternalIdNot(value.type, value.lastFourDigits, value.externalId!!)
             ?.let {
-                throw ConflictingPropertyException(
+                throw DomainException.conflict(
                     parameters = mapOf(
                         "card.type" to value.type,
                         "card.last-four-digits" to value.lastFourDigits
@@ -37,7 +37,7 @@ class CardTypeAndNumberValidator(
     private fun validateNotSaved(value: Card) {
         cardRepository.findByTypeAndLastFourDigits(value.type, value.lastFourDigits)
             ?.let {
-                throw ConflictingPropertyException(
+                throw DomainException.conflict(
                     parameters = mapOf(
                         "card.type" to value.type,
                         "card.last-four-digits" to value.lastFourDigits

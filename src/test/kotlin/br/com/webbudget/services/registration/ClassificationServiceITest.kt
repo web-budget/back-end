@@ -2,7 +2,7 @@ package br.com.webbudget.services.registration
 
 import br.com.webbudget.BaseIntegrationTest
 import br.com.webbudget.domain.entities.registration.Classification
-import br.com.webbudget.domain.exceptions.ConflictingPropertyException
+import br.com.webbudget.domain.exceptions.DomainException
 import br.com.webbudget.domain.services.registration.ClassificationService
 import br.com.webbudget.infrastructure.repository.registration.ClassificationRepository
 import br.com.webbudget.utilities.fixtures.createClassification
@@ -58,7 +58,7 @@ class ClassificationServiceITest : BaseIntegrationTest() {
         val toCreate = createClassification(name = "Mercado", budget = null)
 
         assertThatThrownBy { classificationService.create(toCreate) }
-            .isInstanceOf(ConflictingPropertyException::class.java)
+            .isInstanceOf(DomainException::class.java)
     }
 
     @Test
@@ -111,7 +111,7 @@ class ClassificationServiceITest : BaseIntegrationTest() {
         }
 
         assertThatThrownBy { classificationService.update(toUpdate) }
-            .isInstanceOf(ConflictingPropertyException::class.java)
+            .isInstanceOf(DomainException::class.java)
     }
 
     @Test
